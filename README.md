@@ -1,66 +1,68 @@
 # 🎬 Cinema Platform - Frontend
 
-Modern, responsive web client for the Cinema Management System, developed as part of the **SoftServe Practice**. This application provides an interactive interface for users to book tickets and for administrators to manage the cinema ecosystem.
+Modern, immersive web client for the Cinema Management System, developed as part of the **SoftServe Practice**. This application provides a premium user interface for booking tickets and a powerful dashboard for cinema administration.
 
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=flat&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat&logo=typescript)
 ![Vite](https://img.shields.io/badge/Vite-Bundler-646CFF?style=flat&logo=vite)
-![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS-v4.0-06B6D4?style=flat&logo=tailwindcss)
+![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS-v4.1-06B6D4?style=flat&logo=tailwindcss)
+![SignalR](https://img.shields.io/badge/SignalR-RealTime-512BD4?style=flat&logo=signalr)
+![TanStack Query](https://img.shields.io/badge/TanStack_Query-v5-FF4154?style=flat&logo=reactquery)
 ![Biome](https://img.shields.io/badge/Biome-Linting-FFC53D?style=flat&logo=biome)
 ![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=flat&logo=vercel)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-> **Backend:** Check out [cinema-platform-back](https://github.com/stkossman/cinema-platform-back)
+> **Backend:** Check out [cinema-platform-back](https://github.com/stkossman/cinema-platform-back) for the .NET 8 API.
 
 ---
 
-## ⚡ Tech Stack
+## 🏗️ Architecture & Tech Stack
 
-Built with a focus on performance, type safety, and modern development experience.
+The project is built with **Performance** and **Type Safety** in mind, utilizing the latest React 19 features and feature-sliced architectural patterns.
 
-| Category | Technologies |
+| Layer | Technologies |
 |---|---|
 | **Core** | React 19, TypeScript, Vite, Bun |
+| **State Management** | TanStack Query (Server State), Context API (Auth/UI), React Hooks |
+| **Real-Time** | Microsoft SignalR (WebSockets) |
 | **Styling** | Tailwind CSS **v4**, clsx, tailwind-merge, Lucide React (Icons) |
-| **State & API** | Context API, Custom Hooks, Axios (Interceptors) |
-| **Forms** | React Hook Form + Zod (Schema Validation) |
-| **Routing** | React Router DOM |
+| **Forms & Validation** | React Hook Form + Zod |
+| **Routing** | React Router DOM v7 |
 | **Tooling** | Biome.js (Fast Linting & Formatting) |
-| **Deployment** | Vercel |
+| **Deployment** | Vercel (CI/CD) |
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
 ### 👤 For Customers (User Experience)
-* **Dynamic Hero Slider**: Features active movies with trailers and quick booking actions.
-* **Smart Scheduling**: "Now in Theaters" vs "Coming Soon" tabs with an integrated date picker.
-* **Interactive Booking Flow**:
-    * **Visual Seat Selection**: Real-time interactive hall map showing available/occupied seats.
-    * **Pricing Logic**: Dynamic price calculation based on seat type (VIP, Sofa, Standard) and day of the week.
-    * **Payment Simulation**: Integrated flow with order summary and success confirmation.
-* **User Dashboard**:
-    * Ticket history and active bookings.
-    * Profile management (Edit details, change password).
-* **Authentication**: Secure Login/Register with JWT handling (auto-redirects, protected routes).
+* **Immersive "Dark Fantasy" UI**: Premium aesthetic with glassmorphism, fluid animations, and "rolling text" effects.
+* **Real-Time Booking**:
+    * **Live Seat Locking**: See seats turning gray instantly when other users select them (powered by SignalR).
+    * **Visual Hall Map**: Interactive SVG/Grid map with distinct seat types (Lux, Love Seats, Standard).
+* **Digital Member Card**: Personal QR code and "Cinema Club" status in the profile.
+* **Smart Navigation**: Full-screen overlay menu and "Fat Footer" with categorized information.
+* **Dynamic Content**: Static pages (Rules, Tech, Privacy) rendered via a unified template system.
 
 ### 🛡️ For Administrators (Management Panel)
-* **Hall Builder**: A drag-and-drop style visual editor to construct cinema halls, define rows/columns, and assign seat types.
-* **Pricing Matrix Editor**: A sophisticated grid interface to set prices per seat type for every day of the week.
-* **User Activity Tracker**: Advanced search and view of specific user order history and tickets.
-* **Ticket Validation**: Interface for scanning/validating ticket codes (QR simulation).
-* **Content Management**: Tools to manage movies and sessions (connected to backend).
+* **Visual Hall Builder**: Drag-and-drop style editor to construct cinema halls and assign seat types.
+* **Pricing Matrix**: Advanced grid interface to set dynamic prices based on day of week and seat type.
+* **Analytics Dashboard**: View user activity, ticket sales, and occupancy rates.
+* **Content Management**: Full CRUD for Movies, Sessions, and Technologies.
+
+---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-* Node.js (v18 or higher)
-* bun
+* Node.js (v18+)
+* **Bun** (Recommended package manager)
 
 ### Installation
 
 1.  **Clone the repository:**
     ```bash
-    git clone git@github.com:stkossman/cinema-platform-front.git
+    git clone https://github.com/stkossman/cinema-platform-front.git
     cd cinema-platform-front
     ```
 
@@ -72,7 +74,7 @@ Built with a focus on performance, type safety, and modern development experienc
 3.  **Environment Configuration:**
     Create a `.env` file in the root directory:
     ```env
-    VITE_API_URL=https://your-backend-api-url.com/api
+    VITE_API_URL=your.url.com
     ```
 
 4.  **Run the development server:**
@@ -81,17 +83,24 @@ Built with a focus on performance, type safety, and modern development experienc
     ```
     The app will run at `http://localhost:5173`.
 
-## 📸 Key UI Components
+---
 
-### 1. Booking Interface
-Users can select sessions based on time and choose specific seats on a visual map.
+## 🔧 Key Implementation Details
 
-### 2. Hall Builder (Admin)
-Visual tool for administrators to design hall layouts and seat configurations.
+### Real-Time Seat Synchronization
+The application uses **SignalR** to maintain consistency across all connected clients.
+1.  When User A selects a seat, a WebSocket message is sent.
+2.  The Backend broadcasts a `SeatLocked` event.
+3.  User B's client receives the event and updates the React Query cache via `setQueryData`, instantly marking the seat as occupied without a page refresh.
 
-### 3. Pricing Matrix
-Grid-based editor for managing dynamic pricing strategies across different days.
+### Feature-Sliced Design
+Code is organized by **features** rather than technical layers. For example, `features/booking` contains:
+- `components/SeatSelector.tsx` (UI)
+- `hooks/useBooking.ts` (Logic & State)
+This ensures that deleting a feature removes all associated code, keeping the project clean.
+
+---
 
 ## 📜 License
 
-This project is licensed under the MIT License.
+This project is licensed under the **MIT License**.
