@@ -16,6 +16,22 @@
   --color-success: #22c55e;
 }
 
+@media (min-width: 1024px) {
+  body,
+  a,
+  button,
+  input,
+  textarea,
+  select {
+    cursor: none;
+  }
+
+  iframe,
+  .cursor-auto {
+    cursor: auto !important;
+  }
+}
+
 body {
   background-color: var(--bg-main);
   color: var(--text-main);
