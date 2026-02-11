@@ -76,17 +76,21 @@ const MoviesGrid = () => {
   })
 
   const displayedMovies = useMemo(() => {
+    let filtered = []
+
     if (activeTab === 'soon') {
-      return movies.filter(m => m.status === MovieStatus.ComingSoon)
+      filtered = movies.filter(m => m.status === MovieStatus.ComingSoon)
+    } else {
+      filtered = movies
+        .filter(m => m.status === MovieStatus.Active)
+        .filter(m => {
+          return m.sessions.some(s =>
+            isSameDate(new Date(s.startTime), selectedDate),
+          )
+        })
     }
 
-    return movies
-      .filter(m => m.status === MovieStatus.Active)
-      .filter(m => {
-        return m.sessions.some(s =>
-          isSameDate(new Date(s.startTime), selectedDate),
-        )
-      })
+    return filtered.slice(0, 8)
   }, [movies, activeTab, selectedDate])
 
   if (isLoading) {
