@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+@theme {
+  --animate-aurora: aurora 60s linear infinite;
+  --animate-flip-words: flip-words 8s infinite;
+  
+  @keyframes aurora {
+    from {
+      background-position: 50% 50%, 50% 50%;
+    }
+    to {
+      background-position: 350% 50%, 350% 50%;
+    }
+  }
+}
+
 :root {
   --bg-main: #0a0a0a;
   --bg-card: #171717;

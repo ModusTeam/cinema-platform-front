@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ChevronDown, HelpCircle, Phone, Mail } from 'lucide-react'
 import { clsx } from 'clsx'
 import { FAQ_ITEMS } from '../data/staticContent'
+import { FlipWords } from '../common/components/FlipWords'
 
 const FAQPage = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
@@ -9,6 +10,8 @@ const FAQPage = () => {
   const toggleItem = (index: number) => {
     setOpenIndex(openIndex === index ? null : index)
   }
+
+  const flipWords = ['запитання', 'теми', 'ситуації', 'міфи']
 
   return (
     <div className='min-h-screen bg-[var(--bg-main)] px-4 py-20 text-[var(--text-main)]'>
@@ -19,9 +22,10 @@ const FAQPage = () => {
           </div>
           <h1 className='text-4xl sm:text-6xl font-black tracking-tighter text-white'>
             Поширені{' '}
-            <span className='text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-orange-500'>
-              запитання
-            </span>
+            <FlipWords
+              words={flipWords}
+              className='text-[var(--color-primary)] drop-shadow-[0_0_15px_rgba(239,68,68,0.3)]'
+            />
           </h1>
           <p className='text-lg text-[var(--text-muted)] max-w-xl mx-auto leading-relaxed'>
             Ми зібрали відповіді на найпопулярніші питання, щоб ваш похід у кіно
