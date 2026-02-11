@@ -7,9 +7,9 @@ import {
   MonitorPlay,
   Trash2,
   Edit,
-  Loader2,
   Calendar,
 } from 'lucide-react'
+import { GridLoader } from '../../common/components/GridLoader'
 import CreateSessionModal from './components/CreateSessionModal'
 import { type SessionDto } from '../../services/adminSessionsService'
 import ConfirmModal from '../../common/components/Modals/ConfirmModal'
@@ -106,7 +106,7 @@ const AdminSessionsPage = () => {
 
       {isLoading ? (
         <div className='py-20 flex justify-center'>
-          <Loader2 className='h-8 w-8 animate-spin text-[var(--color-primary)]' />
+          <GridLoader className='h-8 w-8 animate-spin text-[var(--color-primary)]' />
         </div>
       ) : (
         <div className='space-y-10 animate-in fade-in slide-in-from-bottom-4'>

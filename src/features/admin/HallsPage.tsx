@@ -5,12 +5,12 @@ import { useHallEditor } from './hooks/useHallEditor'
 import {
   Armchair,
   Trash2,
-  Loader2,
   Plus,
   Users,
   MonitorPlay,
   Pencil,
 } from 'lucide-react'
+import { GridLoader } from '../../common/components/GridLoader'
 import ConfirmModal from '../../common/components/Modals/ConfirmModal'
 import InputModal from '../../common/components/Modals/InputModal'
 import { useToast } from '../../common/components/Toast/ToastContext'
@@ -133,7 +133,7 @@ const HallsPage = () => {
       {isProcessingSeats && (
         <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm'>
           <div className='text-center'>
-            <Loader2 className='h-12 w-12 animate-spin text-[var(--color-primary)] mx-auto mb-4' />
+            <GridLoader className='h-12 w-12 animate-spin text-[var(--color-primary)] mx-auto mb-4' />
             <p className='text-white font-medium'>
               Застосування конфігурації місць...
             </p>
@@ -144,7 +144,7 @@ const HallsPage = () => {
       {mode !== 'list' ? (
         isLoadingEditData ? (
           <div className='flex justify-center py-20'>
-            <Loader2 className='h-8 w-8 animate-spin text-[var(--color-primary)]' />
+            <GridLoader className='h-8 w-8 animate-spin text-[var(--color-primary)]' />
           </div>
         ) : (
           <div className='animate-in fade-in slide-in-from-top-4'>
@@ -163,7 +163,7 @@ const HallsPage = () => {
         <>
           {isLoading && (
             <div className='flex justify-center py-20'>
-              <Loader2 className='h-8 w-8 animate-spin text-[var(--color-primary)]' />
+              <GridLoader className='h-8 w-8 animate-spin text-[var(--color-primary)]' />
             </div>
           )}
 

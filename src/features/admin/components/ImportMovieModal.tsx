@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { X, Search, Download, Loader2, Image as ImageIcon } from 'lucide-react'
+import { X, Search, Download, Image as ImageIcon } from 'lucide-react'
+import { GridLoader } from '../../../common/components/GridLoader'
 import { moviesService } from '../../../services/moviesService'
 import type { TmdbSearchResult } from '../../../types/movie'
 
@@ -85,7 +86,7 @@ const ImportMovieModal = ({
               className='absolute right-2 top-1/2 -translate-y-1/2 bg-[var(--color-primary)] text-white px-3 py-1.5 rounded-md text-xs font-bold hover:bg-[var(--color-primary-hover)] disabled:opacity-50'
             >
               {isSearching ? (
-                <Loader2 className='animate-spin' size={14} />
+                <GridLoader className='animate-spin' size={14} />
               ) : (
                 'Пошук'
               )}
@@ -134,7 +135,7 @@ const ImportMovieModal = ({
                   className='flex items-center gap-2 bg-[var(--color-primary)]/10 text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white px-4 py-2 rounded-lg font-bold text-sm transition-all disabled:opacity-50'
                 >
                   {isImporting === movie.tmdbId ? (
-                    <Loader2 size={18} className='animate-spin' />
+                    <GridLoader size={18} className='animate-spin' />
                   ) : (
                     <Download size={18} />
                   )}

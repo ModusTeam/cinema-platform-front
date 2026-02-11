@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useAdminMovies } from '../../features/admin/hooks/useAdminMovies'
 import {
   Search,
-  Loader2,
   Plus,
   Star,
   Trash2,
@@ -13,6 +12,7 @@ import {
   Archive,
   PlayCircle,
 } from 'lucide-react'
+import { GridLoader } from '../../common/components/GridLoader'
 import ImportMovieModal from '../../features/admin/components/ImportMovieModal'
 import EditMovieModal from '../../features/admin/components/EditMovieModal'
 import { type Movie, MovieStatus } from '../../types/movie'
@@ -100,7 +100,7 @@ const AdminMoviesPage = () => {
 
       {isLoading ? (
         <div className='flex justify-center py-20'>
-          <Loader2 className='animate-spin text-[var(--color-primary)] h-8 w-8' />
+          <GridLoader className='animate-spin text-[var(--color-primary)] h-8 w-8' />
         </div>
       ) : (
         <>

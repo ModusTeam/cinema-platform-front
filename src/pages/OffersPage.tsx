@@ -1,9 +1,10 @@
 import { useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Sparkles, Loader2, Ticket, SearchX, Play, Circle } from 'lucide-react'
+import { Sparkles, Ticket, SearchX, Play, Circle } from 'lucide-react'
 import { useAuth } from '../features/auth/AuthContext'
 import { moviesService } from '../services/moviesService'
+import { GridLoader } from '../common/components/GridLoader'
 
 const OffersPage = () => {
   const { user, isLoading: isAuthLoading } = useAuth()
@@ -30,7 +31,7 @@ const OffersPage = () => {
   if (isAuthLoading || (isLoading && user)) {
     return (
       <div className='flex min-h-[calc(100vh-4rem)] items-center justify-center bg-[var(--bg-main)]'>
-        <Loader2 className='h-8 w-8 animate-spin text-[var(--color-primary)]' />
+        <GridLoader className='h-8 w-8 animate-spin text-[var(--color-primary)]' />
       </div>
     )
   }

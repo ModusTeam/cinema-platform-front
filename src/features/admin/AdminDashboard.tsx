@@ -5,9 +5,9 @@ import {
   Film,
   TrendingUp,
   TrendingDown,
-  Loader2,
   Users,
 } from 'lucide-react'
+import { GridLoader } from '../../common/components/GridLoader'
 import {
   AreaChart,
   Area,
@@ -233,7 +233,7 @@ const AdminDashboard = () => {
           <div className='flex-1 w-full min-h-0'>
             {isLoading ? (
               <div className='w-full h-full flex items-center justify-center'>
-                <Loader2 className='animate-spin text-[var(--color-primary)] h-8 w-8' />
+                <GridLoader className='animate-spin text-[var(--color-primary)] h-8 w-8' />
               </div>
             ) : chartData.length > 0 ? (
               <ResponsiveContainer width='99%' height='100%'>

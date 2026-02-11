@@ -2,7 +2,6 @@ import { useState, useMemo } from 'react'
 import { useUserActivity } from './hooks/useUserActivity'
 import {
   Search,
-  Loader2,
   User,
   Ticket,
   LayoutList,
@@ -12,6 +11,7 @@ import {
   Mail,
   Ban,
 } from 'lucide-react'
+import { GridLoader } from '../../common/components/GridLoader'
 import { clsx } from 'clsx'
 
 const UserActivityPage = () => {
@@ -106,7 +106,7 @@ const UserActivityPage = () => {
         <div className='flex-1 overflow-y-auto space-y-1 pr-1 custom-scrollbar'>
           {isLoadingUsers ? (
             <div className='flex justify-center py-10'>
-              <Loader2 className='animate-spin text-[var(--color-primary)]' />
+              <GridLoader className='animate-spin text-[var(--color-primary)]' />
             </div>
           ) : filteredUsers.length === 0 ? (
             <div className='text-center py-10 text-[var(--text-muted)] text-sm'>
@@ -185,7 +185,7 @@ const UserActivityPage = () => {
 
             {isLoadingData ? (
               <div className='flex justify-center py-20 min-h-[300px]'>
-                <Loader2 className='animate-spin text-[var(--color-primary)] h-8 w-8' />
+                <GridLoader className='animate-spin text-[var(--color-primary)] h-8 w-8' />
               </div>
             ) : (
               <div className='animate-in fade-in zoom-in-95 duration-300 space-y-6'>

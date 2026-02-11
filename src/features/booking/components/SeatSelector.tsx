@@ -1,5 +1,6 @@
 import type { Hall, Seat } from '../../../types/hall'
-import { Armchair, Loader2 } from 'lucide-react'
+import { Armchair } from 'lucide-react'
+import { GridLoader } from '../../../common/components/GridLoader'
 import { useMemo } from 'react'
 
 interface SeatSelectorProps {
@@ -154,7 +155,7 @@ const SeatSelector = ({
                 }
               >
                 {isLocking ? (
-                  <Loader2 size={16} className='animate-spin' />
+                  <GridLoader size={16} className='animate-spin' />
                 ) : (
                   <Armchair
                     size={

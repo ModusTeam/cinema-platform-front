@@ -6,7 +6,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { authService } from '../services/authService'
 import Input from '../common/components/Input'
-import { Loader2, Ticket, ArrowRight } from 'lucide-react'
+import { Ticket, ArrowRight } from 'lucide-react'
+import { GridLoader } from '../common/components/GridLoader'
 
 const registerSchema = z
   .object({
@@ -146,7 +147,7 @@ const RegisterPage = () => {
               className='w-full flex items-center justify-center gap-2 rounded-xl bg-white py-3.5 text-sm font-bold text-black transition-all hover:bg-zinc-200 hover:shadow-lg active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed mt-4'
             >
               {isSubmitting ? (
-                <Loader2 className='mr-2 h-5 w-5 animate-spin' />
+                <GridLoader className='mr-2 h-5 w-5 animate-spin' />
               ) : (
                 <>
                   Створити акаунт <ArrowRight size={16} />

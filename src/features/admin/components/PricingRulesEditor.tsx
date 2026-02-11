@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { X, Save, Loader2, RefreshCw } from 'lucide-react'
+import { X, Save, RefreshCw } from 'lucide-react'
+import { GridLoader } from '../../../common/components/GridLoader'
 import {
   type PricingDetailsDto,
   type SetPricingRuleDto,
@@ -91,7 +92,7 @@ const PricingRulesEditor = ({
   if (isLoadingTypes)
     return (
       <div className='p-10 flex justify-center'>
-        <Loader2 className='animate-spin' />
+        <GridLoader className='animate-spin' />
       </div>
     )
 
@@ -211,7 +212,7 @@ const PricingRulesEditor = ({
             className='flex items-center gap-2 bg-[var(--color-success)] text-white px-8 py-2 rounded-lg font-bold hover:brightness-110 shadow-lg shadow-[var(--color-success)]/20 transition-all'
           >
             {isSaving ? (
-              <Loader2 className='animate-spin' />
+              <GridLoader className='animate-spin' />
             ) : (
               <Save size={18} />
             )}

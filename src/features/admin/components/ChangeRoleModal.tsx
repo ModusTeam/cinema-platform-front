@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { X, Shield, ShieldAlert, Loader2, Check } from 'lucide-react'
+import { X, Shield, ShieldAlert, Check } from 'lucide-react'
+import { GridLoader } from '../../../common/components/GridLoader'
 import type { UserDto } from '../../../services/adminUsersService'
 
 interface ChangeRoleModalProps {
@@ -121,7 +122,7 @@ const ChangeRoleModal = ({
             disabled={isLoading || selectedRole === user.role}
             className='px-6 py-2 bg-white text-black rounded-lg font-bold text-sm hover:bg-zinc-200 disabled:opacity-50 flex items-center gap-2'
           >
-            {isLoading && <Loader2 size={16} className='animate-spin' />}
+            {isLoading && <GridLoader size={16} className='animate-spin' />}
             Зберегти
           </button>
         </div>

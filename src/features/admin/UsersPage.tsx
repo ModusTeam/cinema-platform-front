@@ -2,13 +2,13 @@ import { useState, useMemo } from 'react'
 import { useUsers } from './hooks/useUsers'
 import {
   Search,
-  Loader2,
   User as UserIcon,
   MoreHorizontal,
   ShieldCheck,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react'
+import { GridLoader } from '../../common/components/GridLoader'
 import { useAuth } from '../auth/AuthContext'
 import ChangeRoleModal from './components/ChangeRoleModal'
 import { type UserDto } from '../../services/adminUsersService'
@@ -89,7 +89,7 @@ const UsersPage = () => {
 
       {isLoading ? (
         <div className='flex justify-center py-20'>
-          <Loader2 className='animate-spin text-[var(--color-primary)] h-8 w-8' />
+          <GridLoader className='animate-spin text-[var(--color-primary)] h-8 w-8' />
         </div>
       ) : (
         <>

@@ -4,7 +4,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import Input from '../common/components/Input'
 import {
-  Loader2,
   Save,
   LogOut,
   LayoutDashboard,
@@ -19,6 +18,7 @@ import { Link } from 'react-router-dom'
 import { clsx } from 'clsx'
 import TicketCard from '../features/profile/components/TicketCard'
 import { useProfile, type TabType } from '../features/profile/hooks/useProfile'
+import { GridLoader } from '../common/components/GridLoader'
 
 const profileSchema = z
   .object({
@@ -275,7 +275,7 @@ const ProfilePage = () => {
 
                   {isLoadingTickets ? (
                     <div className='flex py-20 justify-center'>
-                      <Loader2 className='animate-spin text-[var(--color-primary)] w-8 h-8' />
+                      <GridLoader className='animate-spin text-[var(--color-primary)] w-8 h-8' />
                     </div>
                   ) : activeTickets.length > 0 ? (
                     <div className='grid gap-4'>
@@ -426,7 +426,7 @@ const ProfilePage = () => {
                           className='flex items-center gap-2 rounded-xl bg-[var(--color-primary)] px-8 py-4 text-sm font-bold text-white transition-all hover:bg-[var(--color-primary-hover)] shadow-lg shadow-[var(--color-primary)]/20 disabled:opacity-70 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-95'
                         >
                           {isSaving ? (
-                            <Loader2 className='h-4 w-4 animate-spin' />
+                            <GridLoader className='h-4 w-4 animate-spin' />
                           ) : (
                             <Save className='h-4 w-4' />
                           )}

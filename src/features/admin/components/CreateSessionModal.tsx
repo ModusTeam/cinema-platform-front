@@ -1,12 +1,5 @@
-import {
-  X,
-  Loader2,
-  Calendar,
-  Clock,
-  DollarSign,
-  Film,
-  MonitorPlay,
-} from 'lucide-react'
+import { X, Calendar, Clock, DollarSign, Film, MonitorPlay } from 'lucide-react'
+import { GridLoader } from '../../../common/components/GridLoader'
 import { useCreateSession } from '../hooks/useCreateSession'
 
 interface CreateSessionModalProps {
@@ -57,7 +50,7 @@ const CreateSessionModal = ({
 
         {isLoadingData ? (
           <div className='py-12 flex justify-center'>
-            <Loader2 className='h-8 w-8 animate-spin text-[var(--text-muted)]' />
+            <GridLoader className='h-8 w-8 animate-spin text-[var(--text-muted)]' />
           </div>
         ) : (
           <form onSubmit={submit} className='space-y-5'>
@@ -157,7 +150,7 @@ const CreateSessionModal = ({
                 className='bg-[var(--color-primary)] text-white text-sm font-bold px-6 py-2.5 rounded-lg hover:bg-[var(--color-primary-hover)] disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2 transition-colors shadow-lg shadow-[var(--color-primary)]/20'
               >
                 {isSubmitting ? (
-                  <Loader2 size={16} className='animate-spin' />
+                  <GridLoader size={16} className='animate-spin' />
                 ) : (
                   <Calendar size={16} />
                 )}

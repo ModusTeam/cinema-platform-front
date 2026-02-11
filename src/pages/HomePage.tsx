@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { Loader2, Film, ArrowRight } from 'lucide-react'
+import { Film, ArrowRight } from 'lucide-react'
+import { GridLoader } from '../common/components/GridLoader'
 import MovieCard from '../features/movies/components/MovieCard'
 import PromoSection from '../features/home/components/PromoSection'
 import HeroSection from '../features/movies/components/HeroSection'
@@ -20,7 +21,7 @@ const HomePage = () => {
   if (isLoading) {
     return (
       <div className='flex h-screen w-full items-center justify-center bg-[var(--bg-main)]'>
-        <Loader2 className='h-12 w-12 animate-spin text-[var(--color-primary)]' />
+        <GridLoader className='h-12 w-12 animate-spin text-[var(--color-primary)]' />
       </div>
     )
   }

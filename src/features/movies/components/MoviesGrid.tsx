@@ -6,7 +6,8 @@ import { moviesService } from '../../../services/moviesService'
 import { bookingService } from '../../../services/bookingService'
 import { hallsService } from '../../../services/hallsService'
 import MovieCard from './MovieCard'
-import { Loader2, CalendarDays, Clock, Calendar } from 'lucide-react'
+import { CalendarDays, Clock, Calendar } from 'lucide-react'
+import { GridLoader } from '../../../common/components/GridLoader'
 import { clsx } from 'clsx'
 
 interface MovieWithMeta extends Movie {
@@ -91,7 +92,7 @@ const MoviesGrid = () => {
   if (isLoading) {
     return (
       <div className='flex h-64 w-full items-center justify-center'>
-        <Loader2 className='h-10 w-10 animate-spin text-[var(--color-primary)]' />
+        <GridLoader className='h-10 w-10 animate-spin text-[var(--color-primary)]' />
       </div>
     )
   }

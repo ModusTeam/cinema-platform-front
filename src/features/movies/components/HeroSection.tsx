@@ -1,4 +1,5 @@
-import { Play, Info, Loader2, Star, Calendar, Clock } from 'lucide-react'
+import { Play, Info, Star, Calendar, Clock } from 'lucide-react'
+import { GridLoader } from '../../../common/components/GridLoader'
 import { Link } from 'react-router-dom'
 import { useHeroSlider } from '../hooks/useHeroSlider'
 
@@ -17,7 +18,7 @@ const HeroSection = () => {
   if (isLoading) {
     return (
       <div className='flex h-[85vh] w-full items-center justify-center bg-[var(--bg-main)]'>
-        <Loader2 className='h-12 w-12 animate-spin text-[var(--color-primary)]' />
+        <GridLoader className='h-12 w-12 animate-spin text-[var(--color-primary)]' />
       </div>
     )
   }

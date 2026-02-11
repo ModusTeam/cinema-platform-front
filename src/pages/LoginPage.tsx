@@ -5,7 +5,8 @@ import * as z from 'zod'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../features/auth/AuthContext'
 import Input from '../common/components/Input'
-import { Loader2, Clapperboard, ArrowRight } from 'lucide-react'
+import { Clapperboard, ArrowRight } from 'lucide-react'
+import { GridLoader } from '../common/components/GridLoader'
 
 const loginSchema = z.object({
   email: z
@@ -116,7 +117,7 @@ const LoginPage = () => {
               className='w-full flex items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] py-3.5 text-sm font-bold text-white transition-all hover:bg-[var(--color-primary-hover)] hover:shadow-lg hover:shadow-[var(--color-primary)]/25 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed'
             >
               {isSubmitting ? (
-                <Loader2 className='mr-2 h-5 w-5 animate-spin' />
+                <GridLoader className='mr-2 h-5 w-5 animate-spin' />
               ) : (
                 <>
                   Увійти <ArrowRight size={16} />

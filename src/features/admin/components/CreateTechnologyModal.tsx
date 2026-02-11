@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { X, Loader2 } from 'lucide-react'
+import { X } from 'lucide-react'
+import { GridLoader } from '../../../common/components/GridLoader'
 import Input from '../../../common/components/Input'
 
 interface CreateTechnologyModalProps {
@@ -89,7 +90,9 @@ const CreateTechnologyModal = ({
               disabled={isSubmitting}
               className='flex items-center gap-2 bg-[var(--color-primary)] text-white px-6 py-2 rounded-lg font-bold hover:bg-[var(--color-primary-hover)] transition-all shadow-lg disabled:opacity-50'
             >
-              {isSubmitting && <Loader2 className='animate-spin' size={16} />}
+              {isSubmitting && (
+                <GridLoader className='animate-spin' size={16} />
+              )}
               Створити
             </button>
           </div>

@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '../../features/auth/AuthContext'
-import { Loader2 } from 'lucide-react'
+import { GridLoader } from '../../common/components/GridLoader'
 
 const AdminRoute = () => {
   const { user, isLoading } = useAuth()
@@ -8,7 +8,7 @@ const AdminRoute = () => {
   if (isLoading) {
     return (
       <div className='flex h-screen items-center justify-center bg-[var(--bg-main)] text-white'>
-        <Loader2 className='animate-spin text-[var(--color-primary)]' />
+        <GridLoader className='animate-spin text-[var(--color-primary)]' />
       </div>
     )
   }

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { moviesService } from '../services/moviesService'
 import MovieDetails from '../features/movies/components/MovieDetails'
 import NotFoundPage from './NotFoundPage'
-import { Loader2 } from 'lucide-react'
+import { GridLoader } from '../common/components/GridLoader'
 
 const MoviePage = () => {
   const { id } = useParams<{ id: string }>()
@@ -22,7 +22,7 @@ const MoviePage = () => {
   if (isLoading) {
     return (
       <div className='flex h-screen w-full items-center justify-center bg-[var(--bg-main)] text-white'>
-        <Loader2 className='h-10 w-10 animate-spin text-[var(--color-primary)]' />
+        <GridLoader className='h-10 w-10 animate-spin text-[var(--color-primary)]' />
       </div>
     )
   }

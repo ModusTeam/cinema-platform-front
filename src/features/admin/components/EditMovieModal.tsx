@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { X, Loader2 } from 'lucide-react'
+import { X } from 'lucide-react'
+import { GridLoader } from '../../../common/components/GridLoader'
 import { moviesService } from '../../../services/moviesService'
 import { type Movie, MovieStatus } from '../../../types/movie'
 import Input from '../../../common/components/Input'
@@ -170,7 +171,7 @@ const EditMovieModal = ({
               disabled={isSaving}
               className='flex items-center gap-2 bg-[var(--color-primary)] text-white px-6 py-2 rounded-lg font-bold hover:bg-[var(--color-primary-hover)] transition-all shadow-lg disabled:opacity-50'
             >
-              {isSaving && <Loader2 className='animate-spin' size={16} />}
+              {isSaving && <GridLoader className='animate-spin' size={16} />}
               Зберегти
             </button>
           </div>

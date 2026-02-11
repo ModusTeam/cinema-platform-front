@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { usePricings } from './hooks/usePricings'
-import { Plus, Tag, Edit, Layers, Loader2, CalendarRange } from 'lucide-react'
+import { Plus, Tag, Edit, Layers, CalendarRange } from 'lucide-react'
+import { GridLoader } from '../../common/components/GridLoader'
 import PricingModal from './components/PricingModal'
 import PricingRulesEditor from './components/PricingRulesEditor'
 import type { PricingDetailsDto } from '../../services/adminPricingsService'
@@ -40,7 +41,7 @@ const PricingsPage = () => {
 
       {isLoading ? (
         <div className='flex justify-center py-20'>
-          <Loader2 className='animate-spin text-[var(--color-primary)] h-8 w-8' />
+          <GridLoader className='animate-spin text-[var(--color-primary)] h-8 w-8' />
         </div>
       ) : (
         <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>

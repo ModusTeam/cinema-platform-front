@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTechnologies } from './hooks/useTechnologies'
-import { Plus, Cpu, Trash2, Loader2 } from 'lucide-react'
+import { Plus, Cpu, Trash2 } from 'lucide-react'
+import { GridLoader } from '../../common/components/GridLoader'
 import CreateTechnologyModal from './components/CreateTechnologyModal'
 
 const TechnologiesPage = () => {
@@ -42,7 +43,7 @@ const TechnologiesPage = () => {
 
       {isLoading ? (
         <div className='flex justify-center py-20'>
-          <Loader2 className='animate-spin text-[var(--color-primary)] h-8 w-8' />
+          <GridLoader className='animate-spin text-[var(--color-primary)] h-8 w-8' />
         </div>
       ) : (
         <div className='rounded-xl border border-white/5 bg-[var(--bg-card)] overflow-hidden backdrop-blur-sm shadow-xl'>

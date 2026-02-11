@@ -1,12 +1,7 @@
 import { useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import {
-  Loader2,
-  ArrowLeft,
-  CheckCircle,
-  Ticket,
-  CalendarX,
-} from 'lucide-react'
+import { ArrowLeft, CheckCircle, Ticket, CalendarX } from 'lucide-react'
+import { GridLoader } from '../common/components/GridLoader'
 import SessionSelector from '../features/booking/components/SessionSelector'
 import SeatSelector from '../features/booking/components/SeatSelector'
 import { useAuth } from '../features/auth/AuthContext'
@@ -47,7 +42,7 @@ const BookingPage = () => {
   if (isAuthLoading || (isLoading && !movie)) {
     return (
       <div className='flex h-screen items-center justify-center bg-[var(--bg-main)] text-white'>
-        <Loader2 className='animate-spin text-[var(--color-primary)]' />
+        <GridLoader className='animate-spin text-[var(--color-primary)]' />
       </div>
     )
   }
@@ -157,7 +152,7 @@ const BookingPage = () => {
 
               {isLoadingDetails ? (
                 <div className='flex justify-center py-20'>
-                  <Loader2 className='animate-spin text-[var(--color-primary)]' />
+                  <GridLoader className='animate-spin text-[var(--color-primary)]' />
                 </div>
               ) : hall ? (
                 <SeatSelector
@@ -278,7 +273,7 @@ const BookingPage = () => {
                   className='flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] py-4 font-bold text-white hover:bg-[var(--color-primary-hover)] shadow-lg shadow-[var(--color-primary)]/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.02] active:scale-100'
                 >
                   {isProcessingPayment ? (
-                    <Loader2 className='animate-spin' />
+                    <GridLoader className='animate-spin' />
                   ) : (
                     <>
                       <Ticket size={20} /> Оплатити квитки
