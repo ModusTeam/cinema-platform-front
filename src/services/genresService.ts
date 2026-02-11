@@ -2,7 +2,7 @@ import { api } from '../lib/axios'
 
 export interface Genre {
   id: string
-  externalId: number
+  externalId: number | null
   name: string
 }
 
@@ -12,7 +12,7 @@ export const genresService = {
     return data
   },
 
-  create: async (externalId: number, name: string): Promise<string> => {
+  create: async (externalId: number | null, name: string): Promise<string> => {
     const { data } = await api.post('/genres', { externalId, name })
     return data
   },

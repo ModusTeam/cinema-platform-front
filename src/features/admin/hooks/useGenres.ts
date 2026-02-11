@@ -11,8 +11,13 @@ export const useGenres = () => {
   })
 
   const createMutation = useMutation({
-    mutationFn: ({ externalId, name }: { externalId: number; name: string }) =>
-      genresService.create(externalId, name),
+    mutationFn: ({
+      externalId,
+      name,
+    }: {
+      externalId: number | null
+      name: string
+    }) => genresService.create(externalId, name),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['genres'] })
     },
@@ -27,18 +32,18 @@ export const useGenres = () => {
   })
 
   const deleteMutation = useMutation({
-    mutationFn: genresService.delete,
+    mutationFn: (externalId: number) => genresService.delete(externalId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['genres'] })
     },
   })
 
-  const createGenre = async (externalId: number, name: string) => {
+  const createGenre = async (externalId: number | null, name: string) => {
     try {
       await createMutation.mutateAsync({ externalId, name })
       return { success: true }
     } catch (error: any) {
-      const msg = error.response?.data?.title || 'Помилка створення жанру'
+      const msg = error.response?.data?.detail || 'Помилка створення жанру'
       return { success: false, error: msg }
     }
   }
@@ -48,7 +53,8 @@ export const useGenres = () => {
       await updateMutation.mutateAsync({ externalId, name })
       return { success: true }
     } catch (error: any) {
-      return { success: false, error: 'Помилка оновлення' }
+      const msg = error.response?.data?.detail || 'Помилка оновлення'
+      return { success: false, error: msg }
     }
   }
 

@@ -1,14 +1,33 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
 import { X } from 'lucide-react'
 import { GridLoader } from '../../../common/components/GridLoader'
 import Input from '../../../common/components/Input'
 import { type Genre } from '../../../services/genresService'
 
+const genreSchema = z.object({
+  externalId: z.union([z.string(), z.number(), z.null()]).transform(val => {
+    if (val === '' || val === null) return null
+    const parsed = Number(val)
+    return isNaN(parsed) ? null : parsed
+  }),
+  name: z.string().min(1, "Назва обов'язкова"),
+})
+
+type GenreFormInput = {
+  externalId: string | number | null
+  name: string
+}
+
+type GenreFormOutput = z.infer<typeof genreSchema>
+
 interface GenreModalProps {
   isOpen: boolean
   onClose: () => void
   onSave: (
-    externalId: number,
+    externalId: number | null,
     name: string,
   ) => Promise<{ success: boolean; error?: string }>
   initialData?: Genre | null
@@ -20,27 +39,30 @@ const GenreModal = ({
   onSave,
   initialData,
 }: GenreModalProps) => {
-  const [externalId, setExternalId] = useState('')
-  const [name, setName] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<GenreFormInput, any, GenreFormOutput>({
+    resolver: zodResolver(genreSchema),
+    defaultValues: {
+      externalId: '',
+      name: '',
+    },
+  })
 
   useEffect(() => {
-    if (initialData) {
-      setExternalId(initialData.externalId.toString())
-      setName(initialData.name)
-    } else {
-      setExternalId('')
-      setName('')
+    if (isOpen) {
+      reset({
+        externalId: initialData?.externalId?.toString() ?? '',
+        name: initialData?.name || '',
+      })
     }
-  }, [initialData, isOpen])
+  }, [initialData, isOpen, reset])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!externalId || !name) return
-
-    setIsSubmitting(true)
-    const result = await onSave(Number(externalId), name)
-    setIsSubmitting(false)
+  const onSubmit = async (data: GenreFormOutput) => {
+    const result = await onSave(data.externalId, data.name)
 
     if (result.success) {
       onClose()
@@ -69,21 +91,29 @@ const GenreModal = ({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className='p-6 space-y-4'>
-          <Input
-            label='TMDB ID (External ID)'
-            value={externalId}
-            onChange={e => setExternalId(e.target.value)}
-            type='number'
-            disabled={isEditing}
-            placeholder='Напр. 28 (Action)'
-          />
+        <form onSubmit={handleSubmit(onSubmit)} className='p-6 space-y-4'>
+          <div className='space-y-1'>
+            <Input
+              label='TMDB ID (External ID)'
+              {...register('externalId')}
+              type='number'
+              disabled={isEditing}
+              placeholder='Залиште пустим для власного жанру'
+              error={errors.externalId?.message}
+            />
+            {!isEditing && (
+              <p className='text-xs text-zinc-500'>
+                Вкажіть ID з TMDB або залиште пустим, щоб створити локальний
+                жанр.
+              </p>
+            )}
+          </div>
 
           <Input
             label='Назва'
-            value={name}
-            onChange={e => setName(e.target.value)}
+            {...register('name')}
             placeholder='Напр. Action'
+            error={errors.name?.message}
           />
 
           <div className='flex justify-end gap-3 pt-4'>
