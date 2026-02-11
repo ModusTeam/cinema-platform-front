@@ -8,6 +8,7 @@ import {
   Sparkles,
   Quote,
 } from 'lucide-react'
+import { AuroraText } from '../common/components/AuroraText'
 
 const AboutPage = () => {
   return (
@@ -52,7 +53,7 @@ const AboutPage = () => {
             </span>
             <h2 className='text-4xl md:text-5xl font-black leading-tight text-white'>
               Інженерія <br />
-              <span className='text-zinc-500'>ваших емоцій.</span>
+              <AuroraText className='font-black'>ваших емоцій</AuroraText>
             </h2>
             <p className='text-lg leading-relaxed text-[var(--text-muted)]'>
               Cine<span className='text-white'>ma</span> — це більше, ніж просто

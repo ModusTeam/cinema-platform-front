@@ -11,6 +11,7 @@ import {
   Popcorn,
 } from 'lucide-react'
 import { clsx } from 'clsx'
+import { AuroraText } from '../common/components/AuroraText'
 
 const iconMap: Record<string, any> = {
   Popcorn: Popcorn,
@@ -47,9 +48,7 @@ const CinemaBarPage = () => {
           </div>
           <h1 className='text-5xl md:text-7xl font-black text-white uppercase tracking-tighter drop-shadow-2xl mb-4'>
             Кіно
-            <span className='text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-500'>
-              Бар
-            </span>
+            <AuroraText className='font-black'>Бар</AuroraText>
           </h1>
           <p className='text-[var(--text-muted)] text-lg max-w-lg mx-auto'>
             Хрусткий попкорн, крижані напої та снеки для ідеального перегляду.

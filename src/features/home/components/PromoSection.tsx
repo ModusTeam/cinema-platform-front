@@ -1,6 +1,7 @@
 import { Crown, Sparkles, CreditCard, QrCode } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../../features/auth/AuthContext'
+import { AuroraText } from '../../../common/components/AuroraText'
 
 const PromoSection = () => {
   const { user } = useAuth()
@@ -22,9 +23,7 @@ const PromoSection = () => {
 
               <h2 className='text-3xl md:text-5xl font-black text-white leading-tight'>
                 Твій персональний{' '}
-                <span className='text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-purple-500'>
-                  цифровий пропуск
-                </span>
+                <AuroraText className='font-black'>цифровий пропуск</AuroraText>
               </h2>
 
               <p className='text-lg text-[var(--text-muted)] max-w-lg mx-auto md:mx-0 leading-relaxed'>

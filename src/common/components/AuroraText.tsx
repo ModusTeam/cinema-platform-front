@@ -13,26 +13,19 @@ export function AuroraText({
   ...props
 }: AuroraTextProps) {
   return (
-    <Component
-      className={cn('relative inline-flex overflow-hidden', className)}
-      {...props}
-    >
-      <span className='relative z-10'>{children}</span>
+    <Component className={cn('relative inline-block', className)} {...props}>
       <span
-        className='pointer-events-none absolute -inset-2 mix-blend-lighten blur-2xl opacity-50'
+        className='animate-[aurora_30s_linear_infinite] bg-clip-text text-transparent'
         style={{
           backgroundImage:
-            'conic-gradient(from 90deg at 50% 50%, #00000000 50%, #0a0a0a 50%), radial-gradient(rgba(200,200,200,0.1) 0%, transparent 80%)',
-        }}
-      />
-      <span
-        className='pointer-events-none absolute -inset-[100%] animate-[aurora_60s_linear_infinite] opacity-70 blur-[30px] saturate-[150%]'
-        style={{
-          backgroundImage:
-            'repeating-linear-gradient(100deg, var(--color-primary) 10%, #a855f7 20%, #3b82f6 30%, #a855f7 40%, var(--color-primary) 50%)',
+            'repeating-linear-gradient(100deg, #ef4444 10%, #f97316 20%, #fbbf24 30%, #f97316 40%, #ef4444 50%)',
           backgroundSize: '200% auto',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
         }}
-      />
+      >
+        {children}
+      </span>
     </Component>
   )
 }

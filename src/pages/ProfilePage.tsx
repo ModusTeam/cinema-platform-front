@@ -19,6 +19,7 @@ import { clsx } from 'clsx'
 import TicketCard from '../features/profile/components/TicketCard'
 import { useProfile, type TabType } from '../features/profile/hooks/useProfile'
 import { GridLoader } from '../common/components/GridLoader'
+import { AuroraText } from '../common/components/AuroraText'
 
 const profileSchema = z
   .object({
@@ -136,10 +137,7 @@ const ProfilePage = () => {
         <div className='flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 animate-in fade-in slide-in-from-top-4 duration-700'>
           <div>
             <h1 className='text-4xl md:text-5xl font-black text-white uppercase tracking-tighter mb-2'>
-              Особистий{' '}
-              <span className='text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-orange-500'>
-                Кабінет
-              </span>
+              Особистий <AuroraText className='font-black'>Кабінет</AuroraText>
             </h1>
             <p className='text-[var(--text-muted)] text-lg'>
               Керуйте своїми квитками та налаштуваннями.
