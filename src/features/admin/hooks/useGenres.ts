@@ -24,15 +24,15 @@ export const useGenres = () => {
   })
 
   const updateMutation = useMutation({
-    mutationFn: ({ externalId, name }: { externalId: number; name: string }) =>
-      genresService.update(externalId, name),
+    mutationFn: ({ id, name }: { id: string; name: string }) =>
+      genresService.update(id, name),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['genres'] })
     },
   })
 
   const deleteMutation = useMutation({
-    mutationFn: (externalId: number) => genresService.delete(externalId),
+    mutationFn: (id: string) => genresService.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['genres'] })
     },
@@ -48,9 +48,9 @@ export const useGenres = () => {
     }
   }
 
-  const updateGenre = async (externalId: number, name: string) => {
+  const updateGenre = async (id: string, name: string) => {
     try {
-      await updateMutation.mutateAsync({ externalId, name })
+      await updateMutation.mutateAsync({ id, name })
       return { success: true }
     } catch (error: any) {
       const msg = error.response?.data?.detail || 'Помилка оновлення'
@@ -58,9 +58,9 @@ export const useGenres = () => {
     }
   }
 
-  const deleteGenre = async (externalId: number) => {
+  const deleteGenre = async (id: string) => {
     try {
-      await deleteMutation.mutateAsync(externalId)
+      await deleteMutation.mutateAsync(id)
       return { success: true }
     } catch (error: any) {
       return { success: false, error: 'Помилка видалення' }

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useGenres } from './hooks/useGenres'
-import { Plus, Tag, Edit, Trash2, Search, Lock } from 'lucide-react'
+import { Plus, Tag, Edit, Trash2, Search } from 'lucide-react'
 import { GridLoader } from '../../common/components/GridLoader'
 import GenreModal from './components/GenreModal'
 import { type Genre } from '../../services/genresService'
@@ -19,26 +19,25 @@ const GenresPage = () => {
   }
 
   const handleEditClick = (genre: Genre) => {
-    if (genre.externalId === null) return
     setEditingGenre(genre)
     setIsModalOpen(true)
   }
 
-  const handleDeleteClick = async (externalId: number) => {
+  const handleDeleteClick = async (genre: Genre) => {
+    const idDisplay = genre.externalId ? `ID: ${genre.externalId}` : 'Custom'
     if (
       !confirm(
-        `Видалити жанр ID: ${externalId}? Це може вплинути на існуючі фільми.`,
+        `Видалити жанр "${genre.name}" (${idDisplay})? Це може вплинути на існуючі фільми.`,
       )
     )
       return
-    await deleteGenre(externalId)
+
+    await deleteGenre(genre.id)
   }
 
   const handleSave = async (externalId: number | null, name: string) => {
     if (editingGenre) {
-      if (externalId === null)
-        return { success: false, error: 'Неможливо оновити жанр без ID' }
-      return await updateGenre(externalId, name)
+      return await updateGenre(editingGenre.id, name)
     } else {
       return await createGenre(externalId, name)
     }
@@ -138,35 +137,22 @@ const GenresPage = () => {
                     </td>
                     <td className='px-6 py-4 text-right'>
                       <div className='flex items-center justify-end gap-2'>
-                        {genre.externalId !== null ? (
-                          <>
-                            <button
-                              type='button'
-                              onClick={() => handleEditClick(genre)}
-                              className='p-2 rounded-lg text-[var(--text-muted)] hover:text-white hover:bg-blue-500/20 transition-colors'
-                              title='Редагувати'
-                            >
-                              <Edit size={16} />
-                            </button>
-                            <button
-                              type='button'
-                              onClick={() =>
-                                handleDeleteClick(genre.externalId!)
-                              }
-                              className='p-2 rounded-lg text-[var(--text-muted)] hover:text-red-500 hover:bg-red-500/10 transition-colors'
-                              title='Видалити'
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          </>
-                        ) : (
-                          <div
-                            className='flex items-center gap-2 text-zinc-700 cursor-help'
-                            title='Кастомні жанри не можна редагувати через API'
-                          >
-                            <Lock size={16} />
-                          </div>
-                        )}
+                        <button
+                          type='button'
+                          onClick={() => handleEditClick(genre)}
+                          className='p-2 rounded-lg text-[var(--text-muted)] hover:text-white hover:bg-blue-500/20 transition-colors'
+                          title='Редагувати'
+                        >
+                          <Edit size={16} />
+                        </button>
+                        <button
+                          type='button'
+                          onClick={() => handleDeleteClick(genre)}
+                          className='p-2 rounded-lg text-[var(--text-muted)] hover:text-red-500 hover:bg-red-500/10 transition-colors'
+                          title='Видалити'
+                        >
+                          <Trash2 size={16} />
+                        </button>
                       </div>
                     </td>
                   </tr>

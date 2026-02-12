@@ -17,11 +17,11 @@ export const genresService = {
     return data
   },
 
-  update: async (externalId: number, name: string): Promise<void> => {
-    await api.put(`/genres/${externalId}`, { name })
+  update: async (id: string, name: string): Promise<void> => {
+    await api.put(`/genres/${id}`, { name })
   },
 
-  delete: async (externalId: number): Promise<void> => {
-    await api.delete(`/genres/${externalId}`)
+  delete: async (id: string): Promise<void> => {
+    await api.delete(`/genres/${id}`)
   },
 }
