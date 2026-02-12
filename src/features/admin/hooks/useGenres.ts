@@ -7,7 +7,7 @@ export const useGenres = () => {
   const { data, isLoading } = useQuery({
     queryKey: ['genres'],
     queryFn: genresService.getAll,
-    staleTime: 60 * 60 * 1000,
+    staleTime: 0,
   })
 
   const createMutation = useMutation({
@@ -19,7 +19,7 @@ export const useGenres = () => {
       name: string
     }) => genresService.create(externalId, name),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['genres'] })
+      return queryClient.invalidateQueries({ queryKey: ['genres'] })
     },
   })
 
@@ -27,14 +27,14 @@ export const useGenres = () => {
     mutationFn: ({ id, name }: { id: string; name: string }) =>
       genresService.update(id, name),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['genres'] })
+      return queryClient.invalidateQueries({ queryKey: ['genres'] })
     },
   })
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => genresService.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['genres'] })
+      return queryClient.invalidateQueries({ queryKey: ['genres'] })
     },
   })
 
