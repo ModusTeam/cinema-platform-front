@@ -67,22 +67,19 @@ class TicketHubService {
   private registerHandlers() {
     if (!this.connection) return
 
-    this.connection.off('SeatLocked')
+    this.connection.off('ReceiveSeatStatusChange')
     this.connection.on(
-      'SeatLocked',
-      (sessionId: string, seatId: string, userId: string) => {
-        if (this.sessionId === sessionId && this.onSeatLocked) {
-          this.onSeatLocked(seatId, userId)
+      'ReceiveSeatStatusChange',
+      (seatId: string, status: string, userId: string | null) => {
+        console.log('ReceiveSeatStatusChange:', { seatId, status, userId })
+
+        if (status === 'Locked' || status === 'Reserved') {
+          this.onSeatLocked?.(seatId, userId || '')
+        } else if (status === 'Available') {
+          this.onSeatUnlocked?.(seatId)
         }
       },
     )
-
-    this.connection.off('SeatUnlocked')
-    this.connection.on('SeatUnlocked', (sessionId: string, seatId: string) => {
-      if (this.sessionId === sessionId && this.onSeatUnlocked) {
-        this.onSeatUnlocked(seatId)
-      }
-    })
   }
 }
 
