@@ -50,6 +50,9 @@ const Footer = () => {
               <li>
                 <FooterLink to='/sessions'>Розклад сеансів</FooterLink>
               </li>
+              <li>
+                <FooterLink to='/careers'>Вакансії</FooterLink>
+              </li>
             </ul>
           </div>
 
@@ -63,14 +66,6 @@ const Footer = () => {
               </li>
               <li>
                 <FooterLink to='/faq'>Часті запитання</FooterLink>
-              </li>
-              <li>
-                <a
-                  href='mailto:support@cinema.ua'
-                  className='hover:text-white transition-colors duration-200'
-                >
-                  Зворотній зв'язок
-                </a>
               </li>
             </ul>
           </div>
