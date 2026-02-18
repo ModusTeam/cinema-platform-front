@@ -90,18 +90,6 @@ const Header = () => {
             </span>
           </Link>
 
-          <nav className='hidden lg:flex items-center gap-8'>
-            {NAV_ITEMS.map(item => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className='text-sm font-bold text-zinc-400 hover:text-white transition-colors uppercase tracking-wider group'
-              >
-                <RollingText text={item.label} />
-              </Link>
-            ))}
-          </nav>
-
           <div className='relative z-[70] flex items-center gap-4 md:gap-6'>
             {!isMenuOpen && (
               <div className='hidden md:flex items-center gap-6 animate-in fade-in duration-300'>
