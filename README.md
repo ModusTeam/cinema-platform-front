@@ -10,8 +10,10 @@ Modern, immersive web client for the Cinema Management System, developed as part
 ![TanStack Query](https://img.shields.io/badge/TanStack_Query-v5-FF4154?style=flat&logo=reactquery)
 ![Biome](https://img.shields.io/badge/Biome-Linting-FFC53D?style=flat&logo=biome)
 ![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=flat&logo=vercel)
+[![Docs](https://img.shields.io/badge/Official_Docs-Astro_Starlight-FF5D01?style=flat&logo=astro)](https://modusteam.github.io/cinema-platform-docs/)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
+> **Official Documentation:** Visit our [Cinema Platform Docs](https://modusteam.github.io/cinema-platform-docs/) for the complete REST API reference, system architecture, and developer guides.
 > **Backend:** Check out [cinema-platform-back](https://github.com/stkossman/cinema-platform-back) for the .NET 8 API.
 
 ---
