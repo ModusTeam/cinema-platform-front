@@ -67,6 +67,11 @@ const Footer = () => {
               <li>
                 <FooterLink to='/faq'>Часті запитання</FooterLink>
               </li>
+              <li>
+                <ExternalFooterLink href='https://modusteam.github.io/cinema-platform-docs/'>
+                  API Документація
+                </ExternalFooterLink>
+              </li>
             </ul>
           </div>
 
@@ -133,6 +138,23 @@ const FooterLink = ({
   >
     {children}
   </Link>
+)
+
+const ExternalFooterLink = ({
+  href,
+  children,
+}: {
+  href: string
+  children: React.ReactNode
+}) => (
+  <a
+    href={href}
+    target='_blank'
+    rel='noreferrer'
+    className='hover:text-[var(--color-primary)] transition-colors duration-200 block text-base lg:text-sm py-1 lg:py-0'
+  >
+    {children}
+  </a>
 )
 
 const SocialIcon = ({ icon: Icon, href }: { icon: any; href: string }) => (
