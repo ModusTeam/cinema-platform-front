@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import Input from '../common/components/Input'
 import {
   Save,
   LogOut,
@@ -14,12 +14,14 @@ import {
   CreditCard,
   Sparkles,
 } from 'lucide-react'
-import { Link } from 'react-router-dom'
 import { clsx } from 'clsx'
-import TicketCard from '../features/profile/components/TicketCard'
-import { useProfile, type TabType } from '../features/profile/hooks/useProfile'
-import { GridLoader } from '../common/components/GridLoader'
-import { AuroraText } from '../common/components/AuroraText'
+
+import Input from '@/common/components/Input'
+import { AuroraText } from '@/common/components/AuroraText'
+import { GridLoader } from '@/common/components/GridLoader'
+import AchievementsTabPanel from '@/features/loyalty/achievements/AchievementsTabPanel'
+import TicketCard from '@/features/profile/components/TicketCard'
+import { useProfile, type TabType } from '@/features/profile/hooks/useProfile'
 
 const profileSchema = z
   .object({
@@ -215,6 +217,13 @@ const ProfilePage = () => {
               </div>
             </div>
 
+            <Link
+              to='/account/loyalty'
+              className='flex w-full items-center justify-center gap-2 rounded-2xl border border-white/5 bg-white/[0.04] p-4 text-sm font-bold text-white transition-all hover:bg-white/10'
+            >
+              <Sparkles size={18} /> Програма лояльності
+            </Link>
+
             <button
               type='button'
               onClick={() => logout()}
@@ -226,7 +235,9 @@ const ProfilePage = () => {
 
           <div className='animate-in slide-in-from-right-4 fade-in duration-700 delay-300'>
             <div className='mb-8 p-1.5 rounded-2xl bg-black/40 border border-white/5 backdrop-blur-md inline-flex w-full sm:w-auto overflow-x-auto no-scrollbar'>
-              {(['active-tickets', 'history', 'settings'] as TabType[]).map(
+              {(
+                ['active-tickets', 'history', 'achievements', 'settings'] as TabType[]
+              ).map(
                 tab => (
                   <button
                     key={tab}
@@ -246,11 +257,14 @@ const ProfilePage = () => {
                     <span className='relative z-10 flex items-center gap-2'>
                       {tab === 'active-tickets' && <Ticket size={16} />}
                       {tab === 'history' && <History size={16} />}
+                      {tab === 'achievements' && <Sparkles size={16} />}
                       {tab === 'settings' && <Settings size={16} />}
                       {tab === 'active-tickets'
                         ? 'Квитки'
                         : tab === 'history'
                           ? 'Історія'
+                          : tab === 'achievements'
+                            ? 'Досягнення'
                           : 'Профіль'}
                     </span>
                   </button>
@@ -433,6 +447,22 @@ const ProfilePage = () => {
                       </div>
                     </form>
                   </div>
+                </div>
+              )}
+
+              {activeTab === 'achievements' && (
+                <div className='space-y-6 animate-in fade-in zoom-in-95 duration-300'>
+                  <div className='flex items-center justify-between mb-4 px-2'>
+                    <h3 className='text-lg font-bold text-white flex items-center gap-2'>
+                      <Sparkles size={18} className='text-[var(--color-primary)]' />
+                      Досягнення
+                    </h3>
+                    <span className='text-xs text-[var(--text-muted)]'>
+                      Частина функцій ще в розробці
+                    </span>
+                  </div>
+
+                  <AchievementsTabPanel />
                 </div>
               )}
             </div>

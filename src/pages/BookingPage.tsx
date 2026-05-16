@@ -1,11 +1,14 @@
-import { useEffect } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, CheckCircle, Ticket, CalendarX } from 'lucide-react'
-import { GridLoader } from '../common/components/GridLoader'
-import SessionSelector from '../features/booking/components/SessionSelector'
-import SeatSelector from '../features/booking/components/SeatSelector'
-import { useAuth } from '../features/auth/AuthContext'
-import { useBooking } from '../features/booking/hooks/useBooking'
+
+import { GridLoader } from '@/common/components/GridLoader'
+import SessionSelector from '@/features/booking/components/SessionSelector'
+import SeatSelector from '@/features/booking/components/SeatSelector'
+import { useAuth } from '@/features/auth/AuthContext'
+import { useBooking } from '@/features/booking/hooks/useBooking'
+import LoyaltyCheckoutCard from '@/features/loyalty/components/LoyaltyCheckoutCard'
+import { useCheckoutLoyaltyPreview } from '@/features/loyalty/hooks/useCheckoutLoyaltyPreview'
 
 const BookingPage = () => {
   const { id } = useParams<{ id: string }>()
@@ -28,6 +31,9 @@ const BookingPage = () => {
     toggleSeat,
     submitOrder,
   } = useBooking(id)
+
+  const [useLoyalty, setUseLoyalty] = useState(false)
+  const loyaltyPreviewQuery = useCheckoutLoyaltyPreview(totalPrice)
 
   useEffect(() => {
     if (!isAuthLoading && !user) {
@@ -86,6 +92,11 @@ const BookingPage = () => {
         return (g as any).name
       })
     : []
+
+  const handleSubmitOrder = async () => {
+    // NOTE: backend integration point for GetBalance/DeductPoints
+    await submitOrder()
+  }
 
   return (
     <div className='min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] pb-20'>
@@ -245,6 +256,20 @@ const BookingPage = () => {
             )}
 
             <div className='mt-auto pt-4'>
+              {step === 2 && (
+                <div className='mb-6'>
+                  <LoyaltyCheckoutCard
+                    preview={loyaltyPreviewQuery.data}
+                    isLoading={loyaltyPreviewQuery.isLoading}
+                    isEnabled={
+                      !!loyaltyPreviewQuery.data?.isRedemptionAvailable
+                    }
+                    isChecked={useLoyalty}
+                    onToggle={setUseLoyalty}
+                  />
+                </div>
+              )}
+
               <div className='flex justify-between items-end mb-6'>
                 <span className='text-[var(--text-muted)] font-medium pb-1'>
                   Разом до сплати
@@ -269,7 +294,7 @@ const BookingPage = () => {
                 <button
                   type='button'
                   disabled={selectedSeats.length === 0 || isProcessingPayment}
-                  onClick={submitOrder}
+                  onClick={handleSubmitOrder}
                   className='flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] py-4 font-bold text-white hover:bg-[var(--color-primary-hover)] shadow-lg shadow-[var(--color-primary)]/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.02] active:scale-100'
                 >
                   {isProcessingPayment ? (
