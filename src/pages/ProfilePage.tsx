@@ -2,9 +2,11 @@ import { AuroraText } from '@/common/components/AuroraText'
 import { GridLoader } from '@/common/components/GridLoader'
 import Input from '@/common/components/Input'
 import LoyaltyCard from '@/features/account/components/LoyaltyCard'
+import { useLoyalty } from '@/features/account/hooks/useLoyalty'
 import AchievementsTabPanel from '@/features/loyalty/achievements/AchievementsTabPanel'
 import TicketCard from '@/features/profile/components/TicketCard'
 import { type TabType, useProfile } from '@/features/profile/hooks/useProfile'
+import type { LoyaltyTier } from '@/types/account'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { clsx } from 'clsx'
 import {
@@ -71,6 +73,19 @@ const profileSchema = z
 
 type ProfileFormData = z.infer<typeof profileSchema>
 
+const clamp = (value: number, min: number, max: number) =>
+	Math.min(Math.max(value, min), max)
+
+const getLoyaltyProgressPercent = (tier?: LoyaltyTier, points?: number) => {
+	if (!tier || points === undefined) return 0
+
+	if (tier === 'Gold') return 100
+
+	const [start, end] = tier === 'Bronze' ? [0, 500] : [500, 1500]
+	const progress = ((points - start) / (end - start)) * 100
+	return clamp(progress, 0, 100)
+}
+
 const ProfilePage = () => {
 	const {
 		user,
@@ -83,6 +98,19 @@ const ProfilePage = () => {
 		isSaving,
 		updateProfileData,
 	} = useProfile()
+
+	const loyaltyQuery = useLoyalty()
+	const loyaltyProgressPercent = getLoyaltyProgressPercent(
+		loyaltyQuery.data?.tier,
+		loyaltyQuery.data?.points,
+	)
+	const loyaltyLabel = loyaltyQuery.data
+		? `${loyaltyQuery.data.tier} • ${loyaltyQuery.data.points} балів`
+		: '—'
+	const loyaltyErrorMessage =
+		loyaltyQuery.error instanceof Error
+			? loyaltyQuery.error.message
+			: 'Помилка завантаження'
 
 	const {
 		register,
@@ -207,11 +235,22 @@ const ProfilePage = () => {
 									<div className='flex items-center justify-between text-xs text-zinc-500 mb-4'>
 										<span>STATUS</span>
 										<span className='text-[var(--color-primary)] font-bold flex items-center gap-1'>
-											<Sparkles size={10} /> CINEMA CLUB
+											{loyaltyQuery.isLoading ? (
+												<span className='h-3 w-20 rounded-full bg-white/10 animate-pulse' />
+											) : loyaltyQuery.error ? (
+												loyaltyErrorMessage
+											) : (
+												<>
+													<Sparkles size={10} /> {loyaltyLabel}
+												</>
+											)}
 										</span>
 									</div>
 									<div className='w-full h-1 bg-white/5 rounded-full overflow-hidden'>
-										<div className='h-full w-3/4 bg-gradient-to-r from-[var(--color-primary)] to-orange-500 rounded-full'></div>
+										<div
+											className='h-full bg-gradient-to-r from-[var(--color-primary)] to-orange-500 rounded-full'
+											style={{ width: `${loyaltyProgressPercent}%` }}
+										/>
 									</div>
 								</div>
 							</div>

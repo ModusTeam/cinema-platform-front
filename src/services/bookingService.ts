@@ -56,11 +56,13 @@ export const bookingService = {
 	createOrder: async (
 		sessionId: string,
 		seatIds: string[],
+		useLoyaltyPoints: boolean,
 		paymentToken: string = 'dummy_token',
 	): Promise<CreateOrderResponse> => {
 		const { data } = await api.post<CreateOrderResponse>('/orders', {
 			sessionId,
 			seatIds,
+			useLoyaltyPoints,
 			paymentToken,
 		})
 		return data
