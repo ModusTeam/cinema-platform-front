@@ -1,6 +1,6 @@
-import { api } from '../lib/axios'
-import { supabase } from '../lib/supabase'
-import type { PaginatedResult } from '../types/common'
+import { api } from '@/lib/axios'
+import { adminPricingsService, type PricingLookup } from '@/services/adminPricingsService'
+import type { PaginatedResult } from '@/types/common'
 
 export interface SessionDto {
   id: string
@@ -13,11 +13,6 @@ export interface SessionDto {
   hallName: string
   pricingId: string
   pricingName: string
-}
-
-export interface PricingLookupDto {
-  id: string
-  name: string
 }
 
 export interface CreateSessionRequest {
@@ -51,17 +46,7 @@ export const adminSessionsService = {
     await api.delete(`/sessions/${id}`)
   },
 
-  getPricingsLookup: async (): Promise<PricingLookupDto[]> => {
-    const { data, error } = await supabase
-      .from('pricings')
-      .select('id, name')
-      .order('name')
-
-    if (error) {
-      console.error('Failed to load pricings', error)
-      return []
-    }
-
-    return data || []
+  getPricingsLookup: async (): Promise<PricingLookup[]> => {
+    return adminPricingsService.getLookups()
   },
 }
