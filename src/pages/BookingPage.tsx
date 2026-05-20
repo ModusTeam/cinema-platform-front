@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import { GridLoader } from '@/common/components/GridLoader'
+import { useLoyalty } from '@/features/account/hooks/useLoyalty'
 import { useAuth } from '@/features/auth/AuthContext'
 import SeatSelector from '@/features/booking/components/SeatSelector'
 import SessionSelector from '@/features/booking/components/SessionSelector'
 import { useBooking } from '@/features/booking/hooks/useBooking'
 import LoyaltyCheckoutCard from '@/features/loyalty/components/LoyaltyCheckoutCard'
-import { useCheckoutLoyaltyPreview } from '@/features/loyalty/hooks/useCheckoutLoyaltyPreview'
 
 const BookingPage = () => {
 	const { id } = useParams<{ id: string }>()
@@ -32,8 +32,12 @@ const BookingPage = () => {
 		submitOrder,
 	} = useBooking(id)
 
-	const [useLoyalty, setUseLoyalty] = useState(false)
-	const loyaltyPreviewQuery = useCheckoutLoyaltyPreview(totalPrice)
+	const [useLoyaltyPoints, setUseLoyaltyPoints] = useState(false)
+	const loyaltyQuery = useLoyalty()
+	const loyaltyPoints = loyaltyQuery.data?.points ?? 0
+	const maxDiscount = Math.min(loyaltyPoints, totalPrice)
+	const isLoyaltyDisabled = loyaltyPoints <= 0
+	const loyaltyNote = isLoyaltyDisabled ? 'Недостатньо балів' : undefined
 
 	useEffect(() => {
 		if (!isAuthLoading && !user) {
@@ -94,7 +98,7 @@ const BookingPage = () => {
 		: []
 
 	const handleSubmitOrder = async () => {
-		await submitOrder(useLoyalty)
+		await submitOrder(useLoyaltyPoints)
 	}
 
 	return (
@@ -258,13 +262,19 @@ const BookingPage = () => {
 							{step === 2 && (
 								<div className='mb-6'>
 									<LoyaltyCheckoutCard
-										preview={loyaltyPreviewQuery.data}
-										isLoading={loyaltyPreviewQuery.isLoading}
-										isEnabled={
-											!!loyaltyPreviewQuery.data?.isRedemptionAvailable
+										pointsBalance={loyaltyPoints}
+										maxDiscount={maxDiscount}
+										pointsLimit={loyaltyPoints}
+										isLoading={loyaltyQuery.isLoading}
+										errorMessage={
+											loyaltyQuery.error instanceof Error
+												? loyaltyQuery.error.message
+												: undefined
 										}
-										isChecked={useLoyalty}
-										onToggle={setUseLoyalty}
+										isDisabled={isLoyaltyDisabled || loyaltyQuery.isLoading}
+										disabledNote={loyaltyNote}
+										isChecked={useLoyaltyPoints}
+										onToggle={setUseLoyaltyPoints}
 									/>
 								</div>
 							)}

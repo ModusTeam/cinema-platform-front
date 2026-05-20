@@ -1,7 +1,7 @@
 import { AuroraText } from '@/common/components/AuroraText'
 import { GridLoader } from '@/common/components/GridLoader'
 import Input from '@/common/components/Input'
-import LoyaltyCard from '@/features/account/components/LoyaltyCard'
+import { LOYALTY_TIER_THRESHOLDS } from '@/constants/loyalty'
 import { useLoyalty } from '@/features/account/hooks/useLoyalty'
 import AchievementsTabPanel from '@/features/loyalty/achievements/AchievementsTabPanel'
 import TicketCard from '@/features/profile/components/TicketCard'
@@ -81,8 +81,11 @@ const getLoyaltyProgressPercent = (tier?: LoyaltyTier, points?: number) => {
 
 	if (tier === 'Gold') return 100
 
-	const [start, end] = tier === 'Bronze' ? [0, 500] : [500, 1500]
-	const progress = ((points - start) / (end - start)) * 100
+	const targetPoints =
+		tier === 'Bronze'
+			? LOYALTY_TIER_THRESHOLDS.SILVER.points
+			: LOYALTY_TIER_THRESHOLDS.GOLD.points
+	const progress = (points / targetPoints) * 100
 	return clamp(progress, 0, 100)
 }
 
@@ -255,8 +258,6 @@ const ProfilePage = () => {
 								</div>
 							</div>
 						</div>
-
-						<LoyaltyCard />
 
 						<Link
 							to='/account/loyalty'

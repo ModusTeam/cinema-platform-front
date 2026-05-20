@@ -1,5 +1,4 @@
-import { AlertCircle, Sparkles } from 'lucide-react'
-
+import { LOYALTY_TIER_THRESHOLDS } from '@/constants/loyalty'
 import { useLoyalty } from '@/features/account/hooks/useLoyalty'
 import type { LoyaltyTier as UiLoyaltyTier } from '@/features/loyalty/api/loyalty.types'
 import AchievementsPreview from '@/features/loyalty/components/AchievementsPreview'
@@ -13,6 +12,7 @@ import { useLoyaltyAchievementsPreview } from '@/features/loyalty/hooks/useLoyal
 import { useLoyaltyBenefits } from '@/features/loyalty/hooks/useLoyaltyBenefits'
 import { useLoyaltyProfile } from '@/features/loyalty/hooks/useLoyaltyProfile'
 import type { LoyaltyTier as AccountLoyaltyTier } from '@/types/account'
+import { AlertCircle, Sparkles } from 'lucide-react'
 
 const clamp = (value: number, min: number, max: number) =>
 	Math.min(Math.max(value, min), max)
@@ -22,22 +22,22 @@ const LOYALTY_TIERS: Record<AccountLoyaltyTier, UiLoyaltyTier> = {
 		id: 'bronze',
 		label: 'Bronze',
 		minPoints: 0,
-		maxPoints: 499,
+		maxPoints: LOYALTY_TIER_THRESHOLDS.SILVER.points - 1,
 		badgeColor: '#b45309',
 		benefits: [],
 	},
 	Silver: {
 		id: 'silver',
 		label: 'Silver',
-		minPoints: 500,
-		maxPoints: 1499,
+		minPoints: LOYALTY_TIER_THRESHOLDS.SILVER.points,
+		maxPoints: LOYALTY_TIER_THRESHOLDS.GOLD.points - 1,
 		badgeColor: '#94a3b8',
 		benefits: [],
 	},
 	Gold: {
 		id: 'gold',
 		label: 'Gold',
-		minPoints: 1500,
+		minPoints: LOYALTY_TIER_THRESHOLDS.GOLD.points,
 		badgeColor: '#f59e0b',
 		benefits: [],
 	},
@@ -51,8 +51,11 @@ const getNextTier = (tier: AccountLoyaltyTier) => {
 
 const getProgressPercent = (tier: AccountLoyaltyTier, points: number) => {
 	if (tier === 'Gold') return 100
-	const [start, end] = tier === 'Bronze' ? [0, 500] : [500, 1500]
-	const progress = ((points - start) / (end - start)) * 100
+	const targetPoints =
+		tier === 'Bronze'
+			? LOYALTY_TIER_THRESHOLDS.SILVER.points
+			: LOYALTY_TIER_THRESHOLDS.GOLD.points
+	const progress = (points / targetPoints) * 100
 	return clamp(progress, 0, 100)
 }
 
