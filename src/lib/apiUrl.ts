@@ -6,7 +6,9 @@ const normalizePath = (path: string) => {
 
 export const getApiBaseUrl = () => {
 	if (!RAW_API_URL) {
-		throw new Error('Missing VITE_API_URL. Set it in .env')
+		throw new Error(
+			'Missing VITE_API_URL. Set it in .env (e.g. http://localhost:5211/api).',
+		)
 	}
 
 	if (RAW_API_URL.startsWith('/')) {

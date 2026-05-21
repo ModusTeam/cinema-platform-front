@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query'
-import { useAuth } from '../../auth/AuthContext'
-import { ordersService } from '../../../services/ordersService'
-import { accountService } from '../../../services/accountService'
-import { useToast } from '../../../common/components/Toast/ToastContext'
+import { useToast } from '@/common/components/Toast/ToastContext'
+import { useAuth } from '@/features/auth/AuthContext'
+import { accountService } from '@/services/accountService'
+import { ordersService } from '@/services/ordersService'
 
-export type TabType = 'active-tickets' | 'history' | 'settings'
+export type TabType = 'active-tickets' | 'history' | 'settings' | 'achievements'
 
 export interface ProfileUpdateData {
   firstName: string

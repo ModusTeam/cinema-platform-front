@@ -19,6 +19,8 @@ const SessionsPage = lazy(() => import('../pages/SessionsPage'))
 const CinemaBarPage = lazy(() => import('../pages/CinemaBarPage'))
 const StaticPage = lazy(() => import('../pages/StaticPage'))
 const CareersPage = lazy(() => import('../pages/CareersPage'))
+const LoyaltyPage = lazy(() => import('../pages/LoyaltyPage'))
+const LoyaltyHistoryPage = lazy(() => import('../pages/LoyaltyHistoryPage'))
 
 // admin
 const AdminDashboard = lazy(() => import('../features/admin/AdminDashboard'))
@@ -88,6 +90,14 @@ export const router = createBrowserRouter([
 			{
 				path: 'info/:pageId',
 				element: <StaticPage />,
+			},
+			{
+				path: 'account/loyalty',
+				element: <LoyaltyPage />,
+			},
+			{
+				path: 'account/loyalty/history',
+				element: <LoyaltyHistoryPage />,
 			},
 		],
 	},
