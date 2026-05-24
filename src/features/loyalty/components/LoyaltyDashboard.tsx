@@ -1,9 +1,7 @@
 import { LOYALTY_TIER_THRESHOLDS } from '@/constants/loyalty'
 import { useLoyalty } from '@/features/account/hooks/useLoyalty'
 import type { LoyaltyTier as UiLoyaltyTier } from '@/features/loyalty/api/loyalty.types'
-import AchievementsPreview from '@/features/loyalty/components/AchievementsPreview'
 import BalanceWidget from '@/features/loyalty/components/BalanceWidget'
-import BenefitSimulator from '@/features/loyalty/components/BenefitSimulator'
 import BenefitsList from '@/features/loyalty/components/BenefitsList'
 import BirthdayBonusBanner from '@/features/loyalty/components/BirthdayBonusBanner'
 import PointsExpiryNotice from '@/features/loyalty/components/PointsExpiryNotice'
@@ -76,6 +74,7 @@ const LoyaltyDashboard = () => {
 		profileQuery.error ||
 		benefitsQuery.error ||
 		achievementsQuery.error
+
 	const errorMessage =
 		error instanceof Error ? error.message : 'Помилка завантаження'
 
@@ -95,7 +94,7 @@ const LoyaltyDashboard = () => {
 
 	if (error) {
 		return (
-			<div className='border-l-2 border-red-500/50 pl-4 py-2'>
+			<div className='border-l-2 border-red-500/50 py-2 pl-4'>
 				<div className='flex items-center gap-2 text-red-400'>
 					<AlertCircle size={18} />
 					<span className='font-medium'>Лояльність тимчасово недоступна</span>
@@ -132,8 +131,12 @@ const LoyaltyDashboard = () => {
 		loyaltyPoints !== undefined ? loyaltyPoints : profile.pointsBalance
 
 	return (
-		<div className='space-y-16'>
-			{' '}
+		<div className='relative space-y-16'>
+			<div
+				className='pointer-events-none absolute left-1/2 top-0 -z-10 h-[400px] w-[600px] -translate-x-1/2 rounded-full opacity-10 blur-[120px] transition-colors duration-1000'
+				style={{ backgroundColor: resolvedTier.badgeColor }}
+			/>
+
 			<div className='flex flex-col gap-12 md:flex-row md:items-start md:justify-between md:gap-8'>
 				<div className='flex-1'>
 					<BalanceWidget
@@ -151,6 +154,7 @@ const LoyaltyDashboard = () => {
 					/>
 				</div>
 			</div>
+
 			<div className='grid gap-6 border-y border-white/5 py-8 md:grid-cols-2'>
 				<PointsExpiryNotice expiryDate={profile.pointsExpiryDate} />
 				<BirthdayBonusBanner
@@ -159,6 +163,7 @@ const LoyaltyDashboard = () => {
 					isClaimed={profile.birthdayBonusClaimed}
 				/>
 			</div>
+
 			<section className='space-y-8'>
 				<div className='flex flex-col gap-1'>
 					<h3 className='text-xl font-medium text-white'>Переваги програми</h3>
@@ -168,22 +173,6 @@ const LoyaltyDashboard = () => {
 				</div>
 				<BenefitsList benefits={benefitsQuery.data || []} />
 			</section>
-			<div className='h-px w-full bg-white/5' />
-			<div className='flex flex-col gap-12 md:flex-row md:justify-between'>
-				<div className='flex-1'>
-					<BenefitSimulator />
-				</div>
-
-				<div className='md:w-64 md:shrink-0 md:pt-8'>
-					{achievementsQuery.data ? (
-						<AchievementsPreview data={achievementsQuery.data} />
-					) : (
-						<span className='text-sm text-neutral-600'>
-							Досягнення зʼявляться згодом.
-						</span>
-					)}
-				</div>
-			</div>
 		</div>
 	)
 }

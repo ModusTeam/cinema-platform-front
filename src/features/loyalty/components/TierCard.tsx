@@ -18,13 +18,17 @@ const TierCard = ({
 		<div className='flex w-full flex-col gap-4 md:w-1/2'>
 			<div className='flex flex-col gap-1'>
 				<span className='text-sm tracking-widest text-neutral-500 uppercase'>
-					Поточний рівень
+					Поточний статус
 				</span>
-				<div className='flex items-baseline gap-3'>
-					<h2 className='text-3xl font-semibold text-white'>{tier.label}</h2>
-					<span className='rounded-full bg-white/5 px-2.5 py-0.5 text-[10px] tracking-widest text-neutral-400 uppercase'>
-						Tier
-					</span>
+				<div className='flex items-center gap-3'>
+					<span
+						className='h-2 w-2 rounded-full'
+						style={{
+							backgroundColor: tier.badgeColor,
+							boxShadow: `0 0 12px ${tier.badgeColor}`,
+						}}
+					/>
+					<h2 className='text-3xl font-medium text-white'>{tier.label}</h2>
 				</div>
 			</div>
 

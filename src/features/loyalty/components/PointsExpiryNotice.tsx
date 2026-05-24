@@ -1,37 +1,47 @@
 import { AlarmClock } from 'lucide-react'
 
 interface PointsExpiryNoticeProps {
-  expiryDate?: string
+	expiryDate?: string
 }
 
 const PointsExpiryNotice = ({ expiryDate }: PointsExpiryNoticeProps) => {
-  if (!expiryDate) {
-    return (
-      <div className='rounded-2xl border border-white/10 bg-white/[0.02] p-5 text-sm text-[var(--text-muted)]'>
-        Інформація про термін дії балів буде доступна після підключення бекенду.
-      </div>
-    )
-  }
+	if (!expiryDate) {
+		return (
+			<div className='flex flex-col gap-1 border-l-2 border-white/5 py-1 pl-4'>
+				<span className='text-sm font-medium text-neutral-400'>
+					Термін дії балів
+				</span>
+				<span className='text-xs text-neutral-600'>
+					Дані тимчасово недоступні
+				</span>
+			</div>
+		)
+	}
 
-  const expiry = new Date(expiryDate)
-  const daysLeft = Math.max(
-    0,
-    Math.ceil((expiry.getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
-  )
+	const expiry = new Date(expiryDate)
+	const daysLeft = Math.max(
+		0,
+		Math.ceil((expiry.getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
+	)
 
-  return (
-    <div className='rounded-2xl border border-amber-500/20 bg-amber-500/10 p-5'>
-      <div className='flex items-center gap-3 text-amber-200'>
-        <AlarmClock size={18} />
-        <span className='text-sm font-semibold'>
-          До завершення терміну дії балів: {daysLeft} днів
-        </span>
-      </div>
-      <p className='mt-2 text-xs text-amber-100/80'>
-        Використайте бали до {expiry.toLocaleDateString('uk-UA')}.
-      </p>
-    </div>
-  )
+	const isExpiringSoon = daysLeft <= 30
+	const borderColor = isExpiringSoon ? 'border-amber-500/50' : 'border-white/10'
+	const titleColor = isExpiringSoon ? 'text-amber-400' : 'text-neutral-300'
+	const iconColor = isExpiringSoon ? 'text-amber-400' : 'text-neutral-500'
+
+	return (
+		<div className={`flex flex-col gap-1 border-l-2 ${borderColor} py-1 pl-4`}>
+			<div className={`flex items-center gap-2 ${titleColor}`}>
+				<AlarmClock size={16} className={iconColor} />
+				<span className='text-sm font-medium'>
+					{daysLeft} {daysLeft === 1 ? 'день' : 'днів'} до згоряння
+				</span>
+			</div>
+			<p className='text-xs text-neutral-400'>
+				Використайте бали до {expiry.toLocaleDateString('uk-UA')}
+			</p>
+		</div>
+	)
 }
 
 export default PointsExpiryNotice

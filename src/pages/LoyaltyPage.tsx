@@ -5,8 +5,6 @@ import { Link } from 'react-router-dom'
 const LoyaltyPage = () => {
 	return (
 		<div className='relative min-h-screen overflow-hidden bg-[var(--bg-main)] text-[var(--text-main)]'>
-			<div className='pointer-events-none absolute left-1/2 top-0 -z-10 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-white/[0.015] blur-[100px]' />
-
 			<div className='relative mx-auto max-w-6xl space-y-12 px-4 pb-16 pt-28'>
 				<header className='flex flex-col gap-6 md:flex-row md:items-end md:justify-between'>
 					<div className='flex flex-col gap-2'>
