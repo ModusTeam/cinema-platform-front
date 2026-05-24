@@ -17,9 +17,9 @@ const BalanceWidget = ({ pointsBalance, updatedAt }: BalanceWidgetProps) => {
 					<span className='text-sm text-neutral-500'>балів</span>
 				</div>
 			</div>
-			<p className='text-sm text-neutral-400'>
-				Оновлено {updatedDate.toLocaleDateString('uk-UA')}. Використовуйте бали
-				для майбутніх бронювань та бонусів.
+			<p className='text-sm leading-relaxed text-neutral-400'>
+				Оновлено {updatedDate.toLocaleDateString('uk-UA')}. Балами можна
+				оплатити до 50% чеку, якщо на рахунку більше 75 балів.
 			</p>
 		</div>
 	)

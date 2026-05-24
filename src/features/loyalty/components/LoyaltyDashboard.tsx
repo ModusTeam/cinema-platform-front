@@ -1,8 +1,8 @@
 import { LOYALTY_TIER_THRESHOLDS } from '@/constants/loyalty'
 import { useLoyalty } from '@/features/account/hooks/useLoyalty'
 import type { LoyaltyTier as UiLoyaltyTier } from '@/features/loyalty/api/loyalty.types'
+import AchievementsPreview from '@/features/loyalty/components/AchievementsPreview'
 import BalanceWidget from '@/features/loyalty/components/BalanceWidget'
-import BenefitsList from '@/features/loyalty/components/BenefitsList'
 import BirthdayBonusBanner from '@/features/loyalty/components/BirthdayBonusBanner'
 import PointsExpiryNotice from '@/features/loyalty/components/PointsExpiryNotice'
 import TierCard from '@/features/loyalty/components/TierCard'
@@ -11,9 +11,6 @@ import { useLoyaltyBenefits } from '@/features/loyalty/hooks/useLoyaltyBenefits'
 import { useLoyaltyProfile } from '@/features/loyalty/hooks/useLoyaltyProfile'
 import type { LoyaltyTier as AccountLoyaltyTier } from '@/types/account'
 import { AlertCircle, Sparkles } from 'lucide-react'
-
-const clamp = (value: number, min: number, max: number) =>
-	Math.min(Math.max(value, min), max)
 
 const LOYALTY_TIERS: Record<AccountLoyaltyTier, UiLoyaltyTier> = {
 	Bronze: {
@@ -39,22 +36,6 @@ const LOYALTY_TIERS: Record<AccountLoyaltyTier, UiLoyaltyTier> = {
 		badgeColor: '#f59e0b',
 		benefits: [],
 	},
-}
-
-const getNextTier = (tier: AccountLoyaltyTier) => {
-	if (tier === 'Bronze') return LOYALTY_TIERS.Silver
-	if (tier === 'Silver') return LOYALTY_TIERS.Gold
-	return undefined
-}
-
-const getProgressPercent = (tier: AccountLoyaltyTier, points: number) => {
-	if (tier === 'Gold') return 100
-	const targetPoints =
-		tier === 'Bronze'
-			? LOYALTY_TIER_THRESHOLDS.SILVER.points
-			: LOYALTY_TIER_THRESHOLDS.GOLD.points
-	const progress = (points / targetPoints) * 100
-	return clamp(progress, 0, 100)
 }
 
 const LoyaltyDashboard = () => {
@@ -119,14 +100,8 @@ const LoyaltyDashboard = () => {
 	const profile = profileQuery.data
 	const loyaltyPoints = loyaltyQuery.data?.points
 	const loyaltyTier = loyaltyQuery.data?.tier
+
 	const resolvedTier = loyaltyTier ? LOYALTY_TIERS[loyaltyTier] : profile.tier
-	const resolvedNextTier = loyaltyTier
-		? getNextTier(loyaltyTier)
-		: profile.nextTier
-	const resolvedProgressPercent =
-		loyaltyTier && loyaltyPoints !== undefined
-			? getProgressPercent(loyaltyTier, loyaltyPoints)
-			: profile.progressPercent
 	const resolvedPointsBalance =
 		loyaltyPoints !== undefined ? loyaltyPoints : profile.pointsBalance
 
@@ -146,12 +121,7 @@ const LoyaltyDashboard = () => {
 				</div>
 				<div className='hidden h-24 w-px bg-white/5 md:block' />
 				<div className='flex-1'>
-					<TierCard
-						tier={resolvedTier}
-						nextTier={resolvedNextTier}
-						progressPercent={resolvedProgressPercent}
-						currentPoints={resolvedPointsBalance}
-					/>
+					<TierCard tier={resolvedTier} profile={profile} />
 				</div>
 			</div>
 
@@ -164,15 +134,17 @@ const LoyaltyDashboard = () => {
 				/>
 			</div>
 
-			<section className='space-y-8'>
-				<div className='flex flex-col gap-1'>
-					<h3 className='text-xl font-medium text-white'>Переваги програми</h3>
-					<p className='text-sm text-neutral-500'>
-						Усі привілеї за рівнями будуть оновлюватися.
-					</p>
+			<div className='flex flex-col gap-12 md:flex-row md:justify-between'>
+				<div className='md:w-64 md:shrink-0 md:pt-8'>
+					{achievementsQuery.data ? (
+						<AchievementsPreview data={achievementsQuery.data} />
+					) : (
+						<span className='text-sm text-neutral-600'>
+							Досягнення зʼявляться згодом.
+						</span>
+					)}
 				</div>
-				<BenefitsList benefits={benefitsQuery.data || []} />
-			</section>
+			</div>
 		</div>
 	)
 }
