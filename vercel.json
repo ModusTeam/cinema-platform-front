@@ -2,7 +2,7 @@
 	"rewrites": [
 		{
 			"source": "/api/:path*",
-			"destination": "http://64.226.93.109:8080/api/:path*"
+			"destination": "https://cinemaplatformapi.dev/api/:path*"
 		},
 		{
 			"source": "/(.*)",
