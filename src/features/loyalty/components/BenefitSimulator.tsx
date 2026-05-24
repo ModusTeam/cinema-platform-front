@@ -1,130 +1,58 @@
-import { useMemo, useState } from 'react'
-import { Calculator } from 'lucide-react'
-
-import type {
-  BenefitSimulationInput,
-  BenefitSimulationResult,
-  LoyaltyTierKey,
-} from '@/features/loyalty/api/loyalty.types'
-
-const getTierByPoints = (points: number): LoyaltyTierKey => {
-  if (points >= 4000) return 'gold'
-  if (points >= 1500) return 'silver'
-  return 'bronze'
-}
-
-const getSavingsRate = (tier: LoyaltyTierKey) => {
-  if (tier === 'gold') return 0.12
-  if (tier === 'silver') return 0.07
-  return 0.03
-}
+import { useState } from 'react'
 
 const BenefitSimulator = () => {
-  const [input, setInput] = useState<BenefitSimulationInput>({
-    ticketsPerYear: 10,
-    avgTicketPrice: 180,
-    concessionsPerVisit: 80,
-  })
+	const [tickets, setTickets] = useState('10')
+	const [avgPrice, setAvgPrice] = useState('180')
+	const [barSpend, setBarSpend] = useState('80')
 
-  const result = useMemo<BenefitSimulationResult>(() => {
-    const annualSpend =
-      input.ticketsPerYear * input.avgTicketPrice +
-      input.ticketsPerYear * input.concessionsPerVisit
-    const estimatedPoints = Math.round(annualSpend * 0.1)
-    const estimatedTier = getTierByPoints(estimatedPoints)
-    const estimatedSavings = Math.round(annualSpend * getSavingsRate(estimatedTier))
+	return (
+		<div className='flex flex-col gap-8'>
+			<div className='flex flex-col gap-1'>
+				<h2 className='text-xl font-medium text-white'>Симулятор вигоди</h2>
+				<p className='text-sm text-neutral-500'>
+					Орієнтовні розрахунки без підключення бекенду
+				</p>
+			</div>
 
-    return {
-      estimatedPoints,
-      estimatedTier,
-      estimatedSavings,
-    }
-  }, [input])
+			<div className='grid grid-cols-1 gap-x-12 gap-y-8 md:grid-cols-3'>
+				<div className='flex flex-col gap-2'>
+					<label className='text-xs tracking-wider text-neutral-500 uppercase'>
+						Квитків на рік
+					</label>
+					<input
+						type='number'
+						value={tickets}
+						onChange={e => setTickets(e.target.value)}
+						className='border-b border-neutral-800 bg-transparent pb-1 text-2xl font-medium text-white transition-colors focus:border-neutral-500 focus:outline-none'
+					/>
+				</div>
 
-  return (
-    <div className='rounded-3xl border border-white/10 bg-[var(--bg-card)] p-6 shadow-xl'>
-      <div className='flex items-center gap-3 mb-4'>
-        <div className='rounded-2xl border border-white/10 bg-white/5 p-2 text-[var(--color-primary)]'>
-          <Calculator size={18} />
-        </div>
-        <div>
-          <h3 className='text-lg font-bold text-white'>Симулятор вигоди</h3>
-          <p className='text-xs text-[var(--text-muted)]'>
-            Орієнтовні розрахунки без підключення бекенду.
-          </p>
-        </div>
-      </div>
+				<div className='flex flex-col gap-2'>
+					<label className='text-xs tracking-wider text-neutral-500 uppercase'>
+						Середній чек квитка, ₴
+					</label>
+					<input
+						type='number'
+						value={avgPrice}
+						onChange={e => setAvgPrice(e.target.value)}
+						className='border-b border-neutral-800 bg-transparent pb-1 text-2xl font-medium text-white transition-colors focus:border-neutral-500 focus:outline-none'
+					/>
+				</div>
 
-      <div className='grid gap-4 md:grid-cols-3'>
-        <label className='space-y-2 text-xs text-[var(--text-muted)]'>
-          Квитків на рік
-          <input
-            type='number'
-            min={1}
-            value={input.ticketsPerYear}
-            onChange={event =>
-              setInput(prev => ({
-                ...prev,
-                ticketsPerYear: Number(event.target.value),
-              }))
-            }
-            className='w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-sm text-white'
-          />
-        </label>
-        <label className='space-y-2 text-xs text-[var(--text-muted)]'>
-          Середній чек квитка, ₴
-          <input
-            type='number'
-            min={50}
-            value={input.avgTicketPrice}
-            onChange={event =>
-              setInput(prev => ({
-                ...prev,
-                avgTicketPrice: Number(event.target.value),
-              }))
-            }
-            className='w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-sm text-white'
-          />
-        </label>
-        <label className='space-y-2 text-xs text-[var(--text-muted)]'>
-          Кінобар за відвідування, ₴
-          <input
-            type='number'
-            min={0}
-            value={input.concessionsPerVisit}
-            onChange={event =>
-              setInput(prev => ({
-                ...prev,
-                concessionsPerVisit: Number(event.target.value),
-              }))
-            }
-            className='w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-sm text-white'
-          />
-        </label>
-      </div>
-
-      <div className='mt-6 grid gap-4 md:grid-cols-3'>
-        <div className='rounded-2xl border border-white/10 bg-white/5 p-4'>
-          <div className='text-xs text-[var(--text-muted)]'>Балів на рік</div>
-          <div className='mt-2 text-xl font-bold text-white'>
-            {result.estimatedPoints}
-          </div>
-        </div>
-        <div className='rounded-2xl border border-white/10 bg-white/5 p-4'>
-          <div className='text-xs text-[var(--text-muted)]'>Очікуваний рівень</div>
-          <div className='mt-2 text-xl font-bold text-white'>
-            {result.estimatedTier.toUpperCase()}
-          </div>
-        </div>
-        <div className='rounded-2xl border border-white/10 bg-white/5 p-4'>
-          <div className='text-xs text-[var(--text-muted)]'>Орієнтовна економія</div>
-          <div className='mt-2 text-xl font-bold text-white'>
-            {result.estimatedSavings} ₴
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+				<div className='flex flex-col gap-2'>
+					<label className='text-xs tracking-wider text-neutral-500 uppercase'>
+						Кінобар за відвідування, ₴
+					</label>
+					<input
+						type='number'
+						value={barSpend}
+						onChange={e => setBarSpend(e.target.value)}
+						className='border-b border-neutral-800 bg-transparent pb-1 text-2xl font-medium text-white transition-colors focus:border-neutral-500 focus:outline-none'
+					/>
+				</div>
+			</div>
+		</div>
+	)
 }
 
 export default BenefitSimulator
