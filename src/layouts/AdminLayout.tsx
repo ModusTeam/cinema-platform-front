@@ -1,18 +1,19 @@
-import { Suspense } from 'react'
-import { Link, Outlet, useLocation } from 'react-router-dom'
 import {
-	LayoutDashboard,
-	Film,
-	Calendar,
-	Users,
-	ArrowLeft,
-	Settings,
 	Armchair,
+	ArrowLeft,
+	Award,
+	Calendar,
 	Cpu,
+	Film,
+	LayoutDashboard,
+	Settings,
+	Sword,
 	Tag,
 	Ticket,
-	Sword,
+	Users,
 } from 'lucide-react'
+import { Suspense } from 'react'
+import { Link, Outlet, useLocation } from 'react-router-dom'
 import { GridLoader } from '../common/components/GridLoader'
 
 const MENU_ITEMS = [
@@ -20,6 +21,7 @@ const MENU_ITEMS = [
 	{ icon: Film, label: 'Фільми', href: '/admin/movies' },
 	{ icon: Calendar, label: 'Сеанси', href: '/admin/sessions' },
 	{ icon: Users, label: 'Користувачі', href: '/admin/users' },
+	{ icon: Award, label: 'Лояльність', href: '/admin/loyalty' },
 	{ icon: Armchair, label: 'Зали', href: '/admin/halls' },
 	{ icon: Cpu, label: 'Технології', href: '/admin/technologies' },
 	{ icon: Tag, label: 'Тарифи', href: '/admin/pricings' },
@@ -39,7 +41,10 @@ const AdminLayout = () => {
 		<div className='flex min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] selection:bg-[var(--color-primary)]/30'>
 			<aside className='fixed left-0 top-0 z-40 h-screen w-64 border-r border-white/5 bg-[var(--bg-card)]'>
 				<div className='flex h-16 items-center px-6 border-b border-white/5'>
-					<Link to='/' className='text-xl font-bold tracking-tighter uppercase text-white'>
+					<Link
+						to='/'
+						className='text-xl font-bold tracking-tighter uppercase text-white'
+					>
 						Cinema<span className='text-[var(--color-primary)]'>.</span>{' '}
 						<span className='text-xs text-[var(--text-muted)] ml-1'>Admin</span>
 					</Link>

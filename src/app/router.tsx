@@ -22,6 +22,9 @@ const CareersPage = lazy(() => import('../pages/CareersPage'))
 const LoyaltyPage = lazy(() => import('../pages/LoyaltyPage'))
 const LoyaltyHistoryPage = lazy(() => import('../pages/LoyaltyHistoryPage'))
 const AchievementsPage = lazy(() => import('../pages/AchievementsPage'))
+const AdminLoyaltyPage = lazy(
+	() => import('../features/admin/AdminLoyaltyPage'),
+)
 
 // admin
 const AdminDashboard = lazy(() => import('../features/admin/AdminDashboard'))
@@ -131,6 +134,10 @@ export const router = createBrowserRouter([
 					{
 						path: 'users',
 						element: <UsersPage />,
+					},
+					{
+						path: 'loyalty',
+						element: <AdminLoyaltyPage />,
 					},
 					{
 						path: 'movies',
