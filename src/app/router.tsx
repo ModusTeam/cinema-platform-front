@@ -1,8 +1,8 @@
-import { createBrowserRouter } from 'react-router-dom'
 import { lazy } from 'react'
-import MainLayout from '../layouts/MainLayout'
-import AdminLayout from '../layouts/AdminLayout'
+import { createBrowserRouter } from 'react-router-dom'
 import AdminRoute from '../features/auth/AdminRoute'
+import AdminLayout from '../layouts/AdminLayout'
+import MainLayout from '../layouts/MainLayout'
 import NotFoundPage from '../pages/NotFoundPage'
 
 // client
@@ -21,17 +21,24 @@ const StaticPage = lazy(() => import('../pages/StaticPage'))
 const CareersPage = lazy(() => import('../pages/CareersPage'))
 const LoyaltyPage = lazy(() => import('../pages/LoyaltyPage'))
 const LoyaltyHistoryPage = lazy(() => import('../pages/LoyaltyHistoryPage'))
+const AchievementsPage = lazy(() => import('../pages/AchievementsPage'))
 
 // admin
 const AdminDashboard = lazy(() => import('../features/admin/AdminDashboard'))
 const HallsPage = lazy(() => import('../features/admin/HallsPage'))
-const AdminSessionsPage = lazy(() => import('../features/admin/AdminSessionsPage'))
+const AdminSessionsPage = lazy(
+	() => import('../features/admin/AdminSessionsPage'),
+)
 const UsersPage = lazy(() => import('../features/admin/UsersPage'))
 const AdminMoviesPage = lazy(() => import('../features/admin/AdminMoviesPage'))
-const TechnologiesPage = lazy(() => import('../features/admin/TechnologiesPage'))
+const TechnologiesPage = lazy(
+	() => import('../features/admin/TechnologiesPage'),
+)
 const PricingsPage = lazy(() => import('../features/admin/PricingsPage'))
 const GenresPage = lazy(() => import('../features/admin/GenresPage'))
-const UserActivityPage = lazy(() => import('../features/admin/UserActivityPage'))
+const UserActivityPage = lazy(
+	() => import('../features/admin/UserActivityPage'),
+)
 
 export const router = createBrowserRouter([
 	{
@@ -99,6 +106,7 @@ export const router = createBrowserRouter([
 				path: 'account/loyalty/history',
 				element: <LoyaltyHistoryPage />,
 			},
+			{ path: 'profile/achievements', element: <AchievementsPage /> },
 		],
 	},
 	{

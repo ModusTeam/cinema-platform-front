@@ -1,9 +1,7 @@
 import { LOYALTY_TIER_THRESHOLDS } from '@/constants/loyalty'
 import { useLoyalty } from '@/features/account/hooks/useLoyalty'
 import type { LoyaltyTier as UiLoyaltyTier } from '@/features/loyalty/api/loyalty.types'
-import AchievementsPreview from '@/features/loyalty/components/AchievementsPreview'
 import BalanceWidget from '@/features/loyalty/components/BalanceWidget'
-import BenefitSimulator from '@/features/loyalty/components/BenefitSimulator'
 import BenefitsList from '@/features/loyalty/components/BenefitsList'
 import BirthdayBonusBanner from '@/features/loyalty/components/BirthdayBonusBanner'
 import PointsExpiryNotice from '@/features/loyalty/components/PointsExpiryNotice'
@@ -76,47 +74,42 @@ const LoyaltyDashboard = () => {
 		profileQuery.error ||
 		benefitsQuery.error ||
 		achievementsQuery.error
+
 	const errorMessage =
 		error instanceof Error ? error.message : 'Помилка завантаження'
 
 	if (isLoading) {
 		return (
-			<div className='space-y-6'>
-				<div className='grid gap-6 lg:grid-cols-2'>
-					<div className='h-40 rounded-3xl border border-white/10 bg-[var(--bg-card)] motion-safe:animate-pulse motion-reduce:animate-none' />
-					<div className='h-40 rounded-3xl border border-white/10 bg-[var(--bg-card)] motion-safe:animate-pulse motion-reduce:animate-none' />
+			<div className='space-y-16'>
+				<div className='flex flex-col gap-12 md:flex-row md:gap-8'>
+					<div className='h-24 flex-1 rounded bg-white/5 motion-safe:animate-pulse' />
+					<div className='hidden h-24 w-px bg-white/5 md:block' />
+					<div className='h-24 flex-1 rounded bg-white/5 motion-safe:animate-pulse' />
 				</div>
-				<div className='h-32 rounded-2xl border border-white/10 bg-[var(--bg-card)] motion-safe:animate-pulse motion-reduce:animate-none' />
-				<div className='grid gap-4 md:grid-cols-2'>
-					{Array.from({ length: 2 }).map((_, index) => (
-						<div
-							key={index}
-							className='h-28 rounded-2xl border border-white/10 bg-[var(--bg-card)] motion-safe:animate-pulse motion-reduce:animate-none'
-						/>
-					))}
-				</div>
+				<div className='h-px w-full bg-white/5' />
+				<div className='h-32 rounded bg-white/5 motion-safe:animate-pulse' />
 			</div>
 		)
 	}
 
 	if (error) {
 		return (
-			<div className='rounded-2xl border border-red-500/20 bg-red-500/10 p-6'>
-				<div className='flex items-center gap-2 text-red-200'>
+			<div className='border-l-2 border-red-500/50 py-2 pl-4'>
+				<div className='flex items-center gap-2 text-red-400'>
 					<AlertCircle size={18} />
-					<span className='font-semibold'>Лояльність тимчасово недоступна</span>
+					<span className='font-medium'>Лояльність тимчасово недоступна</span>
 				</div>
-				<p className='mt-2 text-sm text-red-100/80'>{errorMessage}</p>
+				<p className='mt-2 text-sm text-neutral-400'>{errorMessage}</p>
 			</div>
 		)
 	}
 
 	if (!profileQuery.data) {
 		return (
-			<div className='rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-10 text-center'>
-				<Sparkles className='mx-auto h-10 w-10 text-[var(--text-muted)]' />
-				<h3 className='mt-4 text-lg font-bold text-white'>Немає даних</h3>
-				<p className='mt-2 text-sm text-[var(--text-muted)]'>
+			<div className='flex flex-col items-center justify-center py-20 text-center'>
+				<Sparkles className='h-8 w-8 text-neutral-600' />
+				<h3 className='mt-4 text-lg font-medium text-white'>Немає даних</h3>
+				<p className='mt-2 text-sm text-neutral-500'>
 					Профіль лояльності зʼявиться після першого бронювання.
 				</p>
 			</div>
@@ -138,21 +131,31 @@ const LoyaltyDashboard = () => {
 		loyaltyPoints !== undefined ? loyaltyPoints : profile.pointsBalance
 
 	return (
-		<div className='space-y-8'>
-			<div className='grid gap-6 lg:grid-cols-2'>
-				<BalanceWidget
-					pointsBalance={resolvedPointsBalance}
-					updatedAt={new Date().toISOString()}
-				/>
-				<TierCard
-					tier={resolvedTier}
-					nextTier={resolvedNextTier}
-					progressPercent={resolvedProgressPercent}
-					currentPoints={resolvedPointsBalance}
-				/>
+		<div className='relative space-y-16'>
+			<div
+				className='pointer-events-none absolute left-1/2 top-0 -z-10 h-[400px] w-[600px] -translate-x-1/2 rounded-full opacity-10 blur-[120px] transition-colors duration-1000'
+				style={{ backgroundColor: resolvedTier.badgeColor }}
+			/>
+
+			<div className='flex flex-col gap-12 md:flex-row md:items-start md:justify-between md:gap-8'>
+				<div className='flex-1'>
+					<BalanceWidget
+						pointsBalance={resolvedPointsBalance}
+						updatedAt={new Date().toISOString()}
+					/>
+				</div>
+				<div className='hidden h-24 w-px bg-white/5 md:block' />
+				<div className='flex-1'>
+					<TierCard
+						tier={resolvedTier}
+						nextTier={resolvedNextTier}
+						progressPercent={resolvedProgressPercent}
+						currentPoints={resolvedPointsBalance}
+					/>
+				</div>
 			</div>
 
-			<div className='grid gap-4 md:grid-cols-2'>
+			<div className='grid gap-6 border-y border-white/5 py-8 md:grid-cols-2'>
 				<PointsExpiryNotice expiryDate={profile.pointsExpiryDate} />
 				<BirthdayBonusBanner
 					isBirthdayMonth={profile.isBirthdayMonth}
@@ -161,25 +164,15 @@ const LoyaltyDashboard = () => {
 				/>
 			</div>
 
-			<section className='space-y-4'>
-				<div>
-					<h3 className='text-lg font-bold text-white'>Переваги програми</h3>
-					<p className='text-sm text-[var(--text-muted)]'>
+			<section className='space-y-8'>
+				<div className='flex flex-col gap-1'>
+					<h3 className='text-xl font-medium text-white'>Переваги програми</h3>
+					<p className='text-sm text-neutral-500'>
 						Усі привілеї за рівнями будуть оновлюватися.
 					</p>
 				</div>
 				<BenefitsList benefits={benefitsQuery.data || []} />
 			</section>
-
-			{achievementsQuery.data ? (
-				<AchievementsPreview data={achievementsQuery.data} />
-			) : (
-				<div className='rounded-3xl border border-dashed border-white/10 bg-white/[0.02] p-6 text-sm text-[var(--text-muted)]'>
-					Превʼю досягнень зʼявиться після першого бронювання.
-				</div>
-			)}
-
-			<BenefitSimulator />
 		</div>
 	)
 }

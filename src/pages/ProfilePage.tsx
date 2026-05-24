@@ -266,6 +266,14 @@ const ProfilePage = () => {
 							<Sparkles size={18} /> Програма лояльності
 						</Link>
 
+						<Link
+							to='/profile/achievements'
+							className='flex w-full items-center justify-center gap-2 rounded-2xl border border-white/5 bg-white/[0.04] p-4 text-sm font-bold text-white transition-all hover:bg-white/10'
+						>
+							<Sparkles className='h-5 w-5' />
+							<span>Досягнення</span>
+						</Link>
+
 						<button
 							type='button'
 							onClick={() => logout()}

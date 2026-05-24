@@ -1,52 +1,59 @@
-import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { useMemo, useState } from 'react'
 
 import { useAuth } from '@/features/auth/AuthContext'
-import { loyaltyService } from '@/features/loyalty/api/loyalty.service'
 import type { LoyaltyHistoryItem } from '@/features/loyalty/api/loyalty.types'
+import { ordersService } from '@/services/ordersService'
 
-const PAGE_SIZE = 6
+const PAGE_SIZE = 10
 
 export const useLoyaltyHistory = () => {
-  const { user } = useAuth()
-  const [page, setPage] = useState(1)
-  const [items, setItems] = useState<LoyaltyHistoryItem[]>([])
+	const { user } = useAuth()
+	const [page, setPage] = useState(1)
 
-  const query = useQuery({
-    queryKey: ['loyalty-history', user?.id, page],
-    queryFn: () => loyaltyService.getLoyaltyHistory(page, PAGE_SIZE),
-    enabled: !!user,
-    staleTime: 60 * 1000,
-  })
+	const query = useQuery({
+		queryKey: ['my-orders-loyalty', user?.id],
+		queryFn: () => ordersService.getMyOrders(),
+		enabled: !!user,
+		staleTime: 60 * 1000,
+	})
 
-  useEffect(() => {
-    if (!user) return
-    setPage(1)
-    setItems([])
-  }, [user?.id])
+	const allItems = useMemo<LoyaltyHistoryItem[]>(() => {
+		if (!query.data) return []
 
-  useEffect(() => {
-    if (!query.data) return
+		const sortedOrders = [...query.data].sort(
+			(a, b) =>
+				new Date(b.sessionDate).getTime() - new Date(a.sessionDate).getTime(),
+		)
 
-    setItems(prev =>
-      query.data?.page === 1
-        ? query.data.items
-        : [...prev, ...query.data.items],
-    )
-  }, [query.data])
+		return sortedOrders.map(order => {
+			const ticketsCount = order.seats?.length || 0
+			const earnedPoints = Math.floor(order.totalPrice * 0.1)
 
-  const total = query.data?.total ?? 0
-  const hasMore = items.length < total
+			return {
+				id: order.id,
+				date: order.sessionDate,
+				type: 'earn',
+				points: earnedPoints,
+				description: `Оплата замовлення ${order.bookingId} (${ticketsCount} квитків)`,
+				orderId: order.id,
+			}
+		})
+	}, [query.data])
 
-  return {
-    items,
-    page,
-    setPage,
-    pageSize: PAGE_SIZE,
-    total,
-    hasMore,
-    isLoading: query.isLoading,
-    isFetching: query.isFetching,
-    error: query.error,
-  }
+	const paginatedItems = useMemo(() => {
+		return allItems.slice(0, page * PAGE_SIZE)
+	}, [allItems, page])
+
+	const hasMore = paginatedItems.length < allItems.length
+
+	return {
+		items: paginatedItems,
+		hasMore,
+		isLoading: query.isLoading,
+		isFetching: query.isFetching,
+		error: query.error,
+		page,
+		setPage,
+	}
 }

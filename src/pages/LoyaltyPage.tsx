@@ -1,37 +1,35 @@
-import { ArrowRight, BadgeCheck } from 'lucide-react'
-import { Link } from 'react-router-dom'
-
 import LoyaltyDashboard from '@/features/loyalty/components/LoyaltyDashboard'
+import { ArrowRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 const LoyaltyPage = () => {
 	return (
-		<div className='min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]'>
-			<div className='container mx-auto max-w-6xl px-4 pt-28 pb-16 space-y-10'>
-				<header className='space-y-4'>
-					<div className='flex items-center gap-3 text-[var(--color-primary)]'>
-						<BadgeCheck size={20} />
-						<span className='text-xs uppercase tracking-widest font-bold'>
-							Програма лояльності
-						</span>
+		<div className='relative min-h-screen overflow-hidden bg-[var(--bg-main)] text-[var(--text-main)]'>
+			<div className='relative mx-auto max-w-6xl space-y-12 px-4 pb-16 pt-28'>
+				<header className='flex flex-col gap-6 md:flex-row md:items-end md:justify-between'>
+					<div className='flex flex-col gap-2'>
+						<h1 className='text-3xl font-medium tracking-tight text-white md:text-4xl'>
+							Loyalty & Achievements
+						</h1>
+						<p className='max-w-2xl text-sm leading-relaxed text-[var(--text-muted)] md:text-base'>
+							Огляд балансу, рівнів та бонусів. Дані синхронізуються з вашим
+							профілем лояльності.
+						</p>
 					</div>
-					<div className='flex flex-col gap-4 md:flex-row md:items-end md:justify-between'>
-						<div>
-							<h1 className='text-4xl md:text-5xl font-black text-white uppercase tracking-tighter'>
-								Loyalty & Achievements
-							</h1>
-							<p className='mt-3 text-[var(--text-muted)] max-w-2xl'>
-								Огляд балансу, рівнів та бонусів. Дані синхронізуються з вашим
-								профілем лояльності.
-							</p>
-						</div>
-						<Link
-							to='/account/loyalty/history'
-							className='inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-white/10'
-						>
-							Переглянути історію <ArrowRight size={16} />
-						</Link>
-					</div>
+
+					<Link
+						to='/account/loyalty/history'
+						className='group flex w-fit items-center gap-2 text-sm text-[var(--text-muted)] transition-colors hover:text-white'
+					>
+						Переглянути історію
+						<ArrowRight
+							size={16}
+							className='transition-transform group-hover:translate-x-1'
+						/>
+					</Link>
 				</header>
+
+				<div className='h-px w-full bg-gradient-to-r from-white/10 via-white/5 to-transparent' />
 
 				<LoyaltyDashboard />
 			</div>
