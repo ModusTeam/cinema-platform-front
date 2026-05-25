@@ -4,7 +4,14 @@ import axios, { type AxiosError } from 'axios'
 
 const LOYALTY_BASE_URL = getLoyaltyApiBaseUrl()
 
-const getErrorMessage = (error: AxiosError<any>): string => {
+interface LoyaltyApiErrorResponse {
+	message?: string | string[]
+	error?: string
+	detail?: string
+	title?: string
+}
+
+const getErrorMessage = (error: AxiosError<LoyaltyApiErrorResponse>): string => {
 	if (!error.response) {
 		if (error.code === 'ECONNABORTED') {
 			return `Request timeout. Check Loyalty API availability at ${LOYALTY_BASE_URL}.`

@@ -69,7 +69,10 @@ const BookingPage = () => {
 	}, [user, isAuthLoading, navigate])
 
 	useEffect(() => {
-		window.scrollTo(0, 0)
+		window.scrollTo({
+			top: 0,
+			behavior: step === 1 ? 'auto' : 'smooth',
+		})
 	}, [step])
 
 	useEffect(() => {
@@ -120,10 +123,7 @@ const BookingPage = () => {
 	}
 
 	const genresList = Array.isArray(movie?.genres)
-		? movie?.genres.map(g => {
-				if (typeof g === 'string') return g
-				return (g as any).name
-			})
+		? movie.genres
 		: []
 
 	const handleSubmitOrder = async () => {

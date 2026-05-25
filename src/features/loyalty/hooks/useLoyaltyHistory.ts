@@ -34,6 +34,12 @@ export const useLoyaltyHistory = () => {
 	}, [page, query.data])
 
 	useEffect(() => {
+		if (!user?.id) {
+			setPage(1)
+			setItems([])
+			return
+		}
+
 		setPage(1)
 		setItems([])
 	}, [user?.id])
