@@ -1,17 +1,50 @@
 export type AchievementStatus = 'unlocked' | 'in-progress' | 'locked'
 
-export type AchievementRarity = 'common' | 'rare' | 'epic' | 'legendary'
+export type AchievementCategoryKey =
+  | 'visits'
+  | 'spending'
+  | 'tier'
+  | 'time'
+  | 'special'
+  | 'streak'
+  | 'secret'
+  | 'unspecified'
+
+export type AchievementRarityKey =
+  | 'common'
+  | 'uncommon'
+  | 'rare'
+  | 'epic'
+  | 'legendary'
+  | 'unspecified'
+
+export type AchievementStrategyKey =
+  | 'instant'
+  | 'threshold'
+  | 'streak'
+  | 'unspecified'
 
 export interface Achievement {
   id: string
+  code: string
   title: string
   description: string
   status: AchievementStatus
-  rarity: AchievementRarity
-  progress?: number
-  total?: number
-  pointsReward?: number
-  category?: string
+  category: AchievementCategoryKey
+  categoryLabel: string
+  rarity: AchievementRarityKey
+  rarityLabel: string
+  strategy: AchievementStrategyKey
+  strategyLabel: string
+  current: number
+  target: number
+  progressPercent: number
+  pointsReward: number
+  isSecret: boolean
+  secretHint?: string
+  icon?: string
+  unlockedAt?: string
+  sortOrder: number
 }
 
 export interface AchievementsPreviewData {
@@ -30,24 +63,33 @@ export interface AchievementsTabData {
   achievements: Achievement[]
 }
 
-export interface AchievementDto {
-  id?: string
-  title?: string
-  name?: string
-  description?: string
-  status?: AchievementStatus | string
-  rarity?: AchievementRarity | string
-  progress?: number
-  currentProgress?: number
-  total?: number
-  targetValue?: number
-  pointsReward?: number
-  rewardPoints?: number
-  category?: string
+export interface BackendAchievementDto {
+  id: string
+  code: string
+  name: string
+  description: string
+  secretHint?: string
+  isSecret: boolean
+  icon: string
+  category: number | string
+  rarity: number | string
+  strategy: number | string
+  criteriaJson: string
+  rewardPoints: number
+  sortOrder: number
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
 }
 
-export interface AchievementsResponseDto {
-  items?: AchievementDto[]
-  achievements?: AchievementDto[]
-  data?: AchievementDto[]
+export interface BackendUserAchievementDto {
+  achievement: BackendAchievementDto
+  current: number
+  target: number
+  isUnlocked: boolean
+  unlockedAt?: string
+}
+
+export interface BackendGetUserAchievementsResponse {
+  achievements: BackendUserAchievementDto[]
 }
