@@ -4,24 +4,36 @@ interface LoyaltyCheckoutCardProps {
 	pointsBalance: number
 	maxDiscount: number
 	pointsLimit: number
+	finalTotal: number
 	isLoading: boolean
 	isDisabled: boolean
 	errorMessage?: string
+	helperText?: string
 	disabledNote?: string
 	isChecked: boolean
 	onToggle: (value: boolean) => void
+	isGoldUpgradeAvailable?: boolean
+	isGoldUpgradeChecked?: boolean
+	goldUpgradeLabel?: string
+	onGoldUpgradeToggle?: (value: boolean) => void
 }
 
 const LoyaltyCheckoutCard = ({
 	pointsBalance,
 	maxDiscount,
 	pointsLimit,
+	finalTotal,
 	isLoading,
 	isDisabled,
 	errorMessage,
+	helperText,
 	disabledNote,
 	isChecked,
 	onToggle,
+	isGoldUpgradeAvailable,
+	isGoldUpgradeChecked = false,
+	goldUpgradeLabel,
+	onGoldUpgradeToggle,
 }: LoyaltyCheckoutCardProps) => {
 	return (
 		<div className='rounded-2xl border border-white/10 bg-[var(--bg-main)]/40 p-4'>
@@ -69,6 +81,27 @@ const LoyaltyCheckoutCard = ({
 							<span>Ліміт балів</span>
 							<span className='text-white'>{pointsLimit} балів</span>
 						</div>
+						<div className='mt-2 flex justify-between'>
+							<span>До сплати після знижки</span>
+							<span className='text-white'>{finalTotal} ₴</span>
+						</div>
+						{helperText && <p className='mt-3 text-[11px]'>{helperText}</p>}
+						{isGoldUpgradeAvailable && onGoldUpgradeToggle && (
+							<label className='mt-3 flex items-start gap-3 rounded-xl border border-amber-400/10 bg-amber-400/5 p-3 text-[11px] text-amber-100'>
+								<input
+									type='checkbox'
+									className='mt-0.5 h-4 w-4 accent-amber-400'
+									checked={isGoldUpgradeChecked}
+									onChange={event =>
+										onGoldUpgradeToggle(event.target.checked)
+									}
+								/>
+								<span>
+									{goldUpgradeLabel ||
+										'Застосувати доступний gold upgrade під час оформлення'}
+								</span>
+							</label>
+						)}
 						{disabledNote && (
 							<div className='mt-3 flex items-start gap-2 text-[10px] text-amber-200'>
 								<AlertTriangle size={14} className='mt-0.5' />

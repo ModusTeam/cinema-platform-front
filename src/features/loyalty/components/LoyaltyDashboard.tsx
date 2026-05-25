@@ -7,7 +7,6 @@ import BirthdayBonusBanner from '@/features/loyalty/components/BirthdayBonusBann
 import PointsExpiryNotice from '@/features/loyalty/components/PointsExpiryNotice'
 import TierCard from '@/features/loyalty/components/TierCard'
 import { useLoyaltyAchievementsPreview } from '@/features/loyalty/hooks/useLoyaltyAchievementsPreview'
-import { useLoyaltyBenefits } from '@/features/loyalty/hooks/useLoyaltyBenefits'
 import { useLoyaltyProfile } from '@/features/loyalty/hooks/useLoyaltyProfile'
 import type { LoyaltyTier as AccountLoyaltyTier } from '@/types/account'
 import { AlertCircle, Sparkles } from 'lucide-react'
@@ -41,19 +40,16 @@ const LOYALTY_TIERS: Record<AccountLoyaltyTier, UiLoyaltyTier> = {
 const LoyaltyDashboard = () => {
 	const loyaltyQuery = useLoyalty()
 	const profileQuery = useLoyaltyProfile()
-	const benefitsQuery = useLoyaltyBenefits()
 	const achievementsQuery = useLoyaltyAchievementsPreview()
 
 	const isLoading =
 		loyaltyQuery.isLoading ||
 		profileQuery.isLoading ||
-		benefitsQuery.isLoading ||
 		achievementsQuery.isLoading
 
 	const error =
 		loyaltyQuery.error ||
 		profileQuery.error ||
-		benefitsQuery.error ||
 		achievementsQuery.error
 
 	const errorMessage =

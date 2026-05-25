@@ -1,5 +1,7 @@
 export type LoyaltyTierKey = 'bronze' | 'silver' | 'gold'
 
+export type ApiLoyaltyTier = 'Bronze' | 'Silver' | 'Gold' | LoyaltyTierKey
+
 export interface LoyaltyTier {
 	id: LoyaltyTierKey
 	label: string
@@ -22,6 +24,7 @@ export interface LoyaltyProfile {
 	birthdayBonusPoints?: number
 	birthdayBonusClaimed?: boolean
 	goldUpgradeAvailable?: boolean
+	updatedAt?: string
 }
 
 export interface LoyaltyBenefit {
@@ -56,6 +59,10 @@ export interface LoyaltyCheckoutPreview {
 	discountValue: number
 	isRedemptionAvailable: boolean
 	helperText: string
+	pointsToSpend?: number
+	finalTotal?: number
+	goldUpgradeAvailable?: boolean
+	goldUpgradeLabel?: string
 }
 
 export interface BenefitSimulationInput {
@@ -68,4 +75,69 @@ export interface BenefitSimulationResult {
 	estimatedPoints: number
 	estimatedTier: LoyaltyTierKey
 	estimatedSavings: number
+}
+
+export interface LoyaltyProfileDto {
+	userId?: string
+	pointsBalance?: number
+	points?: number
+	balance?: number
+	tier?: ApiLoyaltyTier
+	nextTier?: ApiLoyaltyTier
+	progressPercent?: number
+	visitsCount?: number
+	visits?: number
+	yearlyPoints?: number
+	lifetimePoints?: number
+	pointsExpiryDate?: string
+	isBirthdayMonth?: boolean
+	birthdayBonusPoints?: number
+	birthdayBonusClaimed?: boolean
+	goldUpgradeAvailable?: boolean
+	updatedAt?: string
+}
+
+export interface LoyaltyBenefitDto {
+	id?: string
+	title?: string
+	name?: string
+	description?: string
+	tier?: ApiLoyaltyTier
+}
+
+export interface LoyaltyHistoryItemDto {
+	id?: string
+	date?: string
+	createdAt?: string
+	type?: LoyaltyHistoryType | string
+	action?: string
+	points?: number
+	amount?: number
+	description?: string
+	reason?: string
+	orderId?: string
+}
+
+export interface LoyaltyHistoryResponseDto {
+	items?: LoyaltyHistoryItemDto[]
+	data?: LoyaltyHistoryItemDto[]
+	page?: number
+	pageSize?: number
+	total?: number
+}
+
+export interface LoyaltyCheckoutPreviewDto {
+	orderTotal?: number
+	availablePoints?: number
+	pointsBalance?: number
+	maxRedeemablePoints?: number
+	pointsToSpend?: number
+	discountValue?: number
+	discountAmount?: number
+	finalTotal?: number
+	isRedemptionAvailable?: boolean
+	helperText?: string
+	message?: string
+	goldUpgradeAvailable?: boolean
+	goldUpgradeLabel?: string
 }

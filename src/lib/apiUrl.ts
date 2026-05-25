@@ -1,34 +1,45 @@
-const RAW_API_URL = import.meta.env.VITE_API_URL?.trim() || ''
+const normalizePath = (path: string) =>
+	path.replace(/\/{2,}/g, '/').replace(/\/$/, '')
 
-const normalizePath = (path: string) => {
-	return path.replace(/\/{2,}/g, '/').replace(/\/$/, '')
-}
-
-export const getApiBaseUrl = () => {
-	if (!RAW_API_URL) {
+const resolveBaseUrl = (value: string, envName: string) => {
+	if (!value) {
 		throw new Error(
-			'Missing VITE_API_URL. Set it in .env (e.g. http://localhost:5211/api).',
+			`Missing ${envName}. Set it in .env before starting the frontend.`,
 		)
 	}
 
-	if (RAW_API_URL.startsWith('/')) {
-		return normalizePath(RAW_API_URL)
+	if (value.startsWith('/')) {
+		return normalizePath(value)
 	}
 
 	let parsed: URL
 	try {
-		parsed = new URL(RAW_API_URL)
+		parsed = new URL(value)
 	} catch {
 		throw new Error(
-			`Invalid VITE_API_URL: "${RAW_API_URL}". Expected http(s) URL or relative path.`,
+			`Invalid ${envName}: "${value}". Expected http(s) URL or relative path.`,
 		)
 	}
 
 	if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
 		throw new Error(
-			`Invalid VITE_API_URL protocol: "${parsed.protocol}". Use http or https.`,
+			`Invalid ${envName} protocol: "${parsed.protocol}". Use http or https.`,
 		)
 	}
 
 	return `${parsed.origin}${normalizePath(parsed.pathname || '')}`
+}
+
+export const getApiBaseUrl = () => {
+	const rawApiUrl = import.meta.env.VITE_API_URL?.trim() || ''
+
+	return resolveBaseUrl(rawApiUrl, 'VITE_API_URL')
+}
+
+export const getLoyaltyApiBaseUrl = () => {
+	const rawLoyaltyApiUrl =
+		import.meta.env.VITE_LOYALTY_API_URL?.trim() ||
+		getApiBaseUrl().replace(/\/api$/, '')
+
+	return resolveBaseUrl(rawLoyaltyApiUrl, 'VITE_LOYALTY_API_URL')
 }

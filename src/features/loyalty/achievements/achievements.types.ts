@@ -29,3 +29,25 @@ export interface AchievementsTabData {
   }
   achievements: Achievement[]
 }
+
+export interface AchievementDto {
+  id?: string
+  title?: string
+  name?: string
+  description?: string
+  status?: AchievementStatus | string
+  rarity?: AchievementRarity | string
+  progress?: number
+  currentProgress?: number
+  total?: number
+  targetValue?: number
+  pointsReward?: number
+  rewardPoints?: number
+  category?: string
+}
+
+export interface AchievementsResponseDto {
+  items?: AchievementDto[]
+  achievements?: AchievementDto[]
+  data?: AchievementDto[]
+}

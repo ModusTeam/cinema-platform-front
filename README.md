@@ -76,7 +76,8 @@ The project is built with **Performance** and **Type Safety** in mind, utilizing
 3.  **Environment Configuration:**
     Create a `.env` file in the root directory:
     ```env
-    VITE_API_URL=your.url.com
+    VITE_API_URL=https://cinemaplatformapi.dev/api
+    VITE_LOYALTY_API_URL=https://cinemaplatformapi.dev
     ```
 
 4.  **Run the development server:**
@@ -94,6 +95,12 @@ The application uses **SignalR** to maintain consistency across all connected cl
 1.  When User A selects a seat, a WebSocket message is sent.
 2.  The Backend broadcasts a `SeatLocked` event.
 3.  User B's client receives the event and updates the React Query cache via `setQueryData`, instantly marking the seat as occupied without a page refresh.
+
+### Loyalty Service Integration
+- `VITE_API_URL` is used only for the main .NET REST API (`/api/...`).
+- `VITE_LOYALTY_API_URL` is used for the NestJS loyalty service.
+- Loyalty dashboard widgets, checkout loyalty preview, and loyalty history now use real API requests instead of mock data.
+- Booking checkout sends both `useLoyaltyPoints` and `applyGoldUpgrade` flags to `/api/orders`, while seat locking still goes through the .NET `/api/seats/lock` endpoint.
 
 ### Feature-Sliced Design
 Code is organized by **features** rather than technical layers. For example, `features/booking` contains:

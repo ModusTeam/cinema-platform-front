@@ -11,6 +11,7 @@ import { useAuth } from '../../auth/AuthContext'
 interface CreateOrderPayload {
 	seatIds: string[]
 	useLoyaltyPoints: boolean
+	applyGoldUpgrade: boolean
 }
 
 export const useBooking = (movieId?: string) => {
@@ -131,16 +132,29 @@ export const useBooking = (movieId?: string) => {
 	})
 
 	const createOrderMutation = useMutation({
-		mutationFn: ({ seatIds, useLoyaltyPoints }: CreateOrderPayload) =>
-			bookingService.createOrder(
-				selectedSessionId!,
+		mutationFn: ({
+			seatIds,
+			useLoyaltyPoints,
+			applyGoldUpgrade,
+		}: CreateOrderPayload) =>
+			bookingService.createOrder({
+				sessionId: selectedSessionId!,
 				seatIds,
 				useLoyaltyPoints,
-				'test_token',
-			),
+				applyGoldUpgrade,
+				paymentToken: 'test_token',
+			}),
 		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ['session-full-details', selectedSessionId],
+			})
 			setStep(3)
 			toast.success('Замовлення успішно створено!')
+		},
+		onError: () => {
+			queryClient.invalidateQueries({
+				queryKey: ['session-full-details', selectedSessionId],
+			})
 		},
 	})
 
@@ -205,11 +219,15 @@ export const useBooking = (movieId?: string) => {
 		setSelectedSeats([])
 	}
 
-	const submitOrder = async (useLoyaltyPoints: boolean) => {
+	const submitOrder = async (
+		useLoyaltyPoints: boolean,
+		applyGoldUpgrade: boolean,
+	) => {
 		try {
 			await createOrderMutation.mutateAsync({
 				seatIds: selectedSeats.map(s => s.id),
 				useLoyaltyPoints,
+				applyGoldUpgrade,
 			})
 		} catch (error: any) {
 			toast.error(

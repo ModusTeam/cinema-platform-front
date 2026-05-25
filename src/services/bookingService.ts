@@ -6,6 +6,31 @@ export interface CreateOrderResponse {
 	status: string
 }
 
+interface SessionsResponse {
+	items?: SessionDto[]
+}
+
+interface SessionDto {
+	id: string
+	movieId: string
+	hallId: string
+	startTime: string
+	endTime?: string
+	status?: string
+	price?: number
+	hallName?: string
+	movieTitle?: string
+	pricingId?: string
+}
+
+export interface CreateOrderPayload {
+	sessionId: string
+	seatIds: string[]
+	useLoyaltyPoints: boolean
+	applyGoldUpgrade: boolean
+	paymentToken?: string
+}
+
 export const bookingService = {
 	getSessionsByMovieId: async (movieId: string): Promise<Session[]> => {
 		const allSessions = await bookingService.getAllSessions()
@@ -27,21 +52,26 @@ export const bookingService = {
 
 	getAllSessions: async (): Promise<Session[]> => {
 		try {
-			const { data } = await api.get<any>('/sessions', {
-				params: { pageNumber: 1, pageSize: 1000 },
-			})
-			const sessions = data.items || data
+			const { data } = await api.get<SessionsResponse | SessionDto[]>(
+				'/sessions',
+				{
+					params: { pageNumber: 1, pageSize: 1000 },
+				},
+			)
+			const sessions = Array.isArray(data) ? data : data.items || []
 
-			return sessions.map((s: any) => ({
-				id: s.id,
-				movieId: s.movieId,
-				hallId: s.hallId,
-				startTime: s.startTime,
-				priceBase: s.price,
-				hallName: s.hallName || 'Зал',
-				movieTitle: s.movieTitle || 'Фільм',
+			return sessions.map(session => ({
+				id: session.id,
+				movieId: session.movieId,
+				hallId: session.hallId,
+				startTime: session.startTime,
+				endTime: session.endTime || session.startTime,
+				status: session.status || 'Scheduled',
+				priceBase: session.price,
+				hallName: session.hallName || 'Зал',
+				movieTitle: session.movieTitle || 'Фільм',
 				seats: [],
-				pricingId: s.pricingId,
+				pricingId: session.pricingId,
 			}))
 		} catch (error) {
 			console.error('Error fetching all sessions:', error)
@@ -53,16 +83,18 @@ export const bookingService = {
 		await api.post('/seats/lock', { sessionId, seatId })
 	},
 
-	createOrder: async (
-		sessionId: string,
-		seatIds: string[],
-		useLoyaltyPoints: boolean,
-		paymentToken: string = 'dummy_token',
-	): Promise<CreateOrderResponse> => {
+	createOrder: async ({
+		sessionId,
+		seatIds,
+		useLoyaltyPoints,
+		applyGoldUpgrade,
+		paymentToken = 'dummy_token',
+	}: CreateOrderPayload): Promise<CreateOrderResponse> => {
 		const { data } = await api.post<CreateOrderResponse>('/orders', {
 			sessionId,
 			seatIds,
 			useLoyaltyPoints,
+			applyGoldUpgrade,
 			paymentToken,
 		})
 		return data

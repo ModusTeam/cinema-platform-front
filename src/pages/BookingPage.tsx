@@ -9,6 +9,7 @@ import SeatSelector from '@/features/booking/components/SeatSelector'
 import SessionSelector from '@/features/booking/components/SessionSelector'
 import { useBooking } from '@/features/booking/hooks/useBooking'
 import LoyaltyCheckoutCard from '@/features/loyalty/components/LoyaltyCheckoutCard'
+import { useCheckoutLoyaltyPreview } from '@/features/loyalty/hooks/useCheckoutLoyaltyPreview'
 
 const BookingPage = () => {
 	const { id } = useParams<{ id: string }>()
@@ -33,11 +34,33 @@ const BookingPage = () => {
 	} = useBooking(id)
 
 	const [useLoyaltyPoints, setUseLoyaltyPoints] = useState(false)
+	const [applyGoldUpgrade, setApplyGoldUpgrade] = useState(false)
 	const loyaltyQuery = useLoyalty()
-	const loyaltyPoints = loyaltyQuery.data?.points ?? 0
-	const maxDiscount = Math.min(loyaltyPoints, totalPrice)
-	const isLoyaltyDisabled = loyaltyPoints <= 0
-	const loyaltyNote = isLoyaltyDisabled ? 'Недостатньо балів' : undefined
+	const loyaltyPreviewQuery = useCheckoutLoyaltyPreview(totalPrice)
+	const loyaltyPoints =
+		loyaltyPreviewQuery.data?.availablePoints ?? loyaltyQuery.data?.points ?? 0
+	const maxDiscount = loyaltyPreviewQuery.data?.discountValue ?? 0
+	const pointsLimit =
+		loyaltyPreviewQuery.data?.maxRedeemablePoints ?? loyaltyPoints
+	const discountedTotal =
+		useLoyaltyPoints && loyaltyPreviewQuery.data
+			? loyaltyPreviewQuery.data.finalTotal ??
+				Math.max(totalPrice - loyaltyPreviewQuery.data.discountValue, 0)
+			: totalPrice
+	const isLoyaltyDisabled =
+		loyaltyPreviewQuery.isError ||
+		loyaltyPreviewQuery.data?.isRedemptionAvailable === false ||
+		loyaltyPoints <= 0
+	const loyaltyNote = isLoyaltyDisabled
+		? loyaltyPreviewQuery.data?.helperText || 'Недостатньо балів'
+		: undefined
+	const isGoldUpgradeAvailable = Boolean(
+		loyaltyPreviewQuery.data?.goldUpgradeAvailable ||
+			loyaltyQuery.data?.goldUpgradeAvailable,
+	)
+	const loyaltyError = (
+		loyaltyPreviewQuery.error || loyaltyQuery.error
+	) as Error | null
 
 	useEffect(() => {
 		if (!isAuthLoading && !user) {
@@ -48,6 +71,12 @@ const BookingPage = () => {
 	useEffect(() => {
 		window.scrollTo(0, 0)
 	}, [step])
+
+	useEffect(() => {
+		if (!isGoldUpgradeAvailable) {
+			setApplyGoldUpgrade(false)
+		}
+	}, [isGoldUpgradeAvailable])
 
 	if (isAuthLoading || (isLoading && !movie)) {
 		return (
@@ -91,14 +120,14 @@ const BookingPage = () => {
 	}
 
 	const genresList = Array.isArray(movie?.genres)
-		? movie!.genres.map(g => {
+		? movie?.genres.map(g => {
 				if (typeof g === 'string') return g
 				return (g as any).name
 			})
 		: []
 
 	const handleSubmitOrder = async () => {
-		await submitOrder(useLoyaltyPoints)
+		await submitOrder(useLoyaltyPoints, applyGoldUpgrade)
 	}
 
 	return (
@@ -264,17 +293,29 @@ const BookingPage = () => {
 									<LoyaltyCheckoutCard
 										pointsBalance={loyaltyPoints}
 										maxDiscount={maxDiscount}
-										pointsLimit={loyaltyPoints}
-										isLoading={loyaltyQuery.isLoading}
-										errorMessage={
-											loyaltyQuery.error instanceof Error
-												? loyaltyQuery.error.message
-												: undefined
+										pointsLimit={pointsLimit}
+										finalTotal={discountedTotal}
+										isLoading={
+											loyaltyQuery.isLoading || loyaltyPreviewQuery.isLoading
 										}
-										isDisabled={isLoyaltyDisabled || loyaltyQuery.isLoading}
+										errorMessage={
+											loyaltyError?.message
+										}
+										helperText={loyaltyPreviewQuery.data?.helperText}
+										isDisabled={
+											isLoyaltyDisabled ||
+											loyaltyQuery.isLoading ||
+											loyaltyPreviewQuery.isLoading
+										}
 										disabledNote={loyaltyNote}
 										isChecked={useLoyaltyPoints}
 										onToggle={setUseLoyaltyPoints}
+										isGoldUpgradeAvailable={isGoldUpgradeAvailable}
+										isGoldUpgradeChecked={applyGoldUpgrade}
+										goldUpgradeLabel={
+											loyaltyPreviewQuery.data?.goldUpgradeLabel
+										}
+										onGoldUpgradeToggle={setApplyGoldUpgrade}
 									/>
 								</div>
 							)}
@@ -284,7 +325,7 @@ const BookingPage = () => {
 									Разом до сплати
 								</span>
 								<span className='text-3xl font-black text-white'>
-									{totalPrice}{' '}
+									{discountedTotal}{' '}
 									<span className='text-lg text-[var(--text-muted)] font-normal'>
 										₴
 									</span>
