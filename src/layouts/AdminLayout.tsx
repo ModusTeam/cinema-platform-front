@@ -10,6 +10,7 @@ import {
 	Sword,
 	Tag,
 	Ticket,
+	Trophy,
 	Users,
 } from 'lucide-react'
 import { Suspense } from 'react'
@@ -22,6 +23,7 @@ const MENU_ITEMS = [
 	{ icon: Calendar, label: 'Сеанси', href: '/admin/sessions' },
 	{ icon: Users, label: 'Користувачі', href: '/admin/users' },
 	{ icon: Award, label: 'Лояльність', href: '/admin/loyalty' },
+	{ icon: Trophy, label: 'Досягнення', href: '/admin/achievements' },
 	{ icon: Armchair, label: 'Зали', href: '/admin/halls' },
 	{ icon: Cpu, label: 'Технології', href: '/admin/technologies' },
 	{ icon: Tag, label: 'Тарифи', href: '/admin/pricings' },
