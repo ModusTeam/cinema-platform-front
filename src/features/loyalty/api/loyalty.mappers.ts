@@ -103,7 +103,7 @@ export const getTierProgressPercent = (
 export const mapLoyaltyProfile = (
   data: BackendLoyaltyProfileDto,
 ): LoyaltyProfile => {
-  const pointsBalance = data.points ?? 0
+  const pointsBalance = data.balance ?? data.points ?? 0
   const tier = createTier(data.tier, pointsBalance)
   const nextTierKey = getNextTierKey(tier.id)
 
@@ -112,5 +112,12 @@ export const mapLoyaltyProfile = (
     tier,
     nextTier: nextTierKey ? createTier(nextTierKey) : undefined,
     progressPercent: getTierProgressPercent(tier.id, pointsBalance),
+    lifetimePoints: data.lifetimePoints ?? pointsBalance,
+    yearPoints: data.yearPoints ?? 0,
+    yearVisits: data.yearVisits ?? 0,
+    tierExpiresAt: data.tierExpiresAt,
+    balanceExpiresAt: data.balanceExpiresAt,
+    isBirthdayWeek: data.isBirthdayWeek ?? false,
+    goldUpgradeAvailable: data.goldUpgradeAvailable ?? false,
   }
 }

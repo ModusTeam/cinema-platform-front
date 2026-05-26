@@ -12,8 +12,16 @@ export interface LoyaltyTier {
 }
 
 export interface BackendLoyaltyProfileDto {
+  balance?: number
   points: number
   tier: string | number
+  lifetimePoints?: number
+  yearPoints?: number
+  yearVisits?: number
+  tierExpiresAt?: string
+  balanceExpiresAt?: string
+  isBirthdayWeek?: boolean
+  goldUpgradeAvailable?: boolean
 }
 
 export interface LoyaltyProfile {
@@ -21,6 +29,13 @@ export interface LoyaltyProfile {
   tier: LoyaltyTier
   nextTier?: LoyaltyTier
   progressPercent: number
+  lifetimePoints: number
+  yearPoints: number
+  yearVisits: number
+  tierExpiresAt?: string
+  balanceExpiresAt?: string
+  isBirthdayWeek: boolean
+  goldUpgradeAvailable: boolean
 }
 
 export type LoyaltyHistoryType = 'earn' | 'redeem' | 'expire' | 'bonus'

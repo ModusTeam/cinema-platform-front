@@ -1,8 +1,10 @@
+import { useMemo } from 'react'
 import { AlertCircle, ArrowLeft, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 import AchievementCard from '@/features/loyalty/achievements/AchievementCard'
 import { useAchievementsTabData } from '@/features/loyalty/achievements/hooks/useAchievementsTabData'
+import type { Achievement } from '@/features/loyalty/achievements/achievements.types'
 
 const LOADING_CARDS = [
   'achievement-loading-1',
@@ -13,8 +15,45 @@ const LOADING_CARDS = [
   'achievement-loading-6',
 ]
 
+const getNearestAchievement = (achievements: Achievement[]) => {
+  return achievements
+    .filter(item => item.status !== 'unlocked' && item.target > 0)
+    .sort((a, b) => b.progressPercent - a.progressPercent)[0]
+}
+
+const getRecentUnlocked = (achievements: Achievement[]) => {
+  return achievements
+    .filter(item => item.status === 'unlocked' && item.unlockedAt)
+    .sort(
+      (a, b) =>
+        new Date(b.unlockedAt ?? '').getTime() -
+        new Date(a.unlockedAt ?? '').getTime(),
+    )[0]
+}
+
 const AchievementsPage = () => {
   const { data, error, isLoading } = useAchievementsTabData()
+  const summary = useMemo(() => {
+    if (!data) return null
+
+    const nearest = getNearestAchievement(data.achievements)
+    const recent = getRecentUnlocked(data.achievements)
+    const featured = nearest ?? recent
+    const rewardPoints = data.achievements.reduce(
+      (total, item) => total + item.pointsReward,
+      0,
+    )
+
+    return {
+      nearest,
+      featured,
+      featuredLabel: nearest ? 'Найближча ціль' : 'Останнє відкриття',
+      rewardPoints,
+      remainingAchievements: featured
+        ? data.achievements.filter(item => item.id !== featured.id)
+        : data.achievements,
+    }
+  }, [data])
 
   return (
     <div className='relative min-h-screen overflow-hidden bg-[var(--bg-main)] text-[var(--text-main)]'>
@@ -43,7 +82,42 @@ const AchievementsPage = () => {
           </p>
         </header>
 
-        <div className='mb-8 h-px w-full bg-white/5' />
+        {isLoading ? (
+          <div className='mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3'>
+            <div className='h-20 rounded-lg bg-white/5 motion-safe:animate-pulse' />
+            <div className='h-20 rounded-lg bg-white/5 motion-safe:animate-pulse' />
+            <div className='h-20 rounded-lg bg-white/5 motion-safe:animate-pulse' />
+          </div>
+        ) : data && summary ? (
+          <div className='mb-8 grid grid-cols-1 gap-3 border-y border-white/5 py-4 sm:grid-cols-3'>
+            <div>
+              <span className='text-xs tracking-widest text-neutral-500 uppercase'>
+                Відкрито
+              </span>
+              <strong className='mt-1 block text-lg font-medium text-white'>
+                {data.summary.unlocked} / {data.summary.total}
+              </strong>
+            </div>
+            <div>
+              <span className='text-xs tracking-widest text-neutral-500 uppercase'>
+                Найближче
+              </span>
+              <strong className='mt-1 block truncate text-lg font-medium text-white'>
+                {summary.nearest?.title ?? 'Немає активної цілі'}
+              </strong>
+            </div>
+            <div>
+              <span className='text-xs tracking-widest text-neutral-500 uppercase'>
+                Бонуси
+              </span>
+              <strong className='mt-1 block text-lg font-medium text-white'>
+                {summary.rewardPoints} балів
+              </strong>
+            </div>
+          </div>
+        ) : (
+          <div className='mb-8 h-px w-full bg-white/5' />
+        )}
 
         {isLoading ? (
           <div className='grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2 lg:grid-cols-3'>
@@ -73,14 +147,32 @@ const AchievementsPage = () => {
             <Sparkles className='mb-4 h-8 w-8 text-neutral-600' />
             <h3 className='text-lg font-medium text-white'>Список порожній</h3>
             <p className='mt-2 text-sm text-neutral-500'>
-              Досягнення зʼявляться згодом.
+              Досягнення зʼявляться після перших бронювань або нових активностей
+              у програмі лояльності.
             </p>
           </div>
         ) : (
-          <div className='grid grid-cols-1 gap-x-12 gap-y-8 md:grid-cols-2 lg:grid-cols-3'>
-            {data.achievements.map(achievement => (
-              <AchievementCard key={achievement.id} achievement={achievement} />
-            ))}
+          <div className='space-y-8'>
+            {summary?.featured && (
+              <div className='max-w-2xl'>
+                <AchievementCard
+                  achievement={summary.featured}
+                  featured
+                  featuredLabel={summary.featuredLabel}
+                />
+              </div>
+            )}
+
+            <div className='grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2 lg:grid-cols-3'>
+              {(summary?.remainingAchievements ?? data.achievements).map(
+                achievement => (
+                  <AchievementCard
+                    key={achievement.id}
+                    achievement={achievement}
+                  />
+                ),
+              )}
+            </div>
           </div>
         )}
       </div>
