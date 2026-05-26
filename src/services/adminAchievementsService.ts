@@ -40,6 +40,10 @@ export interface AdminAchievementPayload {
   isActive: boolean
 }
 
+export interface AdminAchievementUpdatePayload extends AdminAchievementPayload {
+  id: string
+}
+
 export const adminAchievementsService = {
   getAll: async (
     includeInactive: boolean,
@@ -67,9 +71,14 @@ export const adminAchievementsService = {
     id: string,
     payload: AdminAchievementPayload,
   ): Promise<AdminAchievementDto> => {
+    const body: AdminAchievementUpdatePayload = {
+      ...payload,
+      id,
+    }
+
     const { data } = await api.put<AdminAchievementDto>(
       `/achievements/${id}`,
-      payload,
+      body,
     )
     return data
   },
