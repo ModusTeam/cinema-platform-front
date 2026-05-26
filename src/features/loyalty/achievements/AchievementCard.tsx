@@ -1,5 +1,7 @@
 import { clsx } from 'clsx'
 import { Gift, Lock, Trophy } from 'lucide-react'
+
+import { resolveAchievementIcon } from './achievementContract'
 import type { Achievement } from './achievements.types'
 
 interface AchievementCardProps {
@@ -9,7 +11,11 @@ interface AchievementCardProps {
 
 const AchievementCard = ({ achievement, compact }: AchievementCardProps) => {
   const isLocked = achievement.status === 'locked'
-  const icon = achievement.icon || (isLocked ? '🔒' : '🏆')
+  const Icon = resolveAchievementIcon(
+    achievement.icon,
+    achievement.category,
+    achievement.rarity,
+  )
 
   return (
     <div
@@ -20,7 +26,7 @@ const AchievementCard = ({ achievement, compact }: AchievementCardProps) => {
     >
       <div className='flex items-start gap-4'>
         <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/5 text-lg'>
-          {icon}
+          <Icon className='h-5 w-5 text-[var(--color-primary)]' />
         </div>
 
         <div className='min-w-0 flex-1'>

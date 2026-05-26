@@ -42,6 +42,9 @@ const UserActivityPage = lazy(
 const AdminLoyaltyPage = lazy(
 	() => import('../features/admin/AdminLoyaltyPage'),
 )
+const AdminAchievementsPage = lazy(
+	() => import('../features/admin/AdminAchievementsPage'),
+)
 
 export const router = createBrowserRouter([
 	{
@@ -138,6 +141,10 @@ export const router = createBrowserRouter([
 					{
 						path: 'loyalty',
 						element: <AdminLoyaltyPage />,
+					},
+					{
+						path: 'achievements',
+						element: <AdminAchievementsPage />,
 					},
 					{
 						path: 'movies',
