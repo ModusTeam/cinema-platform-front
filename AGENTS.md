@@ -157,8 +157,8 @@ src/
     loyalty.ts
 
   data/
-    pagesContent.ts
-    staticContent.ts
+    bar.ts
+    faq.ts
 
   features/
     account/
@@ -229,7 +229,12 @@ Public routes are children of `MainLayout`, including:
 - `/sessions`
 - `/bar`
 - `/careers`
-- `/info/:pageId`
+- `/technologies`
+- `/halls`
+- `/rules`
+- `/privacy`
+- `/offer`
+- `/age-limits`
 - `/account/loyalty`
 - `/account/loyalty/history`
 - `/profile/achievements`
@@ -324,11 +329,12 @@ toasts or inline form errors.
 - Lucide icons are already used in navigation and admin UI.
 - Motion animations use the `motion` package, including `motion/react`.
 
-### Static HTML Content
+### Static Informational Pages
 
-`src/pages/StaticPage.tsx` renders static HTML from `src/data/pagesContent.ts`
-with `dangerouslySetInnerHTML`. That content is local repository data. Do not
-render user-generated or remote HTML this way without adding sanitization.
+Static informational pages are standalone JSX components in `src/pages` and use
+`src/layouts/StaticPageLayout.tsx` for the shared shell. Do not reintroduce
+`dangerouslySetInnerHTML` for local mock page content; convert content to typed
+React components instead.
 
 ## Admin Work
 

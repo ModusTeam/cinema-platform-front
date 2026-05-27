@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import {
+  type LucideIcon,
   Facebook,
   Instagram,
   Youtube,
@@ -8,6 +9,7 @@ import {
   Smartphone,
   Film,
 } from 'lucide-react'
+import type { ReactNode } from 'react'
 
 const Footer = () => {
   return (
@@ -39,10 +41,10 @@ const Footer = () => {
             </h4>
             <ul className='space-y-4'>
               <li>
-                <FooterLink to='/info/technologies'>Технології</FooterLink>
+                <FooterLink to='/technologies'>Технології</FooterLink>
               </li>
               <li>
-                <FooterLink to='/info/halls'>Наші зали</FooterLink>
+                <FooterLink to='/halls'>Наші зали</FooterLink>
               </li>
               <li>
                 <FooterLink to='/bar'>Меню кінобару</FooterLink>
@@ -81,16 +83,16 @@ const Footer = () => {
             </h4>
             <ul className='space-y-4'>
               <li>
-                <FooterLink to='/info/rules'>Правила</FooterLink>
+                <FooterLink to='/rules'>Правила</FooterLink>
               </li>
               <li>
-                <FooterLink to='/info/privacy'>Конфіденційність</FooterLink>
+                <FooterLink to='/privacy'>Конфіденційність</FooterLink>
               </li>
               <li>
-                <FooterLink to='/info/offer'>Оферта</FooterLink>
+                <FooterLink to='/offer'>Оферта</FooterLink>
               </li>
               <li>
-                <FooterLink to='/info/age-limits'>Вікові обмеження</FooterLink>
+                <FooterLink to='/age-limits'>Вікові обмеження</FooterLink>
               </li>
             </ul>
           </div>
@@ -125,13 +127,7 @@ const Footer = () => {
   )
 }
 
-const FooterLink = ({
-  to,
-  children,
-}: {
-  to: string
-  children: React.ReactNode
-}) => (
+const FooterLink = ({ to, children }: { to: string; children: ReactNode }) => (
   <Link
     to={to}
     className='hover:text-[var(--color-primary)] transition-colors duration-200 block text-base lg:text-sm py-1 lg:py-0'
@@ -145,7 +141,7 @@ const ExternalFooterLink = ({
   children,
 }: {
   href: string
-  children: React.ReactNode
+  children: ReactNode
 }) => (
   <a
     href={href}
@@ -157,7 +153,13 @@ const ExternalFooterLink = ({
   </a>
 )
 
-const SocialIcon = ({ icon: Icon, href }: { icon: any; href: string }) => (
+const SocialIcon = ({
+  icon: Icon,
+  href,
+}: {
+  icon: LucideIcon
+  href: string
+}) => (
   <a
     href={href}
     target='_blank'
@@ -171,7 +173,13 @@ const SocialIcon = ({ icon: Icon, href }: { icon: any; href: string }) => (
   </a>
 )
 
-const AppButton = ({ icon: Icon, label }: { icon: any; label: string }) => (
+const AppButton = ({
+  icon: Icon,
+  label,
+}: {
+  icon: LucideIcon
+  label: string
+}) => (
   <button
     type='button'
     className='flex items-center gap-3 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl transition-all group w-full lg:w-full text-left active:scale-95'

@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { BAR_MENU } from '../data/staticContent'
+import { BAR_MENU } from '../data/bar'
 import {
+  type LucideIcon,
   CupSoda,
   Coffee,
   Pizza,
@@ -13,7 +14,7 @@ import {
 import { clsx } from 'clsx'
 import { AuroraText } from '../common/components/AuroraText'
 
-const iconMap: Record<string, any> = {
+const iconMap: Record<string, LucideIcon> = {
   Popcorn: Popcorn,
   CupSoda: CupSoda,
   Coffee: Coffee,
@@ -129,9 +130,9 @@ const CinemaBarPage = () => {
                 </div>
 
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-                  {category.items.map((item, idx) => (
+                  {category.items.map(item => (
                     <div
-                      key={idx}
+                      key={item.name}
                       className='group relative bg-[#1a1a1a] border border-white/5 rounded-2xl overflow-hidden hover:border-[var(--color-primary)]/30 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col'
                     >
                       {item.tags && (
@@ -158,9 +159,9 @@ const CinemaBarPage = () => {
                         )}
 
                         <div className='space-y-2 mt-auto'>
-                          {item.options.map((option, optIdx) => (
+                          {item.options.map(option => (
                             <div
-                              key={optIdx}
+                              key={option.label}
                               className='flex justify-between items-center text-sm p-2 rounded-lg bg-white/5 border border-white/5 group-hover:bg-white/[0.07] transition-colors'
                             >
                               <span className='text-zinc-300 font-medium'>

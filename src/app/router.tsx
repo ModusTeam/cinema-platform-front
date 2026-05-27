@@ -17,11 +17,16 @@ const OffersPage = lazy(() => import('../pages/OffersPage'))
 const BookingPage = lazy(() => import('../pages/BookingPage'))
 const SessionsPage = lazy(() => import('../pages/SessionsPage'))
 const CinemaBarPage = lazy(() => import('../pages/CinemaBarPage'))
-const StaticPage = lazy(() => import('../pages/StaticPage'))
 const CareersPage = lazy(() => import('../pages/CareersPage'))
 const LoyaltyPage = lazy(() => import('../pages/LoyaltyPage'))
 const LoyaltyHistoryPage = lazy(() => import('../pages/LoyaltyHistoryPage'))
 const AchievementsPage = lazy(() => import('../pages/AchievementsPage'))
+const PublicTechnologiesPage = lazy(() => import('../pages/TechnologiesPage'))
+const PublicHallsPage = lazy(() => import('../pages/HallsPage'))
+const RulesPage = lazy(() => import('../pages/RulesPage'))
+const PrivacyPage = lazy(() => import('../pages/PrivacyPage'))
+const OfferPage = lazy(() => import('../pages/OfferPage'))
+const AgeLimitsPage = lazy(() => import('../pages/AgeLimitsPage'))
 
 // admin
 const AdminDashboard = lazy(() => import('../features/admin/AdminDashboard'))
@@ -101,8 +106,28 @@ export const router = createBrowserRouter([
 				element: <CareersPage />,
 			},
 			{
-				path: 'info/:pageId',
-				element: <StaticPage />,
+				path: 'technologies',
+				element: <PublicTechnologiesPage />,
+			},
+			{
+				path: 'halls',
+				element: <PublicHallsPage />,
+			},
+			{
+				path: 'rules',
+				element: <RulesPage />,
+			},
+			{
+				path: 'privacy',
+				element: <PrivacyPage />,
+			},
+			{
+				path: 'offer',
+				element: <OfferPage />,
+			},
+			{
+				path: 'age-limits',
+				element: <AgeLimitsPage />,
 			},
 			{
 				path: 'account/loyalty',

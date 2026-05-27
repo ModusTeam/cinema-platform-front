@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ChevronDown, HelpCircle, Phone, Mail } from 'lucide-react'
 import { clsx } from 'clsx'
-import { FAQ_ITEMS } from '../data/staticContent'
+import { FAQ_ITEMS } from '../data/faq'
 import { FlipWords } from '../common/components/FlipWords'
 
 const FAQPage = () => {
@@ -38,7 +38,7 @@ const FAQPage = () => {
             const isOpen = openIndex === index
             return (
               <div
-                key={index}
+                key={item.question}
                 className={clsx(
                   'overflow-hidden rounded-2xl border transition-all duration-300',
                   isOpen
