@@ -82,7 +82,6 @@ type ProfileFormData = z.infer<typeof profileSchema>
 interface TabConfig {
   id: TabType
   label: string
-  description: string
   icon: LucideIcon
 }
 
@@ -90,25 +89,21 @@ const TABS: TabConfig[] = [
   {
     id: 'active-tickets',
     label: 'Квитки',
-    description: 'Майбутні сеанси та QR-коди',
     icon: Ticket,
   },
   {
     id: 'history',
     label: 'Історія',
-    description: 'Минулі замовлення',
     icon: History,
   },
   {
     id: 'achievements',
     label: 'Досягнення',
-    description: 'Прогрес та нагороди',
     icon: Award,
   },
   {
     id: 'settings',
     label: 'Профіль',
-    description: 'Особисті дані та безпека',
     icon: Settings,
   },
 ]
@@ -146,30 +141,6 @@ const StatItem = ({
     <div className='text-xl font-black text-white'>{value}</div>
   </div>
 )
-
-const ContentHeader = ({ tab, count }: { tab: TabConfig; count?: number }) => {
-  const Icon = tab.icon
-
-  return (
-    <div className='mb-5 flex flex-col gap-3 border-b border-white/5 pb-5 sm:flex-row sm:items-end sm:justify-between'>
-      <div className='flex items-start gap-3'>
-        <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/5 bg-white/[0.04]'>
-          <Icon size={18} className='text-[var(--color-primary)]' />
-        </div>
-        <div>
-          <h2 className='text-xl font-bold text-white'>{tab.label}</h2>
-          <p className='mt-1 text-sm text-zinc-500'>{tab.description}</p>
-        </div>
-      </div>
-
-      {count !== undefined && (
-        <span className='w-fit rounded-full border border-white/5 bg-black/30 px-3 py-1 text-xs font-medium text-zinc-400'>
-          {count} записів
-        </span>
-      )}
-    </div>
-  )
-}
 
 const EmptyState = ({
   icon: Icon,
@@ -265,7 +236,6 @@ const ProfilePage = () => {
   if (!user) return null
 
   const initials = `${user.name[0]}${user.surname[0]}`.toUpperCase()
-  const activeTabConfig = TABS.find(tab => tab.id === activeTab) ?? TABS[0]
   const fullName = `${user.name} ${user.surname}`
 
   return (
@@ -427,15 +397,10 @@ const ProfilePage = () => {
                       className={clsx(
                         'shrink-0',
                         activeTab === tab.id && 'text-[var(--color-primary)]',
-                      )}
+                      )} 
                     />
-                    <span className='min-w-0'>
-                      <span className='block text-sm font-bold'>
-                        {tab.label}
-                      </span>
-                      <span className='block truncate text-[11px] opacity-70'>
-                        {tab.description}
-                      </span>
+                    <span className='min-w-0 text-sm font-bold'>
+                      {tab.label}
                     </span>
                   </button>
                 )
@@ -445,11 +410,6 @@ const ProfilePage = () => {
             <section className='min-h-[420px]'>
               {activeTab === 'active-tickets' && (
                 <div className='animate-in fade-in zoom-in-95 duration-300'>
-                  <ContentHeader
-                    tab={activeTabConfig}
-                    count={activeTickets.length}
-                  />
-
                   {isLoadingTickets ? (
                     <div className='flex justify-center py-20'>
                       <GridLoader className='h-8 w-8 animate-spin text-[var(--color-primary)]' />
@@ -480,11 +440,6 @@ const ProfilePage = () => {
 
               {activeTab === 'history' && (
                 <div className='animate-in fade-in zoom-in-95 duration-300'>
-                  <ContentHeader
-                    tab={activeTabConfig}
-                    count={historyOrders.length}
-                  />
-
                   {historyOrders.length > 0 ? (
                     <div className='grid gap-4'>
                       {historyOrders.map(order => (
@@ -503,15 +458,12 @@ const ProfilePage = () => {
 
               {activeTab === 'achievements' && (
                 <div className='animate-in fade-in zoom-in-95 duration-300'>
-                  <ContentHeader tab={activeTabConfig} />
                   <AchievementsTabPanel />
                 </div>
               )}
 
               {activeTab === 'settings' && (
                 <div className='animate-in fade-in zoom-in-95 duration-300'>
-                  <ContentHeader tab={activeTabConfig} />
-
                   <form onSubmit={handleSubmit(onSubmit)} className='space-y-7'>
                     <div className='rounded-2xl border border-white/5 bg-white/[0.025] p-5'>
                       <h3 className='mb-5 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[var(--color-primary)]'>
