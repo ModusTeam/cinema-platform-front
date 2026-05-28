@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { X, Search, Download, Image as ImageIcon } from 'lucide-react'
+import { X, Search, Download, Image as ImageIcon, SearchX } from 'lucide-react'
+import EmptyState from '../../../common/components/EmptyState'
 import { GridLoader } from '../../../common/components/GridLoader'
 import { moviesService } from '../../../services/moviesService'
 import type { TmdbSearchResult } from '../../../types/movie'
@@ -19,6 +20,7 @@ const ImportMovieModal = ({
   const [results, setResults] = useState<TmdbSearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const [isImporting, setIsImporting] = useState<number | null>(null)
+  const [hasSearched, setHasSearched] = useState(false)
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -28,6 +30,7 @@ const ImportMovieModal = ({
     try {
       const data = await moviesService.searchTmdb(query)
       setResults(data)
+      setHasSearched(true)
     } catch (error) {
       console.error(error)
     } finally {
@@ -43,6 +46,7 @@ const ImportMovieModal = ({
       onClose()
       setResults([])
       setQuery('')
+      setHasSearched(false)
     } catch (error: any) {
       alert(error.response?.data?.detail || 'Помилка імпорту')
     } finally {
@@ -96,9 +100,26 @@ const ImportMovieModal = ({
 
         <div className='flex-1 overflow-y-auto p-6 pt-2 space-y-3 custom-scrollbar'>
           {results.length === 0 && !isSearching && (
-            <div className='text-center text-[var(--text-muted)] py-10'>
-              Введіть назву фільму для пошуку
-            </div>
+            <EmptyState
+              icon={
+                hasSearched ? (
+                  <SearchX className='h-12 w-12' />
+                ) : (
+                  <Search className='h-12 w-12' />
+                )
+              }
+              title={
+                hasSearched
+                  ? 'TMDB нічого не знайшов'
+                  : 'Знайдіть фільм для імпорту'
+              }
+              description={
+                hasSearched
+                  ? 'Спробуйте оригінальну назву, рік випуску або коротший пошуковий запит.'
+                  : 'Введіть назву фільму, щоб побачити результати з TMDB і додати потрібну картку в каталог.'
+              }
+              className='border-0 bg-transparent py-10'
+            />
           )}
 
           {results.map(movie => (

@@ -2,6 +2,7 @@ import { clsx } from 'clsx'
 import { AlertCircle, Edit, Plus, Search, Trash2, Trophy } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
+import EmptyState from '@/common/components/EmptyState'
 import { GridLoader } from '@/common/components/GridLoader'
 import ConfirmModal from '@/common/components/Modals/ConfirmModal'
 import { useToast } from '@/common/components/Toast/ToastContext'
@@ -162,13 +163,31 @@ const AdminAchievementsPage = () => {
             </div>
           </div>
         ) : filteredAchievements.length === 0 ? (
-          <div className='flex flex-col items-center justify-center py-16 text-center text-neutral-500'>
-            <Trophy className='mb-4 h-10 w-10 opacity-40' />
-            <p className='font-medium'>Досягнення не знайдені</p>
-            <p className='mt-1 text-sm'>
-              Змініть фільтри або створіть перше досягнення.
-            </p>
-          </div>
+          <EmptyState
+            icon={<Trophy className='h-12 w-12' />}
+            title={
+              search || includeInactive
+                ? 'Досягнень за фільтрами немає'
+                : 'Досягнень ще немає'
+            }
+            description={
+              search || includeInactive
+                ? 'Змініть пошук або фільтр активності, щоб знайти потрібне правило.'
+                : 'Створіть перше досягнення, щоб винагороджувати гостей за активність.'
+            }
+            actionLabel={
+              search || includeInactive ? 'Скинути фільтри' : 'Нове досягнення'
+            }
+            onAction={
+              search || includeInactive
+                ? () => {
+                    setSearch('')
+                    setIncludeInactive(false)
+                  }
+                : handleCreate
+            }
+            className='border-0 bg-transparent py-16'
+          />
         ) : (
           <div className='overflow-x-auto'>
             <table className='w-full min-w-[980px] text-left text-sm'>

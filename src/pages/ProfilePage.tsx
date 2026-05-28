@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { clsx } from 'clsx'
 import {
@@ -22,6 +22,7 @@ import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 
 import { AuroraText } from '@/common/components/AuroraText'
+import EmptyState from '@/common/components/EmptyState'
 import { GridLoader } from '@/common/components/GridLoader'
 import Input from '@/common/components/Input'
 import { LOYALTY_TIER_THRESHOLDS } from '@/constants/loyalty'
@@ -142,30 +143,8 @@ const StatItem = ({
   </div>
 )
 
-const EmptyState = ({
-  icon: Icon,
-  title,
-  description,
-  action,
-}: {
-  icon: LucideIcon
-  title: string
-  description: string
-  action?: React.ReactNode
-}) => (
-  <div className='flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-16 text-center'>
-    <div className='mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-white/5'>
-      <Icon className='h-8 w-8 text-[var(--text-muted)] opacity-60' />
-    </div>
-    <h3 className='text-lg font-bold text-white'>{title}</h3>
-    <p className='mx-auto mt-2 max-w-sm text-sm leading-relaxed text-zinc-500'>
-      {description}
-    </p>
-    {action && <div className='mt-6'>{action}</div>}
-  </div>
-)
-
 const ProfilePage = () => {
+  const navigate = useNavigate()
   const {
     user,
     logout,
@@ -397,7 +376,7 @@ const ProfilePage = () => {
                       className={clsx(
                         'shrink-0',
                         activeTab === tab.id && 'text-[var(--color-primary)]',
-                      )} 
+                      )}
                     />
                     <span className='min-w-0 text-sm font-bold'>
                       {tab.label}
@@ -422,17 +401,11 @@ const ProfilePage = () => {
                     </div>
                   ) : (
                     <EmptyState
-                      icon={Ticket}
+                      icon={<Ticket className='h-12 w-12' />}
                       title='Активних квитків немає'
                       description='Заплануйте наступний сеанс, а QR-квиток зʼявиться тут одразу після бронювання.'
-                      action={
-                        <Link
-                          to='/sessions'
-                          className='rounded-xl bg-white px-6 py-3 text-sm font-bold text-black transition-colors hover:bg-zinc-200'
-                        >
-                          Переглянути афішу
-                        </Link>
-                      }
+                      actionLabel='Переглянути афішу'
+                      onAction={() => navigate('/sessions')}
                     />
                   )}
                 </div>
@@ -448,7 +421,7 @@ const ProfilePage = () => {
                     </div>
                   ) : (
                     <EmptyState
-                      icon={History}
+                      icon={<History className='h-12 w-12' />}
                       title='Історія замовлень порожня'
                       description='Після завершених або скасованих сеансів записи залишатимуться тут.'
                     />

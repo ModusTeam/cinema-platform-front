@@ -1,6 +1,7 @@
+import EmptyState from '@/common/components/EmptyState'
 import AchievementCard from '@/features/loyalty/achievements/AchievementCard'
 import { useAchievementsTabData } from '@/features/loyalty/achievements/hooks/useAchievementsTabData'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Trophy } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 const AchievementsTabPanel = () => {
@@ -43,9 +44,12 @@ const AchievementsTabPanel = () => {
             />
           ))
         ) : (
-          <div className='rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-sm text-neutral-500 md:col-span-3'>
-            Відкритих досягнень поки немає.
-          </div>
+          <EmptyState
+            icon={<Trophy className='h-12 w-12' />}
+            title='Відкритих досягнень поки немає'
+            description='Бронюйте квитки та беріть участь у програмі лояльності, щоб перші нагороди зʼявилися тут.'
+            className='py-12 md:col-span-3'
+          />
         )}
       </div>
 

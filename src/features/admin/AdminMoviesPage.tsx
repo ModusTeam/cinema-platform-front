@@ -3,6 +3,7 @@ import { useAdminMovies } from '../../features/admin/hooks/useAdminMovies'
 import {
   Search,
   Plus,
+  Film,
   Star,
   Trash2,
   Edit,
@@ -12,6 +13,7 @@ import {
   Archive,
   PlayCircle,
 } from 'lucide-react'
+import EmptyState from '../../common/components/EmptyState'
 import { GridLoader } from '../../common/components/GridLoader'
 import ImportMovieModal from '../../features/admin/components/ImportMovieModal'
 import EditMovieModal from '../../features/admin/components/EditMovieModal'
@@ -118,11 +120,29 @@ const AdminMoviesPage = () => {
               <tbody className='divide-y divide-white/5'>
                 {movies.length === 0 ? (
                   <tr>
-                    <td
-                      colSpan={5}
-                      className='px-6 py-12 text-center text-[var(--text-muted)]'
-                    >
-                      Фільмів не знайдено
+                    <td colSpan={5} className='px-6 py-8'>
+                      <EmptyState
+                        icon={<Film className='h-12 w-12' />}
+                        title={
+                          searchTerm
+                            ? 'Фільмів за запитом не знайдено'
+                            : 'Каталог фільмів порожній'
+                        }
+                        description={
+                          searchTerm
+                            ? 'Спробуйте іншу назву або очистьте пошук, щоб повернутися до всього каталогу.'
+                            : 'Імпортуйте перший фільм з TMDB, щоб додати його до афіші кінотеатру.'
+                        }
+                        actionLabel={
+                          searchTerm ? 'Очистити пошук' : 'Імпорт з TMDB'
+                        }
+                        onAction={
+                          searchTerm
+                            ? () => setSearchTerm('')
+                            : () => setIsImportModalOpen(true)
+                        }
+                        className='border-0 bg-transparent py-10'
+                      />
                     </td>
                   </tr>
                 ) : (

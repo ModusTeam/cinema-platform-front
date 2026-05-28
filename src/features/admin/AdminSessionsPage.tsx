@@ -9,6 +9,7 @@ import {
   Edit,
   Calendar,
 } from 'lucide-react'
+import EmptyState from '../../common/components/EmptyState'
 import { GridLoader } from '../../common/components/GridLoader'
 import CreateSessionModal from './components/CreateSessionModal'
 import { type SessionDto } from '../../services/adminSessionsService'
@@ -111,12 +112,14 @@ const AdminSessionsPage = () => {
       ) : (
         <div className='space-y-10 animate-in fade-in slide-in-from-bottom-4'>
           {Object.keys(groupedSessions).length === 0 && (
-            <div className='flex flex-col items-center justify-center py-20 border border-dashed border-white/10 rounded-xl bg-[var(--bg-card)]/50'>
-              <Calendar className='h-12 w-12 text-[var(--text-muted)] mb-4' />
-              <div className='text-xl font-medium text-white'>
-                Сеансів не знайдено
-              </div>
-            </div>
+            <EmptyState
+              icon={<Calendar className='h-12 w-12' />}
+              title='Сеансів ще немає'
+              description='Створіть перший показ, щоб він зʼявився в розкладі для гостей і касирів.'
+              actionLabel='Додати сеанс'
+              onAction={() => setIsCreateModalOpen(true)}
+              className='py-20'
+            />
           )}
 
           {Object.entries(groupedSessions).map(([dateKey, sessionList]) => {

@@ -1,3 +1,6 @@
+import EmptyState from '@/common/components/EmptyState'
+import { Trophy } from 'lucide-react'
+
 import type { Achievement } from './achievements.types'
 
 interface AchievementProgressListProps {
@@ -9,9 +12,12 @@ const AchievementProgressList = ({
 }: AchievementProgressListProps) => {
   if (achievements.length === 0) {
     return (
-      <div className='rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-6 text-center text-sm text-[var(--text-muted)]'>
-        Наразі немає активних досягнень у прогресі.
-      </div>
+      <EmptyState
+        icon={<Trophy className='h-12 w-12' />}
+        title='Немає активних цілей'
+        description='Досягнення в прогресі зʼявляться, коли ви наблизитеся до наступної нагороди.'
+        className='py-10'
+      />
     )
   }
 

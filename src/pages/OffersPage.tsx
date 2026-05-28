@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Sparkles, Ticket, SearchX, Play, Circle } from 'lucide-react'
+import { Sparkles, Ticket, Play, Circle } from 'lucide-react'
+import EmptyState from '../common/components/EmptyState'
 import { useAuth } from '../features/auth/AuthContext'
 import { moviesService } from '../services/moviesService'
 import { GridLoader } from '../common/components/GridLoader'
@@ -134,40 +135,14 @@ const OffersPage = () => {
           </div>
         ) : (
           !isLoading && (
-            <div className='flex flex-col items-center justify-center py-12 text-center animate-in fade-in zoom-in duration-500'>
-              <div className='relative mb-8 group cursor-default'>
-                <div className='absolute inset-0 bg-gradient-to-r from-[var(--color-primary)] to-purple-600 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500' />
-                <div className='relative w-32 h-32 bg-[#1a1a1a] rounded-full border border-white/10 flex items-center justify-center shadow-2xl'>
-                  <SearchX
-                    size={48}
-                    className='text-[var(--text-muted)] group-hover:text-white transition-colors duration-500'
-                  />
-                  <div className='absolute -top-2 -right-2 w-10 h-10 bg-[var(--bg-card)] rounded-full border border-white/10 flex items-center justify-center animate-bounce'>
-                    <Ticket size={16} className='text-[var(--color-primary)]' />
-                  </div>
-                </div>
-              </div>
-
-              <h2 className='text-2xl font-bold text-white mb-3'>
-                Штучний інтелект ще навчається...
-              </h2>
-              <p className='text-[var(--text-muted)] max-w-md mb-8'>
-                У нас поки недостатньо даних про ваші вподобання. Відвідайте
-                кілька сеансів, щоб ми могли скласти ваш персональний
-                кіно-профіль!
-              </p>
-
-              <Link
-                to='/sessions'
-                className='group relative inline-flex items-center gap-2 px-8 py-4 bg-[var(--color-primary)] text-white font-bold rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-lg shadow-[var(--color-primary)]/25'
-              >
-                <span className='relative z-10 flex items-center gap-2'>
-                  <Ticket size={18} />
-                  Обрати перший фільм
-                </span>
-                <div className='absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out' />
-              </Link>
-            </div>
+            <EmptyState
+              icon={<Ticket className='h-12 w-12' />}
+              title='Персональні поради ще готуються'
+              description='Відвідайте кілька сеансів, і ми зможемо скласти добірку фільмів саме під ваші вподобання.'
+              actionLabel='Обрати перший фільм'
+              onAction={() => navigate('/sessions')}
+              className='py-20 animate-in fade-in zoom-in duration-500'
+            />
           )
         )}
       </div>

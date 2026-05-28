@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useGenres } from './hooks/useGenres'
 import { Plus, Tag, Edit, Trash2, Search } from 'lucide-react'
+import EmptyState from '../../common/components/EmptyState'
 import { GridLoader } from '../../common/components/GridLoader'
 import GenreModal from './components/GenreModal'
 import { type Genre } from '../../services/genresService'
@@ -103,11 +104,27 @@ const GenresPage = () => {
             <tbody className='divide-y divide-white/5'>
               {filteredGenres.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={3}
-                    className='px-6 py-8 text-center text-[var(--text-muted)]'
-                  >
-                    Жанрів не знайдено
+                  <td colSpan={3} className='px-6 py-8'>
+                    <EmptyState
+                      icon={<Tag className='h-12 w-12' />}
+                      title={
+                        searchTerm
+                          ? 'Жанрів за запитом немає'
+                          : 'Жанрів ще немає'
+                      }
+                      description={
+                        searchTerm
+                          ? 'Змініть пошуковий запит або очистьте поле, щоб повернутися до списку жанрів.'
+                          : 'Додайте перший жанр, щоб категоризувати фільми в каталозі.'
+                      }
+                      actionLabel={
+                        searchTerm ? 'Очистити пошук' : 'Додати жанр'
+                      }
+                      onAction={
+                        searchTerm ? () => setSearchTerm('') : handleCreateClick
+                      }
+                      className='border-0 bg-transparent py-10'
+                    />
                   </td>
                 </tr>
               ) : (

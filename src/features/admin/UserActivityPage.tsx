@@ -11,6 +11,7 @@ import {
   Mail,
   Ban,
 } from 'lucide-react'
+import EmptyState from '../../common/components/EmptyState'
 import { GridLoader } from '../../common/components/GridLoader'
 import { clsx } from 'clsx'
 
@@ -109,9 +110,16 @@ const UserActivityPage = () => {
               <GridLoader className='animate-spin text-[var(--color-primary)]' />
             </div>
           ) : filteredUsers.length === 0 ? (
-            <div className='text-center py-10 text-[var(--text-muted)] text-sm'>
-              Користувачів не знайдено
-            </div>
+            <EmptyState
+              icon={<User className='h-10 w-10' />}
+              title='Користувачів не знайдено'
+              description='Змініть пошук, щоб обрати користувача та переглянути його активність.'
+              actionLabel={userSearchTerm ? 'Очистити пошук' : undefined}
+              onAction={
+                userSearchTerm ? () => setUserSearchTerm('') : undefined
+              }
+              className='border-0 bg-transparent px-3 py-10'
+            />
           ) : (
             filteredUsers.map(user => (
               <button
@@ -159,10 +167,12 @@ const UserActivityPage = () => {
 
       <div className='flex flex-col gap-6 h-full overflow-y-auto pr-2 custom-scrollbar'>
         {!selectedUserId ? (
-          <div className='flex flex-col items-center justify-center h-full text-[var(--text-muted)] border border-dashed border-white/10 rounded-2xl bg-[var(--bg-card)]/30'>
-            <User size={48} className='opacity-20 mb-4' />
-            <p>Оберіть користувача зі списку зліва</p>
-          </div>
+          <EmptyState
+            icon={<User className='h-12 w-12' />}
+            title='Оберіть користувача'
+            description='Після вибору користувача тут зʼявляться його замовлення, квитки та доступні дії.'
+            className='h-full'
+          />
         ) : (
           <>
             <div className='bg-[var(--bg-card)] border border-white/5 p-6 rounded-2xl shadow-lg shrink-0 animate-in fade-in slide-in-from-top-2'>
@@ -266,11 +276,13 @@ const UserActivityPage = () => {
                       <tbody className='divide-y divide-white/5'>
                         {orders.length === 0 ? (
                           <tr>
-                            <td
-                              colSpan={5}
-                              className='p-8 text-center text-[var(--text-muted)]'
-                            >
-                              Історія замовлень порожня
+                            <td colSpan={5} className='p-6'>
+                              <EmptyState
+                                icon={<LayoutList className='h-12 w-12' />}
+                                title='Замовлень ще немає'
+                                description='Коли користувач оформить бронювання, воно зʼявиться в цій історії.'
+                                className='border-0 bg-transparent py-10'
+                              />
                             </td>
                           </tr>
                         ) : (
@@ -339,11 +351,13 @@ const UserActivityPage = () => {
                       <tbody className='divide-y divide-white/5'>
                         {tickets.length === 0 ? (
                           <tr>
-                            <td
-                              colSpan={6}
-                              className='p-8 text-center text-[var(--text-muted)]'
-                            >
-                              Квитків немає
+                            <td colSpan={6} className='p-6'>
+                              <EmptyState
+                                icon={<Ticket className='h-12 w-12' />}
+                                title='Квитків ще немає'
+                                description='Квитки користувача зʼявляться тут після успішного бронювання.'
+                                className='border-0 bg-transparent py-10'
+                              />
                             </td>
                           </tr>
                         ) : (

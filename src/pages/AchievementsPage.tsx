@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { AlertCircle, ArrowLeft, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
+import EmptyState from '@/common/components/EmptyState'
 import AchievementCard from '@/features/loyalty/achievements/AchievementCard'
 import { useAchievementsTabData } from '@/features/loyalty/achievements/hooks/useAchievementsTabData'
 import type { Achievement } from '@/features/loyalty/achievements/achievements.types'
@@ -143,14 +144,12 @@ const AchievementsPage = () => {
             </p>
           </div>
         ) : !data || data.achievements.length === 0 ? (
-          <div className='flex flex-col items-center justify-center py-20 text-center'>
-            <Sparkles className='mb-4 h-8 w-8 text-neutral-600' />
-            <h3 className='text-lg font-medium text-white'>Список порожній</h3>
-            <p className='mt-2 text-sm text-neutral-500'>
-              Досягнення зʼявляться після перших бронювань або нових активностей
-              у програмі лояльності.
-            </p>
-          </div>
+          <EmptyState
+            icon={<Sparkles className='h-12 w-12' />}
+            title='Досягнення ще попереду'
+            description='Перші нагороди зʼявляться після бронювань, відвідувань або нових активностей у програмі лояльності.'
+            className='py-20'
+          />
         ) : (
           <div className='space-y-8'>
             {summary?.featured && (

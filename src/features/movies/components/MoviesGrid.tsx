@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import EmptyState from '@/common/components/EmptyState'
 import { type Movie, MovieStatus } from '../../../types/movie'
 import { type Session } from '../../../types/hall'
 import { moviesService } from '../../../services/moviesService'
@@ -171,22 +172,34 @@ const MoviesGrid = () => {
 
       <div className='min-h-[400px]'>
         {displayedMovies.length === 0 ? (
-          <div className='flex flex-col items-center justify-center py-20 bg-[var(--bg-card)] rounded-3xl border border-dashed border-white/5 text-[var(--text-muted)]'>
-            {activeTab === 'now' ? (
-              <>
-                <Calendar size={48} className='opacity-20 mb-4' />
-                <p className='text-lg'>
-                  На жаль, на цю дату сеансів не знайдено.
-                </p>
-                <p className='text-sm mt-1'>Спробуйте обрати інший день.</p>
-              </>
-            ) : (
-              <>
-                <Clock size={48} className='opacity-20 mb-4' />
-                <p className='text-lg'>Список анонсів порожній.</p>
-              </>
-            )}
-          </div>
+          <EmptyState
+            icon={
+              activeTab === 'now' ? (
+                <Calendar className='h-12 w-12' />
+              ) : (
+                <Clock className='h-12 w-12' />
+              )
+            }
+            title={
+              activeTab === 'now'
+                ? 'Немає сеансів на цю дату'
+                : 'Анонси ще готуються'
+            }
+            description={
+              activeTab === 'now'
+                ? 'Оберіть інший день у календарі, щоб знайти доступні покази та забронювати місця.'
+                : 'Нові премʼєри зʼявляться тут після додавання в афішу кінотеатру.'
+            }
+            actionLabel={
+              activeTab === 'now' ? 'Повернутися на сьогодні' : undefined
+            }
+            onAction={
+              activeTab === 'now'
+                ? () => setSelectedDate(new Date())
+                : undefined
+            }
+            className='py-20'
+          />
         ) : (
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
             {displayedMovies.map(movie => (

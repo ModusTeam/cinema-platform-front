@@ -35,6 +35,19 @@ project's own `AGENTS.md` files and always take precedence for that project.
 - Match the existing repository style and established local patterns.
 - Keep changes minimal and directly related to the current request.
 
+## UI Empty States
+
+- Use the project's shared empty-state component when one exists. In this
+  repository, use `src/common/components/EmptyState.tsx` for empty list, grid,
+  table, and panel states.
+- Empty-state copy should be warm, specific to the surface, and free of
+  technical language. Include a headline, supporting text, and a primary action
+  only when there is a clear next step.
+- Empty-state visuals should be inline SVG icons or illustrations, sized around
+  48-64px and styled with the project's muted/faint text tokens.
+- Prefer existing design tokens for background, text, borders, and primary
+  actions so the state works across light and dark themes.
+
 ## Error Handling
 
 - Always raise errors explicitly. Never silently ignore them or hide them behind

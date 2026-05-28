@@ -2,6 +2,7 @@ import { ArrowLeft, CalendarX, CheckCircle, Ticket } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
+import EmptyState from '@/common/components/EmptyState'
 import { GridLoader } from '@/common/components/GridLoader'
 import { useLoyalty } from '@/features/account/hooks/useLoyalty'
 import { useAuth } from '@/features/auth/AuthContext'
@@ -143,20 +144,14 @@ const BookingPage = () => {
                   onSelect={selectSession}
                 />
               ) : (
-                <div className='flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-[var(--bg-card)]/30 p-12 text-center min-h-[300px]'>
-                  <div className='mb-6 rounded-full bg-white/5 p-6'>
-                    <CalendarX className='h-10 w-10 text-[var(--text-muted)]' />
-                  </div>
-                  <h3 className='text-xl font-bold text-white'>
-                    Актуальних сеансів немає
-                  </h3>
-                  <Link
-                    to='/sessions'
-                    className='mt-8 rounded-xl bg-[var(--color-primary)] px-8 py-3 text-sm font-bold text-white'
-                  >
-                    Афіша кінотеатру
-                  </Link>
-                </div>
+                <EmptyState
+                  icon={<CalendarX className='h-12 w-12' />}
+                  title='Актуальних сеансів немає'
+                  description='Для цього фільму поки не заплановано майбутніх показів. Перегляньте афішу, щоб знайти інший сеанс.'
+                  actionLabel='Афіша кінотеатру'
+                  onAction={() => navigate('/sessions')}
+                  className='min-h-[300px]'
+                />
               )}
             </div>
           )}

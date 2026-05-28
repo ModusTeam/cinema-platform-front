@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Film, ArrowRight } from 'lucide-react'
+import EmptyState from '../common/components/EmptyState'
 import { GridLoader } from '../common/components/GridLoader'
 import MovieCard from '../features/movies/components/MovieCard'
 import PromoSection from '../features/home/components/PromoSection'
@@ -55,21 +56,22 @@ const HomePage = () => {
         </div>
 
         {moviesToShow.length === 0 ? (
-          <div className='flex flex-col items-center justify-center py-32 text-[var(--text-muted)] bg-[var(--bg-card)] rounded-3xl border border-dashed border-white/10 animate-in fade-in zoom-in duration-500'>
-            <Film size={64} className='opacity-10 mb-6' />
-            <p className='text-lg font-medium'>
-              {filteredMovies.length > 0
-                ? 'Немає активних сеансів для обраної категорії'
-                : 'Фільмів поки що немає'}
-            </p>
-            <button
-              type='button'
-              onClick={() => setActiveFilter('all')}
-              className='mt-6 text-[var(--color-primary)] hover:underline font-bold'
-            >
-              Скинути фільтри
-            </button>
-          </div>
+          <EmptyState
+            icon={<Film className='h-14 w-14' />}
+            title={
+              filteredMovies.length > 0
+                ? 'Немає фільмів у цій добірці'
+                : 'Афіша скоро поповниться'
+            }
+            description={
+              filteredMovies.length > 0
+                ? 'Скиньте фільтр, щоб побачити всі активні фільми та доступні сеанси.'
+                : 'Коли адміністратори додадуть фільми до прокату, вони зʼявляться тут.'
+            }
+            actionLabel='Скинути фільтри'
+            onAction={() => setActiveFilter('all')}
+            className='py-32 animate-in fade-in zoom-in duration-500'
+          />
         ) : (
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 xl:gap-8'>
             {moviesToShow.map(movie => (

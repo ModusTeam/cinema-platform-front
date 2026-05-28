@@ -10,6 +10,7 @@ import {
   MonitorPlay,
   Pencil,
 } from 'lucide-react'
+import EmptyState from '../../common/components/EmptyState'
 import { GridLoader } from '../../common/components/GridLoader'
 import ConfirmModal from '../../common/components/Modals/ConfirmModal'
 import InputModal from '../../common/components/Modals/InputModal'
@@ -168,10 +169,13 @@ const HallsPage = () => {
           )}
 
           {!isLoading && halls.length === 0 && (
-            <div className='rounded-xl border border-dashed border-white/10 bg-[var(--bg-card)]/50 p-12 text-center text-[var(--text-muted)]'>
-              <Armchair className='mx-auto h-12 w-12 mb-4 opacity-50' />
-              Немає залів
-            </div>
+            <EmptyState
+              icon={<Armchair className='h-12 w-12' />}
+              title='Залів ще немає'
+              description='Створіть перший зал зі схемою місць, щоб можна було планувати сеанси.'
+              actionLabel='Створити зал'
+              onAction={handleCreateClick}
+            />
           )}
 
           <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>

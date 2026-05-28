@@ -1,7 +1,8 @@
 import { clsx } from 'clsx'
-import { Award, ChevronRight } from 'lucide-react'
+import { Award, ChevronRight, History, User } from 'lucide-react'
 import { useState } from 'react'
 
+import EmptyState from '@/common/components/EmptyState'
 import { GridLoader } from '@/common/components/GridLoader'
 import { useToast } from '@/common/components/Toast/ToastContext'
 import ModifyLoyaltyModal from '@/features/admin/components/ModifyLoyaltyModal'
@@ -45,6 +46,13 @@ const AdminLoyaltyPage = () => {
 						<div className='flex justify-center py-10'>
 							<GridLoader className='h-6 w-6 animate-spin text-[var(--color-primary)]' />
 						</div>
+					) : userList.length === 0 ? (
+						<EmptyState
+							icon={<User className='h-10 w-10' />}
+							title='Користувачів ще немає'
+							description='Після реєстрації гостей їхні акаунти зʼявляться в цьому списку.'
+							className='border-0 bg-transparent px-3 py-10'
+						/>
 					) : (
 						<div className='flex flex-col gap-1'>
 							{userList.map(user => (
@@ -85,10 +93,12 @@ const AdminLoyaltyPage = () => {
 			{/* Права панель: Деталі лояльності */}
 			<div className='flex h-full flex-1 flex-col rounded-2xl border border-white/5 bg-[var(--bg-card)]'>
 				{!selectedUser ? (
-					<div className='flex h-full flex-col items-center justify-center text-neutral-500'>
-						<Award size={48} className='mb-4 opacity-20' />
-						<p>Оберіть користувача зі списку зліва</p>
-					</div>
+					<EmptyState
+						icon={<Award className='h-12 w-12' />}
+						title='Оберіть користувача'
+						description='Баланс, рівень лояльності та історія операцій зʼявляться після вибору акаунту.'
+						className='h-full border-0 bg-transparent'
+					/>
 				) : (
 					<>
 						<div className='flex items-center justify-between border-b border-white/5 p-6'>
@@ -146,7 +156,12 @@ const AdminLoyaltyPage = () => {
 									))}
 								</div>
 							) : !history || history.length === 0 ? (
-								<p className='text-sm text-neutral-500'>Транзакції відсутні.</p>
+								<EmptyState
+									icon={<History className='h-12 w-12' />}
+									title='Транзакцій ще немає'
+									description='Нарахування, списання та ручні коригування балансу відображатимуться тут.'
+									className='border-0 bg-transparent py-12'
+								/>
 							) : (
 								<div className='flex flex-col'>
 									{history.map(tx => (

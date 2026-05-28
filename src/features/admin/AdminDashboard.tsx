@@ -7,6 +7,7 @@ import {
   TrendingDown,
   Users,
 } from 'lucide-react'
+import EmptyState from '../../common/components/EmptyState'
 import { GridLoader } from '../../common/components/GridLoader'
 import {
   AreaChart,
@@ -294,9 +295,12 @@ const AdminDashboard = () => {
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
-              <div className='w-full h-full flex items-center justify-center text-[var(--text-muted)] text-sm'>
-                Немає даних за цей період
-              </div>
+              <EmptyState
+                icon={<TrendingUp className='h-12 w-12' />}
+                title='Продажів за період немає'
+                description='Коли зʼявляться оплачені замовлення в обраному діапазоні, графік покаже динаміку доходу.'
+                className='h-full border-0 bg-transparent py-10'
+              />
             )}
           </div>
         </div>
@@ -345,9 +349,12 @@ const AdminDashboard = () => {
                 </div>
               ))
             ) : (
-              <div className='text-center text-[var(--text-muted)] text-sm py-10'>
-                Список порожній
-              </div>
+              <EmptyState
+                icon={<Film className='h-12 w-12' />}
+                title='Топ фільмів ще порожній'
+                description='Рейтинг сформується після перших продажів квитків за обраний період.'
+                className='border-0 bg-transparent px-3 py-10'
+              />
             )}
           </div>
         </div>

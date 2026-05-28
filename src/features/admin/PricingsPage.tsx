@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { usePricings } from './hooks/usePricings'
 import { Plus, Tag, Edit, Layers, CalendarRange } from 'lucide-react'
+import EmptyState from '../../common/components/EmptyState'
 import { GridLoader } from '../../common/components/GridLoader'
 import PricingModal from './components/PricingModal'
 import PricingRulesEditor from './components/PricingRulesEditor'
@@ -46,13 +47,14 @@ const PricingsPage = () => {
       ) : (
         <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
           {pricings.length === 0 && (
-            <div className='col-span-full flex flex-col items-center justify-center py-20 text-[var(--text-muted)] border border-dashed border-white/10 rounded-xl bg-[var(--bg-card)]/30'>
-              <Tag className='mb-4 opacity-50' size={48} />
-              <p>
-                Тарифів ще немає. Створіть перший тариф, щоб почати продаж
-                квитків.
-              </p>
-            </div>
+            <EmptyState
+              icon={<Tag className='h-12 w-12' />}
+              title='Тарифів ще немає'
+              description='Створіть перший тариф і налаштуйте правила цін, щоб почати продаж квитків.'
+              actionLabel='Новий тариф'
+              onAction={() => setIsCreateModalOpen(true)}
+              className='col-span-full py-20'
+            />
           )}
 
           {pricings.map(price => (

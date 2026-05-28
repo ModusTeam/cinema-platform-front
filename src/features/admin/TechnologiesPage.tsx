@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTechnologies } from './hooks/useTechnologies'
 import { Plus, Cpu, Trash2 } from 'lucide-react'
+import EmptyState from '../../common/components/EmptyState'
 import { GridLoader } from '../../common/components/GridLoader'
 import CreateTechnologyModal from './components/CreateTechnologyModal'
 
@@ -58,11 +59,15 @@ const TechnologiesPage = () => {
             <tbody className='divide-y divide-white/5'>
               {technologies.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={3}
-                    className='px-6 py-8 text-center text-[var(--text-muted)]'
-                  >
-                    Список порожній
+                  <td colSpan={3} className='px-6 py-8'>
+                    <EmptyState
+                      icon={<Cpu className='h-12 w-12' />}
+                      title='Технологій ще немає'
+                      description='Додайте формати проекції, звуку або залу, щоб привʼязувати їх до кінотеатральних залів.'
+                      actionLabel='Додати технологію'
+                      onAction={() => setIsModalOpen(true)}
+                      className='border-0 bg-transparent py-10'
+                    />
                   </td>
                 </tr>
               ) : (

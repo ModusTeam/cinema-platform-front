@@ -324,10 +324,30 @@ toasts or inline form errors.
 
 - Tailwind CSS v4 is wired through `@tailwindcss/vite`.
 - Prefer theme variables from `src/index.css`, such as `--bg-main`,
-  `--bg-card`, `--text-main`, `--text-muted`, and `--color-primary`.
+  `--bg-card`, `--text-main`, `--text-muted`, `--text-faint`, and
+  `--color-primary`.
 - Use `cn` from `src/lib/utils.ts` when merging conditional classes.
 - Lucide icons are already used in navigation and admin UI.
 - Motion animations use the `motion` package, including `motion/react`.
+
+### Empty States
+
+- Use `src/common/components/EmptyState.tsx` for empty list, grid, table, and
+  panel states instead of inline one-off markup.
+- Component API: `icon`, `title`, `description`, optional `actionLabel`,
+  optional `onAction`, and optional `className`.
+- Pass an inline SVG icon element, usually a Lucide icon already available in
+  the project, sized around `h-12 w-12`.
+- Keep copy warm and context-specific: a short headline, then one or two
+  sentences explaining what appears there and how to populate it.
+- Use the existing tokens for empty-state styling: `--bg-card`,
+  `--text-main`, `--text-muted`, `--text-faint`, `--color-primary`, and
+  `--color-on-primary`.
+- Empty states should be centered with generous vertical padding. In tables,
+  render `EmptyState` inside the `td` and use `className='border-0
+  bg-transparent ...'` so table structure remains valid.
+- Add a primary action only when there is a clear next step, such as resetting a
+  filter, browsing the schedule, or opening an admin create/import modal.
 
 ### Static Informational Pages
 
@@ -405,4 +425,4 @@ that should be verified.
 
 ---
 
-Last updated: 2026-05-27
+Last updated: 2026-05-28

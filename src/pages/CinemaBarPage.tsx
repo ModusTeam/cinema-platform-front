@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { AuroraText } from '../common/components/AuroraText'
+import EmptyState from '../common/components/EmptyState'
 
 const iconMap: Record<string, LucideIcon> = {
   Popcorn: Popcorn,
@@ -182,10 +183,17 @@ const CinemaBarPage = () => {
           })}
 
           {filteredMenu.length === 0 && (
-            <div className='text-center py-20 text-[var(--text-muted)]'>
-              <ShoppingBag size={48} className='mx-auto mb-4 opacity-20' />
-              <p>Нічого не знайдено за вашим запитом.</p>
-            </div>
+            <EmptyState
+              icon={<ShoppingBag className='h-12 w-12' />}
+              title='Смаколиків за запитом немає'
+              description='Спробуйте іншу назву або перегляньте всі категорії кінобару.'
+              actionLabel='Показати все меню'
+              onAction={() => {
+                setSearchTerm('')
+                setActiveCategory('all')
+              }}
+              className='py-20'
+            />
           )}
         </div>
 

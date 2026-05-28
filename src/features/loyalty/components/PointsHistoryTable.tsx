@@ -1,6 +1,7 @@
+import EmptyState from '@/common/components/EmptyState'
 import type { LoyaltyHistoryItem } from '@/features/loyalty/api/loyalty.types'
 import { clsx } from 'clsx'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, History } from 'lucide-react'
 
 const LOADING_ROWS = [
   'history-loading-1',
@@ -72,9 +73,12 @@ const PointsHistoryTable = ({
 
   if (items.length === 0) {
     return (
-      <div className='py-12 text-center text-sm text-neutral-500'>
-        Історія балів ще не доступна в основному API.
-      </div>
+      <EmptyState
+        icon={<History className='h-12 w-12' />}
+        title='Історія балів порожня'
+        description='Нарахування, списання та бонуси зʼявляться тут після перших операцій у програмі лояльності.'
+        className='py-12'
+      />
     )
   }
 

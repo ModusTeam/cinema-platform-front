@@ -8,6 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react'
+import EmptyState from '../../common/components/EmptyState'
 import { GridLoader } from '../../common/components/GridLoader'
 import { useAuth } from '../auth/AuthContext'
 import ChangeRoleModal from './components/ChangeRoleModal'
@@ -105,13 +106,27 @@ const UsersPage = () => {
               <tbody className='divide-y divide-white/5'>
                 {filteredUsers.length === 0 ? (
                   <tr>
-                    <td
-                      colSpan={3}
-                      className='px-6 py-12 text-center text-[var(--text-muted)]'
-                    >
-                      {users.length === 0
-                        ? 'Список користувачів порожній'
-                        : 'За вашим запитом нікого не знайдено на цій сторінці'}
+                    <td colSpan={3} className='px-6 py-8'>
+                      <EmptyState
+                        icon={<UserIcon className='h-12 w-12' />}
+                        title={
+                          users.length === 0
+                            ? 'Користувачів ще немає'
+                            : 'Користувачів за фільтром немає'
+                        }
+                        description={
+                          users.length === 0
+                            ? 'Нові акаунти зʼявляться тут після реєстрації гостей.'
+                            : 'Очистьте фільтр або перейдіть на іншу сторінку списку.'
+                        }
+                        actionLabel={
+                          searchQuery ? 'Очистити фільтр' : undefined
+                        }
+                        onAction={
+                          searchQuery ? () => setSearchQuery('') : undefined
+                        }
+                        className='border-0 bg-transparent py-10'
+                      />
                     </td>
                   </tr>
                 ) : (
