@@ -12,4 +12,13 @@ export interface UserProfileDto {
   lastName: string
   loyaltyPoints: number
   loyaltyTier: LoyaltyTier
+  dateOfBirth?: string | null
+}
+
+export interface SetMyDateOfBirthCommand {
+  dateOfBirth: string
+}
+
+export interface SetMyDateOfBirthResponse {
+  dateOfBirth: string
 }

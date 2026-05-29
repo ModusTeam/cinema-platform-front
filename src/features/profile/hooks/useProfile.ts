@@ -1,9 +1,10 @@
-import { useState } from 'react'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useMemo, useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/common/components/Toast/ToastContext'
 import { useAuth } from '@/features/auth/AuthContext'
 import { accountService } from '@/services/accountService'
 import { ordersService } from '@/services/ordersService'
+import type { User } from '@/types/auth'
 
 export type TabType = 'active-tickets' | 'history' | 'settings' | 'achievements'
 
@@ -15,11 +16,47 @@ export interface ProfileUpdateData {
   confirmNewPassword?: string
 }
 
+const getStatusCode = (error: unknown) => {
+  if (typeof error !== 'object' || error === null || !('response' in error)) {
+    return undefined
+  }
+
+  const response = (error as { response?: { status?: number } }).response
+  return response?.status
+}
+
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (error instanceof Error && error.message) {
+    return error.message
+  }
+
+  return fallback
+}
+
 export const useProfile = () => {
   const { user, logout, updateUser } = useAuth()
   const toast = useToast()
+  const queryClient = useQueryClient()
 
   const [activeTab, setActiveTab] = useState<TabType>('active-tickets')
+
+  const { data: profileData } = useQuery({
+    queryKey: ['account-profile', user?.id],
+    queryFn: accountService.getProfile,
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000,
+  })
+
+  const currentUser: User | null = useMemo(
+    () =>
+      user
+        ? {
+            ...user,
+            dateOfBirth: profileData?.dateOfBirth ?? user.dateOfBirth,
+          }
+        : null,
+    [profileData?.dateOfBirth, user],
+  )
 
   const { data: ticketsData, isLoading: isLoadingTickets } = useQuery({
     queryKey: ['my-orders'],
@@ -70,13 +107,40 @@ export const useProfile = () => {
     onSuccess: () => {
       toast.success('Дані успішно оновлено')
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       console.error(error)
       toast.error(
-        error.response?.data?.detail ||
-          error.message ||
-          'Помилка збереження даних',
+        getErrorMessage(error, 'Помилка збереження даних'),
       )
+    },
+  })
+
+  const setDateOfBirthMutation = useMutation({
+    mutationFn: accountService.setMyDateOfBirth,
+    onSuccess: data => {
+      updateUser({ dateOfBirth: data.dateOfBirth })
+      queryClient.invalidateQueries({ queryKey: ['account-profile'] })
+      toast.success('Дату народження збережено')
+    },
+    onError: error => {
+      const status = getStatusCode(error)
+
+      if (status === 409) {
+        toast.error('Дата народження вже встановлена і її не можна змінити.')
+        return
+      }
+
+      if (status === 404) {
+        toast.error('Не вдалося знайти користувача для оновлення профілю.')
+        return
+      }
+
+      if (status === 400) {
+        toast.error(getErrorMessage(error, 'Перевірте дату народження.'))
+        return
+      }
+
+      toast.error(getErrorMessage(error, 'Не вдалося зберегти дату народження'))
     },
   })
 
@@ -89,8 +153,17 @@ export const useProfile = () => {
     }
   }
 
+  const setDateOfBirth = async (dateOfBirth: string) => {
+    try {
+      await setDateOfBirthMutation.mutateAsync({ dateOfBirth })
+      return true
+    } catch {
+      return false
+    }
+  }
+
   return {
-    user,
+    user: currentUser,
     logout,
     updateUser,
     activeTab,
@@ -102,5 +175,7 @@ export const useProfile = () => {
 
     isSaving: updateProfileMutation.isPending,
     updateProfileData,
+    isSavingDateOfBirth: setDateOfBirthMutation.isPending,
+    setDateOfBirth,
   }
 }

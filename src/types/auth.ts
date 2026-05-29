@@ -4,6 +4,7 @@ export interface User {
   name: string
   surname: string
   role: string
+  dateOfBirth?: string | null
 }
 
 export interface AuthResponse {

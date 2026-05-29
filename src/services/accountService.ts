@@ -1,5 +1,10 @@
 import { api } from '@/lib/axios'
-import type { LoyaltyProfileDto, UserProfileDto } from '@/types/account'
+import type {
+	LoyaltyProfileDto,
+	SetMyDateOfBirthCommand,
+	SetMyDateOfBirthResponse,
+	UserProfileDto,
+} from '@/types/account'
 
 export interface UpdateProfileRequest {
 	firstName: string
@@ -29,5 +34,15 @@ export const accountService = {
 
 	changePassword: async (data: ChangePasswordRequest) => {
 		await api.post('/account/change-password', data)
+	},
+
+	setMyDateOfBirth: async (
+		data: SetMyDateOfBirthCommand,
+	): Promise<SetMyDateOfBirthResponse> => {
+		const response = await api.patch<SetMyDateOfBirthResponse>(
+			'/users/me/date-of-birth',
+			data,
+		)
+		return response.data
 	},
 }

@@ -5,8 +5,11 @@ import { clsx } from 'clsx'
 import {
   Award,
   BadgeCheck,
+  CalendarDays,
   CreditCard,
+  Gift,
   History,
+  Info,
   LayoutDashboard,
   Lock,
   LogOut,
@@ -80,6 +83,23 @@ const profileSchema = z
 
 type ProfileFormData = z.infer<typeof profileSchema>
 
+const dateOfBirthSchema = z.object({
+  dateOfBirth: z
+    .string()
+    .min(1, 'Оберіть дату народження')
+    .refine(value => !Number.isNaN(new Date(value).getTime()), {
+      message: 'Оберіть коректну дату',
+    })
+    .refine(value => new Date(value) <= new Date(), {
+      message: 'Дата народження не може бути в майбутньому',
+    })
+    .refine(value => new Date(value).getFullYear() >= 1900, {
+      message: 'Оберіть коректну дату народження',
+    }),
+})
+
+type DateOfBirthFormData = z.infer<typeof dateOfBirthSchema>
+
 interface TabConfig {
   id: TabType
   label: string
@@ -125,6 +145,17 @@ const getLoyaltyProgressPercent = (tier?: LoyaltyTier, points?: number) => {
   return clamp(progress, 0, 100)
 }
 
+const toDateInputValue = (value: string | null | undefined) => {
+  if (!value) return ''
+
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ''
+
+  return date.toISOString().slice(0, 10)
+}
+
+const getTodayInputValue = () => new Date().toISOString().slice(0, 10)
+
 const StatItem = ({
   label,
   value,
@@ -155,6 +186,8 @@ const ProfilePage = () => {
     isLoadingTickets,
     isSaving,
     updateProfileData,
+    isSavingDateOfBirth,
+    setDateOfBirth,
   } = useProfile()
 
   const loyaltyQuery = useLoyalty()
@@ -187,6 +220,20 @@ const ProfilePage = () => {
     },
   })
 
+  const {
+    register: registerDateOfBirth,
+    handleSubmit: handleDateOfBirthSubmit,
+    reset: resetDateOfBirth,
+    watch: watchDateOfBirth,
+    formState: { errors: dateOfBirthErrors, isValid: isDateOfBirthValid },
+  } = useForm<DateOfBirthFormData>({
+    resolver: zodResolver(dateOfBirthSchema),
+    mode: 'onChange',
+    defaultValues: {
+      dateOfBirth: '',
+    },
+  })
+
   useEffect(() => {
     if (user) {
       reset({
@@ -197,8 +244,12 @@ const ProfilePage = () => {
         newPassword: '',
         confirmNewPassword: '',
       })
+
+      resetDateOfBirth({
+        dateOfBirth: toDateInputValue(user.dateOfBirth),
+      })
     }
-  }, [user, reset])
+  }, [user, reset, resetDateOfBirth])
 
   const onSubmit = async (data: ProfileFormData) => {
     const success = await updateProfileData(data)
@@ -212,10 +263,19 @@ const ProfilePage = () => {
     }
   }
 
+  const onDateOfBirthSubmit = async (data: DateOfBirthFormData) => {
+    const success = await setDateOfBirth(data.dateOfBirth)
+    if (success) {
+      resetDateOfBirth({ dateOfBirth: data.dateOfBirth })
+    }
+  }
+
   if (!user) return null
 
   const initials = `${user.name[0]}${user.surname[0]}`.toUpperCase()
   const fullName = `${user.name} ${user.surname}`
+  const hasDateOfBirth = Boolean(user.dateOfBirth)
+  const dateOfBirthValue = watchDateOfBirth('dateOfBirth')
 
   return (
     <div className='relative min-h-screen overflow-hidden bg-[var(--bg-main)]'>
@@ -472,6 +532,86 @@ const ProfilePage = () => {
                           size={14}
                           className='absolute left-3 top-[38px] text-zinc-500'
                         />
+                      </div>
+                    </div>
+
+                    <div className='rounded-2xl border border-white/5 bg-white/[0.025] p-5'>
+                      <div className='mb-5 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between'>
+                        <div>
+                          <h3 className='flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[var(--color-primary)]'>
+                            <CalendarDays size={14} />
+                            Дата народження
+                          </h3>
+                          <p className='mt-2 text-sm leading-relaxed text-zinc-500'>
+                            Це необовʼязково зараз, але допоможе нам
+                            підготувати для вас персональні привілеї.
+                          </p>
+                        </div>
+                        {hasDateOfBirth && (
+                          <span className='inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold text-zinc-400'>
+                            <Lock size={12} />
+                            Set once
+                          </span>
+                        )}
+                      </div>
+
+                      <div className='grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end'>
+                        <div className='relative'>
+                          {!hasDateOfBirth && (
+                            <div
+                              aria-hidden='true'
+                              className='pointer-events-none absolute -left-2 top-[39px] hidden h-4 w-4 rotate-45 rounded-sm border-b border-l border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 md:block'
+                            />
+                          )}
+                          <Input
+                            label='Ваша дата'
+                            type='date'
+                            max={getTodayInputValue()}
+                            disabled={hasDateOfBirth || isSavingDateOfBirth}
+                            error={dateOfBirthErrors.dateOfBirth?.message}
+                            {...registerDateOfBirth('dateOfBirth')}
+                            className='bg-black/40'
+                          />
+                        </div>
+
+                        {!hasDateOfBirth && (
+                          <button
+                            type='button'
+                            onClick={handleDateOfBirthSubmit(
+                              onDateOfBirthSubmit,
+                            )}
+                            disabled={
+                              isSavingDateOfBirth ||
+                              !dateOfBirthValue ||
+                              !isDateOfBirthValid
+                            }
+                            className='flex h-12 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 text-sm font-bold text-white shadow-lg shadow-emerald-500/15 transition-all hover:bg-emerald-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60'
+                          >
+                            {isSavingDateOfBirth ? (
+                              <GridLoader className='h-4 w-4 animate-spin' />
+                            ) : (
+                              <Save className='h-4 w-4' />
+                            )}
+                            Зберегти дату
+                          </button>
+                        )}
+                      </div>
+
+                      <div className='mt-4 rounded-xl border border-white/5 bg-black/25 p-4'>
+                        <div className='flex gap-3'>
+                          <div className='mt-0.5 shrink-0 rounded-full bg-[var(--color-primary)]/10 p-2 text-[var(--color-primary)]'>
+                            {hasDateOfBirth ? (
+                              <Info size={16} />
+                            ) : (
+                              <Gift size={16} />
+                            )}
+                          </div>
+                          <p className='text-sm leading-relaxed text-zinc-400'>
+                            {hasDateOfBirth
+                              ? 'Дату народження можна вказати лише один раз.'
+                              : 'Вкажіть дату народження, щоб у майбутньому отримувати бонуси або знижки до дня народження.'}
+                          </p>
+                        </div>
                       </div>
                     </div>
 
