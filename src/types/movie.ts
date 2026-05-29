@@ -25,6 +25,7 @@ export interface Movie {
   videoUrl?: string | null
   cast: Actor[]
   status: MovieStatus
+  deletedAt?: string | null
 }
 
 export interface MovieDto {
@@ -40,6 +41,7 @@ export interface MovieDto {
   genres: string[]
   cast: Actor[]
   status: number
+  deletedAt?: string | null
 }
 
 export interface TmdbSearchResult {

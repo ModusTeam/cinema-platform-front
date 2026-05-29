@@ -32,6 +32,7 @@ const mapDtoToMovie = (dto: MovieDto & { TrailerUrl?: string }): Movie => ({
 	)
 		? (dto.status as unknown as MovieStatus)
 		: MovieStatus.Active,
+	deletedAt: dto.deletedAt,
 })
 
 export const moviesService = {
@@ -72,6 +73,23 @@ export const moviesService = {
 		}
 	},
 
+	getDeleted: async (
+		pageNumber: number,
+		pageSize: number,
+	): Promise<PaginatedResult<Movie>> => {
+		const { data } = await api.get<PaginatedResult<MovieDto>>(
+			'/movies/deleted',
+			{
+				params: { pageNumber, pageSize },
+			},
+		)
+
+		return {
+			...data,
+			items: data.items.map(mapDtoToMovie),
+		}
+	},
+
 	searchTmdb: async (query: string): Promise<TmdbSearchResult[]> => {
 		const { data } = await api.get<TmdbSearchResult[]>('/movies/tmdb-search', {
 			params: { query },
@@ -88,6 +106,10 @@ export const moviesService = {
 
 	delete: async (id: string): Promise<void> => {
 		await api.delete(`/movies/${id}`)
+	},
+
+	restore: async (id: string): Promise<void> => {
+		await api.post(`/movies/${id}/restore`)
 	},
 
 	update: async (id: string, movieData: Partial<Movie>): Promise<void> => {

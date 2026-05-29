@@ -16,10 +16,22 @@ interface PaginationState {
   hasNextPage: boolean
 }
 
-export const useAdminMovies = () => {
+const activePageSize = 10
+const deletedPageSize = 20
+
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (error instanceof Error && error.message) {
+    return error.message
+  }
+
+  return fallback
+}
+
+export const useAdminMovies = (shouldFetchDeleted: boolean) => {
   const queryClient = useQueryClient()
 
   const [page, setPage] = useState(1)
+  const [deletedPage, setDeletedPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
 
   const [debouncedSearch, setDebouncedSearch] = useState('')
@@ -34,7 +46,24 @@ export const useAdminMovies = () => {
 
   const { data, isLoading, isPlaceholderData } = useQuery({
     queryKey: ['admin-movies', page, debouncedSearch],
-    queryFn: () => moviesService.getPaginated(page, 10, debouncedSearch),
+    queryFn: () =>
+      moviesService.getPaginated(page, activePageSize, debouncedSearch),
+    placeholderData: keepPreviousData,
+    staleTime: 5 * 60 * 1000,
+  })
+
+  const {
+    data: deletedData,
+    isLoading: isDeletedLoading,
+    isPlaceholderData: isDeletedPlaceholderData,
+  } = useQuery({
+    queryKey: [
+      'movies',
+      'deleted',
+      { pageNumber: deletedPage, pageSize: deletedPageSize },
+    ],
+    queryFn: () => moviesService.getDeleted(deletedPage, deletedPageSize),
+    enabled: shouldFetchDeleted,
     placeholderData: keepPreviousData,
     staleTime: 5 * 60 * 1000,
   })
@@ -46,36 +75,71 @@ export const useAdminMovies = () => {
     },
   })
 
+  const restoreMutation = useMutation({
+    mutationFn: moviesService.restore,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-movies'] })
+      queryClient.invalidateQueries({ queryKey: ['movies', 'deleted'] })
+    },
+  })
+
   const deleteMovie = async (id: string) => {
     try {
       await deleteMutation.mutateAsync(id)
       return { success: true }
-    } catch (error: any) {
-      const msg =
-        error.response?.data?.errors?.Detail ||
-        error.response?.data?.detail ||
-        'Не вдалося видалити фільм'
-      return { success: false, error: msg }
+    } catch (error) {
+      return {
+        success: false,
+        error: getErrorMessage(error, 'Не вдалося видалити фільм'),
+      }
+    }
+  }
+
+  const restoreMovie = async (id: string) => {
+    try {
+      await restoreMutation.mutateAsync(id)
+      return { success: true }
+    } catch (error) {
+      return {
+        success: false,
+        error: getErrorMessage(error, 'Не вдалося відновити фільм'),
+      }
     }
   }
 
   const pagination: PaginationState = {
     pageNumber: data?.pageNumber || page,
-    pageSize: 10,
+    pageSize: activePageSize,
     totalPages: data?.totalPages || 0,
     totalCount: data?.totalCount || 0,
     hasPreviousPage: data?.hasPreviousPage || false,
     hasNextPage: data?.hasNextPage || false,
   }
 
+  const deletedPagination: PaginationState = {
+    pageNumber: deletedData?.pageNumber || deletedPage,
+    pageSize: deletedPageSize,
+    totalPages: deletedData?.totalPages || 0,
+    totalCount: deletedData?.totalCount || 0,
+    hasPreviousPage: deletedData?.hasPreviousPage || false,
+    hasNextPage: deletedData?.hasNextPage || false,
+  }
+
   return {
     movies: data?.items || [],
+    deletedMovies: deletedData?.items || [],
     isLoading: isLoading || (isPlaceholderData && !data),
+    isDeletedLoading:
+      isDeletedLoading || (isDeletedPlaceholderData && !deletedData),
+    isRestoring: restoreMutation.isPending,
     pagination,
+    deletedPagination,
     searchTerm,
     setSearchTerm,
     changePage: setPage,
+    changeDeletedPage: setDeletedPage,
     deleteMovie,
+    restoreMovie,
     refresh: () =>
       queryClient.invalidateQueries({ queryKey: ['admin-movies'] }),
   }
