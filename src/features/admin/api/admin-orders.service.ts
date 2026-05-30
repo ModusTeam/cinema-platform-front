@@ -1,5 +1,8 @@
-import { api } from '../lib/axios'
-import type { OrderStatus, TicketStatus } from '@/features/account/model/order.types'
+import { api } from '@/lib/axios'
+import type {
+  OrderStatus,
+  TicketStatus,
+} from '@/features/account/model/order.types'
 
 export interface AdminTicketDto {
   id: string

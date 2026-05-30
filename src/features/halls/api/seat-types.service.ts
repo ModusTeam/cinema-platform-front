@@ -1,4 +1,4 @@
-import { api } from '../lib/axios'
+import { api } from '@/lib/axios'
 import { type SeatType } from '@/features/halls/model/hall.types'
 
 let seatTypesCache: SeatType[] | null = null

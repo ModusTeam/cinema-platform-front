@@ -1,5 +1,8 @@
 import { api } from '@/lib/axios'
-import { adminPricingsService, type PricingLookup } from '@/features/admin/api/admin-pricings.service'
+import {
+  adminPricingsService,
+  type PricingLookup,
+} from '@/features/admin/api/admin-pricings.service'
 import type { PaginatedResult } from '@/shared/types/common.types'
 
 export interface SessionDto {

@@ -109,9 +109,7 @@ export const useProfile = () => {
     },
     onError: (error: unknown) => {
       console.error(error)
-      toast.error(
-        getErrorMessage(error, 'Помилка збереження даних'),
-      )
+      toast.error(getErrorMessage(error, 'Помилка збереження даних'))
     },
   })
 

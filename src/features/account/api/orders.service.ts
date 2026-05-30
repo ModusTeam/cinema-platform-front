@@ -1,4 +1,4 @@
-import { api } from '../lib/axios'
+import { api } from '@/lib/axios'
 import {
   type OrderItem,
   type MyOrdersVm,

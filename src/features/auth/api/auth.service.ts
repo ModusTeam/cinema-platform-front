@@ -1,4 +1,4 @@
-import { api } from '../lib/axios'
+import { api } from '@/lib/axios'
 import type { User, AuthResponse } from '@/features/auth/model/auth.types'
 import { jwtDecode } from 'jwt-decode'
 

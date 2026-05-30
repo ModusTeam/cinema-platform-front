@@ -1,4 +1,4 @@
-import { api } from '../lib/axios'
+import { api } from '@/lib/axios'
 
 export const adminTicketsService = {
   validate: async (id: string): Promise<string> => {
