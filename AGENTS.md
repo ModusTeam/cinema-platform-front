@@ -138,78 +138,32 @@ ESLint config is present, but the configured lint script uses Biome.
 
 ## Repository Layout
 
+The project enforces a strict Feature-Sliced Design (FSD) / Domain-Driven architecture. Do not use global folders for domain logic.
+
 ```text
 src/
-  app/
-    router.tsx
-
-  common/
-    components/
-      AuroraText.tsx
-      FlipWords.tsx
-      GridLoader.tsx
-      Input.tsx
-      ScrollToTop.tsx
-      Modals/
-      Toast/
-
-  constants/
-    loyalty.ts
-
-  data/
-    bar.ts
-    faq.ts
-
-  features/
-    account/
-    admin/
-    auth/
-    booking/
-    home/
-    loyalty/
-    movies/
-    profile/
-
-  layouts/
-    MainLayout.tsx
-    AdminLayout.tsx
-    components/
-
-  lib/
-    apiUrl.ts
-    axios.ts
-    utils.ts
-
-  pages/
-    *.tsx
-
-  services/
-    *Service.ts
-    signalrService.ts
-
-  types/
-    *.ts
+  app/                  # App initialization, global providers, router, global styles
+  shared/               # Reusable UI primitives, generic hooks, api clients (Axios)
+    ui/
+    lib/
+    types/              # ONLY generic/global types (e.g., PaginatedResult)
+  features/             # Isolated business domains
+    [domain_name]/      # e.g., movies, booking, loyalty, admin
+      api/              # Domain-specific API services and React Query hooks
+      model/            # Domain types, state management, stores
+      ui/               # Domain-specific components
+      pages/            # Feature-level page components
+  pages/                # Thin composition layer for routes combining multiple features
 
   App.tsx
-  index.css
   main.tsx
 ```
 
-Important entry points:
+Important architectural constraints:
 
-- `src/main.tsx`: creates the React root and wraps the app in
-  `QueryClientProvider`, `ToastProvider`, `AuthProvider`, and `RouterProvider`.
-- `src/app/router.tsx`: defines all public and admin routes with
-  `React.lazy`.
-- `src/layouts/MainLayout.tsx` and `src/layouts/AdminLayout.tsx`: layout
-  shells with `Suspense` fallbacks.
-- `src/features/auth/AdminRoute.tsx`: admin-only route guard.
-- `src/lib/axios.ts`: shared Axios instance, auth header, 429 retry, 401
-  refresh flow, and normalized error messages.
-- `src/services/authService.ts`: login/register/refresh and localStorage token
-  persistence.
-- `src/services/signalrService.ts`: ticket hub connection and seat lock events.
-- `src/index.css`: Tailwind import plus theme tokens and global styles.
+- No global services: Never place domain API calls in a global `src/services/` directory. They belong in `src/features/[domain]/api/`.
+- No global types: Never place domain-specific interfaces in a global `src/types/` directory. They belong in `src/features/[domain]/model/`.
+- No global pages: Move feature-specific pages into their respective `src/features/[domain]/pages/` where possible.
 
 ## Routing
 
@@ -283,12 +237,11 @@ Use `import type` for type-only imports.
 
 ### API Calls
 
-- Use the shared `api` instance from `src/lib/axios.ts`.
-- Do not create a second Axios client for the main API.
-- Service modules live in `src/services/*Service.ts` for most domains.
-- Loyalty feature API code also exists under `src/features/loyalty/api`.
-- Shared domain types live in `src/types/*` or feature-local `*.types.ts`
-  files where that pattern already exists.
+- Use the shared `api` instance from `src/shared/lib/axios.ts`.
+- **Strict Domain Isolation:** Service modules MUST live in their respective feature folders (`src/features/[domain]/api/xxx.service.ts`).
+- Shared domain types MUST live in `src/features/[domain]/model/xxx.types.ts`.
+- React Query hooks MUST live alongside their services in `src/features/[domain]/api/`.
+- Use stable query keys, typically prefixed by the domain name (e.g., `['movies', movieId]`).
 
 ### React Query
 
