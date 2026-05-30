@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 import { useToast } from '../../../common/components/Toast/ToastContext'
-import { adminPricingsService } from '../../../services/adminPricingsService'
-import { bookingService } from '../../../services/bookingService'
-import { moviesService } from '../../../services/moviesService'
-import { ticketHub } from '../../../services/signalrService'
-import type { Seat, Session } from '../../../types/hall'
+import { adminPricingsService } from '@/features/admin/api/admin-pricings.service'
+import { bookingService } from '@/features/booking/api/booking.service'
+import { moviesService } from '@/features/movies/api/movies.service'
+import { ticketHub } from '@/features/booking/api/signalr.service'
+import type { Seat, Session } from '@/features/halls/model/hall.types'
 import { useAuth } from '../../auth/AuthContext'
 
 interface CreateOrderPayload {

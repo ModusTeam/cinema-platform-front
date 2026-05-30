@@ -1,5 +1,5 @@
 import { api } from '../lib/axios'
-import type { Technology } from '../types/hall'
+import type { Technology } from '@/features/halls/model/hall.types'
 
 export const technologiesService = {
   getAll: async (): Promise<Technology[]> => {

@@ -12,7 +12,7 @@ import {
   X,
 } from 'lucide-react'
 
-import type { OrderItem } from '@/types/order'
+import type { OrderItem } from '@/features/account/model/order.types'
 
 interface TicketCardProps {
   order: OrderItem

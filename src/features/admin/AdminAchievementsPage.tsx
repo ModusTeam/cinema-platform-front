@@ -17,7 +17,7 @@ import {
 import type {
   AdminAchievementDto,
   AdminAchievementPayload,
-} from '@/services/adminAchievementsService'
+} from '@/features/admin/api/admin-achievements.service'
 
 const AdminAchievementsPage = () => {
   const toast = useToast()

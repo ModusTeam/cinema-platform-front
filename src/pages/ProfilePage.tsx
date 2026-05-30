@@ -33,7 +33,7 @@ import { useLoyalty } from '@/features/account/hooks/useLoyalty'
 import AchievementsTabPanel from '@/features/loyalty/achievements/AchievementsTabPanel'
 import TicketCard from '@/features/profile/components/TicketCard'
 import { type TabType, useProfile } from '@/features/profile/hooks/useProfile'
-import type { LoyaltyTier } from '@/types/account'
+import type { LoyaltyTier } from '@/features/account/model/account.types'
 
 const profileSchema = z
   .object({

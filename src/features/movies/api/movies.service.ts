@@ -5,7 +5,7 @@ import {
 	MovieStatus,
 	type PaginatedResult,
 	type TmdbSearchResult,
-} from '@/types/movie'
+} from '@/features/movies/model/movie.types'
 
 export interface MovieRecommendation {
 	id: string

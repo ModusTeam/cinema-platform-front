@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { X, Shield, ShieldAlert, Check } from 'lucide-react'
 import { GridLoader } from '../../../common/components/GridLoader'
-import type { UserDto } from '../../../services/adminUsersService'
+import type { UserDto } from '@/features/admin/api/admin-users.service'
 
 interface ChangeRoleModalProps {
   user: UserDto | null

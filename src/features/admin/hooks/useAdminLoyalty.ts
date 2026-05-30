@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { adminLoyaltyService } from '@/services/adminLoyaltyService'
+import { adminLoyaltyService } from '@/features/admin/api/admin-loyalty.service'
 
 export const useAdminLoyalty = (userId?: string | null) => {
 	const queryClient = useQueryClient()

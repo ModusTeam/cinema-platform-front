@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { moviesService } from '../services/moviesService'
+import { moviesService } from '@/features/movies/api/movies.service'
 import MovieDetails from '../features/movies/components/MovieDetails'
 import NotFoundPage from './NotFoundPage'
 import { GridLoader } from '../common/components/GridLoader'

@@ -1,5 +1,5 @@
 import { getApiBaseUrl } from '@/lib/apiUrl'
-import { authService } from '@/services/authService'
+import { authService } from '@/features/auth/api/auth.service'
 import axios, { type AxiosError } from 'axios'
 
 const BASE_URL = getApiBaseUrl()

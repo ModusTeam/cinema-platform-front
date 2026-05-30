@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { useAuth } from '@/features/auth/AuthContext'
 import { loyaltyService } from '@/features/loyalty/api/loyalty.service'
-import type { LoyaltyTier } from '@/types/account'
+import type { LoyaltyTier } from '@/features/account/model/account.types'
 
 export const useLoyalty = () => {
   const { user, isAuthenticated } = useAuth()

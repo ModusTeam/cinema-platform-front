@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { hallsService } from '../../../services/hallsService'
-import { bookingService } from '../../../services/bookingService'
-import type { Seat, Technology } from '../../../types/hall'
+import { hallsService } from '@/features/halls/api/halls.service'
+import { bookingService } from '@/features/booking/api/booking.service'
+import type { Seat, Technology } from '@/features/halls/model/hall.types'
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 

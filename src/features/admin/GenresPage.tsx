@@ -4,7 +4,7 @@ import { Plus, Tag, Edit, Trash2, Search } from 'lucide-react'
 import EmptyState from '../../common/components/EmptyState'
 import { GridLoader } from '../../common/components/GridLoader'
 import GenreModal from './components/GenreModal'
-import { type Genre } from '../../services/genresService'
+import { type Genre } from '@/features/admin/api/genres.service'
 
 const GenresPage = () => {
   const { genres, isLoading, createGenre, updateGenre, deleteGenre } =

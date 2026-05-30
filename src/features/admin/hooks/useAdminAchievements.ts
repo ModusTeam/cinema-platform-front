@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   type AdminAchievementPayload,
   adminAchievementsService,
-} from '@/services/adminAchievementsService'
+} from '@/features/admin/api/admin-achievements.service'
 
 export const useAdminAchievements = (includeInactive: boolean) => {
   const queryClient = useQueryClient()

@@ -4,7 +4,7 @@ import type {
 	SetMyDateOfBirthCommand,
 	SetMyDateOfBirthResponse,
 	UserProfileDto,
-} from '@/types/account'
+} from '@/features/account/model/account.types'
 
 export interface UpdateProfileRequest {
 	firstName: string

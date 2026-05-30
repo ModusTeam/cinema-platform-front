@@ -5,7 +5,7 @@ import * as z from 'zod'
 import { X } from 'lucide-react'
 import { GridLoader } from '../../../common/components/GridLoader'
 import Input from '../../../common/components/Input'
-import { type Genre } from '../../../services/genresService'
+import { type Genre } from '@/features/admin/api/genres.service'
 
 const genreSchema = z.object({
   externalId: z.union([z.string(), z.number(), z.null()]).transform(val => {

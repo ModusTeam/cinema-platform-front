@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { moviesService } from '../../../services/moviesService'
-import { bookingService } from '../../../services/bookingService'
-import { hallsService } from '../../../services/hallsService'
-import type { Movie } from '../../../types/movie'
-import type { Session } from '../../../types/hall'
+import { moviesService } from '@/features/movies/api/movies.service'
+import { bookingService } from '@/features/booking/api/booking.service'
+import { hallsService } from '@/features/halls/api/halls.service'
+import type { Movie } from '@/features/movies/model/movie.types'
+import type { Session } from '@/features/halls/model/hall.types'
 
 export interface MovieWithMeta extends Movie {
   sessions: Session[]

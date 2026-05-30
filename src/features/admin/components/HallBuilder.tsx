@@ -8,7 +8,7 @@ import {
 	Save,
 } from 'lucide-react'
 import { useMemo } from 'react'
-import type { Seat, Technology } from '../../../types/hall'
+import type { Seat, Technology } from '@/features/halls/model/hall.types'
 import { useHallBuilder } from '../hooks/useHallBuilder'
 
 const getSeatColor = (typeName: string = 'Standard') => {

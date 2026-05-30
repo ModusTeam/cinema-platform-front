@@ -4,7 +4,7 @@ import {
   type MyOrdersVm,
   type OrderDto,
   OrderStatus,
-} from '../types/order'
+} from '@/features/account/model/order.types'
 
 const mapOrderDtoToItem = (dto: OrderDto): OrderItem | null => {
   if (!dto.tickets || dto.tickets.length === 0) return null

@@ -5,8 +5,8 @@ import {
   useEffect,
   type ReactNode,
 } from 'react'
-import { type User } from '../../types/auth'
-import { authService } from '../../services/authService'
+import { type User } from '@/features/auth/model/auth.types'
+import { authService } from '@/features/auth/api/auth.service'
 
 interface LoginParams {
   email: string

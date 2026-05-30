@@ -4,8 +4,8 @@ import { GridLoader } from '../../../common/components/GridLoader'
 import {
   type PricingDetailsDto,
   type SetPricingRuleDto,
-} from '../../../services/adminPricingsService'
-import { seatTypesService } from '../../../services/seatTypesService'
+} from '@/features/admin/api/admin-pricings.service'
+import { seatTypesService } from '@/features/halls/api/seat-types.service'
 import { useQuery } from '@tanstack/react-query'
 
 interface PricingRulesEditorProps {

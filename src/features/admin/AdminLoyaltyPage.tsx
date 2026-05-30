@@ -8,7 +8,7 @@ import { useToast } from '@/common/components/Toast/ToastContext'
 import ModifyLoyaltyModal from '@/features/admin/components/ModifyLoyaltyModal'
 import { useAdminLoyalty } from '@/features/admin/hooks/useAdminLoyalty'
 import { useUsers } from '@/features/admin/hooks/useUsers'
-import type { UserDto } from '@/services/adminUsersService'
+import type { UserDto } from '@/features/admin/api/admin-users.service'
 
 const AdminLoyaltyPage = () => {
 	const toast = useToast()

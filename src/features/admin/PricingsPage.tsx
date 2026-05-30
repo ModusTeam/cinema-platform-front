@@ -5,7 +5,7 @@ import EmptyState from '../../common/components/EmptyState'
 import { GridLoader } from '../../common/components/GridLoader'
 import PricingModal from './components/PricingModal'
 import PricingRulesEditor from './components/PricingRulesEditor'
-import type { PricingDetailsDto } from '../../services/adminPricingsService'
+import type { PricingDetailsDto } from '@/features/admin/api/admin-pricings.service'
 
 const PricingsPage = () => {
   const { pricings, isLoading, createPricing, updateRules } = usePricings()

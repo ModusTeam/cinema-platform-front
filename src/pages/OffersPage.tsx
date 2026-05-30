@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Sparkles, Ticket, Play, Circle } from 'lucide-react'
 import EmptyState from '../common/components/EmptyState'
 import { useAuth } from '../features/auth/AuthContext'
-import { moviesService } from '../services/moviesService'
+import { moviesService } from '@/features/movies/api/movies.service'
 import { GridLoader } from '../common/components/GridLoader'
 
 const OffersPage = () => {

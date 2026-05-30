@@ -5,7 +5,7 @@ import { useToast } from '@/common/components/Toast/ToastContext'
 import EditMovieModal from '@/features/admin/components/EditMovieModal'
 import ImportMovieModal from '@/features/admin/components/ImportMovieModal'
 import { useAdminMovies } from '@/features/admin/hooks/useAdminMovies'
-import { type Movie, MovieStatus } from '@/types/movie'
+import { type Movie, MovieStatus } from '@/features/movies/model/movie.types'
 import {
   Archive,
   CheckCircle2,

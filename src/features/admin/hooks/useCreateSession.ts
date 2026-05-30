@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { adminSessionsService } from '../../../services/adminSessionsService'
-import { moviesService } from '../../../services/moviesService'
-import { hallsService } from '../../../services/hallsService'
+import { adminSessionsService } from '@/features/admin/api/admin-sessions.service'
+import { moviesService } from '@/features/movies/api/movies.service'
+import { hallsService } from '@/features/halls/api/halls.service'
 import { useToast } from '../../../common/components/Toast/ToastContext'
 
 export const useCreateSession = (

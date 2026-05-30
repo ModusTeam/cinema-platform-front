@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { technologiesService } from '../../../services/technologiesService'
-import { seatTypesService } from '../../../services/seatTypesService'
-import type { Seat, SeatType } from '../../../types/hall'
+import { technologiesService } from '@/features/halls/api/technologies.service'
+import { seatTypesService } from '@/features/halls/api/seat-types.service'
+import type { Seat, SeatType } from '@/features/halls/model/hall.types'
 
 export const useHallBuilder = (
   initialSeats: Seat[] = [],
