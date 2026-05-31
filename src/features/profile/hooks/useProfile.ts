@@ -2,9 +2,9 @@ import { useMemo, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/common/components/Toast/ToastContext'
 import { useAuth } from '@/features/auth/AuthContext'
-import { accountService } from '@/services/accountService'
-import { ordersService } from '@/services/ordersService'
-import type { User } from '@/types/auth'
+import { accountService } from '@/features/account/api/account.service'
+import { ordersService } from '@/features/account/api/orders.service'
+import type { User } from '@/features/auth/model/auth.types'
 
 export type TabType = 'active-tickets' | 'history' | 'settings' | 'achievements'
 
@@ -109,9 +109,7 @@ export const useProfile = () => {
     },
     onError: (error: unknown) => {
       console.error(error)
-      toast.error(
-        getErrorMessage(error, 'Помилка збереження даних'),
-      )
+      toast.error(getErrorMessage(error, 'Помилка збереження даних'))
     },
   })
 

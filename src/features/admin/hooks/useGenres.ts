@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { genresService } from '../../../services/genresService'
+import { genresService } from '@/features/admin/api/genres.service'
 
 export const useGenres = () => {
   const queryClient = useQueryClient()

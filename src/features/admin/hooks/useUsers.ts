@@ -5,7 +5,7 @@ import {
   useQueryClient,
   keepPreviousData,
 } from '@tanstack/react-query'
-import { adminUsersService } from '../../../services/adminUsersService'
+import { adminUsersService } from '@/features/admin/api/admin-users.service'
 
 interface PaginationState {
   pageNumber: number

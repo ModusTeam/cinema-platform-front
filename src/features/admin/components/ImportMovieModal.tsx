@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { X, Search, Download, Image as ImageIcon, SearchX } from 'lucide-react'
 import EmptyState from '../../../common/components/EmptyState'
 import { GridLoader } from '../../../common/components/GridLoader'
-import { moviesService } from '../../../services/moviesService'
-import type { TmdbSearchResult } from '../../../types/movie'
+import { moviesService } from '@/features/movies/api/movies.service'
+import type { TmdbSearchResult } from '@/features/movies/model/movie.types'
 
 interface ImportMovieModalProps {
   isOpen: boolean

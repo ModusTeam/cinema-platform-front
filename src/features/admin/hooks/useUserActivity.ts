@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { adminUsersService } from '../../../services/adminUsersService'
-import { adminOrdersService } from '../../../services/adminOrdersService'
-import { adminTicketsService } from '../../../services/adminTicketsService'
+import { adminUsersService } from '@/features/admin/api/admin-users.service'
+import { adminOrdersService } from '@/features/admin/api/admin-orders.service'
+import { adminTicketsService } from '@/features/admin/api/admin-tickets.service'
 import { useToast } from '../../../common/components/Toast/ToastContext'
 
 export const useUserActivity = () => {

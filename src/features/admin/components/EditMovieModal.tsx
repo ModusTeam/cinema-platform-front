@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { GridLoader } from '../../../common/components/GridLoader'
-import { moviesService } from '../../../services/moviesService'
-import { type Movie, MovieStatus } from '../../../types/movie'
+import { moviesService } from '@/features/movies/api/movies.service'
+import { type Movie, MovieStatus } from '@/features/movies/model/movie.types'
 import Input from '../../../common/components/Input'
 import { useToast } from '../../../common/components/Toast/ToastContext'
 

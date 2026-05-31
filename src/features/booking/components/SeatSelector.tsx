@@ -1,4 +1,4 @@
-import type { Hall, Seat } from '../../../types/hall'
+import type { Hall, Seat } from '@/features/halls/model/hall.types'
 import { Armchair } from 'lucide-react'
 import { GridLoader } from '../../../common/components/GridLoader'
 import { useMemo } from 'react'

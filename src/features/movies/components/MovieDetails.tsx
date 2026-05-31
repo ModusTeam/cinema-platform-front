@@ -8,7 +8,7 @@ import {
   Film,
 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
-import { type Movie } from '../../../types/movie'
+import { type Movie } from '@/features/movies/model/movie.types'
 import { useAuth } from '../../../features/auth/AuthContext'
 
 interface MovieDetailsProps {

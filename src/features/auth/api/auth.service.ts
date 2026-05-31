@@ -1,5 +1,5 @@
-import { api } from '../lib/axios'
-import type { User, AuthResponse } from '../types/auth'
+import { api } from '@/lib/axios'
+import type { User, AuthResponse } from '@/features/auth/model/auth.types'
 import { jwtDecode } from 'jwt-decode'
 
 const ACCESS_TOKEN_KEY = 'cinema_access_token'

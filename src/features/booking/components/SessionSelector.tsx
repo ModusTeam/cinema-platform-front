@@ -1,4 +1,4 @@
-import { type Session } from '../../../types/hall'
+import { type Session } from '@/features/halls/model/hall.types'
 import { Clock } from 'lucide-react'
 
 interface SessionSelectorProps {

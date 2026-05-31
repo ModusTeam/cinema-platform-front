@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { technologiesService } from '../../../services/technologiesService'
+import { technologiesService } from '@/features/halls/api/technologies.service'
 
 export const useTechnologies = () => {
   const queryClient = useQueryClient()

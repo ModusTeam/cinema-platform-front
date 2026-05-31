@@ -15,7 +15,7 @@ import {
 import type {
   AdminAchievementDto,
   AdminAchievementPayload,
-} from '@/services/adminAchievementsService'
+} from '@/features/admin/api/admin-achievements.service'
 
 const achievementSchema = z
   .object({
@@ -134,7 +134,11 @@ const parseCriteriaDefaults = (
   criteriaJson?: string,
 ): Pick<
   AchievementFormData,
-  'criteriaMode' | 'criteriaField' | 'criteriaOperator' | 'criteriaTarget' | 'criteriaJson'
+  | 'criteriaMode'
+  | 'criteriaField'
+  | 'criteriaOperator'
+  | 'criteriaTarget'
+  | 'criteriaJson'
 > => {
   if (!criteriaJson?.trim()) {
     return {
@@ -457,9 +461,7 @@ const AchievementFormModal = ({
                     reset(
                       {
                         ...watch(),
-                        criteriaMode: event.target.checked
-                          ? 'json'
-                          : 'builder',
+                        criteriaMode: event.target.checked ? 'json' : 'builder',
                       },
                       { keepDirty: true, keepTouched: true },
                     )

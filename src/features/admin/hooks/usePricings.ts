@@ -7,7 +7,7 @@ import {
 import {
   adminPricingsService,
   type SetPricingRuleDto,
-} from '../../../services/adminPricingsService'
+} from '@/features/admin/api/admin-pricings.service'
 
 export const usePricings = () => {
   const queryClient = useQueryClient()

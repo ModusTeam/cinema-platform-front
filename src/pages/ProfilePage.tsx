@@ -33,7 +33,7 @@ import { useLoyalty } from '@/features/account/hooks/useLoyalty'
 import AchievementsTabPanel from '@/features/loyalty/achievements/AchievementsTabPanel'
 import TicketCard from '@/features/profile/components/TicketCard'
 import { type TabType, useProfile } from '@/features/profile/hooks/useProfile'
-import type { LoyaltyTier } from '@/types/account'
+import type { LoyaltyTier } from '@/features/account/model/account.types'
 
 const profileSchema = z
   .object({
@@ -543,8 +543,8 @@ const ProfilePage = () => {
                             Дата народження
                           </h3>
                           <p className='mt-2 text-sm leading-relaxed text-zinc-500'>
-                            Це необовʼязково зараз, але допоможе нам
-                            підготувати для вас персональні привілеї.
+                            Це необовʼязково зараз, але допоможе нам підготувати
+                            для вас персональні привілеї.
                           </p>
                         </div>
                         {hasDateOfBirth && (

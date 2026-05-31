@@ -12,7 +12,7 @@ import EmptyState from '../../common/components/EmptyState'
 import { GridLoader } from '../../common/components/GridLoader'
 import { useAuth } from '../auth/AuthContext'
 import ChangeRoleModal from './components/ChangeRoleModal'
-import { type UserDto } from '../../services/adminUsersService'
+import { type UserDto } from '@/features/admin/api/admin-users.service'
 
 const UsersPage = () => {
   const { user: currentUser } = useAuth()

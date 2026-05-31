@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
-import { authService } from '../../../services/authService'
+import { authService } from '@/features/auth/api/auth.service'
 import { useToast } from '../../../common/components/Toast/ToastContext'
 
 const registerSchema = z

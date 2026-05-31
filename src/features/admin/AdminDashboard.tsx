@@ -21,7 +21,7 @@ import {
 import {
   adminStatsService,
   type DashboardStatsDto,
-} from '../../services/adminStatsService'
+} from '@/features/admin/api/admin-stats.service'
 
 interface StatCardProps {
   title: string

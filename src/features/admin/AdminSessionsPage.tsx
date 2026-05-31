@@ -12,7 +12,7 @@ import {
 import EmptyState from '../../common/components/EmptyState'
 import { GridLoader } from '../../common/components/GridLoader'
 import CreateSessionModal from './components/CreateSessionModal'
-import { type SessionDto } from '../../services/adminSessionsService'
+import { type SessionDto } from '@/features/admin/api/admin-sessions.service'
 import ConfirmModal from '../../common/components/Modals/ConfirmModal'
 import InputModal from '../../common/components/Modals/InputModal'
 import { useToast } from '../../common/components/Toast/ToastContext'

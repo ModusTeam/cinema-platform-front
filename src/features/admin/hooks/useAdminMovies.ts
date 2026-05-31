@@ -5,7 +5,7 @@ import {
   useQueryClient,
   keepPreviousData,
 } from '@tanstack/react-query'
-import { moviesService } from '../../../services/moviesService'
+import { moviesService } from '@/features/movies/api/movies.service'
 
 interface PaginationState {
   pageNumber: number

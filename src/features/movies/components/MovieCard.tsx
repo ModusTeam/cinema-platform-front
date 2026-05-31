@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Star, CalendarRange } from 'lucide-react'
-import { type Movie, MovieStatus } from '../../../types/movie'
-import { type Session } from '../../../types/hall'
+import { type Movie, MovieStatus } from '@/features/movies/model/movie.types'
+import { type Session } from '@/features/halls/model/hall.types'
 
 interface MovieCardProps {
   movie: Movie

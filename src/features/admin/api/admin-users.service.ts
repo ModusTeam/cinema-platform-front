@@ -1,5 +1,5 @@
-import { api } from '../lib/axios'
-import type { PaginatedResult } from '../types/common'
+import { api } from '@/lib/axios'
+import type { PaginatedResult } from '@/shared/types/common.types'
 
 export interface UserDto {
   id: string

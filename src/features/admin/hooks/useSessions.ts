@@ -4,7 +4,7 @@ import {
   useQueryClient,
   keepPreviousData,
 } from '@tanstack/react-query'
-import { adminSessionsService } from '../../../services/adminSessionsService'
+import { adminSessionsService } from '@/features/admin/api/admin-sessions.service'
 
 export const useSessions = () => {
   const queryClient = useQueryClient()

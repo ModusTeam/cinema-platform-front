@@ -7,7 +7,7 @@ import MovieCard from '../features/movies/components/MovieCard'
 import PromoSection from '../features/home/components/PromoSection'
 import HeroSection from '../features/movies/components/HeroSection'
 import { useHomeMovies } from '../features/home/hooks/useHomeMovies'
-import { MovieStatus } from '../types/movie'
+import { MovieStatus } from '@/features/movies/model/movie.types'
 
 const HomePage = () => {
   const { filteredMovies, isLoading, activeFilter, setActiveFilter, filters } =
