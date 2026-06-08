@@ -34,15 +34,16 @@ const BookingPage = () => {
   } = useBooking(id)
 
   const [useLoyaltyPoints, setUseLoyaltyPoints] = useState(false)
+  const [applyGoldUpgrade, setApplyGoldUpgrade] = useState(false)
   const loyaltyQuery = useLoyalty()
   const loyaltyPoints = loyaltyQuery.data?.points ?? 0
+  const isGoldTier = loyaltyQuery.data?.tier === 'Gold'
   const maxDiscount = 0
   const pointsLimit = loyaltyPoints
   const discountedTotal = totalPrice
   const isLoyaltyDisabled = loyaltyQuery.isError || loyaltyPoints <= 0
   const loyaltyNote = isLoyaltyDisabled ? 'Недостатньо балів' : undefined
-  const isGoldUpgradeAvailable = false
-  const applyGoldUpgrade = false
+  const isGoldUpgradeAvailable = isGoldTier
   const loyaltyError = loyaltyQuery.error as Error | null
 
   useEffect(() => {
@@ -57,6 +58,15 @@ const BookingPage = () => {
       behavior: step === 1 ? 'auto' : 'smooth',
     })
   }, [step])
+
+  useEffect(() => {
+    if (isGoldTier) {
+      setUseLoyaltyPoints(false)
+      return
+    }
+
+    setApplyGoldUpgrade(false)
+  }, [isGoldTier])
 
   if (isAuthLoading || (isLoading && !movie)) {
     return (
@@ -102,7 +112,10 @@ const BookingPage = () => {
   const genresList = Array.isArray(movie?.genres) ? movie.genres : []
 
   const handleSubmitOrder = async () => {
-    await submitOrder(useLoyaltyPoints, applyGoldUpgrade)
+    await submitOrder(
+      isGoldTier ? false : useLoyaltyPoints,
+      isGoldTier ? applyGoldUpgrade : false,
+    )
   }
 
   return (
@@ -273,6 +286,7 @@ const BookingPage = () => {
                     onToggle={setUseLoyaltyPoints}
                     isGoldUpgradeAvailable={isGoldUpgradeAvailable}
                     isGoldUpgradeChecked={applyGoldUpgrade}
+                    onGoldUpgradeToggle={setApplyGoldUpgrade}
                   />
                 </div>
               )}

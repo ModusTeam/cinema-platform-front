@@ -19,10 +19,22 @@ import type {
   AdminAchievementPayload,
 } from '@/features/admin/api/admin-achievements.service'
 
+type SecretFilter = 'all' | 'secret' | 'regular'
+
+const SECRET_FILTER_OPTIONS: Array<{
+  value: SecretFilter
+  label: string
+}> = [
+  { value: 'all', label: 'Усі' },
+  { value: 'secret', label: 'Тільки Secret' },
+  { value: 'regular', label: 'Без Secret' },
+]
+
 const AdminAchievementsPage = () => {
   const toast = useToast()
   const [includeInactive, setIncludeInactive] = useState(false)
   const [search, setSearch] = useState('')
+  const [secretFilter, setSecretFilter] = useState<SecretFilter>('all')
   const [editingAchievement, setEditingAchievement] =
     useState<AdminAchievementDto | null>(null)
   const [isFormOpen, setIsFormOpen] = useState(false)
@@ -44,15 +56,23 @@ const AdminAchievementsPage = () => {
 
   const filteredAchievements = useMemo(() => {
     const query = search.trim().toLowerCase()
-    if (!query) return achievements
 
     return achievements.filter(item => {
-      return (
+      const matchesSecretFilter =
+        secretFilter === 'all' ||
+        (secretFilter === 'secret' && item.isSecret) ||
+        (secretFilter === 'regular' && !item.isSecret)
+      const matchesSearch =
+        !query ||
         item.code.toLowerCase().includes(query) ||
         item.name.toLowerCase().includes(query)
-      )
+
+      return matchesSecretFilter && matchesSearch
     })
-  }, [achievements, search])
+  }, [achievements, search, secretFilter])
+
+  const hasActiveFilters =
+    Boolean(search.trim()) || includeInactive || secretFilter !== 'all'
 
   const handleCreate = () => {
     setEditingAchievement(null)
@@ -113,7 +133,7 @@ const AdminAchievementsPage = () => {
         </button>
       </div>
 
-      <div className='flex flex-col gap-3 rounded-2xl border border-white/5 bg-[var(--bg-card)] p-4 md:flex-row md:items-center md:justify-between'>
+      <div className='flex flex-col gap-3 rounded-2xl border border-white/5 bg-[var(--bg-card)] p-4 xl:flex-row xl:items-center xl:justify-between'>
         <label className='relative block w-full md:max-w-sm'>
           <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500' />
           <input
@@ -124,15 +144,35 @@ const AdminAchievementsPage = () => {
           />
         </label>
 
-        <label className='flex items-center gap-3 text-sm text-neutral-300'>
-          <input
-            type='checkbox'
-            checked={includeInactive}
-            onChange={event => setIncludeInactive(event.target.checked)}
-            className='h-4 w-4 accent-[var(--color-primary)]'
-          />
-          Показувати неактивні
-        </label>
+        <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
+          <div className='flex rounded-xl border border-white/10 bg-black/20 p-1'>
+            {SECRET_FILTER_OPTIONS.map(option => (
+              <button
+                key={option.value}
+                type='button'
+                onClick={() => setSecretFilter(option.value)}
+                className={clsx(
+                  'rounded-lg px-3 py-2 text-xs font-semibold transition-colors',
+                  secretFilter === option.value
+                    ? 'bg-[var(--color-primary)] text-white'
+                    : 'text-neutral-400 hover:bg-white/5 hover:text-white',
+                )}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+
+          <label className='flex items-center gap-3 text-sm text-neutral-300'>
+            <input
+              type='checkbox'
+              checked={includeInactive}
+              onChange={event => setIncludeInactive(event.target.checked)}
+              className='h-4 w-4 accent-[var(--color-primary)]'
+            />
+            Показувати неактивні
+          </label>
+        </div>
       </div>
 
       <div className='overflow-hidden rounded-2xl border border-white/5 bg-[var(--bg-card)]'>
@@ -166,23 +206,24 @@ const AdminAchievementsPage = () => {
           <EmptyState
             icon={<Trophy className='h-12 w-12' />}
             title={
-              search || includeInactive
+              hasActiveFilters
                 ? 'Досягнень за фільтрами немає'
                 : 'Досягнень ще немає'
             }
             description={
-              search || includeInactive
-                ? 'Змініть пошук або фільтр активності, щоб знайти потрібне правило.'
+              hasActiveFilters
+                ? 'Змініть пошук, секретність або фільтр активності, щоб знайти потрібне правило.'
                 : 'Створіть перше досягнення, щоб винагороджувати гостей за активність.'
             }
             actionLabel={
-              search || includeInactive ? 'Скинути фільтри' : 'Нове досягнення'
+              hasActiveFilters ? 'Скинути фільтри' : 'Нове досягнення'
             }
             onAction={
-              search || includeInactive
+              hasActiveFilters
                 ? () => {
                     setSearch('')
                     setIncludeInactive(false)
+                    setSecretFilter('all')
                   }
                 : handleCreate
             }
@@ -220,13 +261,23 @@ const AdminAchievementsPage = () => {
                           <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 text-[var(--color-primary)]'>
                             <Icon size={20} />
                           </div>
-                          <div>
-                            <div className='font-semibold text-white'>
+                          <div className='min-w-0'>
+                            <div className='flex flex-wrap items-center gap-2 font-semibold text-white'>
                               {achievement.name}
+                              {achievement.isSecret && (
+                                <span className='rounded-full bg-violet-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-violet-200'>
+                                  Secret
+                                </span>
+                              )}
                             </div>
                             <div className='mt-1 font-mono text-xs text-neutral-500'>
                               {achievement.code}
                             </div>
+                            {achievement.isSecret && achievement.secretHint && (
+                              <div className='mt-2 max-w-md text-xs leading-5 text-neutral-400'>
+                                Підказка: {achievement.secretHint}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </td>

@@ -25,7 +25,7 @@ export const ACHIEVEMENT_CATEGORY_OPTIONS = [
   { value: 4, key: 'time', label: 'Час' },
   { value: 5, key: 'special', label: 'Спеціальні' },
   { value: 6, key: 'streak', label: 'Серія' },
-  { value: 7, key: 'secret', label: 'Секретні' },
+  { value: 7, key: 'secret', label: 'Secret' },
 ] as const
 
 export const ACHIEVEMENT_RARITY_OPTIONS = [

@@ -35,6 +35,17 @@ const LoyaltyCheckoutCard = ({
   goldUpgradeLabel,
   onGoldUpgradeToggle,
 }: LoyaltyCheckoutCardProps) => {
+  const isGoldUpgradeMode = Boolean(isGoldUpgradeAvailable)
+  const isToggleDisabled = isDisabled || (isGoldUpgradeMode && !onGoldUpgradeToggle)
+  const title = isGoldUpgradeMode
+    ? 'Оновити місця до VIP'
+    : 'Використати бали лояльності'
+  const subtitle = isGoldUpgradeMode
+    ? 'Доступно для рівня Gold — використайте бали для апгрейду місць'
+    : isLoading
+      ? 'Перевіряємо баланс'
+      : `Доступно ${pointsBalance} балів`
+
   return (
     <div className='rounded-2xl border border-white/10 bg-[var(--bg-main)]/40 p-4'>
       <div className='flex items-start justify-between gap-3'>
@@ -43,14 +54,8 @@ const LoyaltyCheckoutCard = ({
             <Coins size={18} />
           </div>
           <div>
-            <div className='text-sm font-semibold text-white'>
-              Використати бали лояльності
-            </div>
-            <p className='text-xs text-[var(--text-muted)]'>
-              {isLoading
-                ? 'Перевіряємо баланс'
-                : `Доступно ${pointsBalance} балів`}
-            </p>
+            <div className='text-sm font-semibold text-white'>{title}</div>
+            <p className='text-xs text-[var(--text-muted)]'>{subtitle}</p>
           </div>
         </div>
 
@@ -58,10 +63,20 @@ const LoyaltyCheckoutCard = ({
           <input
             type='checkbox'
             className='h-4 w-4 accent-[var(--color-primary)]'
-            checked={isChecked}
-            onChange={event => onToggle(event.target.checked)}
-            disabled={isDisabled}
-            aria-label='Use loyalty points'
+            checked={
+              isGoldUpgradeMode ? isGoldUpgradeChecked : isChecked
+            }
+            onChange={event =>
+              isGoldUpgradeMode
+                ? onGoldUpgradeToggle?.(event.target.checked)
+                : onToggle(event.target.checked)
+            }
+            disabled={isToggleDisabled}
+            aria-label={
+              isGoldUpgradeMode
+                ? 'Upgrade selected seats to VIP'
+                : 'Use loyalty points'
+            }
           />
         </label>
       </div>
@@ -71,6 +86,23 @@ const LoyaltyCheckoutCard = ({
           'Завантаження лояльності...'
         ) : errorMessage ? (
           errorMessage
+        ) : isGoldUpgradeMode ? (
+          <>
+            <p>
+              Апгрейд буде застосовано до всіх обраних місць
+            </p>
+            {goldUpgradeLabel && (
+              <p className='mt-2 text-[11px] text-amber-100'>
+                {goldUpgradeLabel}
+              </p>
+            )}
+            {disabledNote && (
+              <div className='mt-3 flex items-start gap-2 text-[10px] text-amber-200'>
+                <AlertTriangle size={14} className='mt-0.5' />
+                <span>{disabledNote}</span>
+              </div>
+            )}
+          </>
         ) : (
           <>
             <div className='flex justify-between'>
@@ -90,20 +122,6 @@ const LoyaltyCheckoutCard = ({
               </span>
             </div>
             {helperText && <p className='mt-3 text-[11px]'>{helperText}</p>}
-            {isGoldUpgradeAvailable && onGoldUpgradeToggle && (
-              <label className='mt-3 flex items-start gap-3 rounded-xl border border-amber-400/10 bg-amber-400/5 p-3 text-[11px] text-amber-100'>
-                <input
-                  type='checkbox'
-                  className='mt-0.5 h-4 w-4 accent-amber-400'
-                  checked={isGoldUpgradeChecked}
-                  onChange={event => onGoldUpgradeToggle(event.target.checked)}
-                />
-                <span>
-                  {goldUpgradeLabel ||
-                    'Застосувати доступний gold upgrade під час оформлення'}
-                </span>
-              </label>
-            )}
             {disabledNote && (
               <div className='mt-3 flex items-start gap-2 text-[10px] text-amber-200'>
                 <AlertTriangle size={14} className='mt-0.5' />
