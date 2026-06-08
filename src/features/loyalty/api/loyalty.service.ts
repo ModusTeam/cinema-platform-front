@@ -2,8 +2,8 @@ import { loyaltyAdapter } from './loyalty.adapter'
 import type {
   LoyaltyBenefit,
   LoyaltyCheckoutPreview,
-  LoyaltyHistoryResponse,
   LoyaltyProfile,
+  LoyaltyTransactionHistory,
 } from './loyalty.types'
 import type { AchievementsPreviewData } from '@/features/loyalty/achievements/achievements.types'
 
@@ -11,11 +11,11 @@ export const loyaltyService = {
   getLoyaltyProfile: async (): Promise<LoyaltyProfile> => {
     return loyaltyAdapter.getLoyaltyProfile()
   },
-  getLoyaltyHistory: async (
-    page: number,
-    pageSize: number,
-  ): Promise<LoyaltyHistoryResponse> => {
-    return loyaltyAdapter.getLoyaltyHistory(page, pageSize)
+  getLoyaltyTransactionHistory: async (
+    limit: number,
+    skip: number,
+  ): Promise<LoyaltyTransactionHistory> => {
+    return loyaltyAdapter.getLoyaltyTransactionHistory(limit, skip)
   },
   getLoyaltyBenefits: async (): Promise<LoyaltyBenefit[]> => {
     return loyaltyAdapter.getLoyaltyBenefits()

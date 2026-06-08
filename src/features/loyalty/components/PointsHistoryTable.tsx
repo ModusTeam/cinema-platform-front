@@ -1,6 +1,11 @@
 import EmptyState from '@/common/components/EmptyState'
-import type { LoyaltyHistoryItem } from '@/features/loyalty/api/loyalty.types'
-import { clsx } from 'clsx'
+import {
+  formatTransactionInfo,
+  formatSignedPoints,
+  getTransactionPointsTone,
+} from '@/features/loyalty/api/loyaltyTransactionFormatters'
+import type { LoyaltyTransaction } from '@/features/loyalty/api/loyalty.types'
+import { cn } from '@/lib/utils'
 import { AlertCircle, History } from 'lucide-react'
 
 const LOADING_ROWS = [
@@ -11,33 +16,24 @@ const LOADING_ROWS = [
 ]
 
 interface PointsHistoryTableProps {
-  items: LoyaltyHistoryItem[]
+  transactions: LoyaltyTransaction[]
   isLoading: boolean
-  isFetching: boolean
+  isLoadingMore: boolean
   hasMore: boolean
   error?: Error | null
   onLoadMore: () => void
 }
 
-const getTypeConfig = (type: LoyaltyHistoryItem['type']) => {
-  switch (type) {
-    case 'earn':
-      return { label: 'Нараховано', color: 'text-emerald-400/90', sign: '+' }
-    case 'redeem':
-      return { label: 'Списано', color: 'text-neutral-300', sign: '-' }
-    case 'bonus':
-      return { label: 'Бонус', color: 'text-amber-400/90', sign: '+' }
-    case 'expire':
-      return { label: 'Закінчення', color: 'text-rose-400/80', sign: '-' }
-    default:
-      return { label: 'Інше', color: 'text-neutral-500', sign: '' }
-  }
+const pointsToneClassName = {
+  positive: 'text-emerald-400/90',
+  negative: 'text-rose-400/85',
+  neutral: 'text-neutral-300',
 }
 
 const PointsHistoryTable = ({
-  items,
+  transactions,
   isLoading,
-  isFetching,
+  isLoadingMore,
   hasMore,
   error,
   onLoadMore,
@@ -71,7 +67,7 @@ const PointsHistoryTable = ({
     )
   }
 
-  if (items.length === 0) {
+  if (transactions.length === 0) {
     return (
       <EmptyState
         icon={<History className='h-12 w-12' />}
@@ -85,36 +81,39 @@ const PointsHistoryTable = ({
   return (
     <div className='flex flex-col gap-8'>
       <div className='flex flex-col'>
-        {items.map(item => {
-          const config = getTypeConfig(item.type)
-          const displayPoints = Math.abs(item.points)
+        {transactions.map(transaction => {
+          const transactionInfo = formatTransactionInfo(transaction)
+          const pointsTone = getTransactionPointsTone(transaction)
 
           return (
             <div
-              key={item.id}
-              className='group flex flex-col justify-between border-b border-white/5 py-6 transition-colors hover:border-white/10 md:flex-row md:items-center'
+              key={transaction.id}
+              className='group grid gap-4 border-b border-white/5 py-6 transition-colors hover:border-white/10 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-8'
             >
-              <div className='flex flex-col gap-1.5'>
+              <div className='min-w-0'>
                 <span className='text-base font-medium text-white'>
-                  {item.description}
+                  {transactionInfo.title}
                 </span>
-                <span className='text-xs text-neutral-500'>
-                  {new Date(item.date).toLocaleDateString('uk-UA', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                  })}
-                  <span className='mx-2'>·</span>
-                  {config.label}
-                </span>
+                <p className='mt-1.5 text-sm leading-relaxed text-neutral-500'>
+                  {transactionInfo.subtitle}
+                </p>
               </div>
 
-              <div className='mt-4 flex items-baseline gap-1.5 md:mt-0'>
-                <span className={clsx('text-lg font-medium', config.color)}>
-                  {config.sign}
-                  {displayPoints}
-                </span>
-                <span className='text-sm text-neutral-500'>балів</span>
+              <div className='sm:text-right'>
+                <div className='flex items-baseline gap-1.5 sm:justify-end'>
+                  <span
+                    className={cn(
+                      'text-lg font-medium',
+                      pointsToneClassName[pointsTone],
+                    )}
+                  >
+                    {formatSignedPoints(transaction)}
+                  </span>
+                  <span className='text-sm text-neutral-500'>балів</span>
+                </div>
+                <div className='mt-1 text-xs text-neutral-600'>
+                  Баланс {transaction.balanceAfter}
+                </div>
               </div>
             </div>
           )
@@ -126,10 +125,10 @@ const PointsHistoryTable = ({
           <button
             type='button'
             onClick={onLoadMore}
-            disabled={isFetching}
-            className='group flex items-center gap-2 text-sm text-neutral-400 transition-colors hover:text-white disabled:opacity-50'
+            disabled={isLoadingMore}
+            className='group flex min-h-11 items-center gap-2 rounded-lg border border-white/10 px-5 text-sm text-neutral-300 transition-colors hover:border-white/20 hover:text-white disabled:cursor-not-allowed disabled:opacity-50'
           >
-            {isFetching ? 'Завантаження...' : 'Завантажити ще'}
+            {isLoadingMore ? 'Завантаження...' : 'Завантажити ще'}
           </button>
         </div>
       )}

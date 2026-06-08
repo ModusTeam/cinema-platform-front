@@ -1,7 +1,12 @@
 import { ArrowLeft } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
+import PointsHistoryTable from '@/features/loyalty/components/PointsHistoryTable'
+import { useLoyaltyHistory } from '@/features/loyalty/hooks/useLoyaltyHistory'
+
 const LoyaltyHistoryPage = () => {
+  const historyQuery = useLoyaltyHistory()
+
   return (
     <div className='relative min-h-screen overflow-hidden bg-[var(--bg-main)] text-[var(--text-main)]'>
       <div className='pointer-events-none absolute left-1/2 top-0 -z-10 h-[400px] w-[600px] -translate-x-1/2 rounded-full bg-white/[0.015] blur-[100px]' />
@@ -27,11 +32,16 @@ const LoyaltyHistoryPage = () => {
           </p>
         </header>
 
-        <div className='rounded-2xl border border-white/10 bg-white/[0.02] p-8 text-sm leading-relaxed text-neutral-400'>
-          Історія балів ще не доступна в основному API. Ми залишили цю сторінку
-          як безпечний fallback і підключимо реальні операції, коли backend
-          додасть користувацький HTTP endpoint для транзакцій.
-        </div>
+        <PointsHistoryTable
+          transactions={historyQuery.transactions}
+          isLoading={historyQuery.isLoading}
+          isLoadingMore={historyQuery.isLoadingMore}
+          hasMore={historyQuery.hasMore}
+          error={historyQuery.error}
+          onLoadMore={() => {
+            void historyQuery.loadMore()
+          }}
+        />
       </div>
     </div>
   )

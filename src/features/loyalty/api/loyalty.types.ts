@@ -38,22 +38,21 @@ export interface LoyaltyProfile {
   goldUpgradeAvailable: boolean
 }
 
-export type LoyaltyHistoryType = 'earn' | 'redeem' | 'expire' | 'bonus'
-
-export interface LoyaltyHistoryItem {
+export interface LoyaltyTransaction {
   id: string
-  date: string
-  type: LoyaltyHistoryType
+  type: string
   points: number
+  balanceAfter: number
+  orderId: string | null
   description: string
-  orderId?: string
+  createdAt: string
 }
 
-export interface LoyaltyHistoryResponse {
-  items: LoyaltyHistoryItem[]
-  page: number
-  pageSize: number
-  total: number
+export interface LoyaltyTransactionHistory {
+  transactions: LoyaltyTransaction[]
+  totalCount: number
+  limit: number
+  skip: number
 }
 
 export interface LoyaltyBenefit {
