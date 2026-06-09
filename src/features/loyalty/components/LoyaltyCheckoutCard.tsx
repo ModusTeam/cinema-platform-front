@@ -1,4 +1,5 @@
-import { AlertTriangle, Coins } from 'lucide-react'
+import { AlertTriangle, CircleArrowUp, Coins } from 'lucide-react'
+import type { ComponentType } from 'react'
 
 interface LoyaltyCheckoutCardProps {
   pointsBalance: number
@@ -18,15 +19,69 @@ interface LoyaltyCheckoutCardProps {
   onGoldUpgradeToggle?: (value: boolean) => void
 }
 
+interface ActionableRowProps {
+  icon: ComponentType<{ size?: number; className?: string }>
+  label: string
+  isChecked: boolean
+  isDisabled?: boolean
+  disabledNote?: string
+  onToggle: (value: boolean) => void
+}
+
+const ActionableRow = ({
+  icon: Icon,
+  label,
+  isChecked,
+  isDisabled,
+  disabledNote,
+  onToggle,
+}: ActionableRowProps) => (
+  <button
+    type='button'
+    role='switch'
+    aria-checked={isChecked}
+    disabled={isDisabled}
+    onClick={() => onToggle(!isChecked)}
+    className={`flex w-full items-center justify-between gap-4 rounded-xl border p-3 text-left transition-colors ${
+      isChecked
+        ? 'border-red-600/80 bg-red-600/10'
+        : 'border-white/10 bg-white/[0.03] hover:border-white/20'
+    } ${isDisabled ? 'cursor-not-allowed opacity-50' : ''}`}
+  >
+    <span className='flex min-w-0 items-center gap-3'>
+      <span className='rounded-lg border border-white/10 bg-white/5 p-2 text-[var(--color-primary)]'>
+        <Icon size={18} />
+      </span>
+      <span className='min-w-0'>
+        <span className='block text-sm font-semibold text-white'>{label}</span>
+        {disabledNote && (
+          <span className='mt-1 flex items-center gap-1 text-[10px] text-amber-200'>
+            <AlertTriangle size={12} />
+            {disabledNote}
+          </span>
+        )}
+      </span>
+    </span>
+    <span
+      className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+        isChecked ? 'bg-red-600' : 'bg-white/15'
+      }`}
+      aria-hidden='true'
+    >
+      <span
+        className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${
+          isChecked ? 'translate-x-6' : 'translate-x-1'
+        }`}
+      />
+    </span>
+  </button>
+)
+
 const LoyaltyCheckoutCard = ({
   pointsBalance,
-  maxDiscount,
-  pointsLimit,
-  finalTotal,
   isLoading,
   isDisabled,
   errorMessage,
-  helperText,
   disabledNote,
   isChecked,
   onToggle,
@@ -36,101 +91,31 @@ const LoyaltyCheckoutCard = ({
   onGoldUpgradeToggle,
 }: LoyaltyCheckoutCardProps) => {
   const isGoldUpgradeMode = Boolean(isGoldUpgradeAvailable)
-  const isToggleDisabled = isDisabled || (isGoldUpgradeMode && !onGoldUpgradeToggle)
-  const title = isGoldUpgradeMode
-    ? 'Оновити місця до VIP'
-    : 'Використати бали лояльності'
-  const subtitle = isGoldUpgradeMode
-    ? 'Доступно для рівня Gold — використайте бали для апгрейду місць'
-    : isLoading
-      ? 'Перевіряємо баланс'
-      : `Доступно ${pointsBalance} балів`
+  const pointsDisabledNote =
+    disabledNote || (isLoading ? 'Перевіряємо баланс' : undefined)
+  const pointsRowDisabled = isDisabled || isLoading || Boolean(errorMessage)
 
   return (
-    <div className='rounded-2xl border border-white/10 bg-[var(--bg-main)]/40 p-4'>
-      <div className='flex items-start justify-between gap-3'>
-        <div className='flex items-center gap-3'>
-          <div className='rounded-xl border border-white/10 bg-white/5 p-2 text-[var(--color-primary)]'>
-            <Coins size={18} />
-          </div>
-          <div>
-            <div className='text-sm font-semibold text-white'>{title}</div>
-            <p className='text-xs text-[var(--text-muted)]'>{subtitle}</p>
-          </div>
-        </div>
+    <div className='space-y-3'>
+      {isGoldUpgradeMode && (
+        <ActionableRow
+          icon={CircleArrowUp}
+          label='Оновити до VIP (+60 ₴)'
+          isChecked={isGoldUpgradeChecked}
+          isDisabled={!onGoldUpgradeToggle}
+          disabledNote={goldUpgradeLabel}
+          onToggle={value => onGoldUpgradeToggle?.(value)}
+        />
+      )}
 
-        <label className='inline-flex items-center'>
-          <input
-            type='checkbox'
-            className='h-4 w-4 accent-[var(--color-primary)]'
-            checked={
-              isGoldUpgradeMode ? isGoldUpgradeChecked : isChecked
-            }
-            onChange={event =>
-              isGoldUpgradeMode
-                ? onGoldUpgradeToggle?.(event.target.checked)
-                : onToggle(event.target.checked)
-            }
-            disabled={isToggleDisabled}
-            aria-label={
-              isGoldUpgradeMode
-                ? 'Upgrade selected seats to VIP'
-                : 'Use loyalty points'
-            }
-          />
-        </label>
-      </div>
-
-      <div className='mt-4 rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-[var(--text-muted)]'>
-        {isLoading ? (
-          'Завантаження лояльності...'
-        ) : errorMessage ? (
-          errorMessage
-        ) : isGoldUpgradeMode ? (
-          <>
-            <p>
-              Апгрейд буде застосовано до всіх обраних місць
-            </p>
-            {goldUpgradeLabel && (
-              <p className='mt-2 text-[11px] text-amber-100'>
-                {goldUpgradeLabel}
-              </p>
-            )}
-            {disabledNote && (
-              <div className='mt-3 flex items-start gap-2 text-[10px] text-amber-200'>
-                <AlertTriangle size={14} className='mt-0.5' />
-                <span>{disabledNote}</span>
-              </div>
-            )}
-          </>
-        ) : (
-          <>
-            <div className='flex justify-between'>
-              <span>Максимальна знижка</span>
-              <span className='text-white'>
-                {maxDiscount > 0 ? `${maxDiscount} ₴` : 'Під час оплати'}
-              </span>
-            </div>
-            <div className='mt-2 flex justify-between'>
-              <span>Ліміт балів</span>
-              <span className='text-white'>{pointsLimit} балів</span>
-            </div>
-            <div className='mt-2 flex justify-between'>
-              <span>До сплати після знижки</span>
-              <span className='text-white'>
-                {maxDiscount > 0 ? `${finalTotal} ₴` : 'Буде уточнено'}
-              </span>
-            </div>
-            {helperText && <p className='mt-3 text-[11px]'>{helperText}</p>}
-            {disabledNote && (
-              <div className='mt-3 flex items-start gap-2 text-[10px] text-amber-200'>
-                <AlertTriangle size={14} className='mt-0.5' />
-                <span>{disabledNote}</span>
-              </div>
-            )}
-          </>
-        )}
-      </div>
+      <ActionableRow
+        icon={Coins}
+        label={`Використати бали (Доступно: ${pointsBalance})`}
+        isChecked={isChecked}
+        isDisabled={pointsRowDisabled}
+        disabledNote={errorMessage || pointsDisabledNote}
+        onToggle={onToggle}
+      />
     </div>
   )
 }

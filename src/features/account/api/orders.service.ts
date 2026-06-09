@@ -32,7 +32,7 @@ const mapOrderDtoToItem = (dto: OrderDto): OrderItem | null => {
   return {
     id: dto.id,
     bookingId: `ORD-${dto.id.substring(0, 8).toUpperCase()}`,
-    totalPrice: dto.totalAmount,
+    totalPrice: dto.amountPaid ?? dto.totalAmount,
     status: uiStatus,
     sessionDate: firstTicket.sessionStart,
     movieTitle: firstTicket.movieTitle,

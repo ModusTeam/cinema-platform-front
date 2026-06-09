@@ -242,6 +242,9 @@ Use `import type` for type-only imports.
 - Shared domain types MUST live in `src/features/[domain]/model/xxx.types.ts`.
 - React Query hooks MUST live alongside their services in `src/features/[domain]/api/`.
 - Use stable query keys, typically prefixed by the domain name (e.g., `['movies', movieId]`).
+- Booking checkout amounts come from `POST /orders/checkout-preview`. Do not
+  calculate ticket totals, discounts, Gold/VIP upgrade amounts, loyalty
+  discounts, or final payable amounts on the frontend.
 
 ### React Query
 

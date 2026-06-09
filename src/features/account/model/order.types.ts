@@ -33,6 +33,8 @@ export interface OrderDto {
   id: string
   createdAt: string
   totalAmount: number
+  amountPaid: number
+  pointsUsed?: number
   status: OrderStatus | string
   tickets: TicketDto[]
 }

@@ -1,15 +1,78 @@
-import { ArrowLeft, CalendarX, CheckCircle, Ticket } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import {
+  Armchair,
+  ArrowLeft,
+  CalendarX,
+  CheckCircle,
+  Clock,
+  MapPin,
+  Ticket,
+} from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import EmptyState from '@/common/components/EmptyState'
 import { GridLoader } from '@/common/components/GridLoader'
 import { useLoyalty } from '@/features/account/hooks/useLoyalty'
 import { useAuth } from '@/features/auth/AuthContext'
+import { useCheckoutPreview } from '@/features/booking/api/useCheckoutPreview'
 import SeatSelector from '@/features/booking/components/SeatSelector'
 import SessionSelector from '@/features/booking/components/SessionSelector'
 import { useBooking } from '@/features/booking/hooks/useBooking'
-import LoyaltyCheckoutCard from '@/features/loyalty/components/LoyaltyCheckoutCard'
+
+interface CheckoutToggleProps {
+  label: string
+  description: string
+  checked: boolean
+  disabled?: boolean
+  onToggle: (value: boolean) => void
+}
+
+const CheckoutToggle = ({
+  label,
+  description,
+  checked,
+  disabled,
+  onToggle,
+}: CheckoutToggleProps) => (
+  <button
+    type='button'
+    role='switch'
+    aria-checked={checked}
+    disabled={disabled}
+    onClick={() => onToggle(!checked)}
+    className={`flex w-full items-center justify-between gap-4 rounded-2xl bg-white/5 px-4 py-3 text-left transition-colors ${
+      disabled ? 'cursor-not-allowed opacity-50' : 'hover:bg-white/10'
+    }`}
+  >
+    <span>
+      <span className='block text-sm font-bold text-white'>{label}</span>
+      <span className='mt-1 block text-xs text-zinc-400'>{description}</span>
+    </span>
+    <span
+      className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${
+        checked ? 'bg-red-600' : 'bg-zinc-700'
+      }`}
+      aria-hidden='true'
+    >
+      <span
+        className={`absolute top-1 h-5 w-5 rounded-full bg-white transition-transform ${
+          checked ? 'translate-x-6' : 'translate-x-1'
+        }`}
+      />
+    </span>
+  </button>
+)
+
+const GOLD_UPGRADE_REJECTION_CODES = new Set([
+  'GOLD_UPGRADE_REQUIRES_GOLD_TIER',
+  'GOLD_UPGRADE_ALREADY_USED_THIS_MONTH',
+  'GOLD_UPGRADE_NO_ELIGIBLE_TICKET',
+])
+
+const LOYALTY_POINTS_REJECTION_CODES = new Set([
+  'LOYALTY_POINTS_NOT_ALLOWED_FOR_SESSION',
+  'LOYALTY_POINTS_INSUFFICIENT_BALANCE',
+])
 
 const BookingPage = () => {
   const { id } = useParams<{ id: string }>()
@@ -23,28 +86,56 @@ const BookingPage = () => {
     selectedSession,
     hall,
     selectedSeats,
-    totalPrice,
     isLoading,
     isLoadingDetails,
     isProcessingPayment,
     selectSession,
     resetSession,
+    goToCheckout,
+    backToSeats,
     toggleSeat,
     submitOrder,
   } = useBooking(id)
 
   const [useLoyaltyPoints, setUseLoyaltyPoints] = useState(false)
   const [applyGoldUpgrade, setApplyGoldUpgrade] = useState(false)
+  const [goldUpgradeBlockedReason, setGoldUpgradeBlockedReason] = useState<
+    string | null
+  >(null)
+  const [loyaltyPointsBlockedReason, setLoyaltyPointsBlockedReason] = useState<
+    string | null
+  >(null)
   const loyaltyQuery = useLoyalty()
   const loyaltyPoints = loyaltyQuery.data?.points ?? 0
-  const isGoldTier = loyaltyQuery.data?.tier === 'Gold'
-  const maxDiscount = 0
-  const pointsLimit = loyaltyPoints
-  const discountedTotal = totalPrice
   const isLoyaltyDisabled = loyaltyQuery.isError || loyaltyPoints <= 0
-  const loyaltyNote = isLoyaltyDisabled ? 'Недостатньо балів' : undefined
-  const isGoldUpgradeAvailable = isGoldTier
-  const loyaltyError = loyaltyQuery.error as Error | null
+  const selectedSeatIds = useMemo(
+    () => selectedSeats.map(seat => seat.id),
+    [selectedSeats],
+  )
+  const selectedSeatIdsKey = selectedSeatIds.join('|')
+  const {
+    preview,
+    isLoading: isPreviewLoading,
+    isError: isPreviewError,
+    error: previewError,
+  } = useCheckoutPreview({
+    sessionId: selectedSession?.id || '',
+    seatIds: selectedSeatIds,
+    useLoyaltyPoints,
+    applyGoldUpgrade,
+    enabled: step === 3,
+  })
+  const {
+    preview: goldUpgradeAvailabilityPreview,
+    isLoading: isGoldUpgradeAvailabilityLoading,
+  } = useCheckoutPreview({
+    sessionId: selectedSession?.id || '',
+    seatIds: selectedSeatIds,
+    useLoyaltyPoints: false,
+    applyGoldUpgrade: true,
+    enabled: step === 3 && !applyGoldUpgrade,
+  })
+  const goldUpgradeAvailability = goldUpgradeAvailabilityPreview?.goldUpgrade
 
   useEffect(() => {
     if (!isAuthLoading && !user) {
@@ -60,13 +151,74 @@ const BookingPage = () => {
   }, [step])
 
   useEffect(() => {
-    if (isGoldTier) {
-      setUseLoyaltyPoints(false)
-      return
+    if (!selectedSession?.id && !selectedSeatIdsKey) return
+    setGoldUpgradeBlockedReason(null)
+    setLoyaltyPointsBlockedReason(null)
+  }, [selectedSeatIdsKey, selectedSession?.id])
+
+  useEffect(() => {
+    if (
+      preview?.goldUpgrade.requested &&
+      preview.goldUpgrade.canApply === false
+    ) {
+      setApplyGoldUpgrade(false)
+      if (
+        preview.goldUpgrade.reasonCode &&
+        GOLD_UPGRADE_REJECTION_CODES.has(preview.goldUpgrade.reasonCode)
+      ) {
+        setGoldUpgradeBlockedReason(
+          preview.goldUpgrade.reason || 'GOLD upgrade is unavailable.',
+        )
+      }
+    }
+  }, [
+    preview?.goldUpgrade.canApply,
+    preview?.goldUpgrade.reason,
+    preview?.goldUpgrade.reasonCode,
+    preview?.goldUpgrade.requested,
+  ])
+
+  useEffect(() => {
+    if (
+      goldUpgradeAvailability?.requested &&
+      goldUpgradeAvailability.canApply === false &&
+      goldUpgradeAvailability.reasonCode &&
+      GOLD_UPGRADE_REJECTION_CODES.has(goldUpgradeAvailability.reasonCode)
+    ) {
+      setGoldUpgradeBlockedReason(
+        goldUpgradeAvailability.reason || 'GOLD upgrade is unavailable.',
+      )
     }
 
-    setApplyGoldUpgrade(false)
-  }, [isGoldTier])
+    if (
+      goldUpgradeAvailability?.requested &&
+      goldUpgradeAvailability.canApply
+    ) {
+      setGoldUpgradeBlockedReason(null)
+    }
+  }, [goldUpgradeAvailability])
+
+  useEffect(() => {
+    if (
+      preview?.loyaltyPoints.requested &&
+      preview.loyaltyPoints.canApply === false
+    ) {
+      setUseLoyaltyPoints(false)
+      if (
+        preview.loyaltyPoints.reasonCode &&
+        LOYALTY_POINTS_REJECTION_CODES.has(preview.loyaltyPoints.reasonCode)
+      ) {
+        setLoyaltyPointsBlockedReason(
+          preview.loyaltyPoints.reason || 'Loyalty points are unavailable.',
+        )
+      }
+    }
+  }, [
+    preview?.loyaltyPoints.canApply,
+    preview?.loyaltyPoints.reason,
+    preview?.loyaltyPoints.reasonCode,
+    preview?.loyaltyPoints.requested,
+  ])
 
   if (isAuthLoading || (isLoading && !movie)) {
     return (
@@ -76,7 +228,7 @@ const BookingPage = () => {
     )
   }
 
-  if (step === 3) {
+  if (step === 4) {
     return (
       <div className='flex h-screen flex-col items-center justify-center bg-[var(--bg-main)] px-4 text-center animate-in fade-in zoom-in duration-500'>
         <div className='bg-[var(--bg-card)] p-12 rounded-3xl border border-white/5 shadow-2xl flex flex-col items-center'>
@@ -92,16 +244,16 @@ const BookingPage = () => {
           </p>
           <div className='flex gap-4'>
             <Link
-              to='/'
+              to='/profile'
               className='rounded-xl bg-white px-8 py-3 font-bold text-black hover:bg-zinc-200 transition-colors'
             >
-              На головну
+              Go to profile
             </Link>
             <Link
-              to='/profile'
+              to='/'
               className='rounded-xl border border-white/10 bg-white/5 px-8 py-3 font-bold text-white hover:bg-white/10 transition-colors'
             >
-              Мої квитки
+              Go to home
             </Link>
           </div>
         </div>
@@ -110,12 +262,46 @@ const BookingPage = () => {
   }
 
   const genresList = Array.isArray(movie?.genres) ? movie.genres : []
+  const sessionDateTimeLabel = selectedSession
+    ? `${new Date(selectedSession.startTime).toLocaleDateString('uk-UA', {
+        day: 'numeric',
+        month: 'long',
+      })}, ${new Date(selectedSession.startTime).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      })}`
+    : '10 червня, 22:00'
+  const selectedSeatsLabel =
+    selectedSeats.length > 0
+      ? selectedSeats
+          .map(seat => `Ряд ${seat.row}, Місце ${seat.number}`)
+          .join(', ')
+      : 'Ряд 5, Місце 12, 13'
+  const currency = preview?.currency || '₴'
+  const previewErrorMessage =
+    previewError instanceof Error
+      ? previewError.message
+      : 'Не вдалося завантажити попередній розрахунок'
+  const canPay =
+    Boolean(preview?.canCheckout) && !isPreviewError && !isPreviewLoading
+  const formatAmount = (amount?: number) =>
+    amount === undefined ? '—' : `${amount} ${currency}`
+  const isGoldUpgradeRejected =
+    preview?.goldUpgrade.requested && preview.goldUpgrade.canApply === false
+  const isLoyaltyPointsRejected =
+    preview?.loyaltyPoints.requested && preview.loyaltyPoints.canApply === false
+  const isGoldUpgradeDisabled =
+    isGoldUpgradeAvailabilityLoading ||
+    isGoldUpgradeRejected ||
+    Boolean(goldUpgradeBlockedReason)
+  const isLoyaltyPointsDisabled =
+    isLoyaltyDisabled ||
+    loyaltyQuery.isLoading ||
+    isLoyaltyPointsRejected ||
+    Boolean(loyaltyPointsBlockedReason)
 
   const handleSubmitOrder = async () => {
-    await submitOrder(
-      isGoldTier ? false : useLoyaltyPoints,
-      isGoldTier ? applyGoldUpgrade : false,
-    )
+    await submitOrder(useLoyaltyPoints, applyGoldUpgrade)
   }
 
   return (
@@ -133,213 +319,268 @@ const BookingPage = () => {
           </Link>
 
           <div className='flex items-center gap-2'>
-            <div
-              className={`h-2 w-2 rounded-full ${step >= 1 ? 'bg-[var(--color-primary)]' : 'bg-white/20'}`}
-            ></div>
-            <div
-              className={`h-1 w-8 rounded-full ${step >= 2 ? 'bg-[var(--color-primary)]' : 'bg-white/10'}`}
-            ></div>
-            <div
-              className={`h-2 w-2 rounded-full ${step >= 2 ? 'bg-[var(--color-primary)]' : 'bg-white/20'}`}
-            ></div>
+            {[1, 2, 3, 4].map((item, index) => (
+              <div key={item} className='flex items-center gap-2'>
+                <div
+                  className={`h-2 w-2 rounded-full ${
+                    step >= item ? 'bg-[var(--color-primary)]' : 'bg-white/20'
+                  }`}
+                />
+                {index < 3 && (
+                  <div
+                    className={`h-1 w-6 rounded-full ${
+                      step > item ? 'bg-[var(--color-primary)]' : 'bg-white/10'
+                    }`}
+                  />
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </header>
 
-      <main className='container mx-auto grid gap-8 px-4 py-8 lg:grid-cols-[1fr_350px]'>
-        <div>
-          {step === 1 && (
-            <div className='animate-in fade-in slide-in-from-left-4 duration-500'>
-              {sessions.length > 0 ? (
-                <SessionSelector
-                  sessions={sessions}
-                  selectedSession={null}
-                  onSelect={selectSession}
-                />
-              ) : (
-                <EmptyState
-                  icon={<CalendarX className='h-12 w-12' />}
-                  title='Актуальних сеансів немає'
-                  description='Для цього фільму поки не заплановано майбутніх показів. Перегляньте афішу, щоб знайти інший сеанс.'
-                  actionLabel='Афіша кінотеатру'
-                  onAction={() => navigate('/sessions')}
-                  className='min-h-[300px]'
-                />
-              )}
-            </div>
-          )}
+      <main className='container mx-auto px-4 py-8'>
+        {step === 1 && (
+          <div className='animate-in fade-in slide-in-from-left-4 duration-500'>
+            {sessions.length > 0 ? (
+              <SessionSelector
+                sessions={sessions}
+                selectedSession={null}
+                onSelect={selectSession}
+              />
+            ) : (
+              <EmptyState
+                icon={<CalendarX className='h-12 w-12' />}
+                title='Актуальних сеансів немає'
+                description='Для цього фільму поки не заплановано майбутніх показів. Перегляньте афішу, щоб знайти інший сеанс.'
+                actionLabel='Афіша кінотеатру'
+                onAction={() => navigate('/sessions')}
+                className='min-h-[300px]'
+              />
+            )}
+          </div>
+        )}
 
-          {step === 2 && (
-            <div className='animate-in fade-in slide-in-from-right-4 duration-500'>
-              <h2 className='text-2xl font-bold text-white mb-6 flex items-center gap-3'>
+        {step === 2 && (
+          <div className='animate-in fade-in slide-in-from-right-4 duration-500'>
+            <div className='mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+              <h2 className='flex items-center gap-3 text-2xl font-bold text-white'>
                 <Ticket className='text-[var(--color-primary)]' /> Оберіть місця
               </h2>
-
-              {isLoadingDetails ? (
-                <div className='flex justify-center py-20'>
-                  <GridLoader className='animate-spin text-[var(--color-primary)]' />
-                </div>
-              ) : hall ? (
-                <SeatSelector
-                  hall={hall}
-                  selectedSeats={selectedSeats}
-                  onToggleSeat={toggleSeat}
-                  occupiedSeatIds={selectedSession?.occupiedSeatIds || []}
-                />
-              ) : null}
+              <button
+                type='button'
+                disabled={selectedSeats.length === 0}
+                onClick={goToCheckout}
+                className='rounded-xl bg-red-600 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-red-600/25 transition-all hover:bg-red-500 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-white/40 disabled:shadow-none'
+              >
+                Продовжити
+              </button>
             </div>
-          )}
-        </div>
 
-        <div className='h-fit'>
-          <div className='rounded-2xl border border-white/5 bg-[var(--bg-card)] p-6 backdrop-blur-sm sticky top-24 shadow-2xl overflow-hidden'>
-            <div className='absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--color-primary)] to-orange-500'></div>
-
-            <h3 className='mb-6 text-lg font-black uppercase tracking-wider text-white/50'>
-              Ваше замовлення
-            </h3>
-
-            <div className='mb-6 flex gap-4'>
-              <img
-                src={movie?.posterUrl || movie?.backdropUrl}
-                alt={movie?.title}
-                className='h-24 w-16 rounded-lg object-cover shadow-lg bg-zinc-800'
+            {isLoadingDetails ? (
+              <div className='flex justify-center py-20'>
+                <GridLoader className='animate-spin text-[var(--color-primary)]' />
+              </div>
+            ) : hall ? (
+              <SeatSelector
+                hall={hall}
+                selectedSeats={selectedSeats}
+                onToggleSeat={toggleSeat}
+                occupiedSeatIds={selectedSession?.occupiedSeatIds || []}
               />
-              <div className='flex flex-col justify-center'>
-                <div className='font-bold text-white line-clamp-2 text-lg leading-tight mb-1'>
-                  {movie?.title}
-                </div>
-                <div className='text-xs font-medium text-[var(--text-muted)] bg-white/5 px-2 py-1 rounded w-fit'>
-                  {movie?.year} • {genresList[0]}
-                </div>
-              </div>
-            </div>
+            ) : null}
 
-            <div className='space-y-4 mb-6'>
-              <div className='flex justify-between items-center text-sm py-3 border-b border-white/5 border-dashed'>
-                <div className='text-[var(--text-muted)]'>Сеанс</div>
-                <div className='text-white font-medium text-right'>
-                  {selectedSession ? (
-                    <>
-                      <div>
-                        {new Date(
-                          selectedSession.startTime,
-                        ).toLocaleDateString()}
-                      </div>
-                      <div className='text-[var(--color-primary)] font-bold text-base'>
-                        {new Date(selectedSession.startTime).toLocaleTimeString(
-                          [],
-                          { hour: '2-digit', minute: '2-digit' },
-                        )}
-                      </div>
-                    </>
-                  ) : (
-                    <span className='text-zinc-600 italic'>—</span>
-                  )}
-                </div>
-              </div>
-              <div className='flex justify-between items-center text-sm py-3 border-b border-white/5 border-dashed'>
-                <div className='text-[var(--text-muted)]'>Зал</div>
-                <div className='text-white font-medium'>
-                  {selectedSession?.hallName || (
-                    <span className='text-zinc-600 italic'>—</span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {selectedSeats.length > 0 && (
-              <div className='mb-6 bg-white/5 rounded-xl p-4 border border-white/5'>
-                <div className='text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-3'>
-                  Обрані місця ({selectedSeats.length})
-                </div>
-                <div className='flex flex-wrap gap-2 max-h-32 overflow-y-auto custom-scrollbar pr-1'>
-                  {selectedSeats.map(s => (
-                    <div
-                      key={s.id}
-                      className='flex items-center gap-2 rounded-lg border border-white/10 bg-[var(--bg-main)] px-3 py-1.5 text-xs text-white shadow-sm'
-                    >
-                      <span className='text-[var(--text-muted)]'>Р{s.row}</span>
-                      <span className='font-bold text-[var(--color-primary)]'>
-                        М{s.number}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className='mt-auto pt-4'>
-              {step === 2 && (
-                <div className='mb-6'>
-                  <LoyaltyCheckoutCard
-                    pointsBalance={loyaltyPoints}
-                    maxDiscount={maxDiscount}
-                    pointsLimit={pointsLimit}
-                    finalTotal={discountedTotal}
-                    isLoading={loyaltyQuery.isLoading}
-                    errorMessage={loyaltyError?.message}
-                    helperText='Попередній розрахунок знижки ще не доступний. Якщо увімкнути бали, backend розрахує остаточну суму під час оплати.'
-                    isDisabled={isLoyaltyDisabled || loyaltyQuery.isLoading}
-                    disabledNote={loyaltyNote}
-                    isChecked={useLoyaltyPoints}
-                    onToggle={setUseLoyaltyPoints}
-                    isGoldUpgradeAvailable={isGoldUpgradeAvailable}
-                    isGoldUpgradeChecked={applyGoldUpgrade}
-                    onGoldUpgradeToggle={setApplyGoldUpgrade}
-                  />
-                </div>
-              )}
-
-              <div className='flex justify-between items-end mb-6'>
-                <span className='text-[var(--text-muted)] font-medium pb-1'>
-                  Разом до сплати
-                </span>
-                <span className='text-3xl font-black text-white'>
-                  {discountedTotal}{' '}
-                  <span className='text-lg text-[var(--text-muted)] font-normal'>
-                    ₴
-                  </span>
-                </span>
-              </div>
-
-              {step === 1 ? (
-                <button
-                  type='button'
-                  disabled={true}
-                  className='w-full rounded-xl bg-white/10 py-4 font-bold text-white/50 cursor-not-allowed border border-white/5'
-                >
-                  Оберіть сеанс
-                </button>
-              ) : (
-                <button
-                  type='button'
-                  disabled={selectedSeats.length === 0 || isProcessingPayment}
-                  onClick={handleSubmitOrder}
-                  className='flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] py-4 font-bold text-white hover:bg-[var(--color-primary-hover)] shadow-lg shadow-[var(--color-primary)]/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.02] active:scale-100'
-                >
-                  {isProcessingPayment ? (
-                    <GridLoader className='animate-spin' />
-                  ) : (
-                    <>
-                      <Ticket size={20} /> Оплатити квитки
-                    </>
-                  )}
-                </button>
-              )}
-
-              {step === 2 && (
-                <button
-                  type='button'
-                  onClick={resetSession}
-                  className='w-full mt-3 py-2 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] hover:text-white transition-colors'
-                >
-                  Змінити сеанс
-                </button>
-              )}
+            <div className='mt-8 flex justify-center'>
+              <button
+                type='button'
+                onClick={resetSession}
+                className='py-2 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] transition-colors hover:text-white'
+              >
+                Змінити сеанс
+              </button>
             </div>
           </div>
-        </div>
+        )}
+
+        {step === 3 && (
+          <div className='mx-auto max-w-6xl animate-in fade-in slide-in-from-bottom-4 duration-500'>
+            <div className='overflow-hidden rounded-3xl bg-[#111111] shadow-2xl shadow-black/40 lg:grid lg:min-h-[680px] lg:grid-cols-[65fr_35fr]'>
+              <div className='relative min-h-[420px] lg:min-h-full'>
+                <img
+                  src={movie?.posterUrl || movie?.backdropUrl}
+                  alt={movie?.title}
+                  className='absolute inset-0 h-full w-full object-cover'
+                />
+                <div className='absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent' />
+                <div className='absolute inset-x-0 bottom-0 space-y-5 p-6 sm:p-8'>
+                  <div>
+                    <div className='mb-3 flex flex-wrap gap-2 text-xs font-semibold text-zinc-300'>
+                      <span className='rounded-full bg-white/10 px-3 py-1'>
+                        {genresList[0] || 'Кіно'}
+                      </span>
+                      <span className='rounded-full bg-white/10 px-3 py-1'>
+                        {movie?.duration} хв
+                      </span>
+                      <span className='rounded-full bg-white/10 px-3 py-1'>
+                        {movie?.year}
+                      </span>
+                    </div>
+                    <h1 className='max-w-2xl text-4xl font-black leading-tight text-white sm:text-5xl'>
+                      {movie?.title}
+                    </h1>
+                  </div>
+
+                  <div className='grid gap-3 text-sm font-medium text-zinc-300 sm:grid-cols-3'>
+                    <div className='flex items-center gap-2'>
+                      <Clock size={16} className='text-red-400' />
+                      {sessionDateTimeLabel}
+                    </div>
+                    <div className='flex items-center gap-2'>
+                      <MapPin size={16} className='text-red-400' />
+                      {selectedSession?.hallName || 'Зал 1'}
+                    </div>
+                    <div className='flex items-center gap-2'>
+                      <Armchair size={16} className='text-red-400' />
+                      {selectedSeatsLabel}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <aside className='relative flex flex-col bg-[#151515] p-6 sm:p-8'>
+                <div className='mb-8 flex items-start justify-between gap-4'>
+                  <div className='border-l-4 border-red-600 pl-3'>
+                    <h2 className='mt-2 text-2xl font-black text-white'>
+                      Ваше замовлення
+                    </h2>
+                  </div>
+                </div>
+
+                <div className='space-y-3'>
+                  <CheckoutToggle
+                    label='Ultra-comfort'
+                    description={
+                      goldUpgradeBlockedReason ||
+                      preview?.goldUpgrade.reason ||
+                      `Знижка: ${formatAmount(
+                        preview?.goldUpgrade.discountAmount,
+                      )}`
+                    }
+                    checked={applyGoldUpgrade}
+                    disabled={isGoldUpgradeDisabled}
+                    onToggle={setApplyGoldUpgrade}
+                  />
+                  <CheckoutToggle
+                    label='Використати бали'
+                    description={
+                      loyaltyPointsBlockedReason ||
+                      preview?.loyaltyPoints.reason ||
+                      `Доступно: ${loyaltyPoints} балів, знижка: ${formatAmount(
+                        preview?.loyaltyPoints.discountAmount,
+                      )}`
+                    }
+                    checked={useLoyaltyPoints}
+                    disabled={isLoyaltyPointsDisabled}
+                    onToggle={setUseLoyaltyPoints}
+                  />
+                </div>
+
+                <div className='relative mt-8 min-h-48 space-y-4 text-sm'>
+                  {isPreviewLoading && (
+                    <div className='absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-[#151515]/80 backdrop-blur-sm'>
+                      <GridLoader className='animate-spin text-red-400' />
+                    </div>
+                  )}
+
+                  {isPreviewError ? (
+                    <div className='rounded-2xl bg-red-500/10 p-4 text-sm text-red-200'>
+                      {previewErrorMessage}
+                    </div>
+                  ) : (
+                    <>
+                      <div className='flex items-center justify-between text-zinc-400'>
+                        <span>Base tickets</span>
+                        <span className='text-white'>
+                          {formatAmount(preview?.originalAmount)}
+                        </span>
+                      </div>
+                      {preview?.goldUpgrade.applied && (
+                        <div className='flex items-center justify-between text-zinc-400'>
+                          <span>Gold upgrade discount</span>
+                          <span className='text-red-300'>
+                            -{formatAmount(preview.goldUpgrade.discountAmount)}
+                          </span>
+                        </div>
+                      )}
+                      {preview?.loyaltyPoints.applied && (
+                        <div className='flex items-center justify-between text-zinc-400'>
+                          <span>Loyalty discount</span>
+                          <span className='text-red-300'>
+                            -
+                            {formatAmount(preview.loyaltyPoints.discountAmount)}
+                          </span>
+                        </div>
+                      )}
+                      {preview?.canCheckout === false && (
+                        <div className='rounded-2xl bg-amber-500/10 p-3 text-xs text-amber-200'>
+                          Неможливо оформити замовлення. Перевірте обрані місця
+                          та параметри знижок.
+                        </div>
+                      )}
+                      {preview?.warnings.map(warning => (
+                        <div
+                          key={warning}
+                          className='rounded-2xl bg-amber-500/10 p-3 text-xs text-amber-200'
+                        >
+                          {warning}
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </div>
+
+                <div className='mt-auto pt-8'>
+                  <div className='mb-6 flex items-end justify-between'>
+                    <span className='text-sm font-semibold text-zinc-400'>
+                      Total
+                    </span>
+                    <span className='text-4xl font-black text-white'>
+                      {formatAmount(preview?.finalAmountToPay)}
+                    </span>
+                  </div>
+
+                  <button
+                    type='button'
+                    disabled={
+                      isProcessingPayment ||
+                      !canPay ||
+                      isPreviewError ||
+                      isPreviewLoading
+                    }
+                    onClick={handleSubmitOrder}
+                    className='flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-500 to-red-600 py-4 text-base font-black text-white shadow-lg shadow-red-600/30 transition-all hover:scale-[1.01] hover:from-red-400 hover:to-red-500 active:scale-100 disabled:cursor-not-allowed disabled:opacity-50'
+                  >
+                    {isProcessingPayment ? (
+                      <GridLoader className='animate-spin' />
+                    ) : (
+                      <>
+                        <Ticket size={20} /> Оплатити замовлення
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    type='button'
+                    onClick={backToSeats}
+                    className='mt-5 w-full py-2 text-xs font-bold uppercase tracking-wider text-zinc-500 transition-colors hover:text-white'
+                  >
+                    Назад до місць
+                  </button>
+                </div>
+              </aside>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   )

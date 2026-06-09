@@ -31,6 +31,62 @@ export interface CreateOrderPayload {
   paymentToken?: string
 }
 
+export interface CheckoutPreviewRequest {
+  sessionId: string
+  seatIds: string[]
+  useLoyaltyPoints: boolean
+  applyGoldUpgrade: boolean
+}
+
+export interface CheckoutPreviewResponse {
+  currency: string
+  canCheckout: boolean
+  originalAmount: number
+  amountAfterGoldUpgrade: number
+  finalAmountToPay: number
+  totalDiscountAmount: number
+  goldUpgrade: {
+    requested: boolean
+    canApply: boolean
+    applied: boolean
+    discountAmount: number
+    seatId: string | null
+    priceBefore: number | null
+    priceAfter: number | null
+    reasonCode: string | null
+    reason: string | null
+  }
+  loyaltyPoints: {
+    requested: boolean
+    canApply: boolean
+    applied: boolean
+    pointsToDeduct: number
+    discountAmount: number
+    amountToPay: number
+    reasonCode: string | null
+    reason: string | null
+  }
+  tickets: Array<{
+    seatId: string
+    seatType: string
+    originalPrice: number
+    finalPriceAfterGoldUpgrade: number
+    goldDiscountAmount: number
+    isGoldUpgraded: boolean
+  }>
+  warnings: string[]
+}
+
+export const checkoutPreviewApi = async (
+  payload: CheckoutPreviewRequest,
+): Promise<CheckoutPreviewResponse> => {
+  const { data } = await api.post<CheckoutPreviewResponse>(
+    '/orders/checkout-preview',
+    payload,
+  )
+  return data
+}
+
 export const bookingService = {
   getSessionsByMovieId: async (movieId: string): Promise<Session[]> => {
     const allSessions = await bookingService.getAllSessions()
