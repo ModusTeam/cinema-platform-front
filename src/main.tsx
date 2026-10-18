@@ -8,7 +8,7 @@ if (!rootElement) throw new Error('Root element not found')
 
 const root = createRoot(rootElement)
 
-if (import.meta.env.PROD) {
+if (import.meta.env.VITE_SHOW_WIP === 'true') {
   root.render(
     <StrictMode>
       <WorkInProgress />
