@@ -23,10 +23,12 @@ const HeroSection = () => {
     )
   }
 
-  if (movies.length === 0) return null
+  if (movies.length === 0) {
+    return <div className='h-24 md:h-28' aria-hidden='true' />
+  }
 
   return (
-    <section className='relative h-[85vh] w-full overflow-hidden bg-black group'>
+    <section className='relative min-h-[85svh] w-full overflow-hidden bg-black group'>
       <div className='absolute inset-0 transition-opacity duration-700 ease-in-out'>
         <img
           key={activeMovie.id}
@@ -40,7 +42,7 @@ const HeroSection = () => {
         <div className='hidden lg:block absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-[var(--bg-main)]/90 to-transparent pointer-events-none' />
       </div>
 
-      <div className='relative container mx-auto flex h-full items-end pb-20 px-4'>
+      <div className='relative container mx-auto flex min-h-[85svh] items-end px-4 pb-20 pt-28'>
         <div className='grid w-full lg:grid-cols-[1fr_350px] gap-12'>
           <div
             className={`max-w-3xl space-y-6 transition-all duration-500 ${isAnimating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}
@@ -146,10 +148,10 @@ const HeroSection = () => {
         </div>
 
         <div className='lg:hidden absolute bottom-8 left-0 right-0 flex justify-center gap-2'>
-          {movies.map((_, idx) => (
+          {movies.map((movie, idx) => (
             <button
               type='button'
-              key={idx}
+              key={movie.id}
               onClick={() => handleManualSelect(idx)}
               className={`h-1.5 rounded-full transition-all duration-300 ${
                 idx === currentIndex

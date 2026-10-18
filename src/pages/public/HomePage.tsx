@@ -39,7 +39,7 @@ const HomePage = () => {
     <div className='min-h-screen bg-[var(--bg-main)] font-sans pb-20'>
       <HeroSection />
 
-      <div className='container mx-auto px-4 -mt-10 relative z-10'>
+      <div className='container relative z-10 mx-auto px-4 pt-10'>
         <div className='flex flex-col md:flex-row justify-between items-end mb-8 gap-6'>
           <h2 className='text-3xl font-black text-white pl-4 border-l-4 border-[var(--color-primary)] leading-none uppercase tracking-wide'>
             Зараз у кіно
