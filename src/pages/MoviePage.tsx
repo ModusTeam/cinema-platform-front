@@ -1,9 +1,9 @@
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { moviesService } from '@/features/movies/api/movies.service'
-import MovieDetails from '../features/movies/components/MovieDetails'
+import { moviesService } from '@/entities/movie/api/movies.service'
+import MovieDetails from '@/widgets/movie-details/ui/MovieDetails'
 import NotFoundPage from './NotFoundPage'
-import { GridLoader } from '../common/components/GridLoader'
+import { GridLoader } from '@/shared/ui/GridLoader'
 
 const MoviePage = () => {
   const { id } = useParams<{ id: string }>()

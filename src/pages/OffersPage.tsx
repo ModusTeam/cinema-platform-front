@@ -2,10 +2,10 @@ import { useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { Sparkles, Ticket, Play, Circle } from 'lucide-react'
-import EmptyState from '../common/components/EmptyState'
-import { useAuth } from '../features/auth/AuthContext'
-import { moviesService } from '@/features/movies/api/movies.service'
-import { GridLoader } from '../common/components/GridLoader'
+import EmptyState from '@/shared/ui/EmptyState'
+import { useAuth } from '@/features/auth/model/AuthContext'
+import { moviesService } from '@/entities/movie/api/movies.service'
+import { GridLoader } from '@/shared/ui/GridLoader'
 
 const OffersPage = () => {
   const { user, isLoading: isAuthLoading } = useAuth()

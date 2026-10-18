@@ -1,0 +1,21 @@
+import { useQuery } from '@tanstack/react-query'
+
+import { useAuth } from '@/features/auth/model/AuthContext'
+import { loyaltyService } from '@/features/loyalty/api/loyalty.service'
+import type { LoyaltyTier } from '@/entities/account/model/account.types'
+
+export const useLoyalty = () => {
+  const { user, isAuthenticated } = useAuth()
+
+  return useQuery({
+    queryKey: ['loyalty-profile', user?.id],
+    queryFn: loyaltyService.getLoyaltyProfile,
+    staleTime: 5 * 60 * 1000,
+    enabled: isAuthenticated,
+    select: data => ({
+      points: data.pointsBalance,
+      tier: `${data.tier.label}` as LoyaltyTier,
+      goldUpgradeAvailable: false,
+    }),
+  })
+}

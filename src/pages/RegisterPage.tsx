@@ -5,9 +5,9 @@ import * as z from 'zod'
 import { Link, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { authService } from '@/features/auth/api/auth.service'
-import Input from '../common/components/Input'
+import Input from '@/shared/ui/Input'
 import { Ticket, ArrowRight } from 'lucide-react'
-import { GridLoader } from '../common/components/GridLoader'
+import { GridLoader } from '@/shared/ui/GridLoader'
 
 const registerSchema = z
   .object({

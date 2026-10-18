@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BAR_MENU } from '../data/bar'
+import { BAR_MENU } from '@/pages/data/bar'
 import {
   type LucideIcon,
   CupSoda,
@@ -12,8 +12,8 @@ import {
   Popcorn,
 } from 'lucide-react'
 import { clsx } from 'clsx'
-import { AuroraText } from '../common/components/AuroraText'
-import EmptyState from '../common/components/EmptyState'
+import { AuroraText } from '@/shared/ui/AuroraText'
+import EmptyState from '@/shared/ui/EmptyState'
 
 const iconMap: Record<string, LucideIcon> = {
   Popcorn: Popcorn,

@@ -1,8 +1,8 @@
 import { lazy } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
-import AdminRoute from '../features/auth/AdminRoute'
-import AdminLayout from '../layouts/AdminLayout'
-import MainLayout from '../layouts/MainLayout'
+import AdminRoute from '@/features/auth/ui/AdminRoute'
+import AdminLayout from '@/app/layouts/AdminLayout'
+import MainLayout from '@/app/layouts/MainLayout'
 import NotFoundPage from '../pages/NotFoundPage'
 
 // client
@@ -29,26 +29,26 @@ const OfferPage = lazy(() => import('../pages/OfferPage'))
 const AgeLimitsPage = lazy(() => import('../pages/AgeLimitsPage'))
 
 // admin
-const AdminDashboard = lazy(() => import('../features/admin/AdminDashboard'))
-const HallsPage = lazy(() => import('../features/admin/HallsPage'))
+const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'))
+const HallsPage = lazy(() => import('@/pages/admin/HallsPage'))
 const AdminSessionsPage = lazy(
-  () => import('../features/admin/AdminSessionsPage'),
+  () => import('@/pages/admin/AdminSessionsPage'),
 )
-const UsersPage = lazy(() => import('../features/admin/UsersPage'))
-const AdminMoviesPage = lazy(() => import('../features/admin/AdminMoviesPage'))
+const UsersPage = lazy(() => import('@/pages/admin/UsersPage'))
+const AdminMoviesPage = lazy(() => import('@/pages/admin/AdminMoviesPage'))
 const TechnologiesPage = lazy(
-  () => import('../features/admin/TechnologiesPage'),
+  () => import('@/pages/admin/TechnologiesPage'),
 )
-const PricingsPage = lazy(() => import('../features/admin/PricingsPage'))
-const GenresPage = lazy(() => import('../features/admin/GenresPage'))
+const PricingsPage = lazy(() => import('@/pages/admin/PricingsPage'))
+const GenresPage = lazy(() => import('@/pages/admin/GenresPage'))
 const UserActivityPage = lazy(
-  () => import('../features/admin/UserActivityPage'),
+  () => import('@/pages/admin/UserActivityPage'),
 )
 const AdminLoyaltyPage = lazy(
-  () => import('../features/admin/AdminLoyaltyPage'),
+  () => import('@/pages/admin/AdminLoyaltyPage'),
 )
 const AdminAchievementsPage = lazy(
-  () => import('../features/admin/AdminAchievementsPage'),
+  () => import('@/pages/admin/AdminAchievementsPage'),
 )
 
 export const router = createBrowserRouter([

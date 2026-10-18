@@ -1,4 +1,4 @@
-import { api } from '@/lib/axios'
+import { api } from '@/shared/api/axios'
 
 export interface Genre {
   id: string

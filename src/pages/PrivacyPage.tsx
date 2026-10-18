@@ -1,4 +1,4 @@
-import StaticPageLayout from '../layouts/StaticPageLayout'
+import StaticPageLayout from '@/widgets/static-page/ui/StaticPageLayout'
 
 const PrivacyPage = () => {
   return (

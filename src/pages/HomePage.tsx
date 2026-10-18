@@ -1,13 +1,13 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Film, ArrowRight } from 'lucide-react'
-import EmptyState from '../common/components/EmptyState'
-import { GridLoader } from '../common/components/GridLoader'
-import MovieCard from '../features/movies/components/MovieCard'
-import PromoSection from '../features/home/components/PromoSection'
-import HeroSection from '../features/movies/components/HeroSection'
-import { useHomeMovies } from '../features/home/hooks/useHomeMovies'
-import { MovieStatus } from '@/features/movies/model/movie.types'
+import EmptyState from '@/shared/ui/EmptyState'
+import { GridLoader } from '@/shared/ui/GridLoader'
+import MovieCard from '@/features/movies/ui/MovieCard'
+import PromoSection from '@/widgets/home/ui/PromoSection'
+import HeroSection from '@/features/movies/ui/HeroSection'
+import { useHomeMovies } from '@/widgets/home/model/useHomeMovies'
+import { MovieStatus } from '@/entities/movie/model/movie.types'
 
 const HomePage = () => {
   const { filteredMovies, isLoading, activeFilter, setActiveFilter, filters } =

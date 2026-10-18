@@ -12,7 +12,7 @@ code disagree, inspect the code and update this document as part of the change.
 - Package manager: Bun is required
 - Authoritative lockfile: `bun.lock`
 - Deployment config: `vercel.json`
-- Current branch expected by this workspace: `main`
+- Base branch: `main`; task branches may be checked out for development.
 
 The app lets visitors browse cinema content and book seats, authenticated users
 manage profile/loyalty/tickets, and admins manage cinema operations under
@@ -58,13 +58,13 @@ There are currently no test scripts in `package.json`.
 
 ## Runtime Configuration
 
-The API base URL is resolved in `src/lib/apiUrl.ts`.
+The API base URL is resolved in `src/shared/api/apiUrl.ts`.
 
 - `VITE_API_URL` is required by the frontend.
 - It may be an `http(s)` URL or a relative path.
 - If it is missing or invalid, startup/runtime code throws a clear error.
-- `src/lib/axios.ts` creates the shared Axios client from this value.
-- `src/services/signalrService.ts` derives the ticket hub URL by removing a
+- `src/shared/api/axios.ts` creates the shared Axios client from this value.
+- `src/features/booking/api/signalr.service.ts` derives the ticket hub URL by removing a
   trailing `/api` from `VITE_API_URL` and appending `/tickets`.
 
 Example local environment:
@@ -138,32 +138,29 @@ ESLint config is present, but the configured lint script uses Biome.
 
 ## Repository Layout
 
-The project enforces a strict Feature-Sliced Design (FSD) / Domain-Driven architecture. Do not use global folders for domain logic.
+The project uses a pragmatic Feature-Sliced Design layout. Place domain code in
+the slice that owns it and keep generic infrastructure in `shared`.
 
 ```text
 src/
-  app/                  # App initialization, global providers, router, global styles
-  shared/               # Reusable UI primitives, generic hooks, api clients (Axios)
-    ui/
-    lib/
-    types/              # ONLY generic/global types (e.g., PaginatedResult)
-  features/             # Isolated business domains
-    [domain_name]/      # e.g., movies, booking, loyalty, admin
-      api/              # Domain-specific API services and React Query hooks
-      model/            # Domain types, state management, stores
-      ui/               # Domain-specific components
-      pages/            # Feature-level page components
-  pages/                # Thin composition layer for routes combining multiple features
-
-  App.tsx
-  main.tsx
+  app/                  # Router, route layouts, startup UI, global style tokens
+  pages/                # Public route screens and admin/ screens
+  widgets/              # Composed home, movie-grid and static-page sections
+  features/             # Auth, booking, loyalty, admin interactions, profile UI
+  entities/             # Account, hall, movie and order APIs and models
+  shared/               # Generic UI, Axios, utilities and common types
+  main.tsx              # Provider composition and React entry point
+  App.tsx               # Unused Vite starter component, retained as-is
 ```
 
 Important architectural constraints:
 
-- No global services: Never place domain API calls in a global `src/services/` directory. They belong in `src/features/[domain]/api/`.
-- No global types: Never place domain-specific interfaces in a global `src/types/` directory. They belong in `src/features/[domain]/model/`.
-- No global pages: Move feature-specific pages into their respective `src/features/[domain]/pages/` where possible.
+- Keep route screens in `pages` and reusable composed sections in `widgets`.
+- Keep user interactions in `features` and reusable domain APIs/models in `entities`.
+- Keep generic UI and infrastructure in `shared`; avoid global domain services and types.
+- Dependencies should flow from `app` through `pages`, `widgets`, `features`,
+  `entities`, then `shared`. Existing auth integration in the Axios client and
+  admin hall editing's use of booking APIs are retained to preserve behavior.
 
 ## Routing
 
@@ -237,10 +234,9 @@ Use `import type` for type-only imports.
 
 ### API Calls
 
-- Use the shared `api` instance from `src/shared/lib/axios.ts`.
-- **Strict Domain Isolation:** Service modules MUST live in their respective feature folders (`src/features/[domain]/api/xxx.service.ts`).
-- Shared domain types MUST live in `src/features/[domain]/model/xxx.types.ts`.
-- React Query hooks MUST live alongside their services in `src/features/[domain]/api/`.
+- Use the shared `api` instance from `src/shared/api/axios.ts`.
+- Put domain services and types in the owning `entities` or `features` slice.
+- Keep React Query hooks with their owning feature or entity; existing API-adjacent hooks may stay under `api`.
 - Use stable query keys, typically prefixed by the domain name (e.g., `['movies', movieId]`).
 - Booking checkout amounts come from `POST /orders/checkout-preview`. Do not
   calculate ticket totals, discounts, Gold/VIP upgrade amounts, loyalty
@@ -257,7 +253,7 @@ Use `import type` for type-only imports.
 
 ### Auth
 
-- Auth state is provided by `src/features/auth/AuthContext.tsx`.
+- Auth state is provided by `src/features/auth/model/AuthContext.tsx`.
 - Access and refresh tokens are stored in localStorage by `authService`.
 - Axios attaches `Authorization: Bearer <token>` when an access token exists.
 - Axios attempts `/auth/refresh-token` on eligible `401` responses.
@@ -266,7 +262,7 @@ Use `import type` for type-only imports.
 ### Toasts
 
 Use `useToast()` from
-`src/common/components/Toast/ToastContext.tsx` for user-visible success and
+`src/shared/ui/toast/ToastContext.tsx` for user-visible success and
 failure messages.
 
 ### Forms
@@ -279,16 +275,16 @@ toasts or inline form errors.
 ### Styling
 
 - Tailwind CSS v4 is wired through `@tailwindcss/vite`.
-- Prefer theme variables from `src/index.css`, such as `--bg-main`,
+- Prefer theme variables from `src/app/styles/index.css`, such as `--bg-main`,
   `--bg-card`, `--text-main`, `--text-muted`, `--text-faint`, and
   `--color-primary`.
-- Use `cn` from `src/lib/utils.ts` when merging conditional classes.
+- Use `cn` from `src/shared/lib/utils.ts` when merging conditional classes.
 - Lucide icons are already used in navigation and admin UI.
 - Motion animations use the `motion` package, including `motion/react`.
 
 ### Empty States
 
-- Use `src/common/components/EmptyState.tsx` for empty list, grid, table, and
+- Use `src/shared/ui/EmptyState.tsx` for empty list, grid, table, and
   panel states instead of inline one-off markup.
 - Component API: `icon`, `title`, `description`, optional `actionLabel`,
   optional `onAction`, and optional `className`.
@@ -308,7 +304,7 @@ toasts or inline form errors.
 ### Static Informational Pages
 
 Static informational pages are standalone JSX components in `src/pages` and use
-`src/layouts/StaticPageLayout.tsx` for the shared shell. Do not reintroduce
+`src/widgets/static-page/ui/StaticPageLayout.tsx` for the shared shell. Do not reintroduce
 `dangerouslySetInnerHTML` for local mock page content; convert content to typed
 React components instead.
 
@@ -316,11 +312,11 @@ React components instead.
 
 When adding or editing admin functionality:
 
-- Keep admin pages under `src/features/admin`.
-- Keep admin-only components under `src/features/admin/components`.
-- Keep admin hooks under `src/features/admin/hooks`.
+- Keep admin route pages under `src/pages/admin`.
+- Keep admin-only components under `src/features/admin/ui`.
+- Keep admin hooks under `src/features/admin/model`.
 - Add admin routes only under the `/admin` branch in `src/app/router.tsx`.
-- Add sidebar entries in `MENU_ITEMS` in `src/layouts/AdminLayout.tsx` only
+- Add sidebar entries in `MENU_ITEMS` in `src/app/layouts/AdminLayout.tsx` only
   when the page should be navigable from the admin sidebar.
 - Admin pages must remain protected by `AdminRoute`.
 
@@ -331,7 +327,7 @@ components or hooks, place those under the matching `src/features/<domain>`
 folder when that domain already exists.
 
 If a public page should be linked globally, update the existing layout
-navigation or footer components in `src/layouts/components`.
+navigation or footer components in `src/app/layouts/components`.
 
 ## Testing
 
@@ -373,12 +369,10 @@ that should be verified.
 
 - `bun.lock` and `package-lock.json` are both present. Bun is required and
   `bun.lock` is authoritative, but the npm lockfile remains in the repo.
-- README mentions `VITE_LOYALTY_API_URL`; current source code does not read that
-  variable.
 - Existing source imports are mixed between `@/` aliases and relative paths.
 - `src/App.tsx` still contains starter/demo content and is not used by
   `src/main.tsx`.
 
 ---
 
-Last updated: 2026-05-28
+Last updated: 2026-10-19

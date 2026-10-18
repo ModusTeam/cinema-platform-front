@@ -8,7 +8,7 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import { motion } from 'motion/react'
-import { AuroraText } from '../common/components/AuroraText'
+import { AuroraText } from '@/shared/ui/AuroraText'
 
 const VACANCIES = [
   {

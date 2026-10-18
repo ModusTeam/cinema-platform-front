@@ -1,4 +1,4 @@
-import MoviesGrid from '../features/movies/components/MoviesGrid'
+import MoviesGrid from '@/widgets/movies-grid/ui/MoviesGrid'
 
 const SessionsPage = () => {
   return (

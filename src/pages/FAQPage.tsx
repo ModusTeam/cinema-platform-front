@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { ChevronDown, HelpCircle, Phone, Mail } from 'lucide-react'
 import { clsx } from 'clsx'
-import { FAQ_ITEMS } from '../data/faq'
-import { FlipWords } from '../common/components/FlipWords'
+import { FAQ_ITEMS } from '@/pages/data/faq'
+import { FlipWords } from '@/shared/ui/FlipWords'
 
 const FAQPage = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0)

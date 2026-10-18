@@ -1,5 +1,5 @@
-import { api } from '@/lib/axios'
-import type { Hall, Session } from '@/features/halls/model/hall.types'
+import { api } from '@/shared/api/axios'
+import type { Hall, Session } from '@/entities/hall/model/hall.types'
 
 export interface CreateOrderResponse {
   orderId: string

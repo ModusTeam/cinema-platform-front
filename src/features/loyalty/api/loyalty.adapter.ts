@@ -1,14 +1,14 @@
 import { achievementsAdapter } from '@/features/loyalty/achievements/achievements.adapter'
-import { api } from '@/lib/axios'
+import { api } from '@/shared/api/axios'
 
-import { mapLoyaltyProfile } from './loyalty.mappers'
+import { mapLoyaltyProfile } from '@/features/loyalty/lib/loyalty.mappers'
 import type {
 	BackendLoyaltyProfileDto,
 	LoyaltyBenefit,
 	LoyaltyCheckoutPreview,
 	LoyaltyProfile,
 	LoyaltyTransactionHistory,
-} from './loyalty.types'
+} from '@/features/loyalty/model/loyalty.types'
 
 export const loyaltyAdapter = {
 	getLoyaltyProfile: async (): Promise<LoyaltyProfile> => {

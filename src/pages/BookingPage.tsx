@@ -10,14 +10,14 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
-import EmptyState from '@/common/components/EmptyState'
-import { GridLoader } from '@/common/components/GridLoader'
-import { useLoyalty } from '@/features/account/hooks/useLoyalty'
-import { useAuth } from '@/features/auth/AuthContext'
+import EmptyState from '@/shared/ui/EmptyState'
+import { GridLoader } from '@/shared/ui/GridLoader'
+import { useLoyalty } from '@/features/loyalty/model/useLoyalty'
+import { useAuth } from '@/features/auth/model/AuthContext'
 import { useCheckoutPreview } from '@/features/booking/api/useCheckoutPreview'
-import SeatSelector from '@/features/booking/components/SeatSelector'
-import SessionSelector from '@/features/booking/components/SessionSelector'
-import { useBooking } from '@/features/booking/hooks/useBooking'
+import SeatSelector from '@/features/booking/ui/SeatSelector'
+import SessionSelector from '@/features/booking/ui/SessionSelector'
+import { useBooking } from '@/features/booking/model/useBooking'
 
 interface CheckoutToggleProps {
   label: string

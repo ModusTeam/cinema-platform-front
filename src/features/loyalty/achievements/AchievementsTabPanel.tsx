@@ -1,6 +1,6 @@
-import EmptyState from '@/common/components/EmptyState'
+import EmptyState from '@/shared/ui/EmptyState'
 import AchievementCard from '@/features/loyalty/achievements/AchievementCard'
-import { useAchievementsTabData } from '@/features/loyalty/achievements/hooks/useAchievementsTabData'
+import { useAchievementsTabData } from '@/features/loyalty/achievements/model/useAchievementsTabData'
 import { ArrowRight, Trophy } from 'lucide-react'
 import { Link } from 'react-router-dom'
 

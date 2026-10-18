@@ -1,4 +1,4 @@
-import LoyaltyDashboard from '@/features/loyalty/components/LoyaltyDashboard'
+import LoyaltyDashboard from '@/features/loyalty/ui/LoyaltyDashboard'
 
 const LoyaltyPage = () => {
   return (

@@ -24,16 +24,16 @@ import {
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 
-import { AuroraText } from '@/common/components/AuroraText'
-import EmptyState from '@/common/components/EmptyState'
-import { GridLoader } from '@/common/components/GridLoader'
-import Input from '@/common/components/Input'
-import { LOYALTY_TIER_THRESHOLDS } from '@/constants/loyalty'
-import { useLoyalty } from '@/features/account/hooks/useLoyalty'
+import { AuroraText } from '@/shared/ui/AuroraText'
+import EmptyState from '@/shared/ui/EmptyState'
+import { GridLoader } from '@/shared/ui/GridLoader'
+import Input from '@/shared/ui/Input'
+import { LOYALTY_TIER_THRESHOLDS } from '@/features/loyalty/config/loyalty'
+import { useLoyalty } from '@/features/loyalty/model/useLoyalty'
 import AchievementsTabPanel from '@/features/loyalty/achievements/AchievementsTabPanel'
-import TicketCard from '@/features/profile/components/TicketCard'
-import { type TabType, useProfile } from '@/features/profile/hooks/useProfile'
-import type { LoyaltyTier } from '@/features/account/model/account.types'
+import TicketCard from '@/features/profile/ui/TicketCard'
+import { type TabType, useProfile } from '@/features/profile/model/useProfile'
+import type { LoyaltyTier } from '@/entities/account/model/account.types'
 
 const profileSchema = z
   .object({

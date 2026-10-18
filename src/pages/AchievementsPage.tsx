@@ -2,9 +2,9 @@ import { useMemo } from 'react'
 import { AlertCircle, ArrowLeft, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
-import EmptyState from '@/common/components/EmptyState'
+import EmptyState from '@/shared/ui/EmptyState'
 import AchievementCard from '@/features/loyalty/achievements/AchievementCard'
-import { useAchievementsTabData } from '@/features/loyalty/achievements/hooks/useAchievementsTabData'
+import { useAchievementsTabData } from '@/features/loyalty/achievements/model/useAchievementsTabData'
 import type { Achievement } from '@/features/loyalty/achievements/achievements.types'
 
 const LOADING_CARDS = [

@@ -3,9 +3,9 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom'
 import { router } from './app/router'
-import { ToastProvider } from './common/components/Toast/ToastContext'
-import { AuthProvider } from './features/auth/AuthContext'
-import './index.css'
+import { ToastProvider } from '@/shared/ui/toast/ToastContext'
+import { AuthProvider } from '@/features/auth/model/AuthContext'
+import '@/app/styles/index.css'
 
 const queryClient = new QueryClient({
   defaultOptions: {

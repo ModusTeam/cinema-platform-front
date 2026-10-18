@@ -1,8 +1,8 @@
 import { ArrowLeft } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
-import PointsHistoryTable from '@/features/loyalty/components/PointsHistoryTable'
-import { useLoyaltyHistory } from '@/features/loyalty/hooks/useLoyaltyHistory'
+import PointsHistoryTable from '@/features/loyalty/ui/PointsHistoryTable'
+import { useLoyaltyHistory } from '@/features/loyalty/model/useLoyaltyHistory'
 
 const LoyaltyHistoryPage = () => {
   const historyQuery = useLoyaltyHistory()

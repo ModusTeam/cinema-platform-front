@@ -3,10 +3,10 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../features/auth/AuthContext'
-import Input from '../common/components/Input'
+import { useAuth } from '@/features/auth/model/AuthContext'
+import Input from '@/shared/ui/Input'
 import { Clapperboard, ArrowRight } from 'lucide-react'
-import { GridLoader } from '../common/components/GridLoader'
+import { GridLoader } from '@/shared/ui/GridLoader'
 
 const loginSchema = z.object({
   email: z

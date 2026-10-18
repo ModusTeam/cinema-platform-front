@@ -8,7 +8,7 @@ import {
   Sparkles,
   Quote,
 } from 'lucide-react'
-import { AuroraText } from '../common/components/AuroraText'
+import { AuroraText } from '@/shared/ui/AuroraText'
 
 const AboutPage = () => {
   return (
