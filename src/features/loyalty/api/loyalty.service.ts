@@ -4,7 +4,7 @@ import type {
   LoyaltyCheckoutPreview,
   LoyaltyProfile,
   LoyaltyTransactionHistory,
-} from './loyalty.types'
+} from '@/features/loyalty/model/loyalty.types'
 import type { AchievementsPreviewData } from '@/features/loyalty/achievements/achievements.types'
 
 export const loyaltyService = {

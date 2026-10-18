@@ -1,0 +1,45 @@
+import { useParams } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
+import { moviesService } from '@/entities/movie/api/movies.service'
+import MovieDetails from '@/widgets/movie-details/ui/MovieDetails'
+import NotFoundPage from '@/pages/public/NotFoundPage'
+import { GridLoader } from '@/shared/ui/GridLoader'
+import UnavailableState from '@/shared/ui/UnavailableState'
+import { isAxiosError } from 'axios'
+
+const MoviePage = () => {
+  const { id } = useParams<{ id: string }>()
+
+  const {
+    data: movie,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ['movie', id],
+    queryFn: () => moviesService.getById(id!),
+    enabled: !!id,
+    staleTime: 5 * 60 * 1000,
+  })
+
+  if (isLoading) {
+    return (
+      <div className='flex h-screen w-full items-center justify-center bg-[var(--bg-main)] text-white'>
+        <GridLoader className='h-10 w-10 animate-spin text-[var(--color-primary)]' />
+      </div>
+    )
+  }
+
+  if (isError && !(isAxiosError(error) && error.response?.status === 404)) {
+    return <UnavailableState onRetry={() => void refetch()} />
+  }
+
+  if (!movie) {
+    return <NotFoundPage />
+  }
+
+  return <MovieDetails movie={movie} />
+}
+
+export default MoviePage

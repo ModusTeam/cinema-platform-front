@@ -1,5 +1,5 @@
-import { clamp } from '@/features/loyalty/api/loyalty.mappers'
-import { api } from '@/lib/axios'
+import { clamp } from '@/features/loyalty/lib/loyalty.mappers'
+import { api } from '@/shared/api/axios'
 
 import {
   getAchievementCategoryLabel,

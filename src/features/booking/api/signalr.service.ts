@@ -1,4 +1,4 @@
-import { getApiBaseUrl } from '@/lib/apiUrl'
+import { getApiBaseUrl } from '@/shared/api/apiUrl'
 import * as signalR from '@microsoft/signalr'
 
 const HUB_URL = getApiBaseUrl().replace(/\/api$/, '') + '/tickets'

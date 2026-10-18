@@ -14,7 +14,9 @@
 
 ### Architecture & Stack
 
-The application is a Vite single-page application with strict TypeScript settings and a feature-oriented source layout.
+The application is a Vite single-page application with strict TypeScript settings and a pragmatic Feature-Sliced Design layout.
+
+The backend is currently undergoing refactoring and further development, so the frontend may not yet reflect the latest backend functionality.
 
 * **Runtime and build:** Bun, Vite 7, TypeScript 5
 * **View layer:** React 19, React DOM
@@ -34,12 +36,18 @@ The application is a Vite single-page application with strict TypeScript setting
 
 **Feature-Sliced Design**
 
-The `src/features` directory acts as the main domain boundary. Feature modules own their API clients, hooks, models, and UI fragments to ensure strict isolation:
+`src` is organized by responsibility:
 
-* `src/features/booking` encapsulates booking service calls, SignalR connection handling, query hooks, and seat-selection UI.
-* `src/features/loyalty` manages loyalty adapters, mappers, dashboard components, and achievement contracts.
-* `src/features/admin` contains administrative pages, service modules, hooks, and entity editor components.
-* `src/pages` composes route-level screens. The router lazy-loads public and administrative routes, guarding the latter with an `AdminRoute` wrapper.
+* `app` contains routing, route layouts, startup UI, and global style tokens.
+* `pages` groups route screens under `public`, `auth`, `account`, `booking`, and guarded `admin` directories.
+* `widgets` contains composed sections used by pages, such as the home content, movie grid, movie details, and static page shell.
+* `features` contains interactions such as authentication, booking, loyalty, profile, and admin editing.
+* `entities` contains reusable account, hall, movie, and order models and API calls.
+* `shared` contains generic UI, Axios infrastructure, utilities, and common types.
+
+Slices use `api`, `model`, `ui`, `lib`, or `config` only where needed. The router lazy-loads public and administrative pages and guards `/admin/*` with `AdminRoute`.
+
+Data-driven screens use shared `EmptyState` for successful responses with no results and `UnavailableState` for failed requests, with retry actions where the query can be refetched.
 
 **Real-Time State Synchronization**
 
@@ -70,7 +78,7 @@ Administrative features under the `/admin` scope provide comprehensive CRUD capa
 Requires Bun. The repository uses `bun.lock` as the authoritative lockfile. Spaces are utilized for formatting in strict adherence to the Biome configuration.
 
 ```bash
-git clone https://github.com/stkossman/cinema-platform-front.git
+git clone https://github.com/ModusTeam/cinema-platform-front.git
 cd cinema-platform-front
 bun install
 ```

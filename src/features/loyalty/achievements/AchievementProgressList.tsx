@@ -1,4 +1,4 @@
-import EmptyState from '@/common/components/EmptyState'
+import EmptyState from '@/shared/ui/EmptyState'
 import { Trophy } from 'lucide-react'
 
 import type { Achievement } from './achievements.types'
