@@ -1,8 +1,9 @@
 import { clsx } from 'clsx'
-import { AlertCircle, Edit, Plus, Search, Trash2, Trophy } from 'lucide-react'
+import { Edit, Plus, Search, Trash2, Trophy } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import ConfirmModal from '@/shared/ui/modals/ConfirmModal'
 import { useToast } from '@/shared/ui/toast/ToastContext'
@@ -47,6 +48,7 @@ const AdminAchievementsPage = () => {
     total,
     isLoading,
     error,
+    refetch,
     createAchievement,
     updateAchievement,
     deleteAchievement,
@@ -191,17 +193,7 @@ const AdminAchievementsPage = () => {
             <GridLoader className='h-8 w-8 animate-spin text-[var(--color-primary)]' />
           </div>
         ) : error ? (
-          <div className='flex items-start gap-3 border-l-2 border-red-500/50 p-6 text-red-300'>
-            <AlertCircle size={20} className='mt-0.5' />
-            <div>
-              <div className='font-medium'>Досягнення тимчасово недоступні</div>
-              <p className='mt-1 text-sm text-neutral-400'>
-                {error instanceof Error
-                  ? error.message
-                  : 'Спробуйте оновити сторінку пізніше.'}
-              </p>
-            </div>
-          </div>
+          <UnavailableState title='Досягнення тимчасово недоступні' onRetry={() => void refetch()} />
         ) : filteredAchievements.length === 0 ? (
           <EmptyState
             icon={<Trophy className='h-12 w-12' />}

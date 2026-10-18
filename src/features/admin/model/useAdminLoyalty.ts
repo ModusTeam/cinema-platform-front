@@ -33,8 +33,12 @@ export const useAdminLoyalty = (userId?: string | null) => {
   return {
     balance: balanceQuery.data,
     isLoadingBalance: balanceQuery.isLoading,
+    isBalanceError: balanceQuery.isError,
+    refetchBalance: balanceQuery.refetch,
     history: historyQuery.data,
     isLoadingHistory: historyQuery.isLoading,
+    isHistoryError: historyQuery.isError,
+    refetchHistory: historyQuery.refetch,
     modifyPoints: modifyMutation.mutateAsync,
     isModifying: modifyMutation.isPending,
   }

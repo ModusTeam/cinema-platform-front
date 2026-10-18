@@ -96,6 +96,8 @@ export const useUserActivity = () => {
   return {
     users: usersList,
     isLoadingUsers: usersQuery.isLoading,
+    isUsersError: usersQuery.isError,
+    refetchUsers: usersQuery.refetch,
 
     selectedUserId,
     selectUser,
@@ -103,6 +105,8 @@ export const useUserActivity = () => {
     orders: userDataQuery.data?.orders || [],
     tickets: userDataQuery.data?.tickets || [],
     isLoadingData: userDataQuery.isFetching,
+    isDataError: userDataQuery.isError,
+    refetchData: userDataQuery.refetch,
 
     validateTicket,
     cancelOrder,

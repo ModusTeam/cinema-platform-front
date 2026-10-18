@@ -3,13 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { moviesService } from '@/entities/movie/api/movies.service'
 import { bookingService } from '@/features/booking/api/booking.service'
 import { hallsService } from '@/entities/hall/api/halls.service'
-import type { Movie } from '@/entities/movie/model/movie.types'
-import type { Session } from '@/entities/hall/model/hall.types'
-
-export interface MovieWithMeta extends Movie {
-  sessions: Session[]
-  technologies: string[]
-}
+import { addMovieSessionMetadata } from '@/features/movies/lib/movieSessionMetadata'
 
 const FILTERS = [
   { id: 'all', label: 'Всі' },
@@ -23,7 +17,7 @@ const FILTERS = [
 export const useHomeMovies = () => {
   const [activeFilter, setActiveFilter] = useState('all')
 
-  const { data: movies = [], isLoading } = useQuery({
+  const { data: movies = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['home-movies-aggregated'],
     queryFn: async () => {
       const [moviesData, allSessions, hallsData] = await Promise.all([
@@ -32,28 +26,7 @@ export const useHomeMovies = () => {
         hallsService.getAll(),
       ])
 
-      const hallTechMap: Record<string, string[]> = {}
-      hallsData.forEach(hall => {
-        hallTechMap[hall.id] = hall.technologies?.map(t => t.name) || []
-      })
-
-      return moviesData.map(movie => {
-        const movieSessions = allSessions.filter(s => s.movieId === movie.id)
-
-        const techSet = new Set<string>()
-        movieSessions.forEach(session => {
-          const techs = hallTechMap[session.hallId]
-          if (techs) techs.forEach(t => techSet.add(t))
-        })
-
-        if (techSet.size === 0) techSet.add('2D')
-
-        return {
-          ...movie,
-          sessions: movieSessions,
-          technologies: Array.from(techSet),
-        }
-      })
+      return addMovieSessionMetadata(moviesData, allSessions, hallsData)
     },
     staleTime: 5 * 60 * 1000,
   })
@@ -76,6 +49,8 @@ export const useHomeMovies = () => {
   return {
     filteredMovies,
     isLoading,
+    isError,
+    refetch,
     activeFilter,
     setActiveFilter,
     filters: FILTERS,

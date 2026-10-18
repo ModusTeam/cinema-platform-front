@@ -4,7 +4,7 @@ import { technologiesService } from '@/entities/hall/api/technologies.service'
 export const useTechnologies = () => {
   const queryClient = useQueryClient()
 
-  const { data: technologies = [], isLoading } = useQuery({
+  const { data: technologies = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['technologies'],
     queryFn: technologiesService.getAll,
     staleTime: Infinity,
@@ -31,6 +31,8 @@ export const useTechnologies = () => {
   return {
     technologies,
     isLoading,
+    isError,
+    refetch,
     createTechnology,
   }
 }

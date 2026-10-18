@@ -3,6 +3,7 @@ import { Award, ChevronRight, History, User } from 'lucide-react'
 import { useState } from 'react'
 
 import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import { useToast } from '@/shared/ui/toast/ToastContext'
 import ModifyLoyaltyModal from '@/features/admin/ui/ModifyLoyaltyModal'
@@ -12,12 +13,26 @@ import type { UserDto } from '@/features/admin/api/admin-users.service'
 
 const AdminLoyaltyPage = () => {
   const toast = useToast()
-  const { users: usersData, isLoading: isLoadingUsers } = useUsers()
+  const {
+    users: usersData,
+    isLoading: isLoadingUsers,
+    isError: isUsersError,
+    refetch: refetchUsers,
+  } = useUsers()
   const [selectedUser, setSelectedUser] = useState<UserDto | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const { balance, history, isLoadingBalance, isLoadingHistory, modifyPoints } =
-    useAdminLoyalty(selectedUser?.id)
+  const {
+    balance,
+    history,
+    isLoadingBalance,
+    isLoadingHistory,
+    isBalanceError,
+    isHistoryError,
+    refetchBalance,
+    refetchHistory,
+    modifyPoints,
+  } = useAdminLoyalty(selectedUser?.id)
 
   const handleModify = async (points: number, reason: string) => {
     if (!selectedUser) return
@@ -46,6 +61,11 @@ const AdminLoyaltyPage = () => {
             <div className='flex justify-center py-10'>
               <GridLoader className='h-6 w-6 animate-spin text-[var(--color-primary)]' />
             </div>
+          ) : isUsersError && userList.length === 0 ? (
+            <UnavailableState
+              onRetry={() => void refetchUsers()}
+              className='border-0 bg-transparent px-3 py-10'
+            />
           ) : userList.length === 0 ? (
             <EmptyState
               icon={<User className='h-10 w-10' />}
@@ -97,6 +117,12 @@ const AdminLoyaltyPage = () => {
             icon={<Award className='h-12 w-12' />}
             title='Оберіть користувача'
             description='Баланс, рівень лояльності та історія операцій зʼявляться після вибору акаунту.'
+            className='h-full border-0 bg-transparent'
+          />
+        ) : isBalanceError && !balance ? (
+          <UnavailableState
+            title='Баланс тимчасово недоступний'
+            onRetry={() => void refetchBalance()}
             className='h-full border-0 bg-transparent'
           />
         ) : (
@@ -155,6 +181,12 @@ const AdminLoyaltyPage = () => {
                     />
                   ))}
                 </div>
+              ) : isHistoryError && !history ? (
+                <UnavailableState
+                  title='Історія тимчасово недоступна'
+                  onRetry={() => void refetchHistory()}
+                  className='border-0 bg-transparent py-12'
+                />
               ) : !history || history.length === 0 ? (
                 <EmptyState
                   icon={<History className='h-12 w-12' />}

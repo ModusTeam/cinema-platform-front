@@ -34,6 +34,7 @@ export const usePricings = () => {
     }) || []
 
   const isLoading = listQuery.isLoading || detailQueries.some(q => q.isLoading)
+  const isError = listQuery.isError || detailQueries.some(q => q.isError)
 
   const createMutation = useMutation({
     mutationFn: adminPricingsService.create,
@@ -76,6 +77,8 @@ export const usePricings = () => {
   return {
     pricings,
     isLoading,
+    isError,
+    refetch: listQuery.refetch,
     createPricing,
     updateRules,
   }

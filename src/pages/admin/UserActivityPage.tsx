@@ -12,6 +12,7 @@ import {
   Ban,
 } from 'lucide-react'
 import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import { clsx } from 'clsx'
 
@@ -19,11 +20,15 @@ const UserActivityPage = () => {
   const {
     users,
     isLoadingUsers,
+    isUsersError,
+    refetchUsers,
     selectedUserId,
     selectUser,
     orders,
     tickets,
     isLoadingData,
+    isDataError,
+    refetchData,
     validateTicket,
     cancelOrder,
   } = useUserActivity()
@@ -109,6 +114,8 @@ const UserActivityPage = () => {
             <div className='flex justify-center py-10'>
               <GridLoader className='animate-spin text-[var(--color-primary)]' />
             </div>
+          ) : isUsersError && users.length === 0 ? (
+            <UnavailableState onRetry={() => void refetchUsers()} className='border-0 bg-transparent px-3 py-10' />
           ) : filteredUsers.length === 0 ? (
             <EmptyState
               icon={<User className='h-10 w-10' />}
@@ -197,6 +204,8 @@ const UserActivityPage = () => {
               <div className='flex justify-center py-20 min-h-[300px]'>
                 <GridLoader className='animate-spin text-[var(--color-primary)] h-8 w-8' />
               </div>
+            ) : isDataError && orders.length === 0 && tickets.length === 0 ? (
+              <UnavailableState onRetry={() => void refetchData()} />
             ) : (
               <div className='animate-in fade-in zoom-in-95 duration-300 space-y-6'>
                 <div className='grid grid-cols-3 gap-4'>

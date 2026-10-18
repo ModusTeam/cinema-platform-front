@@ -144,7 +144,7 @@ the slice that owns it and keep generic infrastructure in `shared`.
 ```text
 src/
   app/                  # Router, route layouts, startup UI, global style tokens
-  pages/                # Public route screens and admin/ screens
+  pages/                # public/, auth/, account/, booking/, admin/ routes
   widgets/              # Composed home, movie-grid and static-page sections
   features/             # Auth, booking, loyalty, admin interactions, profile UI
   entities/             # Account, hall, movie and order APIs and models
@@ -285,7 +285,10 @@ toasts or inline form errors.
 ### Empty States
 
 - Use `src/shared/ui/EmptyState.tsx` for empty list, grid, table, and
-  panel states instead of inline one-off markup.
+  panel states after a successful request with no results.
+- Use `src/shared/ui/UnavailableState.tsx` when a request fails. Pass a retry
+  callback when the query exposes `refetch`; never show an empty-data message
+  for a failed request.
 - Component API: `icon`, `title`, `description`, optional `actionLabel`,
   optional `onAction`, and optional `className`.
 - Pass an inline SVG icon element, usually a Lucide icon already available in
@@ -303,7 +306,7 @@ toasts or inline form errors.
 
 ### Static Informational Pages
 
-Static informational pages are standalone JSX components in `src/pages` and use
+Static informational pages are standalone JSX components in `src/pages/public` and use
 `src/widgets/static-page/ui/StaticPageLayout.tsx` for the shared shell. Do not reintroduce
 `dangerouslySetInnerHTML` for local mock page content; convert content to typed
 React components instead.
@@ -322,7 +325,8 @@ When adding or editing admin functionality:
 
 ## Public Pages
 
-Public route pages live in `src/pages`. If a public page needs feature-specific
+Public route pages live in `src/pages/public`; authentication, account, and
+booking route pages live in their matching `src/pages` directories. If a page needs feature-specific
 components or hooks, place those under the matching `src/features/<domain>`
 folder when that domain already exists.
 

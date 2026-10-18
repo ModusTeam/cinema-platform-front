@@ -44,7 +44,7 @@ export const useAdminMovies = (shouldFetchDeleted: boolean) => {
     return () => clearTimeout(timer)
   }, [searchTerm])
 
-  const { data, isLoading, isPlaceholderData } = useQuery({
+  const { data, isLoading, isPlaceholderData, isError, refetch } = useQuery({
     queryKey: ['admin-movies', page, debouncedSearch],
     queryFn: () =>
       moviesService.getPaginated(page, activePageSize, debouncedSearch),
@@ -56,6 +56,8 @@ export const useAdminMovies = (shouldFetchDeleted: boolean) => {
     data: deletedData,
     isLoading: isDeletedLoading,
     isPlaceholderData: isDeletedPlaceholderData,
+    isError: isDeletedError,
+    refetch: refetchDeleted,
   } = useQuery({
     queryKey: [
       'movies',
@@ -129,8 +131,12 @@ export const useAdminMovies = (shouldFetchDeleted: boolean) => {
     movies: data?.items || [],
     deletedMovies: deletedData?.items || [],
     isLoading: isLoading || (isPlaceholderData && !data),
+    isError,
+    refetch,
     isDeletedLoading:
       isDeletedLoading || (isDeletedPlaceholderData && !deletedData),
+    isDeletedError,
+    refetchDeleted,
     isRestoring: restoreMutation.isPending,
     pagination,
     deletedPagination,

@@ -1,4 +1,5 @@
 import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import ConfirmModal from '@/shared/ui/modals/ConfirmModal'
 import { useToast } from '@/shared/ui/toast/ToastContext'
@@ -52,7 +53,11 @@ const AdminMoviesPage = () => {
     movies,
     deletedMovies,
     isLoading,
+    isError,
+    refetch,
     isDeletedLoading,
+    isDeletedError,
+    refetchDeleted,
     isRestoring,
     searchTerm,
     setSearchTerm,
@@ -218,6 +223,8 @@ const AdminMoviesPage = () => {
           <div className='flex justify-center py-20'>
             <GridLoader className='animate-spin text-[var(--color-primary)] h-8 w-8' />
           </div>
+        ) : isError && movies.length === 0 ? (
+          <UnavailableState onRetry={() => void refetch()} />
         ) : (
           <>
             <div className='rounded-xl border border-white/5 bg-[var(--bg-card)] overflow-hidden backdrop-blur-sm shadow-xl'>
@@ -346,6 +353,8 @@ const AdminMoviesPage = () => {
           <div className='flex justify-center py-20'>
             <GridLoader className='animate-spin text-[var(--color-primary)] h-8 w-8' />
           </div>
+        ) : isDeletedError && deletedMovies.length === 0 ? (
+          <UnavailableState onRetry={() => void refetchDeleted()} />
         ) : (
           <>
             <div className='rounded-xl border border-white/5 bg-[var(--bg-card)] overflow-hidden backdrop-blur-sm shadow-xl'>

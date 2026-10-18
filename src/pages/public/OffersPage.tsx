@@ -6,6 +6,7 @@ import EmptyState from '@/shared/ui/EmptyState'
 import { useAuth } from '@/features/auth/model/AuthContext'
 import { moviesService } from '@/entities/movie/api/movies.service'
 import { GridLoader } from '@/shared/ui/GridLoader'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 const OffersPage = () => {
   const { user, isLoading: isAuthLoading } = useAuth()
@@ -21,6 +22,7 @@ const OffersPage = () => {
     data: recommendations = [],
     isLoading,
     isError,
+    refetch,
   } = useQuery({
     queryKey: ['recommendations', user?.id],
     queryFn: () => moviesService.getRecommendations(6),
@@ -63,13 +65,13 @@ const OffersPage = () => {
           </p>
         </div>
 
-        {isError && (
-          <div className='text-center text-red-400 py-10'>
-            Не вдалося завантажити рекомендації. Спробуйте пізніше.
-          </div>
-        )}
-
-        {!isError && recommendations.length > 0 ? (
+        {isError ? (
+          <UnavailableState
+            title='Не вдалося завантажити рекомендації'
+            onRetry={() => void refetch()}
+            className='py-20'
+          />
+        ) : recommendations.length > 0 ? (
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
             {recommendations.map((movie, index) => {
               const matchPercentage = Math.round(movie.similarityScore * 100)
@@ -134,16 +136,14 @@ const OffersPage = () => {
             })}
           </div>
         ) : (
-          !isLoading && (
-            <EmptyState
-              icon={<Ticket className='h-12 w-12' />}
-              title='Персональні поради ще готуються'
-              description='Відвідайте кілька сеансів, і ми зможемо скласти добірку фільмів саме під ваші вподобання.'
-              actionLabel='Обрати перший фільм'
-              onAction={() => navigate('/sessions')}
-              className='py-20 animate-in fade-in zoom-in duration-500'
-            />
-          )
+          <EmptyState
+            icon={<Ticket className='h-12 w-12' />}
+            title='Персональні поради ще готуються'
+            description='Відвідайте кілька сеансів, і ми зможемо скласти добірку фільмів саме під ваші вподобання.'
+            actionLabel='Обрати перший фільм'
+            onAction={() => navigate('/sessions')}
+            className='py-20 animate-in fade-in zoom-in duration-500'
+          />
         )}
       </div>
     </div>

@@ -1,8 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import EmptyState from '@/shared/ui/EmptyState'
-import { type Movie, MovieStatus } from '@/entities/movie/model/movie.types'
-import { type Session } from '@/entities/hall/model/hall.types'
+import { MovieStatus } from '@/entities/movie/model/movie.types'
 import { moviesService } from '@/entities/movie/api/movies.service'
 import { bookingService } from '@/features/booking/api/booking.service'
 import { hallsService } from '@/entities/hall/api/halls.service'
@@ -10,11 +9,8 @@ import MovieCard from '@/features/movies/ui/MovieCard'
 import { CalendarDays, Clock, Calendar } from 'lucide-react'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import { clsx } from 'clsx'
-
-interface MovieWithMeta extends Movie {
-  sessions: Session[]
-  technologies: string[]
-}
+import { addMovieSessionMetadata } from '@/features/movies/lib/movieSessionMetadata'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 const generateDates = () => {
   const dates = []
@@ -41,7 +37,7 @@ const MoviesGrid = () => {
 
   const dates = generateDates()
 
-  const { data: movies = [], isLoading } = useQuery({
+  const { data: movies = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['home-movies-aggregated'],
     queryFn: async () => {
       const [moviesData, allSessions, hallsData] = await Promise.all([
@@ -50,28 +46,11 @@ const MoviesGrid = () => {
         hallsService.getAll(),
       ])
 
-      const hallTechMap: Record<string, string[]> = {}
-      hallsData.forEach(hall => {
-        hallTechMap[hall.id] = hall.technologies?.map(t => t.name) || []
-      })
-
-      return moviesData
-        .filter(m => m.status !== MovieStatus.Archived)
-        .map(movie => {
-          const sessions = allSessions.filter(s => s.movieId === movie.id)
-          const techSet = new Set<string>()
-          sessions.forEach(s => {
-            const techs = hallTechMap[s.hallId]
-            if (techs) techs.forEach(t => techSet.add(t))
-          })
-          if (techSet.size === 0) techSet.add('2D')
-
-          return {
-            ...movie,
-            sessions,
-            technologies: Array.from(techSet),
-          } as MovieWithMeta
-        })
+      return addMovieSessionMetadata(
+        moviesData.filter(movie => movie.status !== MovieStatus.Archived),
+        allSessions,
+        hallsData,
+      )
     },
     staleTime: 5 * 60 * 1000,
   })
@@ -100,6 +79,10 @@ const MoviesGrid = () => {
         <GridLoader className='h-10 w-10 animate-spin text-[var(--color-primary)]' />
       </div>
     )
+  }
+
+  if (isError && movies.length === 0) {
+    return <UnavailableState onRetry={() => void refetch()} className='py-20' />
   }
 
   return (

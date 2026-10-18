@@ -8,10 +8,18 @@ import PromoSection from '@/widgets/home/ui/PromoSection'
 import HeroSection from '@/features/movies/ui/HeroSection'
 import { useHomeMovies } from '@/widgets/home/model/useHomeMovies'
 import { MovieStatus } from '@/entities/movie/model/movie.types'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 const HomePage = () => {
-  const { filteredMovies, isLoading, activeFilter, setActiveFilter, filters } =
-    useHomeMovies()
+  const {
+    filteredMovies,
+    isLoading,
+    isError,
+    refetch,
+    activeFilter,
+    setActiveFilter,
+    filters,
+  } = useHomeMovies()
 
   const moviesToShow = useMemo(() => {
     return filteredMovies
@@ -55,7 +63,9 @@ const HomePage = () => {
           </div>
         </div>
 
-        {moviesToShow.length === 0 ? (
+        {isError && filteredMovies.length === 0 ? (
+          <UnavailableState onRetry={() => void refetch()} className='py-32' />
+        ) : moviesToShow.length === 0 ? (
           <EmptyState
             icon={<Film className='h-14 w-14' />}
             title={

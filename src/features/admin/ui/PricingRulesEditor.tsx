@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import { X, Save, RefreshCw } from 'lucide-react'
 import { GridLoader } from '@/shared/ui/GridLoader'
+import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
+import { Tag } from 'lucide-react'
 import {
   type PricingDetailsDto,
   type SetPricingRuleDto,
@@ -31,7 +34,12 @@ const PricingRulesEditor = ({
   onClose,
   onSave,
 }: PricingRulesEditorProps) => {
-  const { data: seatTypes = [], isLoading: isLoadingTypes } = useQuery({
+  const {
+    data: seatTypes = [],
+    isLoading: isLoadingTypes,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ['seat-types'],
     queryFn: seatTypesService.getAll,
     staleTime: Infinity,
@@ -118,83 +126,98 @@ const PricingRulesEditor = ({
         </div>
 
         <div className='flex-1 overflow-auto p-6'>
-          <div className='border border-white/10 rounded-lg overflow-hidden'>
-            <table className='w-full text-sm text-left'>
-              <thead className='text-xs uppercase bg-white/5 text-[var(--text-muted)] font-medium'>
-                <tr>
-                  <th className='px-4 py-3 w-48'>Тип місця</th>
-                  {DAYS.map(day => (
-                    <th
-                      key={day.id}
-                      className='px-2 py-3 text-center w-24 border-l border-white/5'
-                    >
-                      {day.name}
-                    </th>
-                  ))}
-                  <th className='px-4 py-3 w-10'></th>
-                </tr>
-              </thead>
-              <tbody className='divide-y divide-white/5'>
-                {seatTypes.map(type => (
-                  <tr
-                    key={type.id}
-                    className='hover:bg-white/5 transition-colors'
-                  >
-                    <td className='px-4 py-3 font-bold text-white'>
-                      {type.name}
-                      <div className='text-[10px] font-normal text-[var(--text-muted)] line-clamp-1'>
-                        {type.description}
-                      </div>
-                    </td>
-                    {DAYS.map(day => {
-                      const price =
-                        matrix[`${day.id}${SEPARATOR}${type.id}`] || 0
-                      return (
-                        <td
-                          key={day.id}
-                          className='p-2 border-l border-white/5'
-                        >
-                          <div className='relative group'>
-                            <input
-                              type='number'
-                              min='0'
-                              step='10'
-                              value={price}
-                              onChange={e =>
-                                handlePriceChange(
-                                  day.id,
-                                  type.id,
-                                  e.target.value,
-                                )
-                              }
-                              className='w-full bg-[var(--bg-main)] border border-transparent focus:border-[var(--color-primary)] rounded px-2 py-1.5 text-center text-white font-medium focus:outline-none transition-all'
-                            />
-                            <span className='absolute right-2 top-1.5 text-[10px] text-[var(--text-muted)] pointer-events-none opacity-50'>
-                              ₴
-                            </span>
-                          </div>
-                        </td>
-                      )
-                    })}
-                    <td className='px-2 text-center border-l border-white/5'>
-                      <button
-                        type='button'
-                        onClick={() => {
-                          const basePrice =
-                            matrix[`${DAYS[0].id}${SEPARATOR}${type.id}`] || 150
-                          fillRow(type.id, basePrice)
-                        }}
-                        className='p-1.5 rounded hover:bg-white/10 text-[var(--text-muted)] hover:text-white'
-                        title='Заповнити весь рядок ціною понеділка'
+          {isError && seatTypes.length === 0 ? (
+            <UnavailableState
+              onRetry={() => void refetch()}
+              className='border-0 bg-transparent'
+            />
+          ) : seatTypes.length === 0 ? (
+            <EmptyState
+              icon={<Tag className='h-12 w-12' />}
+              title='Типів місць ще немає'
+              description='Додайте типи місць, щоб налаштувати правила цін.'
+              className='border-0 bg-transparent'
+            />
+          ) : (
+            <div className='border border-white/10 rounded-lg overflow-hidden'>
+              <table className='w-full text-sm text-left'>
+                <thead className='text-xs uppercase bg-white/5 text-[var(--text-muted)] font-medium'>
+                  <tr>
+                    <th className='px-4 py-3 w-48'>Тип місця</th>
+                    {DAYS.map(day => (
+                      <th
+                        key={day.id}
+                        className='px-2 py-3 text-center w-24 border-l border-white/5'
                       >
-                        <RefreshCw size={14} />
-                      </button>
-                    </td>
+                        {day.name}
+                      </th>
+                    ))}
+                    <th className='px-4 py-3 w-10'></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className='divide-y divide-white/5'>
+                  {seatTypes.map(type => (
+                    <tr
+                      key={type.id}
+                      className='hover:bg-white/5 transition-colors'
+                    >
+                      <td className='px-4 py-3 font-bold text-white'>
+                        {type.name}
+                        <div className='text-[10px] font-normal text-[var(--text-muted)] line-clamp-1'>
+                          {type.description}
+                        </div>
+                      </td>
+                      {DAYS.map(day => {
+                        const price =
+                          matrix[`${day.id}${SEPARATOR}${type.id}`] || 0
+                        return (
+                          <td
+                            key={day.id}
+                            className='p-2 border-l border-white/5'
+                          >
+                            <div className='relative group'>
+                              <input
+                                type='number'
+                                min='0'
+                                step='10'
+                                value={price}
+                                onChange={e =>
+                                  handlePriceChange(
+                                    day.id,
+                                    type.id,
+                                    e.target.value,
+                                  )
+                                }
+                                className='w-full bg-[var(--bg-main)] border border-transparent focus:border-[var(--color-primary)] rounded px-2 py-1.5 text-center text-white font-medium focus:outline-none transition-all'
+                              />
+                              <span className='absolute right-2 top-1.5 text-[10px] text-[var(--text-muted)] pointer-events-none opacity-50'>
+                                ₴
+                              </span>
+                            </div>
+                          </td>
+                        )
+                      })}
+                      <td className='px-2 text-center border-l border-white/5'>
+                        <button
+                          type='button'
+                          onClick={() => {
+                            const basePrice =
+                              matrix[`${DAYS[0].id}${SEPARATOR}${type.id}`] ||
+                              150
+                            fillRow(type.id, basePrice)
+                          }}
+                          className='p-1.5 rounded hover:bg-white/10 text-[var(--text-muted)] hover:text-white'
+                          title='Заповнити весь рядок ціною понеділка'
+                        >
+                          <RefreshCw size={14} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
         <div className='p-6 border-t border-white/10 flex justify-end gap-3 bg-[var(--bg-card)] rounded-b-xl'>
@@ -208,7 +231,7 @@ const PricingRulesEditor = ({
           <button
             type='button'
             onClick={handleSave}
-            disabled={isSaving}
+            disabled={isSaving || isError || seatTypes.length === 0}
             className='flex items-center gap-2 bg-[var(--color-success)] text-white px-8 py-2 rounded-lg font-bold hover:brightness-110 shadow-lg shadow-[var(--color-success)]/20 transition-all'
           >
             {isSaving ? (

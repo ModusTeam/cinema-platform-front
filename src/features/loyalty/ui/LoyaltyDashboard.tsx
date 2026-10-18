@@ -1,7 +1,6 @@
 import { useLoyaltyAchievementsPreview } from '@/features/loyalty/model/useLoyaltyAchievementsPreview'
 import { useLoyaltyProfile } from '@/features/loyalty/model/useLoyaltyProfile'
 import {
-	AlertCircle,
 	ArrowRight,
 	BarChart3,
 	Gift,
@@ -10,15 +9,12 @@ import {
 	Wallet,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 const LoyaltyDashboard = () => {
 	const profileQuery = useLoyaltyProfile()
 	const achievementsQuery = useLoyaltyAchievementsPreview()
-
-	const errorMessage =
-		profileQuery.error instanceof Error
-			? profileQuery.error.message
-			: 'Помилка завантаження'
 
 	if (profileQuery.isLoading) {
 		return (
@@ -37,26 +33,16 @@ const LoyaltyDashboard = () => {
 	}
 
 	if (profileQuery.error) {
-		return (
-			<div className='border-l-2 border-red-500/50 py-2 pl-4'>
-				<div className='flex items-center gap-2 text-red-400'>
-					<AlertCircle size={18} />
-					<span className='font-medium'>Лояльність тимчасово недоступна</span>
-				</div>
-				<p className='mt-2 text-sm text-neutral-400'>{errorMessage}</p>
-			</div>
-		)
+		return <UnavailableState title='Лояльність тимчасово недоступна' onRetry={() => void profileQuery.refetch()} />
 	}
 
 	if (!profileQuery.data) {
 		return (
-			<div className='flex flex-col items-center justify-center py-20 text-center'>
-				<Sparkles className='h-8 w-8 text-neutral-600' />
-				<h3 className='mt-4 text-lg font-medium text-white'>Немає даних</h3>
-				<p className='mt-2 text-sm text-neutral-500'>
-					Профіль лояльності зʼявиться після першого бронювання.
-				</p>
-			</div>
+			<EmptyState
+				icon={<Sparkles className='h-12 w-12' />}
+				title='Немає даних'
+				description='Профіль лояльності зʼявиться після першого бронювання.'
+			/>
 		)
 	}
 
@@ -164,9 +150,7 @@ const LoyaltyDashboard = () => {
 							<div className='h-2 rounded-full bg-white/5 motion-safe:animate-pulse' />
 						</div>
 					) : achievementsQuery.error ? (
-						<p className='mt-8 text-sm text-neutral-500'>
-							Досягнення тимчасово недоступні.
-						</p>
+						<UnavailableState title='Досягнення тимчасово недоступні' onRetry={() => void achievementsQuery.refetch()} className='mt-8 border-0 bg-transparent px-0 py-4' />
 					) : nearestAchievement ? (
 						<div className='mt-8'>
 							<p className='text-base font-medium leading-relaxed text-white'>

@@ -2,11 +2,12 @@ import { useState } from 'react'
 import { useTechnologies } from '@/features/admin/model/useTechnologies'
 import { Plus, Cpu, Trash2 } from 'lucide-react'
 import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import CreateTechnologyModal from '@/features/admin/ui/CreateTechnologyModal'
 
 const TechnologiesPage = () => {
-  const { technologies, isLoading, createTechnology } = useTechnologies()
+  const { technologies, isLoading, isError, refetch, createTechnology } = useTechnologies()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const getTypeColor = (type: string) => {
@@ -46,6 +47,8 @@ const TechnologiesPage = () => {
         <div className='flex justify-center py-20'>
           <GridLoader className='animate-spin text-[var(--color-primary)] h-8 w-8' />
         </div>
+      ) : isError && technologies.length === 0 ? (
+        <UnavailableState onRetry={() => void refetch()} />
       ) : (
         <div className='rounded-xl border border-white/5 bg-[var(--bg-card)] overflow-hidden backdrop-blur-sm shadow-xl'>
           <table className='w-full text-left text-sm'>

@@ -1,8 +1,9 @@
 import { useMemo } from 'react'
-import { AlertCircle, ArrowLeft, Sparkles } from 'lucide-react'
+import { ArrowLeft, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
 import AchievementCard from '@/features/loyalty/achievements/AchievementCard'
 import { useAchievementsTabData } from '@/features/loyalty/achievements/model/useAchievementsTabData'
 import type { Achievement } from '@/features/loyalty/achievements/achievements.types'
@@ -33,7 +34,7 @@ const getRecentUnlocked = (achievements: Achievement[]) => {
 }
 
 const AchievementsPage = () => {
-  const { data, error, isLoading } = useAchievementsTabData()
+  const { data, error, isLoading, refetch } = useAchievementsTabData()
   const summary = useMemo(() => {
     if (!data) return null
 
@@ -130,19 +131,7 @@ const AchievementsPage = () => {
             ))}
           </div>
         ) : error ? (
-          <div className='border-l-2 border-red-500/50 py-2 pl-4'>
-            <div className='flex items-center gap-2 text-red-400'>
-              <AlertCircle size={18} />
-              <span className='font-medium'>
-                Досягнення тимчасово недоступні
-              </span>
-            </div>
-            <p className='mt-2 text-sm text-neutral-400'>
-              {error instanceof Error
-                ? error.message
-                : 'Спробуйте оновити сторінку пізніше.'}
-            </p>
-          </div>
+          <UnavailableState title='Досягнення тимчасово недоступні' onRetry={() => void refetch()} />
         ) : !data || data.achievements.length === 0 ? (
           <EmptyState
             icon={<Sparkles className='h-12 w-12' />}

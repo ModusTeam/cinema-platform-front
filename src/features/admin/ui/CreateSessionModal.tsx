@@ -1,5 +1,6 @@
 import { X, Calendar, Clock, DollarSign, Film, MonitorPlay } from 'lucide-react'
 import { GridLoader } from '@/shared/ui/GridLoader'
+import UnavailableState from '@/shared/ui/UnavailableState'
 import { useCreateSession } from '@/features/admin/model/useCreateSession'
 
 interface CreateSessionModalProps {
@@ -28,6 +29,8 @@ const CreateSessionModal = ({
     time,
     setTime,
     isLoadingData,
+    isDataError,
+    retryData,
     isSubmitting,
     submit,
   } = useCreateSession(isOpen, onSuccess, onClose)
@@ -52,6 +55,11 @@ const CreateSessionModal = ({
           <div className='py-12 flex justify-center'>
             <GridLoader className='h-8 w-8 animate-spin text-[var(--text-muted)]' />
           </div>
+        ) : isDataError ? (
+          <UnavailableState
+            onRetry={() => void retryData()}
+            className='border-0 bg-transparent py-12'
+          />
         ) : (
           <form onSubmit={submit} className='space-y-5'>
             <div>

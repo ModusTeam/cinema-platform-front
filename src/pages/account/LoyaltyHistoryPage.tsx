@@ -41,6 +41,7 @@ const LoyaltyHistoryPage = () => {
           onLoadMore={() => {
             void historyQuery.loadMore()
           }}
+          onRetry={() => void historyQuery.refetch()}
         />
       </div>
     </div>

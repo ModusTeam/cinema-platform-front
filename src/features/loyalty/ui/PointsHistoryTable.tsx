@@ -1,4 +1,5 @@
 import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
 import {
   formatTransactionInfo,
   formatSignedPoints,
@@ -6,7 +7,7 @@ import {
 } from '@/features/loyalty/lib/loyaltyTransactionFormatters'
 import type { LoyaltyTransaction } from '@/features/loyalty/model/loyalty.types'
 import { cn } from '@/shared/lib/utils'
-import { AlertCircle, History } from 'lucide-react'
+import { History } from 'lucide-react'
 
 const LOADING_ROWS = [
   'history-loading-1',
@@ -22,6 +23,7 @@ interface PointsHistoryTableProps {
   hasMore: boolean
   error?: Error | null
   onLoadMore: () => void
+  onRetry?: () => void
 }
 
 const pointsToneClassName = {
@@ -37,6 +39,7 @@ const PointsHistoryTable = ({
   hasMore,
   error,
   onLoadMore,
+  onRetry,
 }: PointsHistoryTableProps) => {
   if (isLoading) {
     return (
@@ -54,17 +57,7 @@ const PointsHistoryTable = ({
   }
 
   if (error) {
-    return (
-      <div className='border-l-2 border-red-500/50 py-2 pl-4'>
-        <div className='flex items-center gap-2 text-red-400'>
-          <AlertCircle size={18} />
-          <span className='font-medium'>Історія тимчасово недоступна</span>
-        </div>
-        <p className='mt-2 text-sm text-neutral-400'>
-          Спробуйте оновити сторінку пізніше.
-        </p>
-      </div>
-    )
+    return <UnavailableState title='Історія тимчасово недоступна' onRetry={onRetry} className='py-12' />
   }
 
   if (transactions.length === 0) {

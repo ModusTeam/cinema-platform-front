@@ -42,6 +42,14 @@ export const useCreateSession = (
 
   const isLoadingData =
     moviesQuery.isLoading || hallsQuery.isLoading || pricingsQuery.isLoading
+  const isDataError =
+    moviesQuery.isError || hallsQuery.isError || pricingsQuery.isError
+  const retryData = () =>
+    Promise.all([
+      moviesQuery.refetch(),
+      hallsQuery.refetch(),
+      pricingsQuery.refetch(),
+    ])
 
   useEffect(() => {
     if (isOpen && !isLoadingData) {
@@ -108,6 +116,8 @@ export const useCreateSession = (
     setTime,
 
     isLoadingData,
+    isDataError,
+    retryData,
     isSubmitting: createMutation.isPending,
     submit,
   }

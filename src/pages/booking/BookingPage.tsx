@@ -11,6 +11,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import { useLoyalty } from '@/features/loyalty/model/useLoyalty'
 import { useAuth } from '@/features/auth/model/AuthContext'
@@ -88,6 +89,12 @@ const BookingPage = () => {
     selectedSeats,
     isLoading,
     isLoadingDetails,
+    isMovieError,
+    isSessionsError,
+    isDetailsError,
+    refetchMovie,
+    refetchSessions,
+    refetchDetails,
     isProcessingPayment,
     selectSession,
     resetSession,
@@ -261,6 +268,10 @@ const BookingPage = () => {
     )
   }
 
+  if (isMovieError && !movie) {
+    return <UnavailableState onRetry={() => void refetchMovie()} />
+  }
+
   const genresList = Array.isArray(movie?.genres) ? movie.genres : []
   const sessionDateTimeLabel = selectedSession
     ? `${new Date(selectedSession.startTime).toLocaleDateString('uk-UA', {
@@ -342,7 +353,9 @@ const BookingPage = () => {
       <main className='container mx-auto px-4 py-8'>
         {step === 1 && (
           <div className='animate-in fade-in slide-in-from-left-4 duration-500'>
-            {sessions.length > 0 ? (
+            {isSessionsError && sessions.length === 0 ? (
+              <UnavailableState onRetry={() => void refetchSessions()} className='min-h-[300px]' />
+            ) : sessions.length > 0 ? (
               <SessionSelector
                 sessions={sessions}
                 selectedSession={null}
@@ -381,6 +394,8 @@ const BookingPage = () => {
               <div className='flex justify-center py-20'>
                 <GridLoader className='animate-spin text-[var(--color-primary)]' />
               </div>
+            ) : isDetailsError && !hall ? (
+              <UnavailableState onRetry={() => void refetchDetails()} />
             ) : hall ? (
               <SeatSelector
                 hall={hall}

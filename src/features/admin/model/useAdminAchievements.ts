@@ -42,6 +42,7 @@ export const useAdminAchievements = (includeInactive: boolean) => {
     total: achievementsQuery.data?.total || 0,
     isLoading: achievementsQuery.isLoading,
     error: achievementsQuery.error,
+    refetch: achievementsQuery.refetch,
     createAchievement: createMutation.mutateAsync,
     updateAchievement: updateMutation.mutateAsync,
     deleteAchievement: deleteMutation.mutateAsync,

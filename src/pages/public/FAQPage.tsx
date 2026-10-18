@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ChevronDown, HelpCircle, Phone, Mail } from 'lucide-react'
 import { clsx } from 'clsx'
-import { FAQ_ITEMS } from '@/pages/data/faq'
+import { FAQ_ITEMS } from '@/pages/public/data/faq'
 import { FlipWords } from '@/shared/ui/FlipWords'
 
 const FAQPage = () => {

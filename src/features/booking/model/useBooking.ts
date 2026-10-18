@@ -41,7 +41,12 @@ export const useBooking = (movieId?: string) => {
   )
   const [selectedSeats, setSelectedSeats] = useState<Seat[]>([])
 
-  const { data: movie, isLoading: isLoadingMovie } = useQuery({
+  const {
+    data: movie,
+    isLoading: isLoadingMovie,
+    isError: isMovieError,
+    refetch: refetchMovie,
+  } = useQuery({
     queryKey: ['movie', movieId],
     queryFn: () => {
       if (!movieId) throw new Error('No movie selected')
@@ -51,7 +56,12 @@ export const useBooking = (movieId?: string) => {
     staleTime: 10 * 60 * 1000,
   })
 
-  const { data: sessions = [], isLoading: isLoadingSessions } = useQuery({
+  const {
+    data: sessions = [],
+    isLoading: isLoadingSessions,
+    isError: isSessionsError,
+    refetch: refetchSessions,
+  } = useQuery({
     queryKey: ['movie-sessions', movieId],
     queryFn: () => {
       if (!movieId) throw new Error('No movie selected')
@@ -67,19 +77,22 @@ export const useBooking = (movieId?: string) => {
         ),
   })
 
-  const { data: bookingData, isLoading: isLoadingDetails } =
-    useQuery<BookingQueryData>({
-      queryKey: ['session-full-details', selectedSessionId],
-      queryFn: async () => {
-        if (!selectedSessionId) throw new Error('No session selected')
-        const session =
-          await bookingService.getSessionDetails(selectedSessionId)
-        const hall = await bookingService.getHallById(session.hallId)
-        return { session, hall }
-      },
-      enabled: !!selectedSessionId,
-      staleTime: Infinity,
-    })
+  const {
+    data: bookingData,
+    isLoading: isLoadingDetails,
+    isError: isDetailsError,
+    refetch: refetchDetails,
+  } = useQuery<BookingQueryData>({
+    queryKey: ['session-full-details', selectedSessionId],
+    queryFn: async () => {
+      if (!selectedSessionId) throw new Error('No session selected')
+      const session = await bookingService.getSessionDetails(selectedSessionId)
+      const hall = await bookingService.getHallById(session.hallId)
+      return { session, hall }
+    },
+    enabled: !!selectedSessionId,
+    staleTime: Infinity,
+  })
 
   const updateOccupiedSeats = useCallback(
     (seatId: string, action: 'add' | 'remove') => {
@@ -258,6 +271,12 @@ export const useBooking = (movieId?: string) => {
     hall: bookingData?.hall,
     selectedSeats,
     isLoading: isLoadingMovie || isLoadingSessions,
+    isMovieError,
+    isSessionsError,
+    isDetailsError,
+    refetchMovie,
+    refetchSessions,
+    refetchDetails,
     isLoadingDetails,
     isProcessingPayment: createOrderMutation.isPending,
     selectSession,

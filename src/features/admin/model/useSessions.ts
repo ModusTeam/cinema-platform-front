@@ -9,7 +9,7 @@ import { adminSessionsService } from '@/features/admin/api/admin-sessions.servic
 export const useSessions = () => {
   const queryClient = useQueryClient()
 
-  const { data: sessions = [], isLoading } = useQuery({
+  const { data: sessions = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['admin-sessions'],
     queryFn: () => adminSessionsService.getAll(1, 100),
     placeholderData: keepPreviousData,
@@ -58,6 +58,8 @@ export const useSessions = () => {
   return {
     sessions,
     isLoading,
+    isError,
+    refetch,
     fetchSessions: () =>
       queryClient.invalidateQueries({ queryKey: ['admin-sessions'] }),
     deleteSession,

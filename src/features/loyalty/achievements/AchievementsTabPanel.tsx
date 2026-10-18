@@ -1,18 +1,15 @@
 import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
 import AchievementCard from '@/features/loyalty/achievements/AchievementCard'
 import { useAchievementsTabData } from '@/features/loyalty/achievements/model/useAchievementsTabData'
 import { ArrowRight, Trophy } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 const AchievementsTabPanel = () => {
-  const { data, error, isLoading } = useAchievementsTabData()
+  const { data, error, isLoading, refetch } = useAchievementsTabData()
 
   if (error) {
-    return (
-      <div className='rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-sm text-neutral-500'>
-        Досягнення тимчасово недоступні.
-      </div>
-    )
+    return <UnavailableState title='Досягнення тимчасово недоступні' onRetry={() => void refetch()} />
   }
 
   if (isLoading || !data) return null

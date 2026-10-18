@@ -22,7 +22,7 @@ export const useUsers = () => {
   const [page, setPage] = useState(1)
   const pageSize = 10
 
-  const { data, isLoading, isPlaceholderData } = useQuery({
+  const { data, isLoading, isPlaceholderData, isError, refetch } = useQuery({
     queryKey: ['admin-users', page],
     queryFn: () => adminUsersService.getAll(page, pageSize),
     placeholderData: keepPreviousData,
@@ -68,6 +68,8 @@ export const useUsers = () => {
   return {
     users: usersList,
     isLoading: isLoading || (isPlaceholderData && !data),
+    isError,
+    refetch,
     pagination,
     changePage: setPage,
     changeUserRole,

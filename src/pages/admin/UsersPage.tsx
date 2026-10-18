@@ -9,6 +9,7 @@ import {
   ChevronRight,
 } from 'lucide-react'
 import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import { useAuth } from '@/features/auth/model/AuthContext'
 import ChangeRoleModal from '@/features/admin/ui/ChangeRoleModal'
@@ -17,7 +18,7 @@ import { type UserDto } from '@/features/admin/api/admin-users.service'
 const UsersPage = () => {
   const { user: currentUser } = useAuth()
 
-  const { users, isLoading, changeUserRole, pagination, changePage } =
+  const { users, isLoading, isError, refetch, changeUserRole, pagination, changePage } =
     useUsers()
 
   const [searchQuery, setSearchQuery] = useState('')
@@ -92,6 +93,8 @@ const UsersPage = () => {
         <div className='flex justify-center py-20'>
           <GridLoader className='animate-spin text-[var(--color-primary)] h-8 w-8' />
         </div>
+      ) : isError && users.length === 0 ? (
+        <UnavailableState onRetry={() => void refetch()} />
       ) : (
         <>
           <div className='rounded-xl border border-white/5 bg-[var(--bg-card)] overflow-hidden backdrop-blur-sm shadow-xl'>

@@ -2,12 +2,13 @@ import { useState, useMemo } from 'react'
 import { useGenres } from '@/features/admin/model/useGenres'
 import { Plus, Tag, Edit, Trash2, Search } from 'lucide-react'
 import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import GenreModal from '@/features/admin/ui/GenreModal'
 import { type Genre } from '@/features/admin/api/genres.service'
 
 const GenresPage = () => {
-  const { genres, isLoading, createGenre, updateGenre, deleteGenre } =
+  const { genres, isLoading, isError, refetch, createGenre, updateGenre, deleteGenre } =
     useGenres()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -91,6 +92,8 @@ const GenresPage = () => {
         <div className='flex justify-center py-20'>
           <GridLoader className='animate-spin text-[var(--color-primary)] h-8 w-8' />
         </div>
+      ) : isError && genres.length === 0 ? (
+        <UnavailableState onRetry={() => void refetch()} />
       ) : (
         <div className='rounded-xl border border-white/5 bg-[var(--bg-card)] overflow-hidden backdrop-blur-sm shadow-xl'>
           <table className='w-full text-left text-sm'>

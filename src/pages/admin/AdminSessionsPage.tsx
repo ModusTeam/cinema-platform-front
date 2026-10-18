@@ -10,6 +10,7 @@ import {
   Calendar,
 } from 'lucide-react'
 import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import CreateSessionModal from '@/features/admin/ui/CreateSessionModal'
 import { type SessionDto } from '@/features/admin/api/admin-sessions.service'
@@ -21,6 +22,8 @@ const AdminSessionsPage = () => {
   const {
     sessions,
     isLoading,
+    isError,
+    refetch,
     fetchSessions,
     deleteSession,
     rescheduleSession,
@@ -109,6 +112,8 @@ const AdminSessionsPage = () => {
         <div className='py-20 flex justify-center'>
           <GridLoader className='h-8 w-8 animate-spin text-[var(--color-primary)]' />
         </div>
+      ) : isError && sessions.length === 0 ? (
+        <UnavailableState onRetry={() => void refetch()} />
       ) : (
         <div className='space-y-10 animate-in fade-in slide-in-from-bottom-4'>
           {Object.keys(groupedSessions).length === 0 && (

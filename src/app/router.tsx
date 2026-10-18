@@ -3,30 +3,30 @@ import { createBrowserRouter } from 'react-router-dom'
 import AdminRoute from '@/features/auth/ui/AdminRoute'
 import AdminLayout from '@/app/layouts/AdminLayout'
 import MainLayout from '@/app/layouts/MainLayout'
-import NotFoundPage from '../pages/NotFoundPage'
+import NotFoundPage from '@/pages/public/NotFoundPage'
 
 // client
-const HomePage = lazy(() => import('../pages/HomePage'))
-const LoginPage = lazy(() => import('../pages/LoginPage'))
-const AboutPage = lazy(() => import('../pages/AboutPage'))
-const RegisterPage = lazy(() => import('../pages/RegisterPage'))
-const ProfilePage = lazy(() => import('../pages/ProfilePage'))
-const MoviePage = lazy(() => import('../pages/MoviePage'))
-const FAQPage = lazy(() => import('../pages/FAQPage'))
-const OffersPage = lazy(() => import('../pages/OffersPage'))
-const BookingPage = lazy(() => import('../pages/BookingPage'))
-const SessionsPage = lazy(() => import('../pages/SessionsPage'))
-const CinemaBarPage = lazy(() => import('../pages/CinemaBarPage'))
-const CareersPage = lazy(() => import('../pages/CareersPage'))
-const LoyaltyPage = lazy(() => import('../pages/LoyaltyPage'))
-const LoyaltyHistoryPage = lazy(() => import('../pages/LoyaltyHistoryPage'))
-const AchievementsPage = lazy(() => import('../pages/AchievementsPage'))
-const PublicTechnologiesPage = lazy(() => import('../pages/TechnologiesPage'))
-const PublicHallsPage = lazy(() => import('../pages/HallsPage'))
-const RulesPage = lazy(() => import('../pages/RulesPage'))
-const PrivacyPage = lazy(() => import('../pages/PrivacyPage'))
-const OfferPage = lazy(() => import('../pages/OfferPage'))
-const AgeLimitsPage = lazy(() => import('../pages/AgeLimitsPage'))
+const HomePage = lazy(() => import('@/pages/public/HomePage'))
+const LoginPage = lazy(() => import('@/pages/auth/LoginPage'))
+const AboutPage = lazy(() => import('@/pages/public/AboutPage'))
+const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage'))
+const ProfilePage = lazy(() => import('@/pages/account/ProfilePage'))
+const MoviePage = lazy(() => import('@/pages/public/MoviePage'))
+const FAQPage = lazy(() => import('@/pages/public/FAQPage'))
+const OffersPage = lazy(() => import('@/pages/public/OffersPage'))
+const BookingPage = lazy(() => import('@/pages/booking/BookingPage'))
+const SessionsPage = lazy(() => import('@/pages/public/SessionsPage'))
+const CinemaBarPage = lazy(() => import('@/pages/public/CinemaBarPage'))
+const CareersPage = lazy(() => import('@/pages/public/CareersPage'))
+const LoyaltyPage = lazy(() => import('@/pages/account/LoyaltyPage'))
+const LoyaltyHistoryPage = lazy(() => import('@/pages/account/LoyaltyHistoryPage'))
+const AchievementsPage = lazy(() => import('@/pages/account/AchievementsPage'))
+const PublicTechnologiesPage = lazy(() => import('@/pages/public/TechnologiesPage'))
+const PublicHallsPage = lazy(() => import('@/pages/public/HallsPage'))
+const RulesPage = lazy(() => import('@/pages/public/RulesPage'))
+const PrivacyPage = lazy(() => import('@/pages/public/PrivacyPage'))
+const OfferPage = lazy(() => import('@/pages/public/OfferPage'))
+const AgeLimitsPage = lazy(() => import('@/pages/public/AgeLimitsPage'))
 
 // admin
 const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'))

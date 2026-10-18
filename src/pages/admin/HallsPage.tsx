@@ -11,6 +11,7 @@ import {
   Pencil,
 } from 'lucide-react'
 import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import ConfirmModal from '@/shared/ui/modals/ConfirmModal'
 import InputModal from '@/shared/ui/modals/InputModal'
@@ -25,7 +26,7 @@ const HallsPage = () => {
   const [saveModalOpen, setSaveModalOpen] = useState(false)
   const [tempSaveData, setTempSaveData] = useState<any>(null)
 
-  const { halls, isLoading, deleteHall } = useHalls()
+  const { halls, isLoading, isError, refetch, deleteHall } = useHalls()
   const {
     initialSeats,
     isLoadingData: isLoadingEditData,
@@ -168,7 +169,11 @@ const HallsPage = () => {
             </div>
           )}
 
-          {!isLoading && halls.length === 0 && (
+          {!isLoading && isError && halls.length === 0 && (
+            <UnavailableState onRetry={() => void refetch()} />
+          )}
+
+          {!isLoading && !isError && halls.length === 0 && (
             <EmptyState
               icon={<Armchair className='h-12 w-12' />}
               title='Залів ще немає'

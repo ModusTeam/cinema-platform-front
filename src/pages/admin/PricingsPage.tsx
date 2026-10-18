@@ -2,13 +2,14 @@ import { useState } from 'react'
 import { usePricings } from '@/features/admin/model/usePricings'
 import { Plus, Tag, Edit, Layers, CalendarRange } from 'lucide-react'
 import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import PricingModal from '@/features/admin/ui/PricingModal'
 import PricingRulesEditor from '@/features/admin/ui/PricingRulesEditor'
 import type { PricingDetailsDto } from '@/features/admin/api/admin-pricings.service'
 
 const PricingsPage = () => {
-  const { pricings, isLoading, createPricing, updateRules } = usePricings()
+  const { pricings, isLoading, isError, refetch, createPricing, updateRules } = usePricings()
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [editingPricing, setEditingPricing] =
@@ -44,6 +45,8 @@ const PricingsPage = () => {
         <div className='flex justify-center py-20'>
           <GridLoader className='animate-spin text-[var(--color-primary)] h-8 w-8' />
         </div>
+      ) : isError && pricings.length === 0 ? (
+        <UnavailableState onRetry={() => void refetch()} />
       ) : (
         <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
           {pricings.length === 0 && (

@@ -26,6 +26,7 @@ import * as z from 'zod'
 
 import { AuroraText } from '@/shared/ui/AuroraText'
 import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import Input from '@/shared/ui/Input'
 import { LOYALTY_TIER_THRESHOLDS } from '@/features/loyalty/config/loyalty'
@@ -184,6 +185,8 @@ const ProfilePage = () => {
     activeTickets,
     historyOrders,
     isLoadingTickets,
+    isTicketsError,
+    refetchTickets,
     isSaving,
     updateProfileData,
     isSavingDateOfBirth,
@@ -453,6 +456,8 @@ const ProfilePage = () => {
                     <div className='flex justify-center py-20'>
                       <GridLoader className='h-8 w-8 animate-spin text-[var(--color-primary)]' />
                     </div>
+                  ) : isTicketsError && activeTickets.length === 0 ? (
+                    <UnavailableState onRetry={() => void refetchTickets()} />
                   ) : activeTickets.length > 0 ? (
                     <div className='grid gap-4'>
                       {activeTickets.map(ticket => (
@@ -473,7 +478,13 @@ const ProfilePage = () => {
 
               {activeTab === 'history' && (
                 <div className='animate-in fade-in zoom-in-95 duration-300'>
-                  {historyOrders.length > 0 ? (
+                  {isLoadingTickets ? (
+                    <div className='flex justify-center py-20'>
+                      <GridLoader className='h-8 w-8 animate-spin text-[var(--color-primary)]' />
+                    </div>
+                  ) : isTicketsError && historyOrders.length === 0 ? (
+                    <UnavailableState onRetry={() => void refetchTickets()} />
+                  ) : historyOrders.length > 0 ? (
                     <div className='grid gap-4'>
                       {historyOrders.map(order => (
                         <TicketCard key={order.id} order={order} isHistory />

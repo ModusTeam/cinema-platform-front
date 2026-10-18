@@ -39,13 +39,15 @@ The backend is currently undergoing refactoring and further development, so the 
 `src` is organized by responsibility:
 
 * `app` contains routing, route layouts, startup UI, and global style tokens.
-* `pages` contains public screens and `pages/admin` contains guarded admin screens.
+* `pages` groups route screens under `public`, `auth`, `account`, `booking`, and guarded `admin` directories.
 * `widgets` contains composed sections used by pages, such as the home content, movie grid, movie details, and static page shell.
 * `features` contains interactions such as authentication, booking, loyalty, profile, and admin editing.
 * `entities` contains reusable account, hall, movie, and order models and API calls.
 * `shared` contains generic UI, Axios infrastructure, utilities, and common types.
 
 Slices use `api`, `model`, `ui`, `lib`, or `config` only where needed. The router lazy-loads public and administrative pages and guards `/admin/*` with `AdminRoute`.
+
+Data-driven screens use shared `EmptyState` for successful responses with no results and `UnavailableState` for failed requests, with retry actions where the query can be refetched.
 
 **Real-Time State Synchronization**
 

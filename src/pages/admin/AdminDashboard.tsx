@@ -8,6 +8,7 @@ import {
   Users,
 } from 'lucide-react'
 import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import {
   AreaChart,
@@ -115,6 +116,8 @@ const CustomChartTooltip = ({ active, payload, label }: any) => {
 const AdminDashboard = () => {
   const [stats, setStats] = useState<DashboardStatsDto | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
+  const [retryCount, setRetryCount] = useState(0)
   const [dateRange, setDateRange] = useState('30d')
 
   useEffect(() => {
@@ -129,15 +132,18 @@ const AdminDashboard = () => {
 
         const data = await adminStatsService.getDashboardStats(from, to)
         setStats(data)
+        setLoadError(false)
       } catch (error) {
         console.error('Error fetching admin stats:', error)
+        setStats(null)
+        setLoadError(true)
       } finally {
         setIsLoading(false)
       }
     }
 
     fetchStats()
-  }, [dateRange])
+  }, [dateRange, retryCount])
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('uk-UA', {
@@ -148,6 +154,10 @@ const AdminDashboard = () => {
   }
 
   const chartData = stats?.salesChart || []
+
+  if (!isLoading && loadError) {
+    return <UnavailableState onRetry={() => setRetryCount(count => count + 1)} />
+  }
 
   const dateFormatter = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('uk-UA', {

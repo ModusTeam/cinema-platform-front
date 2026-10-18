@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { X, Search, Download, Image as ImageIcon, SearchX } from 'lucide-react'
 import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import { moviesService } from '@/entities/movie/api/movies.service'
 import type { TmdbSearchResult } from '@/entities/movie/model/movie.types'
@@ -21,21 +22,29 @@ const ImportMovieModal = ({
   const [isSearching, setIsSearching] = useState(false)
   const [isImporting, setIsImporting] = useState<number | null>(null)
   const [hasSearched, setHasSearched] = useState(false)
+  const [searchFailed, setSearchFailed] = useState(false)
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const search = async () => {
     if (!query.trim()) return
 
     setIsSearching(true)
+    setSearchFailed(false)
     try {
       const data = await moviesService.searchTmdb(query)
       setResults(data)
       setHasSearched(true)
     } catch (error) {
       console.error(error)
+      setResults([])
+      setSearchFailed(true)
     } finally {
       setIsSearching(false)
     }
+  }
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    void search()
   }
 
   const handleImport = async (tmdbId: number) => {
@@ -99,72 +108,84 @@ const ImportMovieModal = ({
         </div>
 
         <div className='flex-1 overflow-y-auto p-6 pt-2 space-y-3 custom-scrollbar'>
-          {results.length === 0 && !isSearching && (
-            <EmptyState
-              icon={
-                hasSearched ? (
-                  <SearchX className='h-12 w-12' />
-                ) : (
-                  <Search className='h-12 w-12' />
-                )
-              }
-              title={
-                hasSearched
-                  ? 'TMDB нічого не знайшов'
-                  : 'Знайдіть фільм для імпорту'
-              }
-              description={
-                hasSearched
-                  ? 'Спробуйте оригінальну назву, рік випуску або коротший пошуковий запит.'
-                  : 'Введіть назву фільму, щоб побачити результати з TMDB і додати потрібну картку в каталог.'
-              }
+          {searchFailed && !isSearching ? (
+            <UnavailableState
+              title='Не вдалося виконати пошук TMDB'
+              onRetry={() => void search()}
               className='border-0 bg-transparent py-10'
             />
+          ) : (
+            results.length === 0 &&
+            !isSearching && (
+              <EmptyState
+                icon={
+                  hasSearched ? (
+                    <SearchX className='h-12 w-12' />
+                  ) : (
+                    <Search className='h-12 w-12' />
+                  )
+                }
+                title={
+                  hasSearched
+                    ? 'TMDB нічого не знайшов'
+                    : 'Знайдіть фільм для імпорту'
+                }
+                description={
+                  hasSearched
+                    ? 'Спробуйте оригінальну назву, рік випуску або коротший пошуковий запит.'
+                    : 'Введіть назву фільму, щоб побачити результати з TMDB і додати потрібну картку в каталог.'
+                }
+                className='border-0 bg-transparent py-10'
+              />
+            )
           )}
 
-          {results.map(movie => (
-            <div
-              key={movie.tmdbId}
-              className='flex gap-4 p-3 rounded-lg border border-white/5 bg-white/5 hover:border-white/10 transition-colors'
-            >
-              <div className='w-16 h-24 bg-zinc-800 rounded shrink-0 overflow-hidden'>
-                {movie.posterUrl ? (
-                  <img
-                    src={movie.posterUrl}
-                    alt={movie.title}
-                    className='w-full h-full object-cover'
-                  />
-                ) : (
-                  <div className='w-full h-full flex items-center justify-center text-[var(--text-muted)]'>
-                    <ImageIcon size={24} />
-                  </div>
-                )}
-              </div>
-
-              <div className='flex-1 min-w-0 py-1'>
-                <h3 className='font-bold text-white text-lg truncate'>
-                  {movie.title}
-                </h3>
-                <p className='text-sm text-[var(--text-muted)]'>{movie.year}</p>
-              </div>
-
-              <div className='flex items-center'>
-                <button
-                  type='button'
-                  onClick={() => handleImport(movie.tmdbId)}
-                  disabled={isImporting !== null}
-                  className='flex items-center gap-2 bg-[var(--color-primary)]/10 text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white px-4 py-2 rounded-lg font-bold text-sm transition-all disabled:opacity-50'
-                >
-                  {isImporting === movie.tmdbId ? (
-                    <GridLoader size={18} className='animate-spin' />
+          {!searchFailed &&
+            results.map(movie => (
+              <div
+                key={movie.tmdbId}
+                className='flex gap-4 p-3 rounded-lg border border-white/5 bg-white/5 hover:border-white/10 transition-colors'
+              >
+                <div className='w-16 h-24 bg-zinc-800 rounded shrink-0 overflow-hidden'>
+                  {movie.posterUrl ? (
+                    <img
+                      src={movie.posterUrl}
+                      alt={movie.title}
+                      className='w-full h-full object-cover'
+                    />
                   ) : (
-                    <Download size={18} />
+                    <div className='w-full h-full flex items-center justify-center text-[var(--text-muted)]'>
+                      <ImageIcon size={24} />
+                    </div>
                   )}
-                  Import
-                </button>
+                </div>
+
+                <div className='flex-1 min-w-0 py-1'>
+                  <h3 className='font-bold text-white text-lg truncate'>
+                    {movie.title}
+                  </h3>
+                  <p className='text-sm text-[var(--text-muted)]'>
+                    {movie.year}
+                  </p>
+                </div>
+
+                <div className='flex items-center'>
+                  <button
+                    type='button'
+                    onClick={() => handleImport(movie.tmdbId)}
+                    disabled={isImporting !== null}
+                    className='flex items-center gap-2 bg-[var(--color-primary)]/10 text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white px-4 py-2 rounded-lg font-bold text-sm transition-all disabled:opacity-50'
+                  >
+                    {isImporting === movie.tmdbId ? (
+                      <GridLoader size={18} className='animate-spin' />
+                    ) : (
+                      <Download size={18} />
+                    )}
+                    Import
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     </div>

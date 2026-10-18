@@ -4,7 +4,7 @@ import { genresService } from '@/features/admin/api/genres.service'
 export const useGenres = () => {
   const queryClient = useQueryClient()
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['genres'],
     queryFn: genresService.getAll,
     staleTime: 0,
@@ -70,6 +70,8 @@ export const useGenres = () => {
   return {
     genres: data || [],
     isLoading,
+    isError,
+    refetch,
     createGenre,
     updateGenre,
     deleteGenre,

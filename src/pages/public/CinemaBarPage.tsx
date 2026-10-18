@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BAR_MENU } from '@/pages/data/bar'
+import { BAR_MENU } from '@/pages/public/data/bar'
 import {
   type LucideIcon,
   CupSoda,

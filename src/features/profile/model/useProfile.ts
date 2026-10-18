@@ -58,7 +58,12 @@ export const useProfile = () => {
     [profileData?.dateOfBirth, user],
   )
 
-  const { data: ticketsData, isLoading: isLoadingTickets } = useQuery({
+  const {
+    data: ticketsData,
+    isLoading: isLoadingTickets,
+    isError: isTicketsError,
+    refetch: refetchTickets,
+  } = useQuery({
     queryKey: ['my-orders'],
     queryFn: ordersService.getMyOrders,
     enabled: !!user,
@@ -170,6 +175,8 @@ export const useProfile = () => {
     activeTickets: ticketsData?.active || [],
     historyOrders: ticketsData?.history || [],
     isLoadingTickets,
+    isTicketsError,
+    refetchTickets,
 
     isSaving: updateProfileMutation.isPending,
     updateProfileData,
