@@ -3,8 +3,7 @@
 Reviewed 2026-10-21 against frontend `a4916ec` (PR #47), backend `d0ceb82`
 (including PR #75), and Loyalty service `f8f38f3`. The backend and Loyalty
 repositories were read only. The frontend branch is
-`fix/frontend-backend-compatibility`. `origin/main` could not be refreshed
-because GitHub SSH authentication was unavailable; local `main` and the branch
+`fix/frontend-backend-compatibility`. Local `main` and the branch
 both point to `a4916ec`.
 
 ## Contract matrix
