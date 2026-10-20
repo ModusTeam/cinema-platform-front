@@ -12,6 +12,12 @@ export interface Actor {
   photoUrl?: string
 }
 
+export interface ActorDto {
+  name: string
+  role: string | null
+  photoUrl: string | null
+}
+
 export interface Movie {
   id: string
   title: string
@@ -31,15 +37,15 @@ export interface Movie {
 export interface MovieDto {
   id: string
   title: string
-  description?: string
+  description?: string | null
   durationMinutes: number
   rating: number
   releaseYear: number
-  posterUrl?: string
-  backdropUrl?: string
-  trailerUrl?: string
+  posterUrl?: string | null
+  backdropUrl?: string | null
+  trailerUrl?: string | null
   genres: string[]
-  cast: Actor[]
+  cast?: ActorDto[]
   status: number
   deletedAt?: string | null
 }
@@ -48,5 +54,5 @@ export interface TmdbSearchResult {
   tmdbId: number
   title: string
   year: string
-  posterUrl?: string
+  posterUrl?: string | null
 }

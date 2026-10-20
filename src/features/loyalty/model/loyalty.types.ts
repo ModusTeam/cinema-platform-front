@@ -18,8 +18,8 @@ export interface BackendLoyaltyProfileDto {
   lifetimePoints?: number
   yearPoints?: number
   yearVisits?: number
-  tierExpiresAt?: string
-  balanceExpiresAt?: string
+  tierExpiresAt?: string | null
+  balanceExpiresAt?: string | null
   isBirthdayWeek?: boolean
   goldUpgradeAvailable?: boolean
 }
@@ -32,8 +32,8 @@ export interface LoyaltyProfile {
   lifetimePoints: number
   yearPoints: number
   yearVisits: number
-  tierExpiresAt?: string
-  balanceExpiresAt?: string
+  tierExpiresAt?: string | null
+  balanceExpiresAt?: string | null
   isBirthdayWeek: boolean
   goldUpgradeAvailable: boolean
 }

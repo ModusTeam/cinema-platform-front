@@ -1,9 +1,8 @@
 import { api } from '@/shared/api/axios'
-import {
-  type OrderItem,
-  type MyOrdersVm,
-  type OrderDto,
-  OrderStatus,
+import type {
+  OrderItem,
+  MyOrdersVm,
+  OrderDto,
 } from '@/entities/order/model/order.types'
 
 const mapOrderDtoToItem = (dto: OrderDto): OrderItem | null => {
@@ -13,27 +12,14 @@ const mapOrderDtoToItem = (dto: OrderDto): OrderItem | null => {
   const sessionDate = new Date(firstTicket.sessionStart)
   const now = new Date()
 
-  let uiStatus: 'active' | 'completed' | 'cancelled' = 'active'
-
-  const statusStr = String(dto.status)
-
-  if (statusStr === OrderStatus.Cancelled || statusStr === OrderStatus.Failed) {
-    uiStatus = 'cancelled'
-  } else if (statusStr === OrderStatus.Pending) {
-    uiStatus = 'cancelled'
-  } else {
-    if (sessionDate < now) {
-      uiStatus = 'completed'
-    } else {
-      uiStatus = 'active'
-    }
-  }
-
   return {
     id: dto.id,
     bookingId: `ORD-${dto.id.substring(0, 8).toUpperCase()}`,
     totalPrice: dto.amountPaid ?? dto.totalAmount,
-    status: uiStatus,
+    status: dto.status,
+    ticketStatuses: dto.tickets.map(ticket => ticket.status),
+    ticketIds: dto.tickets.map(ticket => ticket.id),
+    isPastSession: sessionDate < now,
     sessionDate: firstTicket.sessionStart,
     movieTitle: firstTicket.movieTitle,
     posterUrl:

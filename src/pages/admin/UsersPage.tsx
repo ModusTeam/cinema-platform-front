@@ -13,15 +13,17 @@ import UnavailableState from '@/shared/ui/UnavailableState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import { useAuth } from '@/features/auth/model/AuthContext'
 import ChangeRoleModal from '@/features/admin/ui/ChangeRoleModal'
-import { type UserDto } from '@/features/admin/api/admin-users.service'
+import type { UserDto } from '@/features/admin/api/admin-users.service'
+
+const USERS_PER_PAGE = 10
 
 const UsersPage = () => {
   const { user: currentUser } = useAuth()
 
-  const { users, isLoading, isError, refetch, changeUserRole, pagination, changePage } =
-    useUsers()
+  const { users, isLoading, isError, refetch, changeUserRole } = useUsers()
 
   const [searchQuery, setSearchQuery] = useState('')
+  const [page, setPage] = useState(1)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingUser, setEditingUser] = useState<UserDto | null>(null)
 
@@ -36,6 +38,17 @@ const UsersPage = () => {
         (u.lastName?.toLowerCase() || '').includes(lowerQuery),
     )
   }, [searchQuery, users])
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / USERS_PER_PAGE))
+  const currentPage = Math.min(page, totalPages)
+  const pageUsers = filteredUsers.slice(
+    (currentPage - 1) * USERS_PER_PAGE,
+    currentPage * USERS_PER_PAGE,
+  )
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query)
+    setPage(1)
+  }
 
   const handleEditClick = (user: UserDto) => {
     setEditingUser(user)
@@ -71,7 +84,7 @@ const UsersPage = () => {
         </div>
         <div className='text-sm text-[var(--text-muted)]'>
           Всього:{' '}
-          <span className='text-white font-bold'>{pagination.totalCount}</span>
+          <span className='text-white font-bold'>{users.length}</span>
         </div>
       </div>
 
@@ -82,9 +95,9 @@ const UsersPage = () => {
         />
         <input
           type='text'
-          placeholder="Фільтр на сторінці (ім'я або email)..."
+          placeholder="Пошук за ім'ям або email..."
           value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
+          onChange={e => handleSearchChange(e.target.value)}
           className='w-full rounded-xl bg-[var(--bg-card)] border border-white/5 py-3 pl-10 pr-4 text-white placeholder-[var(--text-muted)] focus:border-[var(--color-primary)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]/50'
         />
       </div>
@@ -120,20 +133,20 @@ const UsersPage = () => {
                         description={
                           users.length === 0
                             ? 'Нові акаунти зʼявляться тут після реєстрації гостей.'
-                            : 'Очистьте фільтр або перейдіть на іншу сторінку списку.'
+                            : 'Очистьте фільтр, щоб побачити всіх користувачів.'
                         }
                         actionLabel={
                           searchQuery ? 'Очистити фільтр' : undefined
                         }
                         onAction={
-                          searchQuery ? () => setSearchQuery('') : undefined
+                          searchQuery ? () => handleSearchChange('') : undefined
                         }
                         className='border-0 bg-transparent py-10'
                       />
                     </td>
                   </tr>
                 ) : (
-                  filteredUsers.map(user => {
+                  pageUsers.map(user => {
                     const isMe = currentUser?.id === user.id
                     const isAdmin = user.role === 'Admin'
                     const initials = getInitials(user.firstName, user.lastName)
@@ -198,24 +211,24 @@ const UsersPage = () => {
             <div className='text-sm text-[var(--text-muted)]'>
               Сторінка{' '}
               <span className='text-white font-bold'>
-                {pagination.pageNumber}
+                {currentPage}
               </span>{' '}
-              з {pagination.totalPages}
+              з {totalPages}
             </div>
 
             <div className='flex gap-2'>
               <button
                 type='button'
-                onClick={() => changePage(pagination.pageNumber - 1)}
-                disabled={!pagination.hasPreviousPage}
+                onClick={() => setPage(currentPage - 1)}
+                disabled={currentPage === 1}
                 className='p-2 rounded-lg bg-[var(--bg-card)] border border-white/10 text-white hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors'
               >
                 <ChevronLeft size={20} />
               </button>
               <button
                 type='button'
-                onClick={() => changePage(pagination.pageNumber + 1)}
-                disabled={!pagination.hasNextPage}
+                onClick={() => setPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
                 className='p-2 rounded-lg bg-[var(--bg-card)] border border-white/10 text-white hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors'
               >
                 <ChevronRight size={20} />
