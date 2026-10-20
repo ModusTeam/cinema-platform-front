@@ -1,5 +1,6 @@
 import { AlertTriangle, CircleArrowUp, Coins } from 'lucide-react'
 import type { ComponentType } from 'react'
+import { loyaltyCopy } from '@/features/loyalty/config/loyalty.copy'
 
 interface LoyaltyCheckoutCardProps {
   pointsBalance: number
@@ -92,7 +93,7 @@ const LoyaltyCheckoutCard = ({
 }: LoyaltyCheckoutCardProps) => {
   const isGoldUpgradeMode = Boolean(isGoldUpgradeAvailable)
   const pointsDisabledNote =
-    disabledNote || (isLoading ? 'Перевіряємо баланс' : undefined)
+    disabledNote || (isLoading ? loyaltyCopy.checkout.checkingBalance : undefined)
   const pointsRowDisabled = isDisabled || isLoading || Boolean(errorMessage)
 
   return (
@@ -100,7 +101,7 @@ const LoyaltyCheckoutCard = ({
       {isGoldUpgradeMode && (
         <ActionableRow
           icon={CircleArrowUp}
-          label='Оновити до VIP (+60 ₴)'
+          label={loyaltyCopy.checkout.goldUpgrade}
           isChecked={isGoldUpgradeChecked}
           isDisabled={!onGoldUpgradeToggle}
           disabledNote={goldUpgradeLabel}
@@ -110,7 +111,7 @@ const LoyaltyCheckoutCard = ({
 
       <ActionableRow
         icon={Coins}
-        label={`Використати бали (Доступно: ${pointsBalance})`}
+        label={loyaltyCopy.checkout.usePoints(pointsBalance)}
         isChecked={isChecked}
         isDisabled={pointsRowDisabled}
         disabledNote={errorMessage || pointsDisabledNote}

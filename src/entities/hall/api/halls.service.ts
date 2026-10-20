@@ -1,5 +1,6 @@
 import { api } from '@/shared/api/axios'
 import type { PaginatedResult } from '@/shared/types/common.types'
+import type { Hall } from '../model/hall.types'
 
 interface CreateHallRequest {
   name: string
@@ -8,6 +9,8 @@ interface CreateHallRequest {
   seatTypeId: string
   technologyIds: string[]
 }
+
+type CreateHallResponse = string | { id?: string; value?: string }
 
 interface UpdateHallRequest {
   hallId: string
@@ -34,6 +37,26 @@ interface BatchChangeSeatTypeRequest {
 }
 
 export const hallsService = {
+  getById: async (hallId: string): Promise<Hall> => {
+    const { data } = await api.get<{
+      id: string
+      name: string
+      capacity?: number
+      rows?: number
+      seatsPerRow?: number
+      seats?: Hall['seats']
+      technologies?: Hall['technologies']
+    }>(`/halls/${hallId}`)
+    return {
+      id: data.id,
+      name: data.name,
+      capacity: data.capacity || (data.seats ? data.seats.length : 0),
+      rowsCount: data.rows,
+      colsCount: data.seatsPerRow,
+      seats: data.seats || [],
+      technologies: data.technologies || [],
+    }
+  },
   getAll: async (): Promise<HallSummaryDto[]> => {
     const { data } = await api.get<PaginatedResult<HallSummaryDto>>('/halls', {
       params: { pageNumber: 1, pageSize: 100 },
@@ -50,7 +73,7 @@ export const hallsService = {
     seatsPerRow: number,
     seatTypeId: string,
     technologyIds: string[],
-  ) => {
+  ): Promise<CreateHallResponse> => {
     const payload: CreateHallRequest = {
       name,
       rows,
@@ -58,7 +81,7 @@ export const hallsService = {
       seatTypeId,
       technologyIds,
     }
-    const { data } = await api.post('/halls', payload)
+    const { data } = await api.post<CreateHallResponse>('/halls', payload)
     return data
   },
 

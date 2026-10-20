@@ -1,10 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useToast } from '@/shared/ui/toast/ToastContext'
 import { bookingService } from '@/features/booking/api/booking.service'
+import { hallsService } from '@/entities/hall/api/halls.service'
+import { sessionsService } from '@/entities/session/api/sessions.service'
 import { moviesService } from '@/entities/movie/api/movies.service'
 import { ticketHub } from '@/features/booking/api/signalr.service'
-import type { Hall, Seat, Session } from '@/entities/hall/model/hall.types'
+import type { Hall, Seat } from '@/entities/hall/model/hall.types'
+import type { Session } from '@/entities/session/model/session.types'
 import { useAuth } from '@/features/auth/model/AuthContext'
 
 interface CreateOrderPayload {
@@ -40,6 +43,11 @@ export const useBooking = (movieId?: string) => {
     null,
   )
   const [selectedSeats, setSelectedSeats] = useState<Seat[]>([])
+  const selectedSeatsRef = useRef(selectedSeats)
+
+  useEffect(() => {
+    selectedSeatsRef.current = selectedSeats
+  }, [selectedSeats])
 
   const {
     data: movie,
@@ -65,7 +73,7 @@ export const useBooking = (movieId?: string) => {
     queryKey: ['movie-sessions', movieId],
     queryFn: () => {
       if (!movieId) throw new Error('No movie selected')
-      return bookingService.getSessionsByMovieId(movieId)
+      return sessionsService.getByMovieId(movieId)
     },
     enabled: !!movieId,
     select: data =>
@@ -86,8 +94,8 @@ export const useBooking = (movieId?: string) => {
     queryKey: ['session-full-details', selectedSessionId],
     queryFn: async () => {
       if (!selectedSessionId) throw new Error('No session selected')
-      const session = await bookingService.getSessionDetails(selectedSessionId)
-      const hall = await bookingService.getHallById(session.hallId)
+      const session = await sessionsService.getDetails(selectedSessionId)
+      const hall = await hallsService.getById(session.hallId)
       return { session, hall }
     },
     enabled: !!selectedSessionId,
@@ -137,31 +145,38 @@ export const useBooking = (movieId?: string) => {
   useEffect(() => {
     if (!selectedSessionId) return
 
-    ticketHub.startConnection(selectedSessionId)
+    void ticketHub.startConnection(selectedSessionId)
 
     ticketHub.onSeatLocked = (seatId, lockerUserId) => {
       updateOccupiedSeats(seatId, 'add')
 
       if (lockerUserId !== user?.id) {
-        setSelectedSeats(prev => {
-          const isSelected = prev.some(s => s.id === seatId)
-          if (isSelected) {
-            toast.warning('На жаль, це місце щойно зайняли.')
-            return prev.filter(s => s.id !== seatId)
-          }
-          return prev
-        })
+        if (selectedSeatsRef.current.some(seat => seat.id === seatId)) {
+          selectedSeatsRef.current = selectedSeatsRef.current.filter(
+            seat => seat.id !== seatId,
+          )
+          setSelectedSeats(prev => prev.filter(seat => seat.id !== seatId))
+          toast.warning('На жаль, це місце щойно зайняли.')
+        }
       }
     }
 
     ticketHub.onSeatUnlocked = seatId => {
       updateOccupiedSeats(seatId, 'remove')
     }
+    ticketHub.onReconnected = () => {
+      void queryClient.invalidateQueries({
+        queryKey: ['session-full-details', selectedSessionId],
+      })
+    }
 
     return () => {
-      ticketHub.stopConnection()
+      ticketHub.onSeatLocked = null
+      ticketHub.onSeatUnlocked = null
+      ticketHub.onReconnected = null
+      void ticketHub.stopConnection()
     }
-  }, [selectedSessionId, toast.warning, updateOccupiedSeats, user?.id])
+  }, [queryClient, selectedSessionId, toast.warning, updateOccupiedSeats, user?.id])
 
   const lockSeatMutation = useMutation({
     mutationFn: (seatId: string) => {
@@ -189,6 +204,9 @@ export const useBooking = (movieId?: string) => {
       queryClient.invalidateQueries({
         queryKey: ['session-full-details', selectedSessionId],
       })
+      queryClient.invalidateQueries({ queryKey: ['my-orders'] })
+      queryClient.invalidateQueries({ queryKey: ['loyalty-profile'] })
+      queryClient.invalidateQueries({ queryKey: ['loyalty-transactions'] })
       setStep(4)
       toast.success('Замовлення успішно створено!')
     },

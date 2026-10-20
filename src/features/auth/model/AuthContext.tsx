@@ -5,8 +5,9 @@ import {
   useEffect,
   type ReactNode,
 } from 'react'
-import { type User } from '@/features/auth/model/auth.types'
+import type { User } from '@/features/auth/model/auth.types'
 import { authService } from '@/features/auth/api/auth.service'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface LoginParams {
   email: string
@@ -25,6 +26,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const queryClient = useQueryClient()
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -35,7 +37,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(false)
     }
     initAuth()
-  }, [])
+    const handleCredentialsCleared = () => {
+      queryClient.clear()
+      setUser(null)
+    }
+    window.addEventListener('cinema-auth-cleared', handleCredentialsCleared)
+    return () => window.removeEventListener('cinema-auth-cleared', handleCredentialsCleared)
+  }, [queryClient])
 
   const login = async ({ email, password }: LoginParams) => {
     const user = await authService.login(email, password)

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { moviesService } from '@/entities/movie/api/movies.service'
-import { bookingService } from '@/features/booking/api/booking.service'
+import { sessionsService } from '@/entities/session/api/sessions.service'
 import { hallsService } from '@/entities/hall/api/halls.service'
 import { addMovieSessionMetadata } from '@/features/movies/lib/movieSessionMetadata'
 
@@ -22,7 +22,7 @@ export const useHomeMovies = () => {
     queryFn: async () => {
       const [moviesData, allSessions, hallsData] = await Promise.all([
         moviesService.getAll(),
-        bookingService.getAllSessions(),
+        sessionsService.getAll(),
         hallsService.getAll(),
       ])
 

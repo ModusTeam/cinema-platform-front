@@ -1,6 +1,7 @@
 import { Sparkles } from 'lucide-react'
 
 import { LOYALTY_TIER_THRESHOLDS } from '@/features/loyalty/config/loyalty'
+import { loyaltyCopy } from '@/features/loyalty/config/loyalty.copy'
 import { getTierProgressPercent } from '@/features/loyalty/lib/loyalty.mappers'
 import type {
   LoyaltyProfile,
@@ -35,7 +36,7 @@ const TierCard = ({ tier, profile }: TierCardProps) => {
     <div className='flex w-full flex-col gap-5 md:w-1/2'>
       <div className='flex flex-col gap-1'>
         <span className='text-sm tracking-widest text-neutral-500 uppercase'>
-          Поточний статус
+          {loyaltyCopy.tier.currentStatus}
         </span>
         <div className='flex items-center gap-3'>
           <span
@@ -49,8 +50,8 @@ const TierCard = ({ tier, profile }: TierCardProps) => {
         </div>
         <p className='text-sm text-neutral-400'>
           {isGold
-            ? 'У вас найвищий рівень програми.'
-            : `Наступний рівень: ${profile.nextTier?.label ?? 'Gold'}.`}
+            ? loyaltyCopy.tier.highestTier
+            : loyaltyCopy.tier.nextTier(profile.nextTier?.label ?? 'Gold')}
         </p>
       </div>
 
@@ -58,7 +59,7 @@ const TierCard = ({ tier, profile }: TierCardProps) => {
         <div className='flex w-fit items-center gap-3 border-l-2 border-[#f59e0b] bg-[#f59e0b]/5 py-2 pl-4 pr-6'>
           <Sparkles className='h-4 w-4 shrink-0 text-[#f59e0b]' />
           <span className='text-sm font-medium text-[#f59e0b]'>
-            Доступне підвищення до Gold
+            {loyaltyCopy.tier.goldUpgradeAvailable}
           </span>
         </div>
       )}
@@ -67,7 +68,7 @@ const TierCard = ({ tier, profile }: TierCardProps) => {
         <div className='flex w-fit items-center gap-3 border-l-2 border-[#f59e0b] bg-[#f59e0b]/5 py-2 pl-4 pr-6'>
           <Sparkles className='h-4 w-4 shrink-0 text-[#f59e0b]' />
           <span className='text-sm font-medium text-[#f59e0b]'>
-            Максимальний рівень програми лояльності
+            {loyaltyCopy.tier.maximumTier}
           </span>
         </div>
       )}
@@ -75,7 +76,10 @@ const TierCard = ({ tier, profile }: TierCardProps) => {
       {thresholds && (
         <div className='flex flex-col gap-3'>
           <span className='text-xs text-neutral-400'>
-            Залишилось {remainingPoints} балів до {profile.nextTier?.label}
+            {loyaltyCopy.tier.pointsRemaining(
+              remainingPoints,
+              profile.nextTier?.label,
+            )}
           </span>
           <div className='h-0.5 w-full overflow-hidden rounded-full bg-white/10'>
             <div
@@ -88,13 +92,17 @@ const TierCard = ({ tier, profile }: TierCardProps) => {
 
       <div className='grid grid-cols-2 gap-3 text-xs'>
         <div className='border-l border-white/10 pl-3'>
-          <span className='block text-neutral-500'>Балів цього року</span>
+          <span className='block text-neutral-500'>
+            {loyaltyCopy.tier.pointsThisYear}
+          </span>
           <strong className='mt-1 block text-sm font-medium text-white'>
             {profile.yearPoints}
           </strong>
         </div>
         <div className='border-l border-white/10 pl-3'>
-          <span className='block text-neutral-500'>Візитів цього року</span>
+          <span className='block text-neutral-500'>
+            {loyaltyCopy.tier.visitsThisYear}
+          </span>
           <strong className='mt-1 block text-sm font-medium text-white'>
             {profile.yearVisits}
           </strong>
@@ -103,13 +111,13 @@ const TierCard = ({ tier, profile }: TierCardProps) => {
 
       {tierExpiry && (
         <p className='text-xs text-neutral-500'>
-          Статус активний до {tierExpiry}.
+          {loyaltyCopy.tier.activeUntil(tierExpiry)}
         </p>
       )}
 
       {!thresholds && !isGold && (
         <p className='text-sm text-neutral-400'>
-          Максимальний рівень досягнуто
+          {loyaltyCopy.tier.maximumReached}
         </p>
       )}
     </div>

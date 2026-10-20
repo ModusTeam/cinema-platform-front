@@ -8,7 +8,9 @@ import {
   Film,
 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
-import { type Movie } from '@/entities/movie/model/movie.types'
+import type { Movie } from '@/entities/movie/model/movie.types'
+import { getMovieGenres } from '@/entities/movie/lib/movieGenres'
+import { movieCopy } from '@/entities/movie/config/movie.copy'
 import { useAuth } from '@/features/auth/model/AuthContext'
 
 interface MovieDetailsProps {
@@ -44,12 +46,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
     ? getYoutubeEmbedUrl(movie.videoUrl)
     : null
 
-  const genresList = Array.isArray(movie.genres)
-    ? movie.genres.map(g => {
-        if (typeof g === 'string') return g
-        return (g as any).name
-      })
-    : []
+  const genresList = getMovieGenres(movie.genres)
 
   return (
     <div className='relative min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] pb-20'>
@@ -70,7 +67,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
             className='flex items-center gap-2 rounded-full bg-black/40 px-4 py-2 text-sm font-medium backdrop-blur-md hover:bg-white/10 border border-white/5 transition-colors text-white'
           >
             <ArrowLeft size={16} />
-            Назад
+            {movieCopy.details.back}
           </Link>
         </div>
 
@@ -116,7 +113,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                 className='group flex items-center gap-3 rounded-full bg-[var(--color-primary)] px-10 py-4 text-lg font-bold text-white transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(239,68,68,0.4)] hover:shadow-[0_0_50px_rgba(239,68,68,0.6)]'
               >
                 <Play className='fill-current' size={20} />
-                Купити квиток
+                {movieCopy.details.buyTicket}
               </button>
             </div>
           </div>
@@ -129,7 +126,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
             <section>
               <h3 className='mb-6 text-xl font-bold uppercase tracking-wider text-white flex items-center gap-2'>
                 <span className='w-8 h-1 bg-[var(--color-primary)] rounded-full'></span>
-                Сюжет
+                {movieCopy.details.story}
               </h3>
               <p className='text-lg leading-relaxed text-[var(--text-muted)]'>
                 {movie.description}
@@ -140,7 +137,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
               <section>
                 <h3 className='mb-8 text-xl font-bold uppercase tracking-wider text-white flex items-center gap-2'>
                   <span className='w-8 h-1 bg-[var(--color-primary)] rounded-full'></span>
-                  Акторський склад
+                  {movieCopy.details.cast}
                 </h3>
                 <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4'>
                   {movie.cast.slice(0, 4).map(actor => (
@@ -187,7 +184,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
               <section>
                 <h3 className='mb-8 text-xl font-bold uppercase tracking-wider text-white flex items-center gap-2'>
                   <span className='w-8 h-1 bg-[var(--color-primary)] rounded-full'></span>
-                  Трейлер
+                  {movieCopy.details.trailer}
                 </h3>
                 <div className='relative aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl'>
                   <iframe
@@ -216,7 +213,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
             <div className='glass-panel rounded-2xl p-8 h-fit shadow-2xl space-y-6'>
               <div className='space-y-2'>
                 <div className='text-xs text-[var(--text-muted)] uppercase tracking-widest flex items-center gap-2'>
-                  <Film size={14} /> Жанри
+                  <Film size={14} /> {movieCopy.details.genres}
                 </div>
                 <div className='flex flex-wrap gap-2'>
                   {genresList.map(g => (
@@ -234,14 +231,14 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
 
               <div className='space-y-1'>
                 <div className='text-xs text-[var(--text-muted)] uppercase tracking-widest'>
-                  Статус
+                  {movieCopy.details.status}
                 </div>
                 <div className='text-lg font-bold text-[var(--color-success)] flex items-center gap-2'>
                   <span className='relative flex h-3 w-3'>
                     <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75'></span>
                     <span className='relative inline-flex rounded-full h-3 w-3 bg-green-500'></span>
                   </span>
-                  У прокаті
+                  {movieCopy.details.inTheaters}
                 </div>
               </div>
 
@@ -251,7 +248,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                 className='w-full group flex items-center justify-center gap-3 rounded-full bg-[var(--color-primary)] py-4 text-lg font-bold text-white transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(239,68,68,0.4)] hover:shadow-[0_0_50px_rgba(239,68,68,0.6)] mt-4'
               >
                 <Play className='fill-current' size={20} />
-                Купити квиток
+                {movieCopy.details.buyTicket}
               </button>
             </div>
           </div>

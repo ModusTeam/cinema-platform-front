@@ -1,36 +1,49 @@
+import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
 import { getApiBaseUrl } from '@/shared/api/apiUrl'
-import { authService } from '@/features/auth/api/auth.service'
-import axios, { type AxiosError } from 'axios'
+import { tokenStorage } from '@/shared/api/tokenStorage'
 
 const BASE_URL = getApiBaseUrl()
+const refreshClient = axios.create({ baseURL: BASE_URL })
 
 export const api = axios.create({
   baseURL: BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: { 'Content-Type': 'application/json' },
 })
 
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+interface ErrorBody {
+  detail?: string
+  title?: string
+  extensions?: { errors?: unknown }
+}
 
-const getErrorMessage = (error: AxiosError<any>): string => {
+const errorText = (value: unknown): string => {
+  if (typeof value === 'string') return value
+  if (typeof value === 'object' && value !== null) {
+    const entry = value as { ErrorMessage?: unknown; message?: unknown }
+    if (typeof entry.ErrorMessage === 'string') return entry.ErrorMessage
+    if (typeof entry.message === 'string') return entry.message
+  }
+  return ''
+}
+
+const getErrorMessage = (error: AxiosError<ErrorBody>): string => {
   if (!error.response) {
     if (error.code === 'ECONNABORTED') {
       return `Request timeout. Check API availability at ${BASE_URL}.`
     }
-
     return `Network error. Check API URL (${BASE_URL}) and protocol (http/https), CORS, or certificate.`
   }
 
   const data = error.response.data
-
-  if (data?.extensions?.errors) {
-    if (Array.isArray(data.extensions.errors)) {
-      return data.extensions.errors
-        .map((e: any) => e.ErrorMessage || e.message)
-        .join('\n')
-    }
-    return Object.values(data.extensions.errors).flat().join('\n')
+  const errors = data?.extensions?.errors
+  if (errors) {
+    const entries = Array.isArray(errors)
+      ? errors
+      : typeof errors === 'object'
+        ? Object.values(errors).flat()
+        : []
+    const message = entries.map(errorText).filter(Boolean).join('\n')
+    if (message) return message
   }
 
   if (data?.detail) return data.detail
@@ -40,50 +53,81 @@ const getErrorMessage = (error: AxiosError<any>): string => {
   if (status >= 500) return `Server error (${status}). Please try again later.`
   if (status >= 400)
     return `Request failed (${status}). Please check your input.`
-
   return 'Сталася невідома помилка'
 }
 
+let refreshPromise: Promise<string | null> | null = null
+
+export const refreshAccessToken = (): Promise<string | null> => {
+  if (refreshPromise) return refreshPromise
+  const refreshToken = tokenStorage.getRefreshToken()
+  if (!refreshToken) return Promise.resolve(null)
+
+  refreshPromise = refreshClient
+    .post<{ accessToken: string; refreshToken: string }>(
+      '/auth/refresh-token',
+      { token: refreshToken },
+    )
+    .then(({ data }) => {
+      if (tokenStorage.getRefreshToken() !== refreshToken) return null
+      tokenStorage.setTokens(data.accessToken, data.refreshToken)
+      return data.accessToken
+    })
+    .catch(() => {
+      if (tokenStorage.getRefreshToken() === refreshToken) tokenStorage.clear()
+      return null
+    })
+    .finally(() => {
+      refreshPromise = null
+    })
+  return refreshPromise
+}
+
 api.interceptors.request.use(config => {
-  const token = authService.getAccessToken()
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
+  const token = tokenStorage.getAccessToken()
+  if (token) config.headers.Authorization = `Bearer ${token}`
   return config
 })
 
 api.interceptors.response.use(
   response => response,
-  async error => {
-    const originalRequest = error.config
+  async (error: AxiosError<ErrorBody>) => {
+    const request = error.config as
+      | (InternalAxiosRequestConfig & { _retry?: boolean; _retry429?: boolean })
+      | undefined
+    if (!request) return Promise.reject(error)
 
-    if (!originalRequest) {
-      return Promise.reject(error)
-    }
-
-    if (error.response?.status === 429 && !originalRequest._retry429) {
-      originalRequest._retry429 = true
-      console.warn('Rate limit hit. Retrying in 1s...')
-      await wait(1000)
-      return api(originalRequest)
+    // Replaying a mutation after 429 can duplicate a server-side operation.
+    const method = request.method?.toLowerCase()
+    if (
+      error.response?.status === 429 &&
+      !request._retry429 &&
+      ['get', 'head', 'options'].includes(method ?? '')
+    ) {
+      request._retry429 = true
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      return api(request)
     }
 
     if (
       error.response?.status === 401 &&
-      !originalRequest._retry &&
-      !originalRequest.url?.includes('/auth/login')
+      !request._retry &&
+      !request.url?.includes('/auth/') &&
+      tokenStorage.getRefreshToken()
     ) {
-      originalRequest._retry = true
-
-      try {
-        const newToken = await authService.refreshToken()
-        if (newToken) {
-          originalRequest.headers.Authorization = `Bearer ${newToken}`
-          return api(originalRequest)
-        }
-      } catch (refreshError) {
-        authService.logout()
-        return Promise.reject(refreshError)
+      request._retry = true
+      const currentToken = tokenStorage.getAccessToken()
+      if (
+        currentToken &&
+        request.headers.Authorization !== `Bearer ${currentToken}`
+      ) {
+        request.headers.Authorization = `Bearer ${currentToken}`
+        return api(request)
+      }
+      const token = await refreshAccessToken()
+      if (token) {
+        request.headers.Authorization = `Bearer ${token}`
+        return api(request)
       }
     }
 

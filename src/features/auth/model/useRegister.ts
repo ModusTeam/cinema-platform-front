@@ -44,13 +44,9 @@ export const useRegister = () => {
       toast.success('Реєстрація успішна! Тепер увійдіть у свій акаунт.')
       navigate('/auth/login')
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       console.error(error)
-      const message =
-        error.response?.data?.detail ||
-        error.response?.data?.title ||
-        error.message ||
-        'Помилка реєстрації'
+      const message = error instanceof Error ? error.message : 'Помилка реєстрації'
       toast.error(message)
     },
   })

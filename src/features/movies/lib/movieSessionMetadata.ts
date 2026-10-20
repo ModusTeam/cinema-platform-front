@@ -1,5 +1,5 @@
 import type { HallSummaryDto } from '@/entities/hall/api/halls.service'
-import type { Session } from '@/entities/hall/model/hall.types'
+import type { Session } from '@/entities/session/model/session.types'
 import type { Movie } from '@/entities/movie/model/movie.types'
 
 interface MovieWithMeta extends Movie {
@@ -27,7 +27,9 @@ export const addMovieSessionMetadata = (
     movieSessions.forEach(session => {
       const hallTechnologyNames = hallTechnologies[session.hallId]
       if (hallTechnologyNames) {
-        hallTechnologyNames.forEach(name => technologies.add(name))
+        hallTechnologyNames.forEach(name => {
+          technologies.add(name)
+        })
       }
     })
 

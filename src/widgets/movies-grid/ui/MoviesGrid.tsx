@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import EmptyState from '@/shared/ui/EmptyState'
 import { MovieStatus } from '@/entities/movie/model/movie.types'
 import { moviesService } from '@/entities/movie/api/movies.service'
-import { bookingService } from '@/features/booking/api/booking.service'
+import { sessionsService } from '@/entities/session/api/sessions.service'
 import { hallsService } from '@/entities/hall/api/halls.service'
 import MovieCard from '@/features/movies/ui/MovieCard'
 import { CalendarDays, Clock, Calendar } from 'lucide-react'
@@ -42,7 +42,7 @@ const MoviesGrid = () => {
     queryFn: async () => {
       const [moviesData, allSessions, hallsData] = await Promise.all([
         moviesService.getAll(),
-        bookingService.getAllSessions(),
+        sessionsService.getAll(),
         hallsService.getAll(),
       ])
 
@@ -118,7 +118,7 @@ const MoviesGrid = () => {
         {activeTab === 'now' && (
           <div className='w-full xl:w-auto overflow-x-auto overflow-y-hidden py-2 px-2 no-scrollbar -mx-2 xl:mx-0'>
             <div className='flex gap-3 min-w-max items-center'>
-              {dates.map((date, idx) => {
+              {dates.map(date => {
                 const isSelected = isSameDate(date, selectedDate)
                 const isToday = isSameDate(date, new Date())
 
@@ -130,7 +130,7 @@ const MoviesGrid = () => {
                 return (
                   <button
                     type='button'
-                    key={idx}
+                    key={date.toDateString()}
                     onClick={() => setSelectedDate(date)}
                     className={clsx(
                       'flex flex-col items-center justify-center w-14 h-16 rounded-xl border transition-all duration-300',
@@ -197,7 +197,6 @@ const MoviesGrid = () => {
                     : []
                 }
                 technologies={movie.technologies}
-                hideIfNoSessions={false}
               />
             ))}
           </div>

@@ -3,6 +3,9 @@ export const OrderStatus = {
   Paid: 'Paid',
   Failed: 'Failed',
   Cancelled: 'Cancelled',
+  PaymentProcessing: 'PaymentProcessing',
+  PaymentOutcomeUnknown: 'PaymentOutcomeUnknown',
+  Expired: 'Expired',
 } as const
 
 export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
@@ -11,6 +14,8 @@ export const TicketStatus = {
   Valid: 'Valid',
   Used: 'Used',
   Refunded: 'Refunded',
+  Reserved: 'Reserved',
+  Released: 'Released',
 } as const
 
 export type TicketStatus = (typeof TicketStatus)[keyof typeof TicketStatus]
@@ -34,7 +39,7 @@ export interface OrderDto {
   createdAt: string
   totalAmount: number
   amountPaid: number
-  pointsUsed?: number
+  pointsUsed: number
   status: OrderStatus | string
   tickets: TicketDto[]
 }

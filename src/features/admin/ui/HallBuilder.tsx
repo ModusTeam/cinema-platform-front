@@ -10,6 +10,7 @@ import {
 import { useMemo } from 'react'
 import type { Seat, Technology } from '@/entities/hall/model/hall.types'
 import { useHallBuilder } from '@/features/admin/model/useHallBuilder'
+import type { HallBuilderData } from '@/features/admin/model/hallBuilder.types'
 
 const getSeatColor = (typeName: string = 'Standard') => {
   const lowerName = typeName.toLowerCase()
@@ -25,7 +26,7 @@ interface HallBuilderProps {
   initialCols?: number
   initialSeats?: Seat[]
   initialTechnologies?: Technology[]
-  onSave: (data: any) => void
+  onSave: (data: HallBuilderData) => void
   isEditing?: boolean
 }
 
@@ -91,10 +92,11 @@ const HallBuilder = ({
             </h4>
             <div className='flex gap-4'>
               <div className='flex flex-col gap-1'>
-                <label className='text-xs text-[var(--text-muted)]'>
+                <label htmlFor='hall-rows' className='text-xs text-[var(--text-muted)]'>
                   Рядів
                 </label>
                 <input
+                  id='hall-rows'
                   type='number'
                   min={1}
                   max={20}
@@ -105,10 +107,11 @@ const HallBuilder = ({
                 />
               </div>
               <div className='flex flex-col gap-1'>
-                <label className='text-xs text-[var(--text-muted)]'>
+                <label htmlFor='hall-cols' className='text-xs text-[var(--text-muted)]'>
                   Місць в ряду
                 </label>
                 <input
+                  id='hall-cols'
                   type='number'
                   min={1}
                   max={30}
@@ -212,8 +215,9 @@ const HallBuilder = ({
                 )
 
             return (
-              <div
+              <button
                 key={`${x}-${y}`}
+                type='button'
                 onClick={() => handleCellClick(x, y)}
                 className={clsx(
                   'h-8 w-8 rounded flex items-center justify-center text-[10px] select-none shadow-lg cursor-pointer hover:opacity-80 transition-transform active:scale-95',
@@ -223,7 +227,7 @@ const HallBuilder = ({
                 title={`Row: ${y}, Num: ${x} (${displayType?.name})`}
               >
                 <Armchair size={16} fill='currentColor' />
-              </div>
+              </button>
             )
           })}
         </div>

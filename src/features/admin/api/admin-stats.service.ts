@@ -41,7 +41,7 @@ export const adminStatsService = {
     from?: Date,
     to?: Date,
   ): Promise<DashboardStatsDto> => {
-    const params: any = {}
+    const params: { from?: string; to?: string } = {}
     if (from) params.from = from.toISOString()
     if (to) params.to = to.toISOString()
 

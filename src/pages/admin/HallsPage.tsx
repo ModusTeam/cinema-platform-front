@@ -2,6 +2,7 @@ import { useState } from 'react'
 import HallBuilder from '@/features/admin/ui/HallBuilder'
 import { useHalls } from '@/features/admin/model/useHalls'
 import { useHallEditor } from '@/features/admin/model/useHallEditor'
+import type { HallBuilderData } from '@/features/admin/model/hallBuilder.types'
 import {
   Armchair,
   Trash2,
@@ -24,7 +25,7 @@ const HallsPage = () => {
 
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [saveModalOpen, setSaveModalOpen] = useState(false)
-  const [tempSaveData, setTempSaveData] = useState<any>(null)
+  const [tempSaveData, setTempSaveData] = useState<HallBuilderData | null>(null)
 
   const { halls, isLoading, isError, refetch, deleteHall } = useHalls()
   const {
@@ -59,14 +60,14 @@ const HallsPage = () => {
     resetEditor()
   }
 
-  const onSaveClick = (data: any) => {
+  const onSaveClick = (data: HallBuilderData) => {
     if (mode === 'list') return
     setTempSaveData(data)
     setSaveModalOpen(true)
   }
 
   const onConfirmSave = async (hallName: string) => {
-    if (mode === 'list') return
+    if (mode === 'list' || !tempSaveData) return
     const result = await saveHall(mode, editingHallId, hallName, tempSaveData)
 
     if (result.success) {

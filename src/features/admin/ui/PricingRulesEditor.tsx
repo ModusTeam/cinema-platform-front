@@ -14,7 +14,10 @@ import { useQuery } from '@tanstack/react-query'
 interface PricingRulesEditorProps {
   pricing: PricingDetailsDto
   onClose: () => void
-  onSave: (id: string, rules: SetPricingRuleDto[]) => Promise<any>
+  onSave: (id: string, rules: SetPricingRuleDto[]) => Promise<{
+    success: boolean
+    error?: string
+  }>
 }
 
 const DAYS = [

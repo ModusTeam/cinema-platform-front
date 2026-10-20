@@ -1,9 +1,7 @@
-import { api } from '@/shared/api/axios'
+import { api, refreshAccessToken } from '@/shared/api/axios'
+import { tokenStorage } from '@/shared/api/tokenStorage'
 import type { User, AuthResponse } from '@/features/auth/model/auth.types'
 import { jwtDecode } from 'jwt-decode'
-
-const ACCESS_TOKEN_KEY = 'cinema_access_token'
-const REFRESH_TOKEN_KEY = 'cinema_refresh_token'
 
 export const authService = {
   login: async (email: string, password: string): Promise<User> => {
@@ -13,7 +11,12 @@ export const authService = {
     })
 
     authService.setTokens(data.accessToken, data.refreshToken)
-    return authService.getUserFromToken(data.accessToken)!
+    const user = authService.getUserFromToken(data.accessToken)
+    if (!user) {
+      authService.logout()
+      throw new Error('Invalid access token')
+    }
+    return user
   },
 
   register: async (
@@ -31,45 +34,29 @@ export const authService = {
   },
 
   refreshToken: async (): Promise<string | null> => {
-    const currentRefreshToken = localStorage.getItem(REFRESH_TOKEN_KEY)
-    if (!currentRefreshToken) return null
-
-    try {
-      const { data } = await api.post<AuthResponse>('/auth/refresh-token', {
-        token: currentRefreshToken,
-      })
-
-      authService.setTokens(data.accessToken, data.refreshToken)
-      return data.accessToken
-    } catch (error) {
-      console.error('Refresh failed', error)
-      authService.logout()
-      return null
-    }
+    return refreshAccessToken()
   },
 
   setTokens: (accessToken: string, refreshToken: string) => {
-    localStorage.setItem(ACCESS_TOKEN_KEY, accessToken)
-    localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken)
+    tokenStorage.setTokens(accessToken, refreshToken)
   },
 
   logout: () => {
-    localStorage.removeItem(ACCESS_TOKEN_KEY)
-    localStorage.removeItem(REFRESH_TOKEN_KEY)
-    delete api.defaults.headers.common['Authorization']
+    tokenStorage.clear()
+    delete api.defaults.headers.common.Authorization
   },
 
-  getAccessToken: () => localStorage.getItem(ACCESS_TOKEN_KEY),
+  getAccessToken: tokenStorage.getAccessToken,
 
   getCurrentUser: (): User | null => {
-    const token = localStorage.getItem(ACCESS_TOKEN_KEY)
+    const token = tokenStorage.getAccessToken()
     if (!token) return null
     return authService.getUserFromToken(token)
   },
 
   getUserFromToken: (token: string): User | null => {
     try {
-      const decoded = jwtDecode<any>(token)
+      const decoded = jwtDecode<Record<string, unknown>>(token)
 
       const role =
         decoded.role ||
@@ -77,15 +64,19 @@ export const authService = {
           'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
         ] ||
         'User'
+      const claim = (key: string): string | null => {
+        const value = decoded[key]
+        return typeof value === 'string' ? value : null
+      }
 
       return {
-        id: decoded.sub || '',
-        email: decoded.email || '',
-        name: decoded.firstName || decoded.given_name || 'User',
-        surname: decoded.lastName || decoded.family_name || '',
+        id: claim('sub') ?? '',
+        email: claim('email') ?? '',
+        name: claim('firstName') ?? claim('given_name') ?? 'User',
+        surname: claim('lastName') ?? claim('family_name') ?? '',
         role: typeof role === 'string' ? role.toLocaleLowerCase() : 'user',
       }
-    } catch (e) {
+    } catch {
       return null
     }
   },

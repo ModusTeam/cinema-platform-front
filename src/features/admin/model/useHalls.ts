@@ -14,6 +14,7 @@ export const useHalls = () => {
     mutationFn: hallsService.delete,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-halls'] })
+      queryClient.invalidateQueries({ queryKey: ['halls'] })
     },
   })
 

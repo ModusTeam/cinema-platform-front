@@ -38,9 +38,9 @@ const LoginPage = () => {
     try {
       await login({ email: data.email, password: data.password })
       navigate('/profile')
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error)
-      setServerError(error.message || 'Неправильний логін або пароль')
+      setServerError(error instanceof Error ? error.message : 'Неправильний логін або пароль')
     } finally {
       setIsSubmitting(false)
     }

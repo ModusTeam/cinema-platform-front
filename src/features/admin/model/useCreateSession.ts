@@ -4,6 +4,7 @@ import { adminSessionsService } from '@/features/admin/api/admin-sessions.servic
 import { moviesService } from '@/entities/movie/api/movies.service'
 import { hallsService } from '@/entities/hall/api/halls.service'
 import { useToast } from '@/shared/ui/toast/ToastContext'
+import { isAxiosError } from 'axios'
 
 export const useCreateSession = (
   isOpen: boolean,
@@ -65,12 +66,16 @@ export const useCreateSession = (
     moviesQuery.data,
     hallsQuery.data,
     pricingsQuery.data,
+    movieId,
+    hallId,
+    pricingId,
   ])
 
   const createMutation = useMutation({
     mutationFn: adminSessionsService.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-sessions'] })
+      queryClient.invalidateQueries({ queryKey: ['movie-sessions', movieId] })
       toast.success('Сеанс успішно створено')
       onSuccess()
       onClose()
@@ -94,8 +99,11 @@ export const useCreateSession = (
         startTime: startDateTime.toISOString(),
         pricingId,
       })
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Помилка створення сеансу')
+    } catch (error: unknown) {
+      const message = isAxiosError<{ error?: string }>(error)
+        ? error.response?.data?.error
+        : undefined
+      toast.error(message || 'Помилка створення сеансу')
     }
   }
 
