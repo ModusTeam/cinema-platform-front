@@ -57,17 +57,22 @@ const UserActivityPage = () => {
         </span>
       )
 
-    if (s === 'pending')
+    if (
+      s === 'pending' ||
+      s === 'reserved' ||
+      s === 'paymentprocessing' ||
+      s === 'paymentoutcomeunknown'
+    )
       return (
         <span className='bg-yellow-500/10 text-yellow-500 border-yellow-500/20 px-2 py-0.5 rounded text-xs font-bold border flex items-center gap-1 w-fit'>
-          Pending
+          {status}
         </span>
       )
 
-    if (s === 'used' || s === 'completed')
+    if (s === 'used' || s === 'released' || s === 'expired')
       return (
         <span className='bg-zinc-500/10 text-zinc-400 border-zinc-500/20 px-2 py-0.5 rounded text-xs font-bold border flex items-center gap-1 w-fit'>
-          Used
+          {status}
         </span>
       )
 

@@ -10,8 +10,13 @@ import type { PaginatedResult } from '@/shared/types/common.types'
 export interface MovieRecommendation {
   id: string
   title: string
-  posterUrl: string
+  posterUrl: string | null
   similarityScore: number
+}
+
+export interface MovieImportReceipt {
+  message: string
+  jobId: string
 }
 
 const mapDtoToMovie = (dto: MovieDto & { TrailerUrl?: string }): Movie => ({
@@ -20,13 +25,17 @@ const mapDtoToMovie = (dto: MovieDto & { TrailerUrl?: string }): Movie => ({
   description: dto.description || 'Опис відсутній',
   backdropUrl:
     dto.backdropUrl || 'https://placehold.co/1920x1080?text=No+Image',
-  posterUrl: dto.posterUrl,
+  posterUrl: dto.posterUrl ?? undefined,
   genres: dto.genres || [],
   rating: dto.rating,
   year: dto.releaseYear,
   duration: dto.durationMinutes,
   videoUrl: dto.trailerUrl || dto.TrailerUrl,
-  cast: dto.cast || [],
+  cast: dto.cast?.map(actor => ({
+    name: actor.name,
+    role: actor.role ?? undefined,
+    photoUrl: actor.photoUrl ?? undefined,
+  })) ?? [],
   status: Object.values(MovieStatus).includes(
     dto.status as unknown as MovieStatus,
   )
@@ -97,11 +106,11 @@ export const moviesService = {
     return data
   },
 
-  importMovie: async (tmdbId: number): Promise<string> => {
-    const { data } = await api.post<{ movieId: string }>('/movies/import', {
-      tmdbId: tmdbId,
+  importMovie: async (tmdbId: number): Promise<MovieImportReceipt> => {
+    const { data } = await api.post<MovieImportReceipt>('/movies/import', {
+      tmdbId,
     })
-    return data.movieId
+    return data
   },
 
   delete: async (id: string): Promise<void> => {

@@ -29,17 +29,15 @@ export const useUsers = () => {
     staleTime: 5 * 60 * 1000,
   })
 
-  const isArrayResponse = Array.isArray(data)
-
-  const usersList = isArrayResponse ? data : data?.items || []
+  const usersList = data ?? []
 
   const pagination: PaginationState = {
-    pageNumber: isArrayResponse ? 1 : data?.pageNumber || page,
-    pageSize: isArrayResponse ? usersList.length : pageSize,
-    totalPages: isArrayResponse ? 1 : data?.totalPages || 1,
-    totalCount: isArrayResponse ? usersList.length : data?.totalCount || 0,
-    hasPreviousPage: isArrayResponse ? false : data?.hasPreviousPage || false,
-    hasNextPage: isArrayResponse ? false : data?.hasNextPage || false,
+    pageNumber: 1,
+    pageSize: usersList.length,
+    totalPages: 1,
+    totalCount: usersList.length,
+    hasPreviousPage: false,
+    hasNextPage: false,
   }
 
   const changeRoleMutation = useMutation({

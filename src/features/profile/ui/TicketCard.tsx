@@ -6,13 +6,32 @@ import {
   Clock,
   Copy,
   MapPin,
-  QrCode,
   ReceiptText,
-  ScanLine,
+  Ticket,
   X,
 } from 'lucide-react'
 
-import type { OrderItem } from '@/entities/order/model/order.types'
+import {
+  OrderStatus,
+  TicketStatus,
+  type OrderItem,
+} from '@/entities/order/model/order.types'
+
+const orderStatusLabels: Record<string, string> = {
+  [OrderStatus.Pending]: 'Очікує оплати',
+  [OrderStatus.PaymentProcessing]: 'Оплата обробляється',
+  [OrderStatus.PaymentOutcomeUnknown]: 'Статус оплати уточнюється',
+  [OrderStatus.Failed]: 'Оплата не вдалася',
+  [OrderStatus.Cancelled]: 'Скасовано',
+  [OrderStatus.Expired]: 'Термін минув',
+}
+
+const ticketStatusLabels: Record<string, string> = {
+  [TicketStatus.Reserved]: 'Зарезервовано',
+  [TicketStatus.Used]: 'Використано',
+  [TicketStatus.Refunded]: 'Повернено',
+  [TicketStatus.Released]: 'Звільнено',
+}
 
 interface TicketCardProps {
   order: OrderItem
@@ -20,17 +39,15 @@ interface TicketCardProps {
 }
 
 const TicketCard = ({ order, isHistory = false }: TicketCardProps) => {
-  const [showQr, setShowQr] = useState(false)
-  const [isCopied, setIsCopied] = useState(false)
+  const [showTickets, setShowTickets] = useState(false)
+  const [copiedTicketId, setCopiedTicketId] = useState<string | null>(null)
   const dateObj = new Date(order.sessionDate)
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(order.id)
-    setIsCopied(true)
-    setTimeout(() => setIsCopied(false), 2000)
+  const handleCopy = (ticketId: string) => {
+    void navigator.clipboard.writeText(ticketId)
+    setCopiedTicketId(ticketId)
+    setTimeout(() => setCopiedTicketId(null), 2000)
   }
-
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${order.id}&bgcolor=ffffff`
 
   const formattedDate = new Intl.DateTimeFormat('uk-UA', {
     day: 'numeric',
@@ -41,75 +58,78 @@ const TicketCard = ({ order, isHistory = false }: TicketCardProps) => {
     hour: '2-digit',
     minute: '2-digit',
   }).format(dateObj)
-  const statusLabel = isHistory
-    ? order.status === 'cancelled'
-      ? 'Скасовано'
-      : 'Використано'
-    : 'Активний'
+  const canShowTickets =
+    !isHistory &&
+    order.status === OrderStatus.Paid &&
+    order.ticketStatuses.some(status => status === TicketStatus.Valid)
+  const statusLabel =
+    orderStatusLabels[order.status] ??
+    (order.status === OrderStatus.Paid
+      ? isHistory
+        ? 'Завершено'
+        : 'Оплачено'
+      : 'Статус невідомий')
 
   return (
     <div className='group relative min-h-[210px] overflow-hidden rounded-2xl border border-white/5 bg-[#171717] shadow-lg transition-all duration-300 hover:border-white/10 hover:shadow-[0_0_30px_-8px_rgba(239,68,68,0.18)]'>
       <div
         className={`absolute inset-0 z-20 flex flex-col items-center justify-between bg-[#171717] p-4 transition-transform duration-500 ease-in-out ${
-          showQr
+          showTickets
             ? 'translate-y-0 opacity-100'
             : 'translate-y-full opacity-0 pointer-events-none'
         }`}
       >
         <div className='mb-2 flex w-full items-center justify-between'>
           <h3 className='flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[var(--color-primary)]'>
-            <ScanLine size={14} /> Сканувати для входу
+            <Ticket size={14} /> Квитки для входу
           </h3>
           <button
             type='button'
-            onClick={() => setShowQr(false)}
+            onClick={() => setShowTickets(false)}
             className='rounded-full bg-white/5 p-1.5 text-[var(--text-muted)] transition-colors hover:bg-white/10 hover:text-white'
           >
             <X size={18} />
           </button>
         </div>
 
-        <div className='flex min-h-0 w-full flex-1 items-center justify-center py-2'>
-          <div className='group/qr relative flex aspect-square h-full max-h-[160px] items-center justify-center rounded-xl bg-white p-2 shadow-xl'>
-            <img
-              src={qrCodeUrl}
-              alt='Ticket QR'
-              className='h-full w-full object-contain mix-blend-multiply'
-              loading='lazy'
-            />
-            <div className='pointer-events-none absolute left-0 right-0 top-0 mx-2 h-0.5 animate-[scan_2s_ease-in-out_infinite] rounded-full bg-red-500 opacity-50 shadow-[0_0_10px_red]' />
-          </div>
-        </div>
-
-        <div className='mt-2 flex w-full items-center justify-between rounded-xl border border-white/5 bg-white/5 p-2'>
-          <div className='flex overflow-hidden px-2 flex-col'>
-            <span className='text-[9px] font-bold uppercase tracking-wider text-[var(--text-muted)]'>
-              ID Квитка
-            </span>
-            <span
-              className='w-full max-w-[200px] truncate font-mono text-[10px] text-white'
-              title={order.id}
-            >
-              {order.id}
-            </span>
-          </div>
-          <button
-            type='button'
-            onClick={handleCopy}
-            className='shrink-0 rounded-lg bg-white/5 p-2 text-white transition-all hover:bg-white/10 active:scale-95'
-            title='Скопіювати ID'
-          >
-            {isCopied ? (
-              <Check size={14} className='text-green-500' />
-            ) : (
-              <Copy size={14} />
-            )}
-          </button>
+        <div className='min-h-0 w-full flex-1 space-y-2 overflow-y-auto py-2'>
+          {order.ticketIds.map((ticketId, index) =>
+            order.ticketStatuses[index] === TicketStatus.Valid ? (
+              <div
+                key={ticketId}
+                className='flex items-center justify-between gap-2 rounded-xl border border-white/5 bg-white/5 p-3'
+              >
+                <div className='min-w-0'>
+                  <div className='text-xs text-[var(--text-muted)]'>
+                    Місце {order.seats[index]}
+                  </div>
+                  <div
+                    className='truncate font-mono text-xs text-white'
+                    title={ticketId}
+                  >
+                    {ticketId}
+                  </div>
+                </div>
+                <button
+                  type='button'
+                  onClick={() => handleCopy(ticketId)}
+                  className='shrink-0 rounded-lg bg-white/5 p-2 text-white hover:bg-white/10'
+                  title='Скопіювати ID квитка'
+                >
+                  {copiedTicketId === ticketId ? (
+                    <Check size={14} className='text-green-500' />
+                  ) : (
+                    <Copy size={14} />
+                  )}
+                </button>
+              </div>
+            ) : null,
+          )}
         </div>
       </div>
 
       <div
-        className={`flex h-full flex-col transition-transform duration-500 sm:flex-row ${showQr ? 'scale-95 opacity-30 blur-[2px]' : ''}`}
+        className={`flex h-full flex-col transition-transform duration-500 sm:flex-row ${showTickets ? 'scale-95 opacity-30 blur-[2px]' : ''}`}
       >
         <div className='relative h-44 w-full shrink-0 overflow-hidden sm:h-auto sm:w-36'>
           <img
@@ -169,12 +189,15 @@ const TicketCard = ({ order, isHistory = false }: TicketCardProps) => {
                 <Armchair size={12} />
                 Місця
               </span>
-              {order.seats.map(seat => (
+              {order.seats.map((seat, index) => (
                 <span
                   key={seat}
                   className='inline-flex items-center rounded-md border border-white/5 bg-white/10 px-2 py-1 text-[10px] font-bold uppercase text-zinc-300'
                 >
                   {seat}
+                  {ticketStatusLabels[order.ticketStatuses[index]]
+                    ? ` · ${ticketStatusLabels[order.ticketStatuses[index]]}`
+                    : ''}
                 </span>
               ))}
             </div>
@@ -191,15 +214,14 @@ const TicketCard = ({ order, isHistory = false }: TicketCardProps) => {
               </span>
             </div>
 
-            {!isHistory ? (
+            {canShowTickets ? (
               <button
                 type='button'
-                onClick={() => setShowQr(true)}
+                onClick={() => setShowTickets(true)}
                 className='flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-xs font-bold text-black shadow-lg transition-colors hover:bg-zinc-200 active:scale-95'
               >
-                <QrCode size={16} />
-                <span className='hidden sm:inline'>QR Код</span>
-                <span className='sm:hidden'>QR</span>
+                <Ticket size={16} />
+                <span>Квитки</span>
               </button>
             ) : (
               <div className='rounded border border-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-zinc-500'>

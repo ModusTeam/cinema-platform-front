@@ -2,6 +2,7 @@ import { getApiBaseUrl } from '@/shared/api/apiUrl'
 import * as signalR from '@microsoft/signalr'
 
 const HUB_URL = `${getApiBaseUrl().replace(/\/api$/, '')}/tickets`
+const sessionGroup = (sessionId: string) => `session:${sessionId}`
 
 class TicketHubService {
   private connection: signalR.HubConnection | null = null
@@ -25,7 +26,7 @@ class TicketHubService {
         const sessionId = this.requestedSessionId
         if (!sessionId) return
         try {
-          await this.connection?.invoke('JoinSessionGroup', sessionId)
+          await this.connection?.invoke('JoinSessionGroup', sessionGroup(sessionId))
           this.sessionId = sessionId
           this.onReconnected?.()
         } catch (error) {
@@ -45,7 +46,7 @@ class TicketHubService {
         if (this.connection?.state !== signalR.HubConnectionState.Connected) return
         if (this.sessionId === sessionId) return
         if (this.sessionId) await this.leaveSession(this.sessionId)
-        await this.connection?.invoke('JoinSessionGroup', sessionId)
+        await this.connection?.invoke('JoinSessionGroup', sessionGroup(sessionId))
         this.sessionId = sessionId
       } catch (error) {
         console.error('SignalR Connection Error:', error)
@@ -74,7 +75,7 @@ class TicketHubService {
 
   private async leaveSession(sessionId: string) {
     try {
-      await this.connection?.invoke('LeaveSessionGroup', sessionId)
+      await this.connection?.invoke('LeaveSessionGroup', sessionGroup(sessionId))
     } catch (err) {
       console.error('Error leaving session group:', err)
     }

@@ -53,7 +53,10 @@ export interface OrderItem {
   id: string
   bookingId: string
   totalPrice: number
-  status: 'active' | 'completed' | 'cancelled'
+  status: OrderStatus | string
+  ticketStatuses: (TicketStatus | string)[]
+  ticketIds: string[]
+  isPastSession: boolean
   sessionDate: string
   movieTitle: string
   posterUrl: string

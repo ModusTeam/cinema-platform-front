@@ -13,6 +13,7 @@ export const api = axios.create({
 interface ErrorBody {
   detail?: string
   title?: string
+  errors?: unknown
   extensions?: { errors?: unknown }
 }
 
@@ -35,7 +36,7 @@ const getErrorMessage = (error: AxiosError<ErrorBody>): string => {
   }
 
   const data = error.response.data
-  const errors = data?.extensions?.errors
+  const errors = data?.errors ?? data?.extensions?.errors
   if (errors) {
     const entries = Array.isArray(errors)
       ? errors

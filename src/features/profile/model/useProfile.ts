@@ -4,6 +4,7 @@ import { useToast } from '@/shared/ui/toast/ToastContext'
 import { useAuth } from '@/features/auth/model/AuthContext'
 import { accountService } from '@/entities/account/api/account.service'
 import { ordersService } from '@/entities/order/api/orders.service'
+import { OrderStatus } from '@/entities/order/model/order.types'
 import type { User } from '@/features/auth/model/auth.types'
 
 export type TabType = 'active-tickets' | 'history' | 'settings' | 'achievements'
@@ -70,9 +71,19 @@ export const useProfile = () => {
     staleTime: 5 * 60 * 1000,
     select: data => {
       return {
-        active: data.filter(t => t.status === 'active'),
+        active: data.filter(
+          order =>
+            !order.isPastSession &&
+            order.status !== OrderStatus.Cancelled &&
+            order.status !== OrderStatus.Failed &&
+            order.status !== OrderStatus.Expired,
+        ),
         history: data.filter(
-          t => t.status === 'completed' || t.status === 'cancelled',
+          order =>
+            order.isPastSession ||
+            order.status === OrderStatus.Cancelled ||
+            order.status === OrderStatus.Failed ||
+            order.status === OrderStatus.Expired,
         ),
       }
     },

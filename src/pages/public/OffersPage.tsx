@@ -89,7 +89,7 @@ const OffersPage = () => {
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <img
-                    src={movie.posterUrl}
+                    src={movie.posterUrl ?? undefined}
                     alt={movie.title}
                     className='h-full w-full object-cover transition-transform duration-700 group-hover:scale-110'
                   />

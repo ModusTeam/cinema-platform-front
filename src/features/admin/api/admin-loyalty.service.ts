@@ -13,7 +13,7 @@ export interface AdminLoyaltyTransaction {
   balanceAfter: number
   description: string
   createdAt: string
-  orderId?: string
+  orderId: string
 }
 
 interface AdminLoyaltyTransactionsResponse {

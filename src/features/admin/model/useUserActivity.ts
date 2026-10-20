@@ -16,9 +16,7 @@ export const useUserActivity = () => {
     staleTime: 5 * 60 * 1000,
   })
 
-  const usersList = Array.isArray(usersQuery.data)
-    ? usersQuery.data
-    : usersQuery.data?.items || []
+  const usersList = usersQuery.data ?? []
 
   const userDataQuery = useQuery({
     queryKey: ['admin-user-orders', selectedUserId],
@@ -48,8 +46,8 @@ export const useUserActivity = () => {
 
   const validateMutation = useMutation({
     mutationFn: adminTicketsService.validate,
-    onSuccess: msg => {
-      toast.success(msg)
+    onSuccess: message => {
+      toast.success(message)
       queryClient.invalidateQueries({
         queryKey: ['admin-user-orders', selectedUserId],
       })
