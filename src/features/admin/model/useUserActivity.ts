@@ -11,8 +11,8 @@ export const useUserActivity = () => {
   const [selectedUserId, setSelectedUserId] = useState('')
 
   const usersQuery = useQuery({
-    queryKey: ['admin-users-list-sidebar'],
-    queryFn: () => adminUsersService.getAll(1, 100),
+    queryKey: ['admin-users'],
+    queryFn: adminUsersService.getAll,
     staleTime: 5 * 60 * 1000,
   })
 

@@ -9,16 +9,8 @@ export interface UserDto {
 }
 
 export const adminUsersService = {
-  getAll: async (
-    page = 1,
-    pageSize = 20,
-  ): Promise<UserDto[]> => {
-    const { data } = await api.get<UserDto[]>('/users', {
-      params: {
-        pageNumber: page,
-        pageSize,
-      },
-    })
+  getAll: async (): Promise<UserDto[]> => {
+    const { data } = await api.get<UserDto[]>('/users')
     return data
   },
 

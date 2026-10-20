@@ -1,44 +1,16 @@
-import { useState } from 'react'
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  keepPreviousData,
-} from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminUsersService } from '@/features/admin/api/admin-users.service'
-
-interface PaginationState {
-  pageNumber: number
-  pageSize: number
-  totalPages: number
-  totalCount: number
-  hasPreviousPage: boolean
-  hasNextPage: boolean
-}
 
 export const useUsers = () => {
   const queryClient = useQueryClient()
 
-  const [page, setPage] = useState(1)
-  const pageSize = 10
-
-  const { data, isLoading, isPlaceholderData, isError, refetch } = useQuery({
-    queryKey: ['admin-users', page],
-    queryFn: () => adminUsersService.getAll(page, pageSize),
-    placeholderData: keepPreviousData,
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ['admin-users'],
+    queryFn: adminUsersService.getAll,
     staleTime: 5 * 60 * 1000,
   })
 
   const usersList = data ?? []
-
-  const pagination: PaginationState = {
-    pageNumber: 1,
-    pageSize: usersList.length,
-    totalPages: 1,
-    totalCount: usersList.length,
-    hasPreviousPage: false,
-    hasNextPage: false,
-  }
 
   const changeRoleMutation = useMutation({
     mutationFn: ({
@@ -65,11 +37,9 @@ export const useUsers = () => {
 
   return {
     users: usersList,
-    isLoading: isLoading || (isPlaceholderData && !data),
+    isLoading,
     isError,
     refetch,
-    pagination,
-    changePage: setPage,
     changeUserRole,
     refresh: () => queryClient.invalidateQueries({ queryKey: ['admin-users'] }),
   }

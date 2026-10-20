@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { QRCodeSVG } from 'qrcode.react'
 import {
   Armchair,
   CalendarDays,
@@ -33,6 +34,20 @@ const ticketStatusLabels: Record<string, string> = {
   [TicketStatus.Released]: 'Звільнено',
 }
 
+const orderStatusStyles: Record<string, string> = {
+  [OrderStatus.Pending]: 'border-amber-400/20 bg-amber-500/15 text-amber-200',
+  [OrderStatus.PaymentProcessing]:
+    'border-amber-400/20 bg-amber-500/15 text-amber-200',
+  [OrderStatus.PaymentOutcomeUnknown]:
+    'border-amber-400/20 bg-amber-500/15 text-amber-200',
+  [OrderStatus.Paid]: 'border-emerald-400/20 bg-emerald-500/15 text-emerald-200',
+  [OrderStatus.Failed]: 'border-red-400/20 bg-red-500/15 text-red-200',
+  [OrderStatus.Cancelled]: 'border-white/10 bg-black/60 text-zinc-300',
+  [OrderStatus.Expired]: 'border-white/10 bg-black/60 text-zinc-300',
+}
+
+const historicalStatusStyle = 'border-white/10 bg-black/60 text-zinc-300'
+
 interface TicketCardProps {
   order: OrderItem
   isHistory?: boolean
@@ -59,9 +74,12 @@ const TicketCard = ({ order, isHistory = false }: TicketCardProps) => {
     minute: '2-digit',
   }).format(dateObj)
   const canShowTickets =
-    !isHistory &&
     order.status === OrderStatus.Paid &&
     order.ticketStatuses.some(status => status === TicketStatus.Valid)
+  const ticketsVisible = showTickets && canShowTickets
+  const statusStyle = isHistory
+    ? historicalStatusStyle
+    : (orderStatusStyles[order.status] ?? historicalStatusStyle)
   const statusLabel =
     orderStatusLabels[order.status] ??
     (order.status === OrderStatus.Paid
@@ -74,7 +92,7 @@ const TicketCard = ({ order, isHistory = false }: TicketCardProps) => {
     <div className='group relative min-h-[210px] overflow-hidden rounded-2xl border border-white/5 bg-[#171717] shadow-lg transition-all duration-300 hover:border-white/10 hover:shadow-[0_0_30px_-8px_rgba(239,68,68,0.18)]'>
       <div
         className={`absolute inset-0 z-20 flex flex-col items-center justify-between bg-[#171717] p-4 transition-transform duration-500 ease-in-out ${
-          showTickets
+          ticketsVisible
             ? 'translate-y-0 opacity-100'
             : 'translate-y-full opacity-0 pointer-events-none'
         }`}
@@ -93,43 +111,52 @@ const TicketCard = ({ order, isHistory = false }: TicketCardProps) => {
         </div>
 
         <div className='min-h-0 w-full flex-1 space-y-2 overflow-y-auto py-2'>
-          {order.ticketIds.map((ticketId, index) =>
-            order.ticketStatuses[index] === TicketStatus.Valid ? (
-              <div
-                key={ticketId}
-                className='flex items-center justify-between gap-2 rounded-xl border border-white/5 bg-white/5 p-3'
-              >
-                <div className='min-w-0'>
-                  <div className='text-xs text-[var(--text-muted)]'>
-                    Місце {order.seats[index]}
-                  </div>
-                  <div
-                    className='truncate font-mono text-xs text-white'
-                    title={ticketId}
-                  >
-                    {ticketId}
-                  </div>
-                </div>
-                <button
-                  type='button'
-                  onClick={() => handleCopy(ticketId)}
-                  className='shrink-0 rounded-lg bg-white/5 p-2 text-white hover:bg-white/10'
-                  title='Скопіювати ID квитка'
+          {canShowTickets &&
+            order.ticketIds.map((ticketId, index) =>
+              order.ticketStatuses[index] === TicketStatus.Valid ? (
+                <div
+                  key={ticketId}
+                  className='flex items-center justify-between gap-2 rounded-xl border border-white/5 bg-white/5 p-3'
                 >
-                  {copiedTicketId === ticketId ? (
-                    <Check size={14} className='text-green-500' />
-                  ) : (
-                    <Copy size={14} />
-                  )}
-                </button>
-              </div>
-            ) : null,
-          )}
+                  <div className='min-w-0'>
+                    <div className='text-xs text-[var(--text-muted)]'>
+                      Місце {order.seats[index]}
+                    </div>
+                    <div
+                      className='truncate font-mono text-xs text-white'
+                      title={ticketId}
+                    >
+                      {ticketId}
+                    </div>
+                  </div>
+                  <div className='shrink-0 rounded-md bg-white p-1'>
+                    <QRCodeSVG
+                      value={ticketId}
+                      size={96}
+                      marginSize={4}
+                      title={`QR-код квитка ${ticketId}`}
+                    />
+                  </div>
+                  <button
+                    type='button'
+                    onClick={() => handleCopy(ticketId)}
+                    className='shrink-0 rounded-lg bg-white/5 p-2 text-white hover:bg-white/10'
+                    title='Скопіювати ID квитка'
+                  >
+                    {copiedTicketId === ticketId ? (
+                      <Check size={14} className='text-green-500' />
+                    ) : (
+                      <Copy size={14} />
+                    )}
+                  </button>
+                </div>
+              ) : null,
+            )}
         </div>
       </div>
 
       <div
-        className={`flex h-full flex-col transition-transform duration-500 sm:flex-row ${showTickets ? 'scale-95 opacity-30 blur-[2px]' : ''}`}
+        className={`flex h-full flex-col transition-transform duration-500 sm:flex-row ${ticketsVisible ? 'scale-95 opacity-30 blur-[2px]' : ''}`}
       >
         <div className='relative h-44 w-full shrink-0 overflow-hidden sm:h-auto sm:w-36'>
           <img
@@ -139,11 +166,7 @@ const TicketCard = ({ order, isHistory = false }: TicketCardProps) => {
           />
           <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent sm:bg-gradient-to-r sm:from-black/30 sm:to-transparent' />
           <div
-            className={`absolute left-3 top-3 rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${
-              isHistory
-                ? 'border-white/10 bg-black/60 text-zinc-300'
-                : 'border-emerald-400/20 bg-emerald-500/15 text-emerald-200'
-            }`}
+            className={`absolute left-3 top-3 rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${statusStyle}`}
           >
             {statusLabel}
           </div>
@@ -231,13 +254,6 @@ const TicketCard = ({ order, isHistory = false }: TicketCardProps) => {
           </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes scan {
-          0%, 100% { top: 5%; opacity: 0; }
-          50% { top: 95%; }
-        }
-      `}</style>
     </div>
   )
 }
