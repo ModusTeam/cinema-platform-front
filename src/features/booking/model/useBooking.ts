@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useToast } from '@/shared/ui/toast/ToastContext'
 import { bookingService } from '@/features/booking/api/booking.service'
 import { hallsService } from '@/entities/hall/api/halls.service'
@@ -43,6 +43,11 @@ export const useBooking = (movieId?: string) => {
     null,
   )
   const [selectedSeats, setSelectedSeats] = useState<Seat[]>([])
+  const selectedSeatsRef = useRef(selectedSeats)
+
+  useEffect(() => {
+    selectedSeatsRef.current = selectedSeats
+  }, [selectedSeats])
 
   const {
     data: movie,
@@ -140,31 +145,38 @@ export const useBooking = (movieId?: string) => {
   useEffect(() => {
     if (!selectedSessionId) return
 
-    ticketHub.startConnection(selectedSessionId)
+    void ticketHub.startConnection(selectedSessionId)
 
     ticketHub.onSeatLocked = (seatId, lockerUserId) => {
       updateOccupiedSeats(seatId, 'add')
 
       if (lockerUserId !== user?.id) {
-        setSelectedSeats(prev => {
-          const isSelected = prev.some(s => s.id === seatId)
-          if (isSelected) {
-            toast.warning('На жаль, це місце щойно зайняли.')
-            return prev.filter(s => s.id !== seatId)
-          }
-          return prev
-        })
+        if (selectedSeatsRef.current.some(seat => seat.id === seatId)) {
+          selectedSeatsRef.current = selectedSeatsRef.current.filter(
+            seat => seat.id !== seatId,
+          )
+          setSelectedSeats(prev => prev.filter(seat => seat.id !== seatId))
+          toast.warning('На жаль, це місце щойно зайняли.')
+        }
       }
     }
 
     ticketHub.onSeatUnlocked = seatId => {
       updateOccupiedSeats(seatId, 'remove')
     }
+    ticketHub.onReconnected = () => {
+      void queryClient.invalidateQueries({
+        queryKey: ['session-full-details', selectedSessionId],
+      })
+    }
 
     return () => {
-      ticketHub.stopConnection()
+      ticketHub.onSeatLocked = null
+      ticketHub.onSeatUnlocked = null
+      ticketHub.onReconnected = null
+      void ticketHub.stopConnection()
     }
-  }, [selectedSessionId, toast.warning, updateOccupiedSeats, user?.id])
+  }, [queryClient, selectedSessionId, toast.warning, updateOccupiedSeats, user?.id])
 
   const lockSeatMutation = useMutation({
     mutationFn: (seatId: string) => {
@@ -192,6 +204,9 @@ export const useBooking = (movieId?: string) => {
       queryClient.invalidateQueries({
         queryKey: ['session-full-details', selectedSessionId],
       })
+      queryClient.invalidateQueries({ queryKey: ['my-orders'] })
+      queryClient.invalidateQueries({ queryKey: ['loyalty-profile'] })
+      queryClient.invalidateQueries({ queryKey: ['loyalty-transactions'] })
       setStep(4)
       toast.success('Замовлення успішно створено!')
     },

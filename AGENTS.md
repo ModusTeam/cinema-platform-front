@@ -131,10 +131,9 @@ tooling:
   vite: ^7.2.4
   '@vitejs/plugin-react': ^5.1.1
   '@biomejs/biome': 2.3.11
-  eslint: ^9.39.1
 ```
 
-ESLint config is present, but the configured lint script uses Biome.
+Biome is the configured lint and format tool.
 
 ## Repository Layout
 
@@ -151,7 +150,6 @@ src/
   shared/               # Generic UI, Axios, utilities and common types
   main.tsx              # React entry point and VITE_SHOW_WIP switch
   app/DevelopmentApp.tsx # Query, toast, auth, and router providers
-  App.tsx               # Unused Vite starter component, retained as-is
 ```
 
 Important architectural constraints:
@@ -162,9 +160,8 @@ Important architectural constraints:
 - Keep generic UI and infrastructure in `shared`; avoid global domain services and types.
 - Dependencies flow from `app` through `pages`, `widgets`, `features`,
   `entities`, then `shared`. Reusable hall reads live in `entities/hall` and
-  are used by both booking and admin editing. `shared/api/axios.ts` still
-  imports `features/auth/api/auth.service.ts`, which also imports the Axios
-  client; this existing cycle and interceptor behavior are deferred to Phase 2.
+  are used by both booking and admin editing. `shared/api` owns token storage,
+  Axios interceptors, and refresh without importing the auth feature.
 - Route pages compose UI. Shared generic UI belongs in `shared/ui`; domain
   display transforms belong in the owning entity's `lib`, and interaction
   components and logic belong in their feature's `ui`, `model`, or `lib`.
@@ -257,16 +254,32 @@ Use `import type` for type-only imports.
 - Defaults: no refetch on window focus, one retry for most errors, and
   `staleTime` of five minutes.
 - Use stable query keys.
+- Include parameters that change a response in its domain-prefixed key.
+- Invalidate affected query prefixes after mutations and preserve existing
+  key values unless correcting stale data.
 - Use `keepPreviousData` for paginated queries where the existing hooks do.
 - Invalidate relevant queries after successful mutations.
 
 ### Auth
 
 - Auth state is provided by `src/features/auth/model/AuthContext.tsx`.
+- `authService` owns login, registration, JWT user mapping, and logout;
+  `shared/api/tokenStorage.ts` keeps the existing localStorage keys.
+- Axios refresh uses a separate client and one in-flight promise. A failed
+  refresh clears credentials and updates the auth context.
 - Access and refresh tokens are stored in localStorage by `authService`.
 - Axios attaches `Authorization: Bearer <token>` when an access token exists.
 - Axios attempts `/auth/refresh-token` on eligible `401` responses.
 - `AdminRoute` permits users whose decoded role lowercases to `admin`.
+
+### Booking SignalR
+
+- `useBooking` owns the hub callback lifetime and cleans up on session change
+  or unmount. The hub service serializes start/stop operations and rejoins the
+  session group after reconnect.
+- Reconnect invalidates `['session-full-details', sessionId]` to recover missed
+  seat events. Keep server occupancy authoritative; do not infer lock ownership
+  from local selection.
 
 ### Toasts
 
@@ -383,8 +396,18 @@ that should be verified.
 - `bun.lock` and `package-lock.json` are both present. Bun is required and
   `bun.lock` is authoritative, but the npm lockfile remains in the repo.
 - Existing source imports are mixed between `@/` aliases and relative paths.
-- `src/App.tsx` still contains starter/demo content and is not used by
-  `src/main.tsx`.
+
+## Backend Compatibility
+
+- Legacy `POST /orders` returns a GUID string and currently receives a mock
+  payment token. The frontend has not adopted the backend's reservation,
+  checkout, and status endpoints. Do not change the payment flow in a refactor.
+- The backend has `PaymentProcessing`, `PaymentOutcomeUnknown`, and `Expired`
+  order states and `Reserved` and `Released` ticket states. The current order
+  list UI still maps only older order states and needs payment-aware treatment.
+- Loyalty profile and transaction DTOs match the .NET account endpoints.
+  Benefits and the older loyalty checkout preview adapter remain placeholders;
+  booking amounts come from `/orders/checkout-preview`.
 
 ---
 

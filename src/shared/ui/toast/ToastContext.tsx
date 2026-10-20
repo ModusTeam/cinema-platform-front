@@ -3,6 +3,7 @@ import {
   useContext,
   useState,
   useCallback,
+  useMemo,
   type ReactNode,
 } from 'react'
 import ToastContainer from '@/shared/ui/toast/ToastContainer'
@@ -48,10 +49,13 @@ export const useToast = () => {
     throw new Error('useToast must be used within a ToastProvider')
   }
 
-  return {
-    success: (msg: string) => context.addToast(msg, 'success'),
-    error: (msg: string) => context.addToast(msg, 'error'),
-    info: (msg: string) => context.addToast(msg, 'info'),
-    warning: (msg: string) => context.addToast(msg, 'warning'),
-  }
+  return useMemo(
+    () => ({
+      success: (msg: string) => context.addToast(msg, 'success'),
+      error: (msg: string) => context.addToast(msg, 'error'),
+      info: (msg: string) => context.addToast(msg, 'info'),
+      warning: (msg: string) => context.addToast(msg, 'warning'),
+    }),
+    [context.addToast],
+  )
 }

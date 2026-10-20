@@ -99,6 +99,8 @@ export const useHallEditor = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-halls'] })
+      queryClient.invalidateQueries({ queryKey: ['halls'] })
+      queryClient.invalidateQueries({ queryKey: ['session-full-details'] })
     },
   })
 

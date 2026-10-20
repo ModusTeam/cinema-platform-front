@@ -11,6 +11,7 @@ interface InputModalProps {
   initialValue?: string
   placeholder?: string
   confirmText?: string
+  type?: React.HTMLInputTypeAttribute
 }
 
 const InputModal = ({
@@ -22,6 +23,7 @@ const InputModal = ({
   initialValue = '',
   placeholder = '',
   confirmText = 'Зберегти',
+  type = 'text',
 }: InputModalProps) => {
   const [value, setValue] = useState(initialValue)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -62,6 +64,7 @@ const InputModal = ({
 
         <form onSubmit={handleSubmit} className='space-y-6'>
           <Input
+            type={type}
             label={label}
             value={value}
             onChange={e => setValue(e.target.value)}

@@ -25,6 +25,7 @@ export const useSessions = () => {
     mutationFn: adminSessionsService.cancel,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-sessions'] })
+      queryClient.invalidateQueries({ queryKey: ['movie-sessions'] })
     },
   })
 
@@ -33,6 +34,7 @@ export const useSessions = () => {
       adminSessionsService.reschedule(id, newDateIso),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-sessions'] })
+      queryClient.invalidateQueries({ queryKey: ['movie-sessions'] })
     },
   })
 

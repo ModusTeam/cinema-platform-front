@@ -21,7 +21,6 @@ const AdminSessionsPage = () => {
     isLoading,
     isError,
     refetch,
-    fetchSessions,
     deleteSession,
     rescheduleSession,
   } = useSessions()
@@ -170,7 +169,6 @@ const AdminSessionsPage = () => {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSuccess={() => {
-          fetchSessions()
           toast.success(adminSessionsCopy.createSuccess)
         }}
       />
@@ -193,7 +191,6 @@ const AdminSessionsPage = () => {
         label={adminSessionsCopy.newStart}
         initialValue={getInitialRescheduleValue()}
         confirmText={adminSessionsCopy.confirmReschedule}
-        // @ts-ignore (type prop passing)
         type='datetime-local'
       />
     </div>

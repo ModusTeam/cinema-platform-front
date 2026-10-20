@@ -1,9 +1,7 @@
 import { api } from '@/shared/api/axios'
 
-export interface CreateOrderResponse {
-  orderId: string
-  status: string
-}
+// The legacy POST /orders endpoint returns a GUID on successful checkout.
+export type CreateOrderResponse = string
 
 export interface CreateOrderPayload {
   sessionId: string
