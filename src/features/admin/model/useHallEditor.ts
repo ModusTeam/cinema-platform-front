@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { isAxiosError } from 'axios'
 import { hallsService } from '@/entities/hall/api/halls.service'
-import { bookingService } from '@/features/booking/api/booking.service'
 import type { Seat, Technology } from '@/entities/hall/model/hall.types'
+import type { HallBuilderData } from './hallBuilder.types'
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -17,11 +18,11 @@ export const useHallEditor = () => {
   const loadHallSeats = async (hallId: string) => {
     setIsLoadingData(true)
     try {
-      const hallData = await bookingService.getHallById(hallId)
+      const hallData = await hallsService.getById(hallId)
       setInitialSeats(hallData.seats)
       setInitialTechnologies(hallData.technologies || [])
       return true
-    } catch (error) {
+    } catch {
       return false
     } finally {
       setIsLoadingData(false)
@@ -43,7 +44,7 @@ export const useHallEditor = () => {
       mode: 'create' | 'edit'
       hallId: string | null
       hallName: string
-      data: any
+      data: HallBuilderData
     }) => {
       let targetHallId = hallId
 
@@ -58,7 +59,7 @@ export const useHallEditor = () => {
         targetHallId =
           typeof createResult === 'string'
             ? createResult
-            : (createResult as any).id || (createResult as any).value
+            : createResult.id || createResult.value || null
       } else if (mode === 'edit' && hallId) {
         await Promise.all([
           hallsService.update(hallId, hallName),
@@ -68,12 +69,12 @@ export const useHallEditor = () => {
 
       if (!targetHallId) throw new Error('Failed to resolve Hall ID')
 
-      const currentHallState = await bookingService.getHallById(targetHallId)
+      const currentHallState = await hallsService.getById(targetHallId)
       const changesByType: Record<string, string[]> = {}
 
       currentHallState.seats.forEach((seat: Seat) => {
         const targetConfig = data.seatConfig.find(
-          (sc: any) => sc.gridX === seat.gridX && sc.gridY === seat.gridY,
+          sc => sc.gridX === seat.gridX && sc.gridY === seat.gridY,
         )
         if (targetConfig && targetConfig.seatTypeId !== seat.seatTypeId) {
           const typeId = targetConfig.seatTypeId
@@ -86,7 +87,7 @@ export const useHallEditor = () => {
       if (typeIdsToUpdate.length > 0) {
         for (const typeId of typeIdsToUpdate) {
           await hallsService.batchChangeSeatType(
-            targetHallId!,
+            targetHallId,
             changesByType[typeId],
             typeId,
           )
@@ -105,15 +106,20 @@ export const useHallEditor = () => {
     mode: 'create' | 'edit',
     hallId: string | null,
     hallName: string,
-    data: any,
+    data: HallBuilderData,
   ) => {
     try {
       await saveMutation.mutateAsync({ mode, hallId, hallName, data })
       return { success: true }
-    } catch (error: any) {
-      const msg = error.response?.data?.errors
-        ? JSON.stringify(error.response.data.errors)
-        : error.message
+    } catch (error) {
+      const errors = isAxiosError<{ errors?: unknown }>(error)
+        ? error.response?.data?.errors
+        : undefined
+      const msg = errors
+        ? JSON.stringify(errors)
+        : error instanceof Error
+          ? error.message
+          : undefined
       return { success: false, error: msg }
     }
   }

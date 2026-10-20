@@ -42,10 +42,12 @@ The backend is currently undergoing refactoring and further development, so the 
 * `pages` groups route screens under `public`, `auth`, `account`, `booking`, and guarded `admin` directories.
 * `widgets` contains composed sections used by pages, such as the home content, movie grid, movie details, and static page shell.
 * `features` contains interactions such as authentication, booking, loyalty, profile, and admin editing.
-* `entities` contains reusable account, hall, movie, and order models and API calls.
+* `entities` contains reusable account, hall, movie, order, and session models and API calls.
 * `shared` contains generic UI, Axios infrastructure, utilities, and common types.
 
 Slices use `api`, `model`, `ui`, `lib`, or `config` only where needed. The router lazy-loads public and administrative pages and guards `/admin/*` with `AdminRoute`.
+
+Dependencies flow downward from `app` to `pages`, `widgets`, `features`, `entities`, and `shared`. Route screens compose widgets and features; reusable domain calls and models belong to their entity. UI shared across domains belongs in `shared/ui`, while interaction-specific components stay in their feature. Pure display transforms live in the owning slice's `lib`, and static UI wording and meaningful identifiers live in nearby `config` files. Cross-slice imports use `@/`; relative imports are used within a slice. The Axios interceptor still depends on the auth feature and forms an auth/API cycle; restructuring it is reserved for Phase 2.
 
 Data-driven screens use shared `EmptyState` for successful responses with no results and `UnavailableState` for failed requests, with retry actions where the query can be refetched.
 
@@ -60,12 +62,14 @@ Seat locking implements a combined REST and SignalR workflow for data consistenc
 
 **Service Interoperability**
 
-The frontend interacts with two backend domains: the primary .NET 8 REST API and the NestJS loyalty service. 
+The frontend calls the primary .NET 10 REST API, which coordinates with the NestJS loyalty service.
 
 * Network boundaries are centralized through an Axios instance configured via `VITE_API_URL`.
 * The interceptor architecture automatically attaches bearer tokens, retries rate-limited requests, and executes access token refreshes upon encountering `401 Unauthorized` responses.
 * Core operations (`/sessions`, `/seats/lock`) and loyalty reads (`/account/loyalty`) share this unified client infrastructure.
 * Cross-domain logic is handled during checkout: the booking payload transmits `useLoyaltyPoints` and `applyGoldUpgrade` flags, delegating final orchestration to the backend API.
+
+`src/main.tsx` selects the WIP placeholder when `VITE_SHOW_WIP=true`; otherwise it loads `app/DevelopmentApp.tsx`, which composes the query, toast, auth, and router providers.
 
 **Administrative Operations**
 

@@ -147,9 +147,10 @@ src/
   pages/                # public/, auth/, account/, booking/, admin/ routes
   widgets/              # Composed home, movie-grid and static-page sections
   features/             # Auth, booking, loyalty, admin interactions, profile UI
-  entities/             # Account, hall, movie and order APIs and models
+  entities/             # Account, hall, movie, order, and session APIs/models
   shared/               # Generic UI, Axios, utilities and common types
-  main.tsx              # Provider composition and React entry point
+  main.tsx              # React entry point and VITE_SHOW_WIP switch
+  app/DevelopmentApp.tsx # Query, toast, auth, and router providers
   App.tsx               # Unused Vite starter component, retained as-is
 ```
 
@@ -157,10 +158,19 @@ Important architectural constraints:
 
 - Keep route screens in `pages` and reusable composed sections in `widgets`.
 - Keep user interactions in `features` and reusable domain APIs/models in `entities`.
+  Generic hall and session reads live in their entity slices, not booking.
 - Keep generic UI and infrastructure in `shared`; avoid global domain services and types.
-- Dependencies should flow from `app` through `pages`, `widgets`, `features`,
-  `entities`, then `shared`. Existing auth integration in the Axios client and
-  admin hall editing's use of booking APIs are retained to preserve behavior.
+- Dependencies flow from `app` through `pages`, `widgets`, `features`,
+  `entities`, then `shared`. Reusable hall reads live in `entities/hall` and
+  are used by both booking and admin editing. `shared/api/axios.ts` still
+  imports `features/auth/api/auth.service.ts`, which also imports the Axios
+  client; this existing cycle and interceptor behavior are deferred to Phase 2.
+- Route pages compose UI. Shared generic UI belongs in `shared/ui`; domain
+  display transforms belong in the owning entity's `lib`, and interaction
+  components and logic belong in their feature's `ui`, `model`, or `lib`.
+- Keep static user-facing copy and meaningful identifiers in nearby `config`
+  files when they recur or obscure component intent. Preserve backend-derived
+  values and existing business behavior when organizing copy.
 
 ## Routing
 
@@ -224,9 +234,8 @@ From `biome.json`:
 TypeScript settings are strict in `tsconfig.app.json`.
 
 The `@/*` path alias is configured in both `tsconfig.app.json` and
-`vite.config.ts`. Existing code contains a mix of `@/` imports and relative
-imports. For new cross-folder imports under `src`, prefer the configured `@/`
-alias unless you are matching nearby relative imports in the same file.
+`vite.config.ts`. Use `@/` for cross-layer and cross-slice imports; use
+relative imports within the same slice or local module.
 
 Use `import type` for type-only imports.
 
@@ -244,7 +253,7 @@ Use `import type` for type-only imports.
 
 ### React Query
 
-- `QueryClient` is configured in `src/main.tsx`.
+- `QueryClient` is configured in `src/app/DevelopmentApp.tsx`.
 - Defaults: no refetch on window focus, one retry for most errors, and
   `staleTime` of five minutes.
 - Use stable query keys.
@@ -379,4 +388,4 @@ that should be verified.
 
 ---
 
-Last updated: 2026-10-19
+Last updated: 2026-10-21

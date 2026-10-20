@@ -1,5 +1,7 @@
-import { type Session } from '@/entities/hall/model/hall.types'
+import type { Session } from '@/entities/session/model/session.types'
 import { Clock } from 'lucide-react'
+import { bookingCopy } from '@/features/booking/config/booking.copy'
+import { DEFAULT_SESSION_PRICE } from '@/entities/session/config/session.constants'
 
 interface SessionSelectorProps {
   sessions: Session[]
@@ -26,7 +28,9 @@ const SessionSelector = ({
     <div className='space-y-8 animate-in fade-in slide-in-from-left-4 duration-500'>
       <div className='flex items-center gap-3'>
         <div className='h-8 w-1 bg-[var(--color-primary)] rounded-full shadow-[0_0_15px_var(--color-primary)]'></div>
-        <h2 className='text-2xl font-bold text-white'>Оберіть сеанс</h2>
+        <h2 className='text-2xl font-bold text-white'>
+          {bookingCopy.selectSession}
+        </h2>
       </div>
 
       <div className='space-y-8'>
@@ -50,7 +54,7 @@ const SessionSelector = ({
                 </span>
                 {isToday && (
                   <span className='ml-2 text-[10px] font-bold uppercase tracking-wider bg-[var(--color-success)]/10 text-[var(--color-success)] px-2 py-0.5 rounded border border-[var(--color-success)]/20'>
-                    Сьогодні
+                    {bookingCopy.today}
                   </span>
                 )}
               </div>
@@ -94,7 +98,7 @@ const SessionSelector = ({
                       <div
                         className={`text-[10px] font-medium mt-1 uppercase tracking-wide transition-colors ${isSelected ? 'text-white/80' : 'text-[var(--text-muted)] group-hover:text-zinc-300'}`}
                       >
-                        {session.priceBase || 150} ₴
+                        {session.priceBase || DEFAULT_SESSION_PRICE} ₴
                       </div>
                     </button>
                   )

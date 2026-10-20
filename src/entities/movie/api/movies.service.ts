@@ -3,9 +3,9 @@ import {
   type Movie,
   type MovieDto,
   MovieStatus,
-  type PaginatedResult,
   type TmdbSearchResult,
 } from '@/entities/movie/model/movie.types'
+import type { PaginatedResult } from '@/shared/types/common.types'
 
 export interface MovieRecommendation {
   id: string

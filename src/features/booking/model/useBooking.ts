@@ -2,9 +2,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
 import { useToast } from '@/shared/ui/toast/ToastContext'
 import { bookingService } from '@/features/booking/api/booking.service'
+import { hallsService } from '@/entities/hall/api/halls.service'
+import { sessionsService } from '@/entities/session/api/sessions.service'
 import { moviesService } from '@/entities/movie/api/movies.service'
 import { ticketHub } from '@/features/booking/api/signalr.service'
-import type { Hall, Seat, Session } from '@/entities/hall/model/hall.types'
+import type { Hall, Seat } from '@/entities/hall/model/hall.types'
+import type { Session } from '@/entities/session/model/session.types'
 import { useAuth } from '@/features/auth/model/AuthContext'
 
 interface CreateOrderPayload {
@@ -65,7 +68,7 @@ export const useBooking = (movieId?: string) => {
     queryKey: ['movie-sessions', movieId],
     queryFn: () => {
       if (!movieId) throw new Error('No movie selected')
-      return bookingService.getSessionsByMovieId(movieId)
+      return sessionsService.getByMovieId(movieId)
     },
     enabled: !!movieId,
     select: data =>
@@ -86,8 +89,8 @@ export const useBooking = (movieId?: string) => {
     queryKey: ['session-full-details', selectedSessionId],
     queryFn: async () => {
       if (!selectedSessionId) throw new Error('No session selected')
-      const session = await bookingService.getSessionDetails(selectedSessionId)
-      const hall = await bookingService.getHallById(session.hallId)
+      const session = await sessionsService.getDetails(selectedSessionId)
+      const hall = await hallsService.getById(session.hallId)
       return { session, hall }
     },
     enabled: !!selectedSessionId,

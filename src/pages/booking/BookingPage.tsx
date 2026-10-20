@@ -19,61 +19,17 @@ import { useCheckoutPreview } from '@/features/booking/api/useCheckoutPreview'
 import SeatSelector from '@/features/booking/ui/SeatSelector'
 import SessionSelector from '@/features/booking/ui/SessionSelector'
 import { useBooking } from '@/features/booking/model/useBooking'
-
-interface CheckoutToggleProps {
-  label: string
-  description: string
-  checked: boolean
-  disabled?: boolean
-  onToggle: (value: boolean) => void
-}
-
-const CheckoutToggle = ({
-  label,
-  description,
-  checked,
-  disabled,
-  onToggle,
-}: CheckoutToggleProps) => (
-  <button
-    type='button'
-    role='switch'
-    aria-checked={checked}
-    disabled={disabled}
-    onClick={() => onToggle(!checked)}
-    className={`flex w-full items-center justify-between gap-4 rounded-2xl bg-white/5 px-4 py-3 text-left transition-colors ${
-      disabled ? 'cursor-not-allowed opacity-50' : 'hover:bg-white/10'
-    }`}
-  >
-    <span>
-      <span className='block text-sm font-bold text-white'>{label}</span>
-      <span className='mt-1 block text-xs text-zinc-400'>{description}</span>
-    </span>
-    <span
-      className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${
-        checked ? 'bg-red-600' : 'bg-zinc-700'
-      }`}
-      aria-hidden='true'
-    >
-      <span
-        className={`absolute top-1 h-5 w-5 rounded-full bg-white transition-transform ${
-          checked ? 'translate-x-6' : 'translate-x-1'
-        }`}
-      />
-    </span>
-  </button>
-)
-
-const GOLD_UPGRADE_REJECTION_CODES = new Set([
-  'GOLD_UPGRADE_REQUIRES_GOLD_TIER',
-  'GOLD_UPGRADE_ALREADY_USED_THIS_MONTH',
-  'GOLD_UPGRADE_NO_ELIGIBLE_TICKET',
-])
-
-const LOYALTY_POINTS_REJECTION_CODES = new Set([
-  'LOYALTY_POINTS_NOT_ALLOWED_FOR_SESSION',
-  'LOYALTY_POINTS_INSUFFICIENT_BALANCE',
-])
+import CheckoutToggle from '@/features/booking/ui/CheckoutToggle'
+import {
+  bookingCopy,
+  GOLD_UPGRADE_REJECTION_CODES,
+  LOYALTY_POINTS_REJECTION_CODES,
+} from '@/features/booking/config/booking.copy'
+import {
+  formatBookingSeat,
+  formatBookingSessionDateTime,
+  formatCheckoutAmount,
+} from '@/features/booking/lib/bookingDisplay'
 
 const BookingPage = () => {
   const { id } = useParams<{ id: string }>()
@@ -174,7 +130,7 @@ const BookingPage = () => {
         GOLD_UPGRADE_REJECTION_CODES.has(preview.goldUpgrade.reasonCode)
       ) {
         setGoldUpgradeBlockedReason(
-          preview.goldUpgrade.reason || 'GOLD upgrade is unavailable.',
+          preview.goldUpgrade.reason || bookingCopy.checkout.goldUnavailable,
         )
       }
     }
@@ -193,7 +149,7 @@ const BookingPage = () => {
       GOLD_UPGRADE_REJECTION_CODES.has(goldUpgradeAvailability.reasonCode)
     ) {
       setGoldUpgradeBlockedReason(
-        goldUpgradeAvailability.reason || 'GOLD upgrade is unavailable.',
+        goldUpgradeAvailability.reason || bookingCopy.checkout.goldUnavailable,
       )
     }
 
@@ -216,7 +172,7 @@ const BookingPage = () => {
         LOYALTY_POINTS_REJECTION_CODES.has(preview.loyaltyPoints.reasonCode)
       ) {
         setLoyaltyPointsBlockedReason(
-          preview.loyaltyPoints.reason || 'Loyalty points are unavailable.',
+          preview.loyaltyPoints.reason || bookingCopy.checkout.loyaltyUnavailable,
         )
       }
     }
@@ -243,24 +199,23 @@ const BookingPage = () => {
             <CheckCircle className='h-12 w-12 text-[var(--color-success)]' />
           </div>
           <h1 className='text-4xl font-bold text-white mb-2'>
-            Оплата успішна!
+            {bookingCopy.success.title}
           </h1>
           <p className='text-[var(--text-muted)] max-w-md mb-8'>
-            Ваші квитки успішно заброньовані. Ми надіслали підтвердження на вашу
-            електронну пошту.
+            {bookingCopy.success.description}
           </p>
           <div className='flex gap-4'>
             <Link
               to='/profile'
               className='rounded-xl bg-white px-8 py-3 font-bold text-black hover:bg-zinc-200 transition-colors'
             >
-              Go to profile
+              {bookingCopy.success.profile}
             </Link>
             <Link
               to='/'
               className='rounded-xl border border-white/10 bg-white/5 px-8 py-3 font-bold text-white hover:bg-white/10 transition-colors'
             >
-              Go to home
+              {bookingCopy.success.home}
             </Link>
           </div>
         </div>
@@ -274,29 +229,23 @@ const BookingPage = () => {
 
   const genresList = Array.isArray(movie?.genres) ? movie.genres : []
   const sessionDateTimeLabel = selectedSession
-    ? `${new Date(selectedSession.startTime).toLocaleDateString('uk-UA', {
-        day: 'numeric',
-        month: 'long',
-      })}, ${new Date(selectedSession.startTime).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      })}`
-    : '10 червня, 22:00'
+    ? formatBookingSessionDateTime(selectedSession.startTime)
+    : bookingCopy.fallbackSessionDate
   const selectedSeatsLabel =
     selectedSeats.length > 0
       ? selectedSeats
-          .map(seat => `Ряд ${seat.row}, Місце ${seat.number}`)
+          .map(formatBookingSeat)
           .join(', ')
-      : 'Ряд 5, Місце 12, 13'
+      : bookingCopy.fallbackSeats
   const currency = preview?.currency || '₴'
   const previewErrorMessage =
     previewError instanceof Error
       ? previewError.message
-      : 'Не вдалося завантажити попередній розрахунок'
+      : bookingCopy.checkout.previewUnavailable
   const canPay =
     Boolean(preview?.canCheckout) && !isPreviewError && !isPreviewLoading
   const formatAmount = (amount?: number) =>
-    amount === undefined ? '—' : `${amount} ${currency}`
+    formatCheckoutAmount(amount, currency)
   const isGoldUpgradeRejected =
     preview?.goldUpgrade.requested && preview.goldUpgrade.canApply === false
   const isLoyaltyPointsRejected =
@@ -326,7 +275,7 @@ const BookingPage = () => {
             <div className='p-2 rounded-full bg-white/5 group-hover:bg-white/10 transition-colors'>
               <ArrowLeft size={16} />
             </div>
-            <span>До фільму</span>
+            <span>{bookingCopy.backToMovie}</span>
           </Link>
 
           <div className='flex items-center gap-2'>
@@ -364,9 +313,9 @@ const BookingPage = () => {
             ) : (
               <EmptyState
                 icon={<CalendarX className='h-12 w-12' />}
-                title='Актуальних сеансів немає'
-                description='Для цього фільму поки не заплановано майбутніх показів. Перегляньте афішу, щоб знайти інший сеанс.'
-                actionLabel='Афіша кінотеатру'
+                title={bookingCopy.noSessionsTitle}
+                description={bookingCopy.noSessionsDescription}
+                actionLabel={bookingCopy.browseMovies}
                 onAction={() => navigate('/sessions')}
                 className='min-h-[300px]'
               />
@@ -378,7 +327,8 @@ const BookingPage = () => {
           <div className='animate-in fade-in slide-in-from-right-4 duration-500'>
             <div className='mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
               <h2 className='flex items-center gap-3 text-2xl font-bold text-white'>
-                <Ticket className='text-[var(--color-primary)]' /> Оберіть місця
+                <Ticket className='text-[var(--color-primary)]' />{' '}
+                {bookingCopy.selectSeats}
               </h2>
               <button
                 type='button'
@@ -386,7 +336,7 @@ const BookingPage = () => {
                 onClick={goToCheckout}
                 className='rounded-xl bg-red-600 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-red-600/25 transition-all hover:bg-red-500 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-white/40 disabled:shadow-none'
               >
-                Продовжити
+                {bookingCopy.continue}
               </button>
             </div>
 
@@ -411,7 +361,7 @@ const BookingPage = () => {
                 onClick={resetSession}
                 className='py-2 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] transition-colors hover:text-white'
               >
-                Змінити сеанс
+                {bookingCopy.changeSession}
               </button>
             </div>
           </div>
@@ -431,7 +381,7 @@ const BookingPage = () => {
                   <div>
                     <div className='mb-3 flex flex-wrap gap-2 text-xs font-semibold text-zinc-300'>
                       <span className='rounded-full bg-white/10 px-3 py-1'>
-                        {genresList[0] || 'Кіно'}
+                        {genresList[0] || bookingCopy.fallbackGenre}
                       </span>
                       <span className='rounded-full bg-white/10 px-3 py-1'>
                         {movie?.duration} хв
@@ -452,7 +402,7 @@ const BookingPage = () => {
                     </div>
                     <div className='flex items-center gap-2'>
                       <MapPin size={16} className='text-red-400' />
-                      {selectedSession?.hallName || 'Зал 1'}
+                      {selectedSession?.hallName || bookingCopy.fallbackHall}
                     </div>
                     <div className='flex items-center gap-2'>
                       <Armchair size={16} className='text-red-400' />
@@ -466,33 +416,34 @@ const BookingPage = () => {
                 <div className='mb-8 flex items-start justify-between gap-4'>
                   <div className='border-l-4 border-red-600 pl-3'>
                     <h2 className='mt-2 text-2xl font-black text-white'>
-                      Ваше замовлення
+                      {bookingCopy.checkout.title}
                     </h2>
                   </div>
                 </div>
 
                 <div className='space-y-3'>
                   <CheckoutToggle
-                    label='Ultra-comfort'
+                    label={bookingCopy.checkout.goldUpgrade}
                     description={
                       goldUpgradeBlockedReason ||
                       preview?.goldUpgrade.reason ||
-                      `Знижка: ${formatAmount(
-                        preview?.goldUpgrade.discountAmount,
-                      )}`
+                      bookingCopy.goldDiscount(
+                        formatAmount(preview?.goldUpgrade.discountAmount),
+                      )
                     }
                     checked={applyGoldUpgrade}
                     disabled={isGoldUpgradeDisabled}
                     onToggle={setApplyGoldUpgrade}
                   />
                   <CheckoutToggle
-                    label='Використати бали'
+                    label={bookingCopy.checkout.loyaltyPoints}
                     description={
                       loyaltyPointsBlockedReason ||
                       preview?.loyaltyPoints.reason ||
-                      `Доступно: ${loyaltyPoints} балів, знижка: ${formatAmount(
-                        preview?.loyaltyPoints.discountAmount,
-                      )}`
+                      bookingCopy.pointsDiscount(
+                        loyaltyPoints,
+                        formatAmount(preview?.loyaltyPoints.discountAmount),
+                      )
                     }
                     checked={useLoyaltyPoints}
                     disabled={isLoyaltyPointsDisabled}
@@ -514,14 +465,14 @@ const BookingPage = () => {
                   ) : (
                     <>
                       <div className='flex items-center justify-between text-zinc-400'>
-                        <span>Base tickets</span>
+                        <span>{bookingCopy.checkout.baseTickets}</span>
                         <span className='text-white'>
                           {formatAmount(preview?.originalAmount)}
                         </span>
                       </div>
                       {preview?.goldUpgrade.applied && (
                         <div className='flex items-center justify-between text-zinc-400'>
-                          <span>Gold upgrade discount</span>
+                          <span>{bookingCopy.checkout.goldDiscount}</span>
                           <span className='text-red-300'>
                             -{formatAmount(preview.goldUpgrade.discountAmount)}
                           </span>
@@ -529,7 +480,7 @@ const BookingPage = () => {
                       )}
                       {preview?.loyaltyPoints.applied && (
                         <div className='flex items-center justify-between text-zinc-400'>
-                          <span>Loyalty discount</span>
+                          <span>{bookingCopy.checkout.loyaltyDiscount}</span>
                           <span className='text-red-300'>
                             -
                             {formatAmount(preview.loyaltyPoints.discountAmount)}
@@ -538,8 +489,7 @@ const BookingPage = () => {
                       )}
                       {preview?.canCheckout === false && (
                         <div className='rounded-2xl bg-amber-500/10 p-3 text-xs text-amber-200'>
-                          Неможливо оформити замовлення. Перевірте обрані місця
-                          та параметри знижок.
+                          {bookingCopy.checkout.cannotCheckout}
                         </div>
                       )}
                       {preview?.warnings.map(warning => (
@@ -557,7 +507,7 @@ const BookingPage = () => {
                 <div className='mt-auto pt-8'>
                   <div className='mb-6 flex items-end justify-between'>
                     <span className='text-sm font-semibold text-zinc-400'>
-                      Total
+                      {bookingCopy.checkout.total}
                     </span>
                     <span className='text-4xl font-black text-white'>
                       {formatAmount(preview?.finalAmountToPay)}
@@ -579,7 +529,7 @@ const BookingPage = () => {
                       <GridLoader className='animate-spin' />
                     ) : (
                       <>
-                        <Ticket size={20} /> Оплатити замовлення
+                        <Ticket size={20} /> {bookingCopy.checkout.pay}
                       </>
                     )}
                   </button>
@@ -589,7 +539,7 @@ const BookingPage = () => {
                     onClick={backToSeats}
                     className='mt-5 w-full py-2 text-xs font-bold uppercase tracking-wider text-zinc-500 transition-colors hover:text-white'
                   >
-                    Назад до місць
+                    {bookingCopy.checkout.backToSeats}
                   </button>
                 </div>
               </aside>

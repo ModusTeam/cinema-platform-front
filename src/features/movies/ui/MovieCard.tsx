@@ -1,13 +1,15 @@
 import { Link } from 'react-router-dom'
 import { Star, CalendarRange } from 'lucide-react'
 import { type Movie, MovieStatus } from '@/entities/movie/model/movie.types'
-import { type Session } from '@/entities/hall/model/hall.types'
+import type { Session } from '@/entities/session/model/session.types'
+import { DEFAULT_SESSION_PRICE } from '@/entities/session/config/session.constants'
+import { getMovieGenres } from '@/entities/movie/lib/movieGenres'
+import { movieCopy } from '@/entities/movie/config/movie.copy'
 
 interface MovieCardProps {
   movie: Movie
   sessions: Session[]
   technologies: string[]
-  hideIfNoSessions?: boolean
 }
 
 const MovieCard = ({ movie, sessions, technologies }: MovieCardProps) => {
@@ -22,13 +24,8 @@ const MovieCard = ({ movie, sessions, technologies }: MovieCardProps) => {
   const isComingSoon = movie.status === MovieStatus.ComingSoon
 
   const genresString = Array.isArray(movie.genres)
-    ? movie.genres
-        .map(g => {
-          if (typeof g === 'string') return g
-          return (g as any).name
-        })
-        .join(', ')
-    : 'Жанр не вказано'
+    ? getMovieGenres(movie.genres).join(', ')
+    : movieCopy.card.missingGenre
 
   return (
     <div className='group relative bg-[var(--bg-card)] rounded-2xl overflow-hidden border border-white/5 transition-all duration-300 hover:border-[var(--color-primary)]/30 hover:shadow-2xl hover:-translate-y-1 h-full flex flex-col'>
@@ -45,7 +42,7 @@ const MovieCard = ({ movie, sessions, technologies }: MovieCardProps) => {
             to={`/movies/${movie.id}`}
             className='bg-white/10 border border-white/20 text-white font-bold py-2.5 px-6 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:bg-white hover:text-black'
           >
-            Про фільм
+            {movieCopy.card.details}
           </Link>
         </div>
 
@@ -59,7 +56,7 @@ const MovieCard = ({ movie, sessions, technologies }: MovieCardProps) => {
           </div>
           {isComingSoon && (
             <div className='bg-yellow-500 text-black text-[10px] font-black uppercase px-2 py-1 rounded-lg shadow-lg w-fit'>
-              Скоро
+              {movieCopy.card.comingSoon}
             </div>
           )}
         </div>
@@ -91,19 +88,19 @@ const MovieCard = ({ movie, sessions, technologies }: MovieCardProps) => {
                       })}
                     </span>
                     <span className='block text-[9px] opacity-60 font-medium group-hover/btn:opacity-100'>
-                      {st.priceBase || 150} ₴
+                      {st.priceBase || DEFAULT_SESSION_PRICE} ₴
                     </span>
                   </Link>
                 ))
               ) : (
                 <span className='text-xs text-[var(--text-muted)] italic py-1 flex items-center gap-1'>
-                  <CalendarRange size={14} /> На обрану дату сеансів немає
+                  <CalendarRange size={14} /> {movieCopy.card.noSessions}
                 </span>
               )}
             </div>
           ) : (
             <div className='text-sm text-[var(--text-muted)] italic'>
-              Прем'єра очікується незабаром
+              {movieCopy.card.premiereSoon}
             </div>
           )}
 

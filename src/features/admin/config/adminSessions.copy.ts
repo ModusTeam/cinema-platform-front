@@ -1,0 +1,25 @@
+export const adminSessionsCopy = {
+  title: 'Розклад сеансів',
+  description: 'Планування та керування показами',
+  add: 'Додати сеанс',
+  emptyTitle: 'Сеансів ще немає',
+  emptyDescription:
+    'Створіть перший показ, щоб він зʼявився в розкладі для гостей і касирів.',
+  today: 'Сьогодні',
+  cancelled: 'Скасовано',
+  hall: 'Зал',
+  pricing: 'Тариф',
+  deleteSuccess: 'Сеанс успішно скасовано',
+  deleteError: 'Помилка скасування. Можливо, на нього вже є квитки.',
+  invalidDate: 'Невірний формат дати',
+  rescheduleSuccess: 'Сеанс успішно перенесено',
+  rescheduleError: 'Помилка переносу: ',
+  createSuccess: 'Сеанс створено успішно',
+  cancelTitle: 'Скасування сеансу',
+  cancelMessage:
+    'Ви впевнені, що хочете скасувати цей сеанс? Цю дію неможливо скасувати.',
+  confirmCancel: 'Так, скасувати',
+  rescheduleTitle: 'Перенести сеанс',
+  newStart: 'Новий час початку',
+  confirmReschedule: 'Перенести',
+} as const

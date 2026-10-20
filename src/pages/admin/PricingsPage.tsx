@@ -7,6 +7,7 @@ import { GridLoader } from '@/shared/ui/GridLoader'
 import PricingModal from '@/features/admin/ui/PricingModal'
 import PricingRulesEditor from '@/features/admin/ui/PricingRulesEditor'
 import type { PricingDetailsDto } from '@/features/admin/api/admin-pricings.service'
+import { getPriceRange } from '@/features/admin/lib/pricingDisplay'
 
 const PricingsPage = () => {
   const { pricings, isLoading, isError, refetch, createPricing, updateRules } = usePricings()
@@ -14,14 +15,6 @@ const PricingsPage = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [editingPricing, setEditingPricing] =
     useState<PricingDetailsDto | null>(null)
-
-  const getPriceRange = (items: any[]) => {
-    if (!items || items.length === 0) return 'Не налаштовано'
-    const prices = items.map(i => i.price)
-    const min = Math.min(...prices)
-    const max = Math.max(...prices)
-    return min === max ? `${min} ₴` : `${min} - ${max} ₴`
-  }
 
   return (
     <div className='space-y-6'>

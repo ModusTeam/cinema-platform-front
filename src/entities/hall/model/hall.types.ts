@@ -4,6 +4,11 @@ export interface SeatType {
   description?: string
 }
 
+export const SeatStatus = {
+  Sold: 'Sold',
+  Locked: 'Locked',
+} as const
+
 export interface Seat {
   id: string
   row: string
@@ -23,20 +28,6 @@ export interface Hall {
   technologies?: Technology[]
   rowsCount?: number
   colsCount?: number
-}
-
-export interface Session {
-  id: string
-  startTime: string
-  endTime: string
-  status: string
-  movieId: string
-  movieTitle: string
-  hallId: string
-  hallName: string
-  priceBase?: number
-  pricingId?: string
-  occupiedSeatIds?: string[]
 }
 
 export interface Technology {

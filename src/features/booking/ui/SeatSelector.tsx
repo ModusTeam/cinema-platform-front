@@ -1,7 +1,9 @@
-import type { Hall, Seat } from '@/entities/hall/model/hall.types'
+import { SeatStatus, type Hall, type Seat } from '@/entities/hall/model/hall.types'
 import { Armchair } from 'lucide-react'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import { useMemo } from 'react'
+import { bookingCopy } from '@/features/booking/config/booking.copy'
+import { formatBookingSeat } from '@/features/booking/lib/bookingDisplay'
 
 interface SeatSelectorProps {
   hall: Hall
@@ -38,7 +40,9 @@ const SeatSelector = ({
 
   const availableTypes = useMemo(() => {
     const types = new Set<string>()
-    hall.seats.forEach(s => types.add(s.seatTypeName))
+    hall.seats.forEach(seat => {
+      types.add(seat.seatTypeName)
+    })
     return Array.from(types)
   }, [hall.seats])
 
@@ -47,7 +51,7 @@ const SeatSelector = ({
       <div className='flex flex-wrap justify-center gap-6 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]'>
         <div className='flex items-center gap-2'>
           <Armchair size={18} className='text-zinc-600' />
-          <span>Вільне</span>
+          <span>{bookingCopy.seats.available}</span>
         </div>
         <div className='flex items-center gap-2'>
           <Armchair
@@ -55,7 +59,7 @@ const SeatSelector = ({
             className='text-[var(--color-primary)] drop-shadow-[0_0_10px_rgba(239,68,68,0.6)]'
             fill='currentColor'
           />
-          <span className='text-white'>Обране</span>
+          <span className='text-white'>{bookingCopy.seats.selected}</span>
         </div>
         <div className='flex items-center gap-2'>
           <Armchair
@@ -64,7 +68,7 @@ const SeatSelector = ({
             fill='currentColor'
             fillOpacity={0.2}
           />
-          <span className='opacity-40'>Зайнято</span>
+          <span className='opacity-40'>{bookingCopy.seats.occupied}</span>
         </div>
 
         {availableTypes.map(type => {
@@ -88,7 +92,7 @@ const SeatSelector = ({
           <div className='h-12 w-full bg-gradient-to-b from-[var(--color-primary)]/20 to-transparent transform rotateX(-45deg) origin-bottom rounded-t-3xl blur-md opacity-50 absolute -top-8 left-0'></div>
           <div className='h-2 w-full rounded-full bg-gradient-to-r from-transparent via-[var(--color-primary)] to-transparent shadow-[0_0_30px_rgba(239,68,68,0.6)] relative z-10' />
           <p className='mt-6 text-center text-[10px] font-black tracking-[0.5em] text-[var(--text-muted)] uppercase opacity-60'>
-            Екран
+            {bookingCopy.seats.screen}
           </p>
         </div>
 
@@ -104,12 +108,12 @@ const SeatSelector = ({
 
             const seat = hall.seats.find(s => s.gridX === x && s.gridY === y)
 
-            if (!seat) return <div key={index} />
+            if (!seat) return <div key={`${x}-${y}`} />
 
             const isOccupied =
               occupiedSet.has(seat.id.toLowerCase()) ||
-              seat.status === 'Sold' ||
-              seat.status === 'Locked'
+              seat.status === SeatStatus.Sold ||
+              seat.status === SeatStatus.Locked
             const isSelected = selectedSeats.some(s => s.id === seat.id)
             const isLocking = lockingSeatId === seat.id
 
@@ -150,8 +154,11 @@ const SeatSelector = ({
                 className={`group relative flex h-8 w-8 items-center justify-center ${seatClasses}`}
                 title={
                   isOccupied
-                    ? `Місце зайняте (Ряд ${seat.row}, Місце ${seat.number})`
-                    : `Ряд ${seat.row}, Місце ${seat.number} (${seat.seatTypeName})`
+                    ? bookingCopy.seats.occupiedTitle(formatBookingSeat(seat))
+                    : bookingCopy.seats.availableTitle(
+                        formatBookingSeat(seat),
+                        seat.seatTypeName,
+                      )
                 }
               >
                 {isLocking ? (
@@ -172,7 +179,7 @@ const SeatSelector = ({
 
                 {!isLocking && !isOccupied && (
                   <div className='absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 whitespace-nowrap z-20 scale-90 group-hover:scale-100'>
-                    Ряд {seat.row} / {seat.number}
+                    {bookingCopy.seats.hoverLabel(seat.row, seat.number)}
                   </div>
                 )}
               </button>
