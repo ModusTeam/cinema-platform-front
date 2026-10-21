@@ -1,0 +1,27 @@
+
+language: en-US
+
+reviews:
+  profile: chill
+  auto_review:
+    enabled: true
+    drafts: false
+  path_filters:
+    - "!bun.lock"
+    - "!dist/**"
+  path_instructions:
+    - path: "src/features/**"
+      instructions: |
+        Review React hooks, async behavior, cleanup, race conditions,
+        TanStack Query invalidation and Feature-Sliced Design boundaries.
+        Avoid suggesting unnecessary abstractions or new state libraries.
+
+    - path: "src/entities/**"
+      instructions: |
+        Check API request and response compatibility with the .NET backend.
+        Flag unsafe assumptions about order, ticket and payment statuses.
+
+    - path: "src/shared/api/**"
+      instructions: |
+        Pay attention to token refresh, concurrent HTTP requests,
+        retry safety, authentication and error handling.
