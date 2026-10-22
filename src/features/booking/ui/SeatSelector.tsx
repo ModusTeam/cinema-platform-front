@@ -1,18 +1,30 @@
 import { Armchair } from 'lucide-react'
 import { useMemo } from 'react'
-import { isSeatAvailable } from '@/entities/hall/lib/seatAvailability'
+import type { SessionAvailability } from '@/entities/session/model/session.types'
+import { normalizeId } from '@/shared/lib/normalizeId'
+import { classifySeat } from '../lib/seatState'
 import { getSeatBounds } from '@/entities/hall/lib/seatGeometry'
 import type { Hall, Seat } from '@/entities/hall/model/hall.types'
 import { bookingCopy } from '@/features/booking/config/booking.copy'
 import { formatBookingSeat } from '@/features/booking/lib/bookingDisplay'
 import { GridLoader } from '@/shared/ui/GridLoader'
 
+const seatDescriptions = {
+  selected: bookingCopy.seats.selected,
+  locked: bookingCopy.seats.lockedTitle,
+  sold: bookingCopy.seats.soldTitle,
+  maintenance: bookingCopy.seats.maintenanceTitle,
+  pending: bookingCopy.seats.pending,
+  unknown: bookingCopy.seats.unknown,
+}
+
 interface SeatSelectorProps {
   hall: Hall
   selectedSeats: Seat[]
   onToggleSeat: (seat: Seat) => void
-  lockingSeatId?: string | null
-  occupiedSeatIds?: string[]
+  pendingSeatIds: ReadonlySet<string>
+  occupancy?: SessionAvailability
+  availabilityVerified: boolean
 }
 
 const getSeatTypeStyle = (typeName: string = 'Standard') => {
@@ -29,14 +41,16 @@ const SeatSelector = ({
   hall,
   selectedSeats,
   onToggleSeat,
-  lockingSeatId,
-  occupiedSeatIds = [],
+  pendingSeatIds,
+  occupancy,
+  availabilityVerified,
 }: SeatSelectorProps) => {
   const { rows, cols } = useMemo(() => getSeatBounds(hall.seats), [hall.seats])
 
-  const occupiedSet = useMemo(() => {
-    return new Set(occupiedSeatIds.map(id => id.toLowerCase()))
-  }, [occupiedSeatIds])
+  const occupancyById = new Map(
+    occupancy?.seats.map(seat => [normalizeId(seat.id), seat]),
+  )
+  const selectedIds = new Set(selectedSeats.map(seat => normalizeId(seat.id)))
 
   const availableTypes = useMemo(() => {
     const types = new Set<string>()
@@ -69,6 +83,19 @@ const SeatSelector = ({
             fillOpacity={0.2}
           />
           <span className='opacity-40'>{bookingCopy.seats.occupied}</span>
+        </div>
+
+        <div className='flex items-center gap-2'>
+          <Armchair size={18} className='text-amber-500' />
+          <span>{bookingCopy.seats.locked}</span>
+        </div>
+        <div className='flex items-center gap-2'>
+          <Armchair size={18} className='text-[var(--text-faint)]' />
+          <span>{bookingCopy.seats.maintenance}</span>
+        </div>
+        <div className='flex items-center gap-2'>
+          <GridLoader size={16} />
+          <span>{bookingCopy.seats.pending}</span>
         </div>
 
         {availableTypes.map(type => {
@@ -104,17 +131,41 @@ const SeatSelector = ({
           }}
         >
           {hall.seats.map(seat => {
-            const isOccupied = !isSeatAvailable(seat, occupiedSet)
-            const isSelected = selectedSeats.some(s => s.id === seat.id)
-            const isLocking = lockingSeatId === seat.id
+            const id = normalizeId(seat.id)
+            const state = classifySeat(
+              seat,
+              occupancyById.get(id),
+              selectedIds.has(id),
+              pendingSeatIds.has(id),
+            )
+            const isSelected = state === 'selected'
+            const isLocking = state === 'pending'
+            const isOccupied =
+              state !== 'available' && !isSelected && !isLocking
+            const disabled =
+              isOccupied || isLocking || (!availabilityVerified && !isSelected)
+            const description =
+              state === 'available'
+                ? availabilityVerified
+                  ? bookingCopy.seats.availableTitle(
+                      formatBookingSeat(seat),
+                      seat.seatTypeName,
+                    )
+                  : bookingCopy.seats.unknown
+                : seatDescriptions[state]
 
             let seatClasses =
-              'transition-all duration-300 transform outline-none '
+              'transition-all duration-300 transform focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] '
             let iconFill = 'none'
             let fillOpacity = 0
 
             if (isOccupied) {
-              seatClasses += 'text-zinc-800 cursor-not-allowed opacity-60'
+              seatClasses +=
+                state === 'locked'
+                  ? 'text-amber-500 cursor-not-allowed opacity-70'
+                  : state === 'maintenance' || state === 'unknown'
+                    ? 'text-[var(--text-faint)] cursor-not-allowed opacity-50'
+                    : 'text-zinc-700 cursor-not-allowed opacity-60'
               iconFill = 'currentColor'
               fillOpacity = 0.2
             } else if (isLocking) {
@@ -141,22 +192,21 @@ const SeatSelector = ({
                 type='button'
                 key={seat.id}
                 style={{ gridColumn: seat.gridX, gridRow: seat.gridY }}
-                disabled={isLocking || isOccupied}
+                aria-disabled={disabled}
+                aria-busy={isLocking}
                 aria-pressed={isSelected}
-                aria-label={`${formatBookingSeat(seat)}, ${seat.seatTypeName}`}
-                onClick={() => onToggleSeat(seat)}
+                aria-label={`${formatBookingSeat(seat)}, ${seat.seatTypeName}. ${description}`}
+                onClick={() => {
+                  if (!disabled) onToggleSeat(seat)
+                }}
                 className={`group relative flex h-8 w-8 items-center justify-center ${seatClasses}`}
-                title={
-                  isOccupied
-                    ? bookingCopy.seats.occupiedTitle(formatBookingSeat(seat))
-                    : bookingCopy.seats.availableTitle(
-                        formatBookingSeat(seat),
-                        seat.seatTypeName,
-                      )
-                }
+                title={description}
               >
                 {isLocking ? (
-                  <GridLoader size={16} className='animate-spin' />
+                  <GridLoader
+                    size={16}
+                    className='animate-spin motion-reduce:animate-none'
+                  />
                 ) : (
                   <Armchair
                     size={

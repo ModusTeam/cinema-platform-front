@@ -68,6 +68,10 @@ export const checkoutPreviewApi = async (
 }
 
 export const bookingService = {
+  unlockSeat: async (sessionId: string, seatId: string): Promise<void> => {
+    await api.post('/seats/unlock', { sessionId, seatId })
+  },
+
   lockSeat: async (sessionId: string, seatId: string): Promise<void> => {
     await api.post('/seats/lock', { sessionId, seatId })
   },

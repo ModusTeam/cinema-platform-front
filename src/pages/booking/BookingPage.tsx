@@ -43,6 +43,12 @@ const BookingPage = () => {
     selectedSession,
     hall,
     selectedSeats,
+    occupancy,
+    pendingSeatIds,
+    isAvailabilityError,
+    isAvailabilityVerified,
+    refreshOccupancy,
+    canCheckout,
     isLoading,
     isLoadingDetails,
     isMovieError,
@@ -243,7 +249,7 @@ const BookingPage = () => {
       ? previewError.message
       : bookingCopy.checkout.previewUnavailable
   const canPay =
-    Boolean(preview?.canCheckout) && !isPreviewError && !isPreviewLoading
+    canCheckout && Boolean(preview?.canCheckout) && !isPreviewError && !isPreviewLoading
   const formatAmount = (amount?: number) =>
     formatCheckoutAmount(amount, currency)
   const isGoldUpgradeRejected =
@@ -270,6 +276,7 @@ const BookingPage = () => {
         <div className='container mx-auto flex items-center justify-between'>
           <Link
             to={`/movies/${id}`}
+            onClick={resetSession}
             className='flex items-center gap-2 text-sm font-medium text-[var(--text-muted)] hover:text-white transition-colors group'
           >
             <div className='p-2 rounded-full bg-white/5 group-hover:bg-white/10 transition-colors'>
@@ -300,6 +307,14 @@ const BookingPage = () => {
       </header>
 
       <main className='container mx-auto px-4 py-8'>
+        {(step === 2 || step === 3) && !isAvailabilityVerified && (
+          <div role='status' className='mb-4 flex flex-wrap items-center gap-3 text-sm text-[var(--text-muted)]'>
+            <span>{isAvailabilityError ? bookingCopy.availability.error : bookingCopy.availability.checking}</span>
+            <button type='button' onClick={() => void refreshOccupancy()} className='underline underline-offset-4'>
+              {bookingCopy.availability.retry}
+            </button>
+          </div>
+        )}
         {step === 1 && (
           <div className='animate-in fade-in slide-in-from-left-4 duration-500'>
             {isSessionsError && sessions.length === 0 ? (
@@ -332,7 +347,7 @@ const BookingPage = () => {
               </h2>
               <button
                 type='button'
-                disabled={selectedSeats.length === 0}
+                disabled={!canCheckout}
                 onClick={goToCheckout}
                 className='rounded-xl bg-red-600 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-red-600/25 transition-all hover:bg-red-500 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-white/40 disabled:shadow-none'
               >
@@ -351,7 +366,9 @@ const BookingPage = () => {
                 hall={hall}
                 selectedSeats={selectedSeats}
                 onToggleSeat={toggleSeat}
-                occupiedSeatIds={selectedSession?.occupiedSeatIds || []}
+                occupancy={occupancy}
+                pendingSeatIds={pendingSeatIds}
+                availabilityVerified={isAvailabilityVerified}
               />
             ) : null}
 
