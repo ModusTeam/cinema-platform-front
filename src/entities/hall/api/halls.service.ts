@@ -1,6 +1,7 @@
 import { api } from '@/shared/api/axios'
 import type { PaginatedResult } from '@/shared/types/common.types'
-import type { Hall } from '../model/hall.types'
+import { getSeatBounds } from '../lib/seatGeometry'
+import type { Hall, HallLayout, HallSeatDefinition } from '../model/hall.types'
 
 interface CreateHallRequest {
   name: string
@@ -8,6 +9,7 @@ interface CreateHallRequest {
   seatsPerRow: number
   seatTypeId: string
   technologyIds: string[]
+  seats?: HallSeatDefinition[]
 }
 
 type CreateHallResponse = string | { id?: string; value?: string }
@@ -42,18 +44,19 @@ export const hallsService = {
       id: string
       name: string
       capacity?: number
-      rows?: number
-      seatsPerRow?: number
+      totalCapacity?: number
       seats?: Hall['seats']
       technologies?: Hall['technologies']
     }>(`/halls/${hallId}`)
+    const seats = data.seats ?? []
+    const bounds = getSeatBounds(seats)
     return {
       id: data.id,
       name: data.name,
-      capacity: data.capacity || (data.seats ? data.seats.length : 0),
-      rowsCount: data.rows,
-      colsCount: data.seatsPerRow,
-      seats: data.seats || [],
+      capacity: data.totalCapacity ?? data.capacity ?? seats.length,
+      rowsCount: bounds.rows,
+      colsCount: bounds.cols,
+      seats,
       technologies: data.technologies || [],
     }
   },
@@ -73,6 +76,7 @@ export const hallsService = {
     seatsPerRow: number,
     seatTypeId: string,
     technologyIds: string[],
+    seats?: HallSeatDefinition[],
   ): Promise<CreateHallResponse> => {
     const payload: CreateHallRequest = {
       name,
@@ -80,9 +84,14 @@ export const hallsService = {
       seatsPerRow,
       seatTypeId,
       technologyIds,
+      ...(seats === undefined ? {} : { seats }),
     }
     const { data } = await api.post<CreateHallResponse>('/halls', payload)
     return data
+  },
+
+  replaceLayout: async (hallId: string, layout: HallLayout): Promise<void> => {
+    await api.put(`/halls/${hallId}/layout`, layout)
   },
 
   batchChangeSeatType: async (

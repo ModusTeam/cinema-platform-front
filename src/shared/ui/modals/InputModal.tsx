@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react'
-import { X, Loader2 } from 'lucide-react'
+import { Loader2, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import Input from '@/shared/ui/Input'
 
 interface InputModalProps {
   isOpen: boolean
   onClose: () => void
   onSubmit: (value: string) => Promise<void> | void
+  closeOnSubmit?: boolean
   title: string
   label?: string
   initialValue?: string
@@ -24,6 +25,7 @@ const InputModal = ({
   placeholder = '',
   confirmText = 'Зберегти',
   type = 'text',
+  closeOnSubmit = true,
 }: InputModalProps) => {
   const [value, setValue] = useState(initialValue)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -39,7 +41,7 @@ const InputModal = ({
     setIsSubmitting(true)
     try {
       await onSubmit(value)
-      onClose()
+      if (closeOnSubmit) onClose()
     } catch (error) {
       console.error(error)
     } finally {

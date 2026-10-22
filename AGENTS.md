@@ -42,6 +42,7 @@ bun install
 bun run dev
 bun run build
 bun run lint
+bun run test
 bun run format
 bun run preview
 ```
@@ -54,7 +55,8 @@ Script meanings:
 - `bun run format`: run `biome format --write ./src`.
 - `bun run preview`: preview the production build.
 
-There are currently no test scripts in `package.json`.
+`bun run test` uses Bun's built-in test runner for focused hall geometry,
+seat availability, painting, and save-flow tests under `tests/`.
 
 ## Runtime Configuration
 
@@ -357,12 +359,10 @@ navigation or footer components in `src/app/layouts/components`.
 
 ## Testing
 
-No unit, component, or end-to-end test tooling is currently configured:
-
-- No `test` script exists in `package.json`.
-- No Vitest, Jest, Playwright, Testing Library, or jsdom dependency exists in
-  `package.json`.
-- No test config files are present.
+`bun run test` runs focused tests with Bun's built-in runner and Node assertions.
+`tests/tsconfig.json` inherits application aliases and adds Node types. No new
+test dependency is required, so the dependency lockfile is unchanged.
+There is no configured component or browser test runner.
 
 Do not claim tests were run unless you add or run an actual configured command.
 If test tooling is intentionally introduced, use Bun commands and update
@@ -375,6 +375,7 @@ For code changes, run the relevant configured Bun commands before concluding:
 ```bash
 bun run lint
 bun run build
+bun run test
 ```
 
 For documentation-only changes, `bun run lint` and `bun run build` are optional
@@ -399,6 +400,16 @@ that should be verified.
 
 ## Backend Compatibility
 
+- Hall creation accepts optional sparse `seats` with absolute 1-based grid
+  coordinates; omitting them still creates a rectangle for existing callers.
+  `PUT /halls/{id}/layout` replaces geometry/types and returns 204. A
+  `Hall.LayoutLocked` or `Hall.Inactive` conflict is authoritative; name and
+  technology endpoints remain independent. Metadata-only saves retain the draft.
+- Hall DTOs expose `totalCapacity` and persisted seats, without dimensions.
+  Visible bounds come from maximum seat coordinates, preserving leading gaps.
+  Trailing empty rows/columns cannot be recovered after reloading. Seat IDs,
+  labels, numbers, and persistent statuses come from the backend; only `Active`
+  seats absent from session occupancy may be selected.
 - Legacy `POST /orders` returns a GUID string and currently receives a mock
   payment token. The frontend has not adopted the backend's reservation,
   checkout, and status endpoints. Do not change the payment flow in a refactor.
@@ -411,4 +422,4 @@ that should be verified.
 
 ---
 
-Last updated: 2026-10-21
+Last updated: 2026-10-22

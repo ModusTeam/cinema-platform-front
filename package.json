@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "biome lint ./src",
+    "test": "bun test --tsconfig-override=./tests/tsconfig.json ./tests",
     "format": "biome format --write ./src",
     "preview": "vite preview"
   },

@@ -1,105 +1,153 @@
-import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { technologiesService } from '@/entities/hall/api/technologies.service'
+import { useEffect, useState } from 'react'
 import { seatTypesService } from '@/entities/hall/api/seat-types.service'
-import type { Seat, SeatType } from '@/entities/hall/model/hall.types'
+import { technologiesService } from '@/entities/hall/api/technologies.service'
+import {
+  createRectangularSeats,
+  createSeatLookup,
+  getSeatBounds,
+} from '@/entities/hall/lib/seatGeometry'
+import type { HallSeatDefinition, Seat } from '@/entities/hall/model/hall.types'
+import { HALL_EDITOR_LIMITS } from '../config/hallEditor.config'
+import {
+  type HallPaintTool,
+  paintHallSeat,
+  seatsOutsideBounds,
+} from '../lib/hallPainting'
 
 export const useHallBuilder = (
   initialSeats: Seat[] = [],
   initialRows = 5,
   initialCols = 8,
   initialTechIds: string[] = [],
+  isEditing = false,
 ) => {
-  const [rows, setRows] = useState(initialRows)
-  const [cols, setCols] = useState(initialCols)
-  const [selectedPaintType, setSelectedPaintType] = useState<SeatType | null>(
-    null,
+  const initialBounds = getSeatBounds(initialSeats)
+  const maxRows = Math.max(HALL_EDITOR_LIMITS.rows, initialBounds.rows)
+  const maxCols = Math.max(HALL_EDITOR_LIMITS.cols, initialBounds.cols)
+  const [rows, setRows] = useState(() =>
+    isEditing ? Math.max(1, initialBounds.rows) : initialRows,
   )
-  const [selectedTechIds, setSelectedTechIds] = useState<string[]>([])
-  const [gridConfig, setGridConfig] = useState<Map<string, string>>(new Map())
+  const [cols, setCols] = useState(() =>
+    isEditing ? Math.max(1, initialBounds.cols) : initialCols,
+  )
+  const [paintTypeId, setPaintTypeId] = useState<string | null>(null)
+  const [tool, setTool] = useState<HallPaintTool>('paint')
+  const [selectedTechIds, setSelectedTechIds] = useState(initialTechIds)
+  const [gridConfig, setGridConfig] = useState<Map<
+    string,
+    HallSeatDefinition
+  > | null>(() => (isEditing ? createSeatLookup(initialSeats) : null))
+  const [pendingResize, setPendingResize] = useState<{
+    rows: number
+    cols: number
+  } | null>(null)
 
   const seatTypesQuery = useQuery({
     queryKey: ['seat-types'],
     queryFn: seatTypesService.getAll,
     staleTime: Infinity,
   })
-
   const technologiesQuery = useQuery({
     queryKey: ['technologies'],
     queryFn: technologiesService.getAll,
     staleTime: Infinity,
   })
+  const availableSeatTypes = seatTypesQuery.data ?? []
+  const primaryType =
+    availableSeatTypes.find(type =>
+      type.name.toLowerCase().includes('standard'),
+    ) ?? availableSeatTypes[0]
+  const selectedPaintType =
+    availableSeatTypes.find(type => type.id === paintTypeId) ?? primaryType
 
   useEffect(() => {
-    if (seatTypesQuery.data && !selectedPaintType) {
-      const standard = seatTypesQuery.data.find(t =>
-        t.name.toLowerCase().includes('standard'),
+    if (gridConfig === null && primaryType) {
+      setGridConfig(
+        createSeatLookup(createRectangularSeats(rows, cols, primaryType.id)),
       )
-      setSelectedPaintType(standard || seatTypesQuery.data[0])
     }
-  }, [seatTypesQuery.data, selectedPaintType])
+  }, [gridConfig, primaryType, rows, cols])
 
-  useEffect(() => {
-    if (initialTechIds.length > 0) setSelectedTechIds(initialTechIds)
-  }, [initialTechIds])
+  const applyResize = (nextRows: number, nextCols: number) => {
+    setGridConfig(
+      previous =>
+        previous &&
+        createSeatLookup(
+          Array.from(previous.values()).filter(
+            seat => seat.gridX <= nextCols && seat.gridY <= nextRows,
+          ),
+        ),
+    )
+    setRows(nextRows)
+    setCols(nextCols)
+    setPendingResize(null)
+  }
 
-  useEffect(() => {
-    if (initialSeats.length > 0) {
-      const minX = Math.min(...initialSeats.map(s => s.gridX))
-      const minY = Math.min(...initialSeats.map(s => s.gridY))
-      const shiftX = minX > 0 ? minX : 0
-      const shiftY = minY > 0 ? minY : 0
-      let maxNormalizedX = 0
-      let maxNormalizedY = 0
-      const newMap = new Map<string, string>()
-
-      initialSeats.forEach(s => {
-        const normX = s.gridX - shiftX
-        const normY = s.gridY - shiftY
-        if (normX > maxNormalizedX) maxNormalizedX = normX
-        if (normY > maxNormalizedY) maxNormalizedY = normY
-        newMap.set(`${normX}-${normY}`, s.seatTypeId)
-      })
-
-      setCols(maxNormalizedX + 1)
-      setRows(maxNormalizedY + 1)
-      setGridConfig(newMap)
+  const requestResize = (nextRows: number, nextCols: number) => {
+    // Keep normal editing manageable while preserving larger persisted bounds.
+    if (
+      !Number.isInteger(nextRows) ||
+      !Number.isInteger(nextCols) ||
+      nextRows < 1 ||
+      nextCols < 1 ||
+      nextRows > maxRows ||
+      nextCols > maxCols
+    )
+      return
+    if (
+      seatsOutsideBounds(gridConfig?.values() ?? [], nextRows, nextCols).length
+    ) {
+      setPendingResize({ rows: nextRows, cols: nextCols })
+    } else {
+      applyResize(nextRows, nextCols)
     }
-  }, [initialSeats])
+  }
 
   const toggleTech = (id: string) => {
-    setSelectedTechIds(prev =>
-      prev.includes(id) ? prev.filter(t => t !== id) : [...prev, id],
+    setSelectedTechIds(previous =>
+      previous.includes(id)
+        ? previous.filter(technologyId => technologyId !== id)
+        : [...previous, id],
     )
   }
 
-  const handleCellClick = (x: number, y: number) => {
-    if (!selectedPaintType) return
-    const key = `${x}-${y}`
-    setGridConfig(prev => {
-      const newMap = new Map(prev)
-      if (newMap.get(key) === selectedPaintType.id) {
-        newMap.delete(key)
-      } else {
-        newMap.set(key, selectedPaintType.id)
-      }
-      return newMap
-    })
+  const handleCellClick = (gridX: number, gridY: number) => {
+    setGridConfig(
+      previous =>
+        previous &&
+        paintHallSeat(previous, gridX, gridY, selectedPaintType?.id, tool),
+    )
   }
 
   return {
     rows,
-    setRows,
     cols,
-    setCols,
-    availableSeatTypes: seatTypesQuery.data || [],
-    availableTechnologies: technologiesQuery.data || [],
+    maxRows,
+    maxCols,
+    requestResize,
+    pendingResize,
+    setPendingResize,
+    applyResize,
+    availableSeatTypes,
+    availableTechnologies: technologiesQuery.data ?? [],
+    primaryType,
     selectedPaintType,
-    setSelectedPaintType,
+    selectPaintType: (id: string) => {
+      setPaintTypeId(id)
+      setTool('paint')
+    },
+    tool,
+    setTool,
     selectedTechIds,
     toggleTech,
     gridConfig,
     handleCellClick,
-    isLoading: seatTypesQuery.isLoading || technologiesQuery.isLoading,
+    isLoading: seatTypesQuery.isPending || technologiesQuery.isPending,
+    isError: seatTypesQuery.isError || technologiesQuery.isError,
+    retry: () => {
+      void seatTypesQuery.refetch()
+      void technologiesQuery.refetch()
+    },
   }
 }
