@@ -56,7 +56,8 @@ Script meanings:
 - `bun run preview`: preview the production build.
 
 `bun run test` uses Bun's built-in test runner for focused hall geometry,
-seat availability, painting, and save-flow tests under `tests/`.
+seat availability, painting, save-flow, booking lock/reconciliation, and hub
+lifecycle tests under `tests/`. Frontend CI runs the build and these tests.
 
 ## Runtime Configuration
 
@@ -68,6 +69,9 @@ The API base URL is resolved in `src/shared/api/apiUrl.ts`.
 - `src/shared/api/axios.ts` creates the shared Axios client from this value.
 - `src/features/booking/api/signalr.service.ts` derives the ticket hub URL by removing a
   trailing `/api` from `VITE_API_URL` and appending `/tickets`.
+- Optional `VITE_TICKET_HUB_URL` overrides the hub URL. Set an absolute backend
+  `/tickets` URL when using a relative API URL and the frontend host does not
+  proxy the hub. Existing Vercel rewrites only proxy `/api/*`.
 
 Example local environment:
 
@@ -279,9 +283,17 @@ Use `import type` for type-only imports.
 - `useBooking` owns the hub callback lifetime and cleans up on session change
   or unmount. The hub service serializes start/stop operations and rejoins the
   session group after reconnect.
-- Reconnect invalidates `['session-full-details', sessionId]` to recover missed
-  seat events. Keep server occupancy authoritative; do not infer lock ownership
-  from local selection.
+- Initial join, reconnect, and seat events refresh the separate, user-specific
+  `['session-seat-availability', normalizedSessionId, normalizedUserId]` query.
+  `GET /sessions/{id}/seats` is authoritative for occupancy and lock ownership;
+  hall details remain authoritative for full sparse geometry and maintenance.
+- Occupancy reconciles every 10 seconds during selection/checkout, pauses when
+  hidden/offline, and stops on completion. Failed or unverified ownership blocks
+  checkout. Never free seats directly in response to an unlock notification.
+- Explicit deselection unlocks the seat. Explicit session/back navigation releases
+  this booking's newly acquired locks; pre-existing own locks and generic unmount
+  use the backend TTL fallback because another tab may share user-scoped ownership.
+  Successful orders retain backend-controlled reservation cleanup.
 
 ### Toasts
 
@@ -422,4 +434,4 @@ that should be verified.
 
 ---
 
-Last updated: 2026-10-22
+Last updated: 2026-10-23

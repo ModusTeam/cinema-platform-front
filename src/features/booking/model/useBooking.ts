@@ -1,7 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react'
 import { hallsService } from '@/entities/hall/api/halls.service'
-import { isSeatAvailable } from '@/entities/hall/lib/seatAvailability'
+import { normalizeId } from '@/shared/lib/normalizeId'
+import { bookingCopy } from '../config/booking.copy'
+import { classifySeat, ownsSeatLock } from '../lib/seatState'
+import { SeatSelection } from './seatSelection'
+import { useSeatOccupancy } from './useSeatOccupancy'
 import type { Hall, Seat } from '@/entities/hall/model/hall.types'
 import { moviesService } from '@/entities/movie/api/movies.service'
 import { sessionsService } from '@/entities/session/api/sessions.service'
@@ -12,6 +22,7 @@ import { ticketHub } from '@/features/booking/api/signalr.service'
 import { useToast } from '@/shared/ui/toast/ToastContext'
 
 interface CreateOrderPayload {
+  sessionId: string
   seatIds: string[]
   useLoyaltyPoints: boolean
   applyGoldUpgrade: boolean
@@ -22,18 +33,6 @@ interface BookingQueryData {
   hall: Hall
 }
 
-interface ApiErrorLike {
-  response?: {
-    status?: number
-    data?: {
-      detail?: string
-    }
-  }
-}
-
-const isApiErrorLike = (error: unknown): error is ApiErrorLike =>
-  typeof error === 'object' && error !== null && 'response' in error
-
 export const useBooking = (movieId?: string) => {
   const toast = useToast()
   const queryClient = useQueryClient()
@@ -43,12 +42,41 @@ export const useBooking = (movieId?: string) => {
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
     null,
   )
-  const [selectedSeats, setSelectedSeats] = useState<Seat[]>([])
-  const selectedSeatsRef = useRef(selectedSeats)
+  const occupancy = useSeatOccupancy(
+    selectedSessionId,
+    user?.id,
+    step === 2 || step === 3,
+  )
+  const { refresh: refreshOccupancy } = occupancy
+  const selection = useMemo(
+    () =>
+      new SeatSelection(selectedSessionId || '', {
+        lock: bookingService.lockSeat,
+        unlock: bookingService.unlockSeat,
+        refresh: refreshOccupancy,
+        warn: key => toast.warning(bookingCopy.availability[key]),
+      }),
+    [selectedSessionId, user?.id, refreshOccupancy, toast.warning],
+  )
+  const orderAttempt = useRef(false)
+  const currentSelection = useRef(selection)
+  currentSelection.current = selection
+  const selectionSnapshot = useSyncExternalStore(
+    selection.subscribe,
+    selection.getSnapshot,
+  )
+  const selectedSeats = selectionSnapshot.seats
 
   useEffect(() => {
-    selectedSeatsRef.current = selectedSeats
-  }, [selectedSeats])
+    selection.activate()
+    // Generic unmount cannot establish whether another tab is using the lock.
+    // Explicit session/back navigation below releases this tab's fresh locks.
+    return () => selection.abandon(false)
+  }, [selection])
+
+  useEffect(() => {
+    if (occupancy.data) selection.reconcile(occupancy.data)
+  }, [occupancy.data, selection])
 
   const {
     data: movie,
@@ -103,168 +131,74 @@ export const useBooking = (movieId?: string) => {
     staleTime: Infinity,
   })
 
-  const updateOccupiedSeats = useCallback(
-    (seatId: string, action: 'add' | 'remove') => {
-      if (!selectedSessionId) return
-
-      queryClient.setQueryData(
-        ['session-full-details', selectedSessionId],
-        (oldData: BookingQueryData | undefined) => {
-          if (!oldData?.session) return oldData
-
-          const currentOccupied = oldData.session.occupiedSeatIds || []
-          const targetId = seatId.toString().toLowerCase()
-
-          let newOccupied = [...currentOccupied]
-
-          if (action === 'add') {
-            const exists = currentOccupied.some(
-              (id: string) => id.toString().toLowerCase() === targetId,
-            )
-            if (!exists) {
-              newOccupied.push(seatId)
-            }
-          } else {
-            newOccupied = currentOccupied.filter(
-              (id: string) => id.toString().toLowerCase() !== targetId,
-            )
-          }
-
-          return {
-            ...oldData,
-            session: {
-              ...oldData.session,
-              occupiedSeatIds: newOccupied,
-            },
-          }
-        },
-      )
-    },
-    [queryClient, selectedSessionId],
-  )
-
   useEffect(() => {
-    if (!selectedSessionId) return
-
+    if (!selectedSessionId || step === 1 || step === 4) return
+    let active = true
+    const refresh = () => {
+      if (active) void refreshOccupancy()
+    }
+    ticketHub.onSeatLocked = refresh
+    ticketHub.onSeatUnlocked = refresh
+    ticketHub.onSynchronized = refresh
     void ticketHub.startConnection(selectedSessionId)
-
-    ticketHub.onSeatLocked = (seatId, lockerUserId) => {
-      updateOccupiedSeats(seatId, 'add')
-
-      if (lockerUserId !== user?.id) {
-        if (selectedSeatsRef.current.some(seat => seat.id === seatId)) {
-          selectedSeatsRef.current = selectedSeatsRef.current.filter(
-            seat => seat.id !== seatId,
-          )
-          setSelectedSeats(prev => prev.filter(seat => seat.id !== seatId))
-          toast.warning('На жаль, це місце щойно зайняли.')
-        }
-      }
-    }
-
-    ticketHub.onSeatUnlocked = seatId => {
-      updateOccupiedSeats(seatId, 'remove')
-    }
-    ticketHub.onReconnected = () => {
-      void queryClient.invalidateQueries({
-        queryKey: ['session-full-details', selectedSessionId],
-      })
-    }
-
     return () => {
+      active = false
       ticketHub.onSeatLocked = null
       ticketHub.onSeatUnlocked = null
-      ticketHub.onReconnected = null
+      ticketHub.onSynchronized = null
       void ticketHub.stopConnection()
     }
-  }, [
-    queryClient,
-    selectedSessionId,
-    toast.warning,
-    updateOccupiedSeats,
-    user?.id,
-  ])
-
-  const lockSeatMutation = useMutation({
-    mutationFn: (seatId: string) => {
-      if (!selectedSessionId) throw new Error('No session selected')
-      return bookingService.lockSeat(selectedSessionId, seatId)
-    },
-  })
+  }, [selectedSessionId, step === 1 || step === 4, refreshOccupancy])
 
   const createOrderMutation = useMutation({
-    mutationFn: ({
-      seatIds,
-      useLoyaltyPoints,
-      applyGoldUpgrade,
-    }: CreateOrderPayload) => {
-      if (!selectedSessionId) throw new Error('No session selected')
-      return bookingService.createOrder({
-        sessionId: selectedSessionId,
-        seatIds,
-        useLoyaltyPoints,
-        applyGoldUpgrade,
+    mutationFn: (payload: CreateOrderPayload) =>
+      bookingService.createOrder({
+        ...payload,
         paymentToken: 'test_token',
-      })
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['session-full-details', selectedSessionId],
-      })
-      queryClient.invalidateQueries({ queryKey: ['my-orders'] })
-      queryClient.invalidateQueries({ queryKey: ['loyalty-profile'] })
-      queryClient.invalidateQueries({ queryKey: ['loyalty-transactions'] })
-      setStep(4)
-      toast.success('Замовлення успішно створено!')
-    },
-    onError: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['session-full-details', selectedSessionId],
-      })
-    },
+      }),
   })
 
-  const toggleSeat = async (seat: Seat) => {
-    const isSelected = selectedSeats.some(s => s.id === seat.id)
-
-    const occupiedList = bookingData?.session?.occupiedSeatIds || []
-    const isAvailable = isSeatAvailable(
-      seat,
-      new Set(occupiedList.map(id => id.toLowerCase())),
+  const occupancyById = new Map(
+    occupancy.data?.seats.map(seat => [normalizeId(seat.id), seat]),
+  )
+  const canCheckout =
+    occupancy.verified &&
+    selectedSeats.length > 0 &&
+    selectionSnapshot.pending.size === 0 &&
+    selectedSeats.every(seat =>
+      ownsSeatLock(occupancyById.get(normalizeId(seat.id))),
     )
-    if (!isAvailable && !isSelected) {
-      toast.error('Це місце вже зайняте.')
-      return
-    }
 
-    if (isSelected) {
-      setSelectedSeats(prev => prev.filter(s => s.id !== seat.id))
-    } else {
-      setSelectedSeats(prev => [...prev, seat])
-      try {
-        await lockSeatMutation.mutateAsync(seat.id)
-      } catch (error: unknown) {
-        setSelectedSeats(prev => prev.filter(s => s.id !== seat.id))
-        if (isApiErrorLike(error) && error.response?.status === 409) {
-          toast.error('Це місце щойно зайняли або воно заблоковане.')
-        }
-      }
-    }
+  const toggleSeat = (seat: Seat) => {
+    const id = normalizeId(seat.id)
+    const selected = selectedSeats.some(value => normalizeId(value.id) === id)
+    const state = classifySeat(
+      seat,
+      occupancyById.get(id),
+      selected,
+      selectionSnapshot.pending.has(id),
+    )
+    if (state === 'pending') return
+    if (!selected && (!occupancy.verified || state !== 'available')) return
+    void selection.toggle(seat, ownsSeatLock(occupancyById.get(id)))
   }
 
   const selectSession = (session: Session) => {
-    setSelectedSessionId(session.id)
+    if (createOrderMutation.isPending) return
+    selection.abandon(true)
+    setSelectedSessionId(normalizeId(session.id))
     setStep(2)
   }
 
   const resetSession = () => {
+    if (createOrderMutation.isPending) return
+    selection.abandon(true)
     setStep(1)
     setSelectedSessionId(null)
-    setSelectedSeats([])
   }
 
   const goToCheckout = () => {
-    if (selectedSeats.length === 0) return
+    if (!canCheckout) return
     setStep(3)
   }
 
@@ -276,18 +210,66 @@ export const useBooking = (movieId?: string) => {
     useLoyaltyPoints: boolean,
     applyGoldUpgrade: boolean,
   ) => {
+    if (
+      !selectedSessionId ||
+      !canCheckout ||
+      orderAttempt.current ||
+      createOrderMutation.isPending
+    )
+      return
+    orderAttempt.current = true
+    const owner = selection
+    const sessionId = selectedSessionId
+    owner.setSubmitting(true)
     try {
+      const verified = await refreshOccupancy()
+      owner.setSubmitting(false)
+      if (currentSelection.current !== owner || !owner.isActive() || !verified)
+        return
+      owner.reconcile(verified)
+      const seats = owner.getSnapshot()
+      const latest = new Map(
+        verified.seats.map(seat => [normalizeId(seat.id), seat]),
+      )
+      if (
+        !seats.seats.length ||
+        seats.seats.length !== selectedSeats.length ||
+        seats.pending.size ||
+        !seats.seats.every(seat =>
+          ownsSeatLock(latest.get(normalizeId(seat.id))),
+        )
+      )
+        return
+      owner.setSubmitting(true)
       await createOrderMutation.mutateAsync({
-        seatIds: selectedSeats.map(s => s.id),
+        sessionId,
+        seatIds: seats.seats.map(seat => seat.id),
         useLoyaltyPoints,
         applyGoldUpgrade,
       })
+      owner.complete()
+      void queryClient.invalidateQueries({
+        queryKey: ['session-full-details', sessionId],
+      })
+      void queryClient.invalidateQueries({ queryKey: ['my-orders'] })
+      void queryClient.invalidateQueries({ queryKey: ['loyalty-profile'] })
+      void queryClient.invalidateQueries({ queryKey: ['loyalty-transactions'] })
+      if (currentSelection.current === owner && owner.isActive()) {
+        setStep(4)
+        toast.success('Замовлення успішно створено!')
+      }
     } catch (error: unknown) {
-      toast.error(
-        isApiErrorLike(error) && error.response?.data?.detail
-          ? error.response.data.detail
-          : 'Помилка при створенні замовлення',
-      )
+      if (currentSelection.current === owner && owner.isActive()) {
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : 'Помилка при створенні замовлення',
+        )
+        void refreshOccupancy()
+      }
+    } finally {
+      orderAttempt.current = false
+      owner.setSubmitting(false)
     }
   }
 
@@ -298,6 +280,12 @@ export const useBooking = (movieId?: string) => {
     selectedSession: bookingData?.session,
     hall: bookingData?.hall,
     selectedSeats,
+    occupancy: occupancy.data,
+    pendingSeatIds: selectionSnapshot.pending,
+    isAvailabilityError: occupancy.isError,
+    isAvailabilityVerified: occupancy.verified,
+    refreshOccupancy,
+    canCheckout,
     isLoading: isLoadingMovie || isLoadingSessions,
     isMovieError,
     isSessionsError,

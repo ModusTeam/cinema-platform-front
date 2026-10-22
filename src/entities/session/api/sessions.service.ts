@@ -1,5 +1,9 @@
 import { api } from '@/shared/api/axios'
-import { type Session, SessionStatus } from '../model/session.types'
+import {
+  type Session,
+  type SessionAvailability,
+  SessionStatus,
+} from '../model/session.types'
 
 interface SessionsResponse {
   items?: SessionDto[]
@@ -19,6 +23,17 @@ interface SessionDto {
 }
 
 export const sessionsService = {
+  getSeatAvailability: async (
+    sessionId: string,
+    signal?: AbortSignal,
+  ): Promise<SessionAvailability> => {
+    const { data } = await api.get<SessionAvailability>(
+      `/sessions/${sessionId}/seats`,
+      { signal, headers: { 'Cache-Control': 'no-cache' } },
+    )
+    return data
+  },
+
   getByMovieId: async (movieId: string): Promise<Session[]> => {
     const allSessions = await sessionsService.getAll()
     return allSessions.filter(session => session.movieId === movieId)
