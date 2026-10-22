@@ -47,8 +47,8 @@ export class TicketHubService {
 
   constructor(
     factory: () => HubConnection = createConnection,
-    schedule: typeof setTimeout = setTimeout,
-    cancel: typeof clearTimeout = clearTimeout,
+    schedule: typeof setTimeout = globalThis.setTimeout.bind(globalThis),
+    cancel: typeof clearTimeout = globalThis.clearTimeout.bind(globalThis),
   ) {
     this.factory = factory
     this.schedule = schedule

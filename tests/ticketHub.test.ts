@@ -188,6 +188,48 @@ test('initial failures retry with bounded delays and stop cancels further retrie
   assert.equal(connection.calls.filter(value => value === 'start').length, 4)
 })
 
+test('default retry timers retain the global receiver when stored on the service', async () => {
+  const originalSchedule = globalThis.setTimeout
+  const originalCancel = globalThis.clearTimeout
+  const timer = originalSchedule.call(globalThis, () => {}, 60_000)
+  originalCancel.call(globalThis, timer)
+  const scheduled: number[] = []
+  const cancelled: Array<ReturnType<typeof setTimeout> | undefined> = []
+  const connection = new FakeHub()
+  connection.beforeStart = async () => {
+    throw new Error('offline')
+  }
+  let service: TicketHubService
+  try {
+    globalThis.setTimeout = function (
+      this: unknown,
+      _callback: () => void,
+      delay: number,
+    ) {
+      assert.equal(this, globalThis, 'setTimeout requires the global receiver')
+      scheduled.push(delay)
+      return timer
+    } as typeof setTimeout
+    globalThis.clearTimeout = function (
+      this: unknown,
+      handle: ReturnType<typeof setTimeout> | undefined,
+    ) {
+      assert.equal(this, globalThis, 'clearTimeout requires the global receiver')
+      cancelled.push(handle)
+    }
+    service = new TicketHubService(() => connection)
+  } finally {
+    // Restore globals before any async work; the service keeps its bound copies.
+    globalThis.setTimeout = originalSchedule
+    globalThis.clearTimeout = originalCancel
+  }
+  await service.startConnection('session-a')
+  assert.deepEqual(scheduled, [1000])
+  assert.deepEqual(cancelled, [undefined])
+  await service.stopConnection()
+  assert.deepEqual(cancelled, [undefined, timer])
+})
+
 test('hub URL keeps absolute defaults and permits explicit backend URL for relative API deployments', () => {
   assert.equal(
     resolveTicketHubUrl('https://cinema.example/api'),
