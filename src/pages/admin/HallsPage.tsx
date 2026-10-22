@@ -1,22 +1,25 @@
-import { useState } from 'react'
-import HallBuilder from '@/features/admin/ui/HallBuilder'
-import { useHalls } from '@/features/admin/model/useHalls'
-import { useHallEditor } from '@/features/admin/model/useHallEditor'
-import type { HallBuilderData } from '@/features/admin/model/hallBuilder.types'
 import {
   Armchair,
-  Trash2,
-  Plus,
-  Users,
   MonitorPlay,
   Pencil,
+  Plus,
+  Trash2,
+  Users,
 } from 'lucide-react'
+import { useState } from 'react'
+import type {
+  HallBuilderData,
+  HallSaveScope,
+} from '@/features/admin/model/hallBuilder.types'
+import { useHallEditor } from '@/features/admin/model/useHallEditor'
+import { useHalls } from '@/features/admin/model/useHalls'
+import HallBuilder from '@/features/admin/ui/HallBuilder'
 import EmptyState from '@/shared/ui/EmptyState'
-import UnavailableState from '@/shared/ui/UnavailableState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import ConfirmModal from '@/shared/ui/modals/ConfirmModal'
 import InputModal from '@/shared/ui/modals/InputModal'
 import { useToast } from '@/shared/ui/toast/ToastContext'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 const HallsPage = () => {
   const toast = useToast()
@@ -26,23 +29,24 @@ const HallsPage = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [saveModalOpen, setSaveModalOpen] = useState(false)
   const [tempSaveData, setTempSaveData] = useState<HallBuilderData | null>(null)
+  const [saveScope, setSaveScope] = useState<HallSaveScope>('all')
 
   const { halls, isLoading, isError, refetch, deleteHall } = useHalls()
   const {
-    initialSeats,
+    initialHall,
+    layoutLocked,
     isLoadingData: isLoadingEditData,
     isProcessing: isProcessingSeats,
     loadHallSeats,
     saveHall,
     resetEditor,
-    initialTechnologies,
   } = useHallEditor()
 
   const handleEditClick = async (hallId: string) => {
     setEditingHallId(hallId)
     setMode('edit')
     const success = await loadHallSeats(hallId)
-    if (!success) {
+    if (success === false) {
       toast.error('Помилка завантаження даних залу')
       setMode('list')
     }
@@ -60,23 +64,35 @@ const HallsPage = () => {
     resetEditor()
   }
 
-  const onSaveClick = (data: HallBuilderData) => {
+  const onSaveClick = (data: HallBuilderData, scope: HallSaveScope) => {
     if (mode === 'list') return
     setTempSaveData(data)
+    setSaveScope(scope)
     setSaveModalOpen(true)
   }
 
   const onConfirmSave = async (hallName: string) => {
     if (mode === 'list' || !tempSaveData) return
-    const result = await saveHall(mode, editingHallId, hallName, tempSaveData)
+    const result = await saveHall(
+      mode,
+      editingHallId,
+      hallName,
+      tempSaveData,
+      saveScope,
+    )
 
     if (result.success) {
       toast.success(
-        mode === 'create' ? 'Зал успішно створено!' : 'Зал оновлено!',
+        mode === 'create'
+          ? 'Зал успішно створено!'
+          : saveScope === 'metadata'
+            ? 'Назву й технології збережено. Схема залишилася в редакторі.'
+            : 'Зал оновлено!',
       )
-      handleBackToList()
+      if (saveScope === 'all') handleBackToList()
     } else {
       toast.error(`Помилка: ${result.error}`)
+      return
     }
     setSaveModalOpen(false)
     setTempSaveData(null)
@@ -155,10 +171,12 @@ const HallsPage = () => {
               {mode === 'edit' ? 'Редагування залу' : 'Створення нового залу'}
             </h2>
             <HallBuilder
+              key={editingHallId ?? 'new'}
               onSave={onSaveClick}
-              initialSeats={initialSeats}
-              initialTechnologies={initialTechnologies}
+              initialSeats={initialHall?.seats}
+              initialTechnologies={initialHall?.technologies}
               isEditing={mode === 'edit'}
+              layoutLocked={layoutLocked}
             />
           </div>
         )
@@ -199,6 +217,7 @@ const HallsPage = () => {
                       <button
                         type='button'
                         onClick={() => handleEditClick(hall.id)}
+                        aria-label={`Редагувати зал ${hall.name}`}
                         className='rounded p-2 text-[var(--text-muted)] hover:bg-white/10 hover:text-white transition-colors'
                       >
                         <Pencil size={18} />
@@ -206,6 +225,7 @@ const HallsPage = () => {
                       <button
                         type='button'
                         onClick={() => onDeleteClick(hall.id)}
+                        aria-label={`Видалити зал ${hall.name}`}
                         className='rounded p-2 text-[var(--text-muted)] hover:bg-[var(--color-error)]/10 hover:text-[var(--color-error)] transition-colors'
                       >
                         <Trash2 size={18} />
@@ -242,10 +262,17 @@ const HallsPage = () => {
       />
 
       <InputModal
+        closeOnSubmit={false}
         isOpen={saveModalOpen}
         onClose={() => setSaveModalOpen(false)}
         onSubmit={onConfirmSave}
-        title={mode === 'edit' ? 'Оновлення залу' : 'Збереження залу'}
+        title={
+          mode === 'edit'
+            ? saveScope === 'metadata'
+              ? 'Збереження назви й технологій'
+              : 'Оновлення залу'
+            : 'Збереження залу'
+        }
         label='Назва залу'
         placeholder='Наприклад: Зал 1 (IMAX)'
         initialValue={getCurrentHallName()}

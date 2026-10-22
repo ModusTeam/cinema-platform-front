@@ -2,15 +2,28 @@ import { clsx } from 'clsx'
 import {
   Armchair,
   Cpu,
+  Eraser,
   MousePointer2,
   PaintBucket,
   Ruler,
   Save,
 } from 'lucide-react'
-import { useMemo } from 'react'
+import { useMemo, useRef, useState } from 'react'
+import {
+  getGridCells,
+  seatCoordinateKey,
+  serializeSeats,
+} from '@/entities/hall/lib/seatGeometry'
 import type { Seat, Technology } from '@/entities/hall/model/hall.types'
+import type {
+  HallBuilderData,
+  HallSaveScope,
+} from '@/features/admin/model/hallBuilder.types'
 import { useHallBuilder } from '@/features/admin/model/useHallBuilder'
-import type { HallBuilderData } from '@/features/admin/model/hallBuilder.types'
+import ConfirmModal from '@/shared/ui/modals/ConfirmModal'
+import UnavailableState from '@/shared/ui/UnavailableState'
+import { HALL_EDITOR_LIMITS } from '../config/hallEditor.config'
+import { seatsOutsideBounds } from '../lib/hallPainting'
 
 const getSeatColor = (typeName: string = 'Standard') => {
   const lowerName = typeName.toLowerCase()
@@ -26,8 +39,9 @@ interface HallBuilderProps {
   initialCols?: number
   initialSeats?: Seat[]
   initialTechnologies?: Technology[]
-  onSave: (data: HallBuilderData) => void
+  onSave: (data: HallBuilderData, scope: HallSaveScope) => void
   isEditing?: boolean
+  layoutLocked?: boolean
 }
 
 const HallBuilder = ({
@@ -37,6 +51,7 @@ const HallBuilder = ({
   initialTechnologies = [],
   onSave,
   isEditing = false,
+  layoutLocked = false,
 }: HallBuilderProps) => {
   const initialTechIds = useMemo(
     () => initialTechnologies.map(t => t.id),
@@ -45,45 +60,92 @@ const HallBuilder = ({
 
   const {
     rows,
-    setRows,
     cols,
-    setCols,
+    maxRows,
+    maxCols,
+    requestResize,
+    pendingResize,
+    setPendingResize,
+    applyResize,
     availableSeatTypes,
     availableTechnologies,
     selectedPaintType,
-    setSelectedPaintType,
+    selectPaintType,
+    primaryType,
+    tool,
+    setTool,
     selectedTechIds,
     toggleTech,
     gridConfig,
     handleCellClick,
-  } = useHallBuilder(initialSeats, initialRows, initialCols, initialTechIds)
+    isLoading,
+    isError,
+    retry,
+  } = useHallBuilder(
+    initialSeats,
+    initialRows,
+    initialCols,
+    initialTechIds,
+    isEditing,
+  )
+  const dragPointer = useRef<number | null>(null)
+  const [rowInput, setRowInput] = useState(String(rows))
+  const [colInput, setColInput] = useState(String(cols))
+  const dimensionsChanged =
+    Number(rowInput) !== rows || Number(colInput) !== cols
+  const validDimensions =
+    Number.isInteger(Number(rowInput)) &&
+    Number.isInteger(Number(colInput)) &&
+    Number(rowInput) >= 1 &&
+    Number(rowInput) <= maxRows &&
+    Number(colInput) >= 1 &&
+    Number(colInput) <= maxCols
+  const cells = useMemo(() => getGridCells(rows, cols), [rows, cols])
+  const typesById = new Map(
+    availableSeatTypes.map(type => [type.id, type.name]),
+  )
+  initialSeats?.forEach(seat => {
+    if (!typesById.has(seat.seatTypeId))
+      typesById.set(seat.seatTypeId, seat.seatTypeName)
+  })
+  const canSaveLayout =
+    !isLoading &&
+    !isError &&
+    !!primaryType &&
+    !!gridConfig?.size &&
+    gridConfig.size <= HALL_EDITOR_LIMITS.seats &&
+    !dimensionsChanged &&
+    validDimensions
 
-  const handleSave = () => {
-    if (!availableSeatTypes.length) return
-    const primaryType =
-      availableSeatTypes.find(t => t.name.toLowerCase().includes('standard')) ||
-      availableSeatTypes[0]
-    const configArray = []
-
-    for (let y = 0; y < rows; y++) {
-      for (let x = 0; x < cols; x++) {
-        const key = `${x}-${y}`
-        const typeId = gridConfig.get(key) || primaryType.id
-        configArray.push({ gridX: x + 1, gridY: y + 1, seatTypeId: typeId })
-      }
-    }
-
-    onSave({
-      rows,
-      cols,
-      technologyIds: selectedTechIds,
-      primarySeatTypeId: primaryType.id,
-      seatConfig: configArray,
-    })
+  const handleSave = (scope: HallSaveScope) => {
+    if (scope === 'all' && !canSaveLayout) return
+    onSave(
+      {
+        rows,
+        cols,
+        technologyIds: selectedTechIds,
+        primarySeatTypeId: primaryType?.id ?? '',
+        seatConfig: serializeSeats(gridConfig?.values() ?? []),
+      },
+      scope,
+    )
   }
 
   return (
-    <div className='space-y-6'>
+    <div className='grid min-w-0 grid-cols-1 gap-6'>
+      {isError && (
+        <UnavailableState
+          title='Не вдалося завантажити типи місць або технології'
+          onRetry={retry}
+        />
+      )}
+      {isEditing && (
+        <p className='text-sm text-[var(--text-muted)]'>
+          {layoutLocked
+            ? 'Схему та типи місць заблоковано через історію сеансів або пов’язані записи. Зміни залишилися в редакторі. Назву й технології можна зберегти окремо.'
+            : 'Схему та типи місць можна змінювати лише без історії сеансів і пов’язаних записів. Назва й технології редагуються окремо.'}
+        </p>
+      )}
       <div className='flex flex-col gap-6 rounded-xl border border-white/10 bg-[var(--bg-card)] p-6'>
         <div className='flex flex-wrap gap-8'>
           <div className='flex flex-col gap-3'>
@@ -92,50 +154,73 @@ const HallBuilder = ({
             </h4>
             <div className='flex gap-4'>
               <div className='flex flex-col gap-1'>
-                <label htmlFor='hall-rows' className='text-xs text-[var(--text-muted)]'>
+                <label
+                  htmlFor='hall-rows'
+                  className='text-xs text-[var(--text-muted)]'
+                >
                   Рядів
                 </label>
                 <input
                   id='hall-rows'
                   type='number'
                   min={1}
-                  max={20}
-                  value={rows}
-                  onChange={e => setRows(Number(e.target.value))}
-                  disabled={isEditing}
+                  max={maxRows}
+                  value={rowInput}
+                  onChange={e => setRowInput(e.target.value)}
                   className='w-20 rounded bg-[var(--bg-main)] px-3 py-2 text-white border border-white/10 disabled:opacity-50 disabled:cursor-not-allowed focus:border-[var(--color-primary)] focus:outline-none'
                 />
               </div>
               <div className='flex flex-col gap-1'>
-                <label htmlFor='hall-cols' className='text-xs text-[var(--text-muted)]'>
-                  Місць в ряду
+                <label
+                  htmlFor='hall-cols'
+                  className='text-xs text-[var(--text-muted)]'
+                >
+                  Стовпців
                 </label>
                 <input
                   id='hall-cols'
                   type='number'
                   min={1}
-                  max={30}
-                  value={cols}
-                  onChange={e => setCols(Number(e.target.value))}
-                  disabled={isEditing}
+                  max={maxCols}
+                  value={colInput}
+                  onChange={e => setColInput(e.target.value)}
                   className='w-20 rounded bg-[var(--bg-main)] px-3 py-2 text-white border border-white/10 disabled:opacity-50 disabled:cursor-not-allowed focus:border-[var(--color-primary)] focus:outline-none'
                 />
               </div>
+              <button
+                type='button'
+                disabled={!validDimensions || !dimensionsChanged}
+                onClick={() => {
+                  setRowInput(String(Number(rowInput)))
+                  setColInput(String(Number(colInput)))
+                  requestResize(Number(rowInput), Number(colInput))
+                }}
+                className='self-end rounded border border-white/10 px-3 py-2 text-sm text-[var(--text-main)] hover:bg-white/5 disabled:opacity-50'
+              >
+                Застосувати
+              </button>
             </div>
+            {!validDimensions && (
+              <p className='text-xs text-[var(--text-muted)]'>
+                Рядів: 1–{maxRows}, стовпців: 1–{maxCols}. Вкажіть цілі числа.
+              </p>
+            )}
           </div>
 
           <div className='flex flex-col gap-3'>
             <h4 className='text-sm font-medium text-[var(--text-muted)] flex items-center gap-2'>
-              <PaintBucket size={16} /> Тип для малювання
+              <PaintBucket size={16} /> Намалювати місце
             </h4>
             <div className='flex flex-wrap gap-2'>
               {availableSeatTypes.map(type => {
-                const isSelected = selectedPaintType?.id === type.id
+                const isSelected =
+                  tool === 'paint' && selectedPaintType?.id === type.id
                 return (
                   <button
                     type='button'
                     key={type.id}
-                    onClick={() => setSelectedPaintType(type)}
+                    onClick={() => selectPaintType(type.id)}
+                    aria-pressed={isSelected}
                     className={clsx(
                       'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all border',
                       isSelected
@@ -150,6 +235,19 @@ const HallBuilder = ({
                   </button>
                 )
               })}
+              <button
+                type='button'
+                aria-pressed={tool === 'erase'}
+                onClick={() => setTool('erase')}
+                className={clsx(
+                  'flex items-center gap-2 rounded-lg border px-3 py-2 text-sm',
+                  tool === 'erase'
+                    ? 'border-white bg-white/10 text-white'
+                    : 'border-transparent text-[var(--text-muted)] hover:bg-white/5',
+                )}
+              >
+                <Eraser size={16} /> Стерти місце
+              </button>
             </div>
           </div>
         </div>
@@ -167,6 +265,7 @@ const HallBuilder = ({
                   key={tech.id}
                   type='button'
                   onClick={() => toggleTech(tech.id)}
+                  aria-pressed={selectedTechIds.includes(tech.id)}
                   className={clsx(
                     'px-3 py-1 text-xs rounded-full border transition-all',
                     selectedTechIds.includes(tech.id)
@@ -179,18 +278,37 @@ const HallBuilder = ({
               ))}
             </div>
           </div>
+          {isEditing && (
+            <button
+              type='button'
+              onClick={() => handleSave('metadata')}
+              className='rounded-lg border border-white/10 px-4 py-3 text-sm text-[var(--text-main)] hover:bg-white/5'
+            >
+              Зберегти лише назву та технології
+            </button>
+          )}
           <button
             type='button'
-            onClick={handleSave}
-            className='flex items-center gap-2 rounded-lg bg-[var(--color-success)] px-6 py-3 text-sm font-bold text-white hover:brightness-110 ml-auto shadow-lg shadow-[var(--color-success)]/20'
+            onClick={() => handleSave('all')}
+            disabled={!canSaveLayout}
+            className='flex items-center gap-2 rounded-lg bg-[var(--color-success)] px-6 py-3 text-sm font-bold text-white hover:brightness-110 ml-auto shadow-lg shadow-[var(--color-success)]/20 disabled:opacity-50 disabled:cursor-not-allowed'
           >
             <Save size={18} />{' '}
             {isEditing ? 'Зберегти зміни' : 'Згенерувати зал'}
           </button>
         </div>
+        <output className='block text-sm text-[var(--text-muted)]'>
+          Місць: {gridConfig?.size ?? 0}
+          {dimensionsChanged &&
+            ' · Застосуйте нові розміри перед збереженням схеми.'}
+          {gridConfig?.size === 0 &&
+            ' · Додайте хоча б одне місце для збереження схеми.'}
+          {gridConfig?.size === HALL_EDITOR_LIMITS.seats &&
+            ' · Досягнуто ліміту місць.'}
+        </output>
       </div>
 
-      <div className='relative overflow-hidden rounded-xl border border-white/10 bg-[var(--bg-card)] p-8'>
+      <div className='relative overflow-x-auto rounded-xl border border-white/10 bg-[var(--bg-card)] p-4 sm:p-8'>
         <div className='mt-10 w-full flex justify-center'>
           <div className='w-2/3 h-2 bg-gradient-to-r from-transparent via-[var(--color-primary)]/50 to-transparent rounded-full shadow-[0_5px_15px_rgba(239,68,68,0.2)]' />
         </div>
@@ -198,40 +316,82 @@ const HallBuilder = ({
           Екран
         </p>
         <div className='absolute top-4 right-4 text-xs text-[var(--text-muted)] flex items-center gap-1'>
-          <MousePointer2 size={12} /> Натисніть, щоб змінити тип
+          <MousePointer2 size={12} /> Натисніть або проведіть мишею
         </div>
         <div
-          className='grid gap-2 mx-auto w-fit transition-all duration-300'
-          style={{ gridTemplateColumns: `repeat(${cols}, minmax(30px, 1fr))` }}
+          className='grid gap-2 mx-auto w-fit'
+          style={{ gridTemplateColumns: `repeat(${cols}, 32px)` }}
         >
-          {Array.from({ length: rows * cols }).map((_, i) => {
-            const x = i % cols
-            const y = Math.floor(i / cols)
-            const configTypeId = gridConfig.get(`${x}-${y}`)
-            const displayType = configTypeId
-              ? availableSeatTypes.find(t => t.id === configTypeId)
-              : availableSeatTypes.find(t =>
-                  t.name.toLowerCase().includes('standard'),
-                )
+          {cells.map(cell => {
+            const { gridX: x, gridY: y } = cell
+            const seat = gridConfig?.get(seatCoordinateKey(cell))
+            const typeName = seat
+              ? (typesById.get(seat.seatTypeId) ?? 'Тип місця')
+              : undefined
+            const label = `Ряд ${y}, стовпець ${x}: ${seat ? typeName : 'порожня клітинка'}`
 
             return (
               <button
                 key={`${x}-${y}`}
                 type='button'
                 onClick={() => handleCellClick(x, y)}
+                onPointerDown={event => {
+                  if (event.pointerType !== 'mouse' || event.button !== 0)
+                    return
+                  dragPointer.current = event.pointerId
+                  handleCellClick(x, y)
+                }}
+                onPointerEnter={event => {
+                  if (
+                    event.pointerId === dragPointer.current &&
+                    event.buttons === 1
+                  )
+                    handleCellClick(x, y)
+                }}
+                onPointerUp={() => {
+                  dragPointer.current = null
+                }}
+                onPointerCancel={() => {
+                  dragPointer.current = null
+                }}
+                disabled={gridConfig === null}
+                aria-label={label}
                 className={clsx(
                   'h-8 w-8 rounded flex items-center justify-center text-[10px] select-none shadow-lg cursor-pointer hover:opacity-80 transition-transform active:scale-95',
-                  getSeatColor(displayType?.name),
+                  seat
+                    ? getSeatColor(typeName)
+                    : 'border border-dashed border-white/15 bg-transparent',
                   'text-white',
                 )}
-                title={`Row: ${y}, Num: ${x} (${displayType?.name})`}
+                title={label}
               >
-                <Armchair size={16} fill='currentColor' />
+                {seat ? (
+                  <Armchair size={16} fill='currentColor' />
+                ) : (
+                  <span aria-hidden='true' className='text-[var(--text-faint)]'>
+                    +
+                  </span>
+                )}
               </button>
             )
           })}
         </div>
       </div>
+      <ConfirmModal
+        isOpen={pendingResize !== null}
+        onClose={() => {
+          setPendingResize(null)
+          setRowInput(String(rows))
+          setColInput(String(cols))
+        }}
+        onConfirm={() => {
+          if (pendingResize) applyResize(pendingResize.rows, pendingResize.cols)
+        }}
+        title='Зменшити схему залу?'
+        message={`За новими межами буде видалено місць: ${pendingResize ? seatsOutsideBounds(gridConfig?.values() ?? [], pendingResize.rows, pendingResize.cols).length : 0}. Інші порожні клітинки залишаться порожніми.`}
+        confirmText='Зменшити та видалити'
+        isDestructive
+      />
     </div>
   )
 }

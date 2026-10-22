@@ -1,9 +1,11 @@
-import { SeatStatus, type Hall, type Seat } from '@/entities/hall/model/hall.types'
 import { Armchair } from 'lucide-react'
-import { GridLoader } from '@/shared/ui/GridLoader'
 import { useMemo } from 'react'
+import { isSeatAvailable } from '@/entities/hall/lib/seatAvailability'
+import { getSeatBounds } from '@/entities/hall/lib/seatGeometry'
+import type { Hall, Seat } from '@/entities/hall/model/hall.types'
 import { bookingCopy } from '@/features/booking/config/booking.copy'
 import { formatBookingSeat } from '@/features/booking/lib/bookingDisplay'
+import { GridLoader } from '@/shared/ui/GridLoader'
 
 interface SeatSelectorProps {
   hall: Hall
@@ -30,11 +32,9 @@ const SeatSelector = ({
   lockingSeatId,
   occupiedSeatIds = [],
 }: SeatSelectorProps) => {
-  const cols = hall.colsCount || 10
-  const rows = hall.rowsCount || 10
+  const { rows, cols } = useMemo(() => getSeatBounds(hall.seats), [hall.seats])
 
   const occupiedSet = useMemo(() => {
-    console.log('Occupied IDs in Selector:', occupiedSeatIds)
     return new Set(occupiedSeatIds.map(id => id.toLowerCase()))
   }, [occupiedSeatIds])
 
@@ -99,21 +99,12 @@ const SeatSelector = ({
         <div
           className='grid gap-y-3 gap-x-2 mx-auto w-fit'
           style={{
-            gridTemplateColumns: `repeat(${cols}, minmax(32px, 1fr))`,
+            gridTemplateColumns: cols ? `repeat(${cols}, 32px)` : undefined,
+            gridTemplateRows: rows ? `repeat(${rows}, 32px)` : undefined,
           }}
         >
-          {Array.from({ length: rows * cols }).map((_, index) => {
-            const x = index % cols
-            const y = Math.floor(index / cols)
-
-            const seat = hall.seats.find(s => s.gridX === x && s.gridY === y)
-
-            if (!seat) return <div key={`${x}-${y}`} />
-
-            const isOccupied =
-              occupiedSet.has(seat.id.toLowerCase()) ||
-              seat.status === SeatStatus.Sold ||
-              seat.status === SeatStatus.Locked
+          {hall.seats.map(seat => {
+            const isOccupied = !isSeatAvailable(seat, occupiedSet)
             const isSelected = selectedSeats.some(s => s.id === seat.id)
             const isLocking = lockingSeatId === seat.id
 
@@ -149,7 +140,10 @@ const SeatSelector = ({
               <button
                 type='button'
                 key={seat.id}
+                style={{ gridColumn: seat.gridX, gridRow: seat.gridY }}
                 disabled={isLocking || isOccupied}
+                aria-pressed={isSelected}
+                aria-label={`${formatBookingSeat(seat)}, ${seat.seatTypeName}`}
                 onClick={() => onToggleSeat(seat)}
                 className={`group relative flex h-8 w-8 items-center justify-center ${seatClasses}`}
                 title={

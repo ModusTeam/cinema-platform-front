@@ -1,14 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useToast } from '@/shared/ui/toast/ToastContext'
-import { bookingService } from '@/features/booking/api/booking.service'
 import { hallsService } from '@/entities/hall/api/halls.service'
-import { sessionsService } from '@/entities/session/api/sessions.service'
-import { moviesService } from '@/entities/movie/api/movies.service'
-import { ticketHub } from '@/features/booking/api/signalr.service'
+import { isSeatAvailable } from '@/entities/hall/lib/seatAvailability'
 import type { Hall, Seat } from '@/entities/hall/model/hall.types'
+import { moviesService } from '@/entities/movie/api/movies.service'
+import { sessionsService } from '@/entities/session/api/sessions.service'
 import type { Session } from '@/entities/session/model/session.types'
 import { useAuth } from '@/features/auth/model/AuthContext'
+import { bookingService } from '@/features/booking/api/booking.service'
+import { ticketHub } from '@/features/booking/api/signalr.service'
+import { useToast } from '@/shared/ui/toast/ToastContext'
 
 interface CreateOrderPayload {
   seatIds: string[]
@@ -176,7 +177,13 @@ export const useBooking = (movieId?: string) => {
       ticketHub.onReconnected = null
       void ticketHub.stopConnection()
     }
-  }, [queryClient, selectedSessionId, toast.warning, updateOccupiedSeats, user?.id])
+  }, [
+    queryClient,
+    selectedSessionId,
+    toast.warning,
+    updateOccupiedSeats,
+    user?.id,
+  ])
 
   const lockSeatMutation = useMutation({
     mutationFn: (seatId: string) => {
@@ -221,8 +228,11 @@ export const useBooking = (movieId?: string) => {
     const isSelected = selectedSeats.some(s => s.id === seat.id)
 
     const occupiedList = bookingData?.session?.occupiedSeatIds || []
-    const isOccupied = occupiedList.includes(seat.id)
-    if (isOccupied && !isSelected) {
+    const isAvailable = isSeatAvailable(
+      seat,
+      new Set(occupiedList.map(id => id.toLowerCase())),
+    )
+    if (!isAvailable && !isSelected) {
       toast.error('Це місце вже зайняте.')
       return
     }

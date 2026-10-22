@@ -1,11 +1,11 @@
+import type { HallSeatDefinition } from '@/entities/hall/model/hall.types'
+
+export type HallSaveScope = 'all' | 'metadata'
+
 export interface HallBuilderData {
   rows: number
   cols: number
   technologyIds: string[]
   primarySeatTypeId: string
-  seatConfig: Array<{
-    gridX: number
-    gridY: number
-    seatTypeId: string
-  }>
+  seatConfig: HallSeatDefinition[]
 }

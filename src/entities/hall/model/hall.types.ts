@@ -5,18 +5,28 @@ export interface SeatType {
 }
 
 export const SeatStatus = {
-  Sold: 'Sold',
-  Locked: 'Locked',
+  Active: 'Active',
+  Maintenance: 'Maintenance',
+  Reserved: 'Reserved',
 } as const
 
-export interface Seat {
+export interface HallSeatDefinition {
+  gridX: number
+  gridY: number
+  seatTypeId: string
+}
+
+export interface HallLayout {
+  rows: number
+  seatsPerRow: number
+  seats: HallSeatDefinition[]
+}
+
+export interface Seat extends HallSeatDefinition {
   id: string
   row: string
   number: number
-  gridX: number
-  gridY: number
   status: string
-  seatTypeId: string
   seatTypeName: string
 }
 

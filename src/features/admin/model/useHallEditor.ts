@@ -1,134 +1,98 @@
-import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { isAxiosError } from 'axios'
+import { useRef, useState } from 'react'
 import { hallsService } from '@/entities/hall/api/halls.service'
-import type { Seat, Technology } from '@/entities/hall/model/hall.types'
-import type { HallBuilderData } from './hallBuilder.types'
-
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+import { getSeatBounds, serializeSeats } from '@/entities/hall/lib/seatGeometry'
+import type { Hall } from '@/entities/hall/model/hall.types'
+import {
+  type HallEditorSnapshot,
+  saveHallChanges,
+} from '../lib/saveHallChanges'
+import type { HallBuilderData, HallSaveScope } from './hallBuilder.types'
 
 export const useHallEditor = () => {
   const queryClient = useQueryClient()
   const [isLoadingData, setIsLoadingData] = useState(false)
-  const [initialSeats, setInitialSeats] = useState<Seat[]>([])
-  const [initialTechnologies, setInitialTechnologies] = useState<Technology[]>(
-    [],
-  )
+  const [initialHall, setInitialHall] = useState<Hall | null>(null)
+  const [layoutLocked, setLayoutLocked] = useState(false)
+  const original = useRef<HallEditorSnapshot | null>(null)
+  const loadVersion = useRef(0)
 
   const loadHallSeats = async (hallId: string) => {
+    const version = ++loadVersion.current
     setIsLoadingData(true)
     try {
-      const hallData = await hallsService.getById(hallId)
-      setInitialSeats(hallData.seats)
-      setInitialTechnologies(hallData.technologies || [])
+      const hall = await hallsService.getById(hallId)
+      if (version !== loadVersion.current) return null
+      const bounds = getSeatBounds(hall.seats)
+      original.current = {
+        id: hall.id,
+        name: hall.name,
+        technologyIds:
+          hall.technologies?.map(technology => technology.id) ?? [],
+        layout: {
+          rows: Math.max(1, bounds.rows),
+          seatsPerRow: Math.max(1, bounds.cols),
+          seats: serializeSeats(hall.seats),
+        },
+      }
+      setInitialHall(hall)
+      setLayoutLocked(false)
       return true
     } catch {
-      return false
+      return version === loadVersion.current ? false : null
     } finally {
-      setIsLoadingData(false)
+      if (version === loadVersion.current) setIsLoadingData(false)
     }
   }
 
   const resetEditor = () => {
-    setInitialSeats([])
-    setInitialTechnologies([])
+    ++loadVersion.current
+    original.current = null
+    setInitialHall(null)
+    setLayoutLocked(false)
+    setIsLoadingData(false)
   }
 
   const saveMutation = useMutation({
-    mutationFn: async ({
-      mode,
-      hallId,
-      hallName,
-      data,
-    }: {
+    mutationFn: async (input: {
       mode: 'create' | 'edit'
       hallId: string | null
       hallName: string
       data: HallBuilderData
+      scope: HallSaveScope
     }) => {
-      let targetHallId = hallId
-
-      if (mode === 'create') {
-        const createResult = await hallsService.create(
-          hallName,
-          data.rows,
-          data.cols,
-          data.primarySeatTypeId,
-          data.technologyIds,
-        )
-        targetHallId =
-          typeof createResult === 'string'
-            ? createResult
-            : createResult.id || createResult.value || null
-      } else if (mode === 'edit' && hallId) {
-        await Promise.all([
-          hallsService.update(hallId, hallName),
-          hallsService.updateTechnologies(hallId, data.technologyIds),
-        ])
-      }
-
-      if (!targetHallId) throw new Error('Failed to resolve Hall ID')
-
-      const currentHallState = await hallsService.getById(targetHallId)
-      const changesByType: Record<string, string[]> = {}
-
-      currentHallState.seats.forEach((seat: Seat) => {
-        const targetConfig = data.seatConfig.find(
-          sc => sc.gridX === seat.gridX && sc.gridY === seat.gridY,
-        )
-        if (targetConfig && targetConfig.seatTypeId !== seat.seatTypeId) {
-          const typeId = targetConfig.seatTypeId
-          if (!changesByType[typeId]) changesByType[typeId] = []
-          changesByType[typeId].push(seat.id)
-        }
+      const result = await saveHallChanges(hallsService, {
+        ...input,
+        original: original.current,
       })
-
-      const typeIdsToUpdate = Object.keys(changesByType)
-      if (typeIdsToUpdate.length > 0) {
-        for (const typeId of typeIdsToUpdate) {
-          await hallsService.batchChangeSeatType(
-            targetHallId,
-            changesByType[typeId],
-            typeId,
-          )
-          if (typeIdsToUpdate.length > 1) await wait(200)
-        }
+      original.current = result.snapshot
+      if (result.layoutLocked) setLayoutLocked(true)
+      if (result.saved.length) {
+        await Promise.all(
+          [
+            'admin-halls',
+            'halls',
+            'session-full-details',
+            'admin-sessions',
+            'movie-sessions',
+          ].map(key => queryClient.invalidateQueries({ queryKey: [key] })),
+        )
       }
-
-      await wait(500)
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-halls'] })
-      queryClient.invalidateQueries({ queryKey: ['halls'] })
-      queryClient.invalidateQueries({ queryKey: ['session-full-details'] })
+      return result
     },
   })
 
-  const saveHall = async (
+  const saveHall = (
     mode: 'create' | 'edit',
     hallId: string | null,
     hallName: string,
     data: HallBuilderData,
-  ) => {
-    try {
-      await saveMutation.mutateAsync({ mode, hallId, hallName, data })
-      return { success: true }
-    } catch (error) {
-      const errors = isAxiosError<{ errors?: unknown }>(error)
-        ? error.response?.data?.errors
-        : undefined
-      const msg = errors
-        ? JSON.stringify(errors)
-        : error instanceof Error
-          ? error.message
-          : undefined
-      return { success: false, error: msg }
-    }
-  }
+    scope: HallSaveScope = 'all',
+  ) => saveMutation.mutateAsync({ mode, hallId, hallName, data, scope })
 
   return {
-    initialSeats,
-    initialTechnologies,
+    initialHall,
+    layoutLocked,
     isLoadingData,
     isProcessing: saveMutation.isPending,
     loadHallSeats,
