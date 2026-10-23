@@ -111,7 +111,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
               <Button
                 type='button'
                 onClick={handleBookingClick}
-                className='group gap-3 rounded-full px-10 py-4 text-lg shadow-[0_0_30px_rgba(239,68,68,0.4)]'
+                className='group gap-3 rounded-full px-10 py-4 text-lg'
               >
                 <Play className='fill-current' size={20} />
                 {movieCopy.details.buyTicket}
@@ -187,7 +187,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                   <span className='w-8 h-1 bg-[var(--color-primary)] rounded-full'></span>
                   {movieCopy.details.trailer}
                 </h3>
-                <div className='relative aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl'>
+                <div className='relative aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-black shadow-sm'>
                   <iframe
                     src={trailerEmbedUrl}
                     title={`${movie.title} Trailer`}
@@ -202,16 +202,16 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
 
           <div className='space-y-8'>
             {movie.posterUrl && (
-              <div className='glass-panel rounded-2xl p-2 border border-white/10 shadow-2xl'>
+              <div className='overflow-hidden rounded-2xl shadow-lg'>
                 <img
                   src={movie.posterUrl}
                   alt={movie.title}
-                  className='w-full rounded-xl shadow-inner'
+                  className='w-full'
                 />
               </div>
             )}
 
-            <div className='glass-panel rounded-2xl p-8 h-fit shadow-2xl space-y-6'>
+            <div className='rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 h-fit space-y-6'>
               <div className='space-y-2'>
                 <div className='text-xs text-[var(--text-muted)] uppercase tracking-widest flex items-center gap-2'>
                   <Film size={14} /> {movieCopy.details.genres}
@@ -246,7 +246,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
               <Button
                 type='button'
                 onClick={handleBookingClick}
-                className='w-full group gap-3 rounded-full py-4 text-lg shadow-[0_0_30px_rgba(239,68,68,0.4)] mt-4'
+                className='w-full group gap-3 rounded-full py-4 text-lg mt-4'
               >
                 <Play className='fill-current' size={20} />
                 {movieCopy.details.buyTicket}

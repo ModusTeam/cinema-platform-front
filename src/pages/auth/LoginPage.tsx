@@ -53,10 +53,10 @@ const LoginPage = () => {
   return (
     <div className='flex min-h-[calc(100vh-4rem)]'>
       <div className='hidden lg:flex w-1/2 relative overflow-hidden bg-black items-center justify-center'>
-        <div className='absolute inset-0 bg-[url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=2070&auto=format&fit=crop")] bg-cover bg-center opacity-40 mix-blend-overlay'></div>
+        <div className='absolute inset-0 bg-[url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=2070&auto=format&fit=crop")] bg-cover bg-center opacity-40'></div>
         <div className='absolute inset-0 bg-gradient-to-r from-[var(--bg-main)] via-transparent to-[var(--bg-main)]'></div>
         <div className='relative z-10 p-12 text-center max-w-lg animate-in slide-in-from-left-10 duration-1000'>
-          <div className='w-16 h-16 bg-[var(--color-primary)] rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-[0_0_40px_rgba(239,68,68,0.4)] transform rotate-6'>
+          <div className='w-16 h-16 bg-[var(--action-primary)] rounded-2xl flex items-center justify-center mx-auto mb-8 transform rotate-6'>
             <Clapperboard size={32} className='text-white' />
           </div>
           <h2 className='type-display text-white mb-4 sm:text-4xl'>
@@ -70,9 +70,7 @@ const LoginPage = () => {
       </div>
 
       <div className='w-full lg:w-1/2 flex items-center justify-center p-6 bg-[var(--bg-main)] relative'>
-        <div className='absolute top-20 right-20 w-64 h-64 bg-[var(--color-primary)]/10 rounded-full blur-[100px] pointer-events-none'></div>
-
-        <div className='w-full max-w-md space-y-8 glass-panel p-8 sm:p-10 rounded-3xl shadow-2xl relative z-10 animate-in fade-in zoom-in-95 duration-500'>
+        <div className='w-full max-w-md space-y-8 bg-[var(--bg-card)] border border-[var(--border-default)] p-6 sm:p-10 rounded-3xl relative z-10 animate-in fade-in zoom-in-95 duration-500'>
           <div className='text-center'>
             <h2 className='type-page text-white mb-2'>З поверненням</h2>
             <p className='type-caption text-sm text-[var(--text-muted)]'>

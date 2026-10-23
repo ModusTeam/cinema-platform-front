@@ -5,17 +5,7 @@
 @theme {
   --font-sans: 'Montserrat Variable', ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --animate-aurora: aurora 60s linear infinite;
   --animate-flip-words: flip-words 8s infinite;
-  
-  @keyframes aurora {
-    from {
-      background-position: 50% 50%, 50% 50%;
-    }
-    to {
-      background-position: 350% 50%, 350% 50%;
-    }
-  }
 }
 
 :root {
@@ -96,13 +86,6 @@ body::before {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-primary);
-}
-
-.text-gradient {
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  background-image: linear-gradient(to right, var(--color-primary), #fca5a5);
 }
 
 .glass-panel {

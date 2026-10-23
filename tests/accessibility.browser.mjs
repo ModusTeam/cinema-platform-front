@@ -558,8 +558,12 @@ async function checkAccessibility(page) {
     )
     return { passed: results.length, checks: results }
   } catch (error) {
+    const activeElement = await p
+      .evaluate(() => document.activeElement?.outerHTML)
+      .catch(() => 'Unavailable (page or execution context closed)')
     throw new Error(
-      `${error.message}\nLast successful check: ${results.at(-1)}\nActive element: ${await p.evaluate(() => document.activeElement?.outerHTML)}`,
+      `${error.message}\nLast successful check: ${results.at(-1)}\nActive element: ${activeElement}`,
+      { cause: error },
     )
   } finally {
     releaseMutation?.()

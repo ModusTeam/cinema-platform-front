@@ -1,14 +1,13 @@
 import {
-  Mail,
-  Github,
-  MapPin,
-  ArrowRight,
-  MonitorPlay,
   Armchair,
-  Sparkles,
+  ArrowRight,
+  Github,
+  Mail,
+  MapPin,
+  MonitorPlay,
   Quote,
+  Sparkles,
 } from 'lucide-react'
-import { AuroraText } from '@/shared/ui/AuroraText'
 
 const AboutPage = () => {
   return (
@@ -19,7 +18,6 @@ const AboutPage = () => {
 
         <div className='absolute inset-0 flex items-center justify-center p-10'>
           <div className='relative z-10 select-none'>
-            <div className='absolute -inset-20 rounded-full bg-[var(--color-primary)]/10 blur-[120px]' />
             <h1 className='relative z-10 text-7xl font-black uppercase tracking-tighter text-white sm:text-8xl lg:text-9xl leading-[0.8]'>
               Cine
               <br />
@@ -51,9 +49,9 @@ const AboutPage = () => {
             <span className='inline-block px-3 py-1 rounded-full border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 text-[10px] font-bold uppercase tracking-widest text-[var(--color-primary)]'>
               Хто ми є
             </span>
-            <h2 className='text-4xl md:text-5xl font-black leading-tight text-white'>
+            <h2 className='type-display text-4xl sm:text-4xl md:text-5xl leading-tight text-white'>
               Інженерія <br />
-              <AuroraText className='font-black'>ваших емоцій</AuroraText>
+              <span className='text-[var(--color-primary)]'>ваших емоцій</span>
             </h2>
             <p className='text-lg leading-relaxed text-[var(--text-muted)]'>
               Cine<span className='text-white'>ma</span> — це більше, ніж просто
