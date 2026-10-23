@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import { LogOut, User } from 'lucide-react'
-import { useAuth } from '@/features/auth/model/AuthContext'
 import { clsx } from 'clsx'
+import { LogOut, User } from 'lucide-react'
+import { useEffect, useId, useRef, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { useAuth } from '@/features/auth/model/AuthContext'
+import { useModalFocus } from '@/shared/ui/modals/useModalFocus'
 
 const NAV_ITEMS = [
   { label: 'Афіша', href: '/sessions' },
@@ -14,9 +15,13 @@ const NAV_ITEMS = [
 
 const RollingText = ({ text }: { text: string }) => {
   return (
-    <div className='relative overflow-hidden block h-[1.2em] leading-[1.2em]'>
+    <div
+      aria-hidden='true'
+      className='relative overflow-hidden block h-[1.2em] leading-[1.2em]'
+    >
       {text.split('').map((char, i) => (
         <span
+          // biome-ignore lint/suspicious/noArrayIndexKey: Fixed decorative text positions control the existing animation.
           key={i}
           className='inline-block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-full'
           style={{ transitionDelay: `${i * 25}ms` }}
@@ -38,18 +43,11 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const { user, logout } = useAuth()
   const location = useLocation()
+  const menuId = useId()
+  const menuRef = useRef<HTMLDivElement>(null)
+  useModalFocus(menuRef, isMenuOpen, () => setIsMenuOpen(false))
 
-  useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'unset'
-    }
-    return () => {
-      document.body.style.overflow = 'unset'
-    }
-  }, [isMenuOpen])
-
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Route changes must dismiss the open navigation overlay.
   useEffect(() => {
     setIsMenuOpen(false)
   }, [location])
@@ -66,7 +64,13 @@ const Header = () => {
   }
 
   return (
-    <>
+    <div
+      ref={menuRef}
+      {...(isMenuOpen
+        ? { role: 'dialog', 'aria-modal': true, 'aria-label': 'Головне меню' }
+        : {})}
+      tabIndex={-1}
+    >
       <header
         className={clsx(
           'fixed top-0 left-0 right-0 z-[60] transition-all duration-500 border-b border-transparent',
@@ -122,8 +126,11 @@ const Header = () => {
             <button
               type='button'
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className='group relative flex h-10 w-10 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors focus:outline-none'
-              aria-label='Toggle menu'
+              className='group relative flex h-10 w-10 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors'
+              aria-label={isMenuOpen ? 'Закрити меню' : 'Відкрити меню'}
+              aria-expanded={isMenuOpen}
+              aria-controls={menuId}
+              data-modal-initial-focus
             >
               <div className='relative w-5 h-5'>
                 <span
@@ -151,6 +158,9 @@ const Header = () => {
       </header>
 
       <div
+        id={menuId}
+        inert={!isMenuOpen}
+        aria-hidden={!isMenuOpen}
         className={clsx(
           'fixed inset-0 z-50 flex flex-col bg-[#050505]/95 backdrop-blur-2xl transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]',
           isMenuOpen
@@ -162,11 +172,18 @@ const Header = () => {
         <div className='absolute top-0 right-0 w-[50vw] h-[50vh] bg-[var(--color-primary)]/10 blur-[150px] rounded-full pointer-events-none'></div>
 
         <div className='container mx-auto px-4 md:px-6 grid grid-cols-1 lg:grid-cols-[2fr_1fr] h-full pt-28 pb-10 overflow-y-auto'>
-          <nav className='flex flex-col justify-center space-y-4 lg:space-y-6 relative z-10'>
+          <nav
+            aria-label='Головна навігація'
+            className='flex flex-col justify-center space-y-4 lg:space-y-6 relative z-10'
+          >
             {NAV_ITEMS.map((item, index) => (
               <Link
                 key={item.label}
                 to={item.href}
+                aria-label={item.label}
+                aria-current={
+                  location.pathname === item.href ? 'page' : undefined
+                }
                 className={clsx(
                   'group flex items-center justify-between py-2 border-b border-white/5 lg:border-none lg:py-0 transition-all duration-500 ease-out',
                   isMenuOpen
@@ -265,7 +282,7 @@ const Header = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

@@ -69,10 +69,11 @@ const SessionCard = ({ session, onReschedule, onDelete }: SessionCardProps) => {
         </div>
       </div>
       {!isCancelled && (
-        <div className='absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0 duration-200'>
+        <div className='hover-actions absolute top-4 right-4 flex flex-col gap-2 transition-opacity translate-x-2 group-hover:translate-x-0 group-focus-within:translate-x-0 duration-200'>
           <button
             type='button'
             onClick={() => onReschedule(session.id, session.startTime)}
+            aria-label={`${adminSessionsCopy.rescheduleTitle}: ${session.movieTitle}`}
             className='p-2 bg-[var(--bg-hover)] rounded-lg text-[var(--text-muted)] hover:text-white hover:bg-blue-600 shadow-lg transition-colors'
           >
             <Edit size={16} />
@@ -80,6 +81,7 @@ const SessionCard = ({ session, onReschedule, onDelete }: SessionCardProps) => {
           <button
             type='button'
             onClick={() => onDelete(session.id)}
+            aria-label={`${adminSessionsCopy.cancelTitle}: ${session.movieTitle}`}
             className='p-2 bg-[var(--bg-hover)] rounded-lg text-[var(--text-muted)] hover:text-white hover:bg-[var(--color-error)] shadow-lg transition-colors'
           >
             <Trash2 size={16} />

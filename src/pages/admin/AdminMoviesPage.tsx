@@ -1,12 +1,3 @@
-import EmptyState from '@/shared/ui/EmptyState'
-import UnavailableState from '@/shared/ui/UnavailableState'
-import { GridLoader } from '@/shared/ui/GridLoader'
-import ConfirmModal from '@/shared/ui/modals/ConfirmModal'
-import { useToast } from '@/shared/ui/toast/ToastContext'
-import EditMovieModal from '@/features/admin/ui/EditMovieModal'
-import ImportMovieModal from '@/features/admin/ui/ImportMovieModal'
-import { useAdminMovies } from '@/features/admin/model/useAdminMovies'
-import { type Movie, MovieStatus } from '@/entities/movie/model/movie.types'
 import {
   Archive,
   CheckCircle2,
@@ -23,6 +14,15 @@ import {
   Trash2,
 } from 'lucide-react'
 import { useState } from 'react'
+import { type Movie, MovieStatus } from '@/entities/movie/model/movie.types'
+import { useAdminMovies } from '@/features/admin/model/useAdminMovies'
+import EditMovieModal from '@/features/admin/ui/EditMovieModal'
+import ImportMovieModal from '@/features/admin/ui/ImportMovieModal'
+import EmptyState from '@/shared/ui/EmptyState'
+import { GridLoader } from '@/shared/ui/GridLoader'
+import ConfirmModal from '@/shared/ui/modals/ConfirmModal'
+import { useToast } from '@/shared/ui/toast/ToastContext'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 type MoviesTab = 'active' | 'deleted'
 
@@ -211,6 +211,7 @@ const AdminMoviesPage = () => {
           <input
             type='text'
             placeholder='Пошук фільму за назвою...'
+            aria-label='Пошук фільму за назвою'
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             className='w-full rounded-xl bg-[var(--bg-card)] border border-white/5 py-3 pl-10 pr-4 text-white placeholder-[var(--text-muted)] focus:border-[var(--color-primary)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]/50'
@@ -227,8 +228,13 @@ const AdminMoviesPage = () => {
           <UnavailableState onRetry={() => void refetch()} />
         ) : (
           <>
-            <div className='rounded-xl border border-white/5 bg-[var(--bg-card)] overflow-hidden backdrop-blur-sm shadow-xl'>
-              <table className='w-full text-left text-sm'>
+            <section
+              aria-label='Активні фільми'
+              // biome-ignore lint/a11y/noNoninteractiveTabindex: Keyboard users need to scroll offscreen table columns.
+              tabIndex={0}
+              className='max-w-full rounded-xl border border-white/5 bg-[var(--bg-card)] overflow-x-auto overscroll-x-contain backdrop-blur-sm shadow-xl'
+            >
+              <table className='w-full min-w-[720px] text-left text-sm'>
                 <thead className='bg-white/5 text-[var(--text-muted)] font-medium uppercase text-xs tracking-wider'>
                   <tr>
                     <th className='px-6 py-4 w-[80px]'>Постер</th>
@@ -318,12 +324,13 @@ const AdminMoviesPage = () => {
                           {getStatusBadge(movie.status)}
                         </td>
                         <td className='px-6 py-4 text-right'>
-                          <div className='flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity'>
+                          <div className='hover-actions flex items-center justify-end gap-2 transition-opacity'>
                             <button
                               type='button'
                               onClick={() => setEditingMovie(movie)}
                               className='p-2 rounded-lg text-[var(--text-muted)] hover:text-white hover:bg-blue-500/20 transition-colors'
                               title='Редагувати'
+                              aria-label={`Редагувати фільм «${movie.title}»`}
                             >
                               <Edit size={18} />
                             </button>
@@ -332,6 +339,7 @@ const AdminMoviesPage = () => {
                               onClick={() => handleDelete(movie.id)}
                               className='p-2 rounded-lg text-[var(--text-muted)] hover:text-red-500 hover:bg-red-500/10 transition-colors'
                               title='Видалити'
+                              aria-label={`Видалити фільм «${movie.title}»`}
                             >
                               <Trash2 size={18} />
                             </button>
@@ -342,7 +350,7 @@ const AdminMoviesPage = () => {
                   )}
                 </tbody>
               </table>
-            </div>
+            </section>
 
             {movies.length > 0 && renderPagination(pagination, changePage)}
           </>
@@ -357,8 +365,13 @@ const AdminMoviesPage = () => {
           <UnavailableState onRetry={() => void refetchDeleted()} />
         ) : (
           <>
-            <div className='rounded-xl border border-white/5 bg-[var(--bg-card)] overflow-hidden backdrop-blur-sm shadow-xl'>
-              <table className='w-full text-left text-sm'>
+            <section
+              aria-label='Видалені фільми'
+              // biome-ignore lint/a11y/noNoninteractiveTabindex: Keyboard users need to scroll offscreen table columns.
+              tabIndex={0}
+              className='max-w-full rounded-xl border border-white/5 bg-[var(--bg-card)] overflow-x-auto overscroll-x-contain backdrop-blur-sm shadow-xl'
+            >
+              <table className='w-full min-w-[720px] text-left text-sm'>
                 <thead className='bg-white/5 text-[var(--text-muted)] font-medium uppercase text-xs tracking-wider'>
                   <tr>
                     <th className='px-6 py-4 w-[80px]'>Poster</th>
@@ -446,7 +459,7 @@ const AdminMoviesPage = () => {
                   )}
                 </tbody>
               </table>
-            </div>
+            </section>
 
             {deletedMovies.length > 0 &&
               renderPagination(deletedPagination, changeDeletedPage)}

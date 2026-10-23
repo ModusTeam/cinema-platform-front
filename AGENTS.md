@@ -376,6 +376,15 @@ navigation or footer components in `src/app/layouts/components`.
 test dependency is required, so the dependency lockfile is unchanged.
 There is no configured component or browser test runner.
 
+`tests/inputAccessibility.test.ts` checks shared input markup with React's
+server renderer; it does not verify DOM focus. The optional
+`tests/accessibility.browser.mjs` function runs real Chromium keyboard and
+viewport checks through Playwright's `browser_run_code` tool. Start
+`bun run dev --host 127.0.0.1`, then pass the file contents as the tool's `code`
+argument (or use `filename` if the tool can access the repository). It uses
+disposable browser contexts and mocked API responses, including mutations.
+No additional dependency or browser runner is installed.
+
 Do not claim tests were run unless you add or run an actual configured command.
 If test tooling is intentionally introduced, use Bun commands and update
 `package.json`, the lockfile, and this document in the same change.

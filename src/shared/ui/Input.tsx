@@ -1,5 +1,5 @@
-import { type InputHTMLAttributes, forwardRef } from 'react'
-import { clsx, type ClassValue } from 'clsx'
+import { type ClassValue, clsx } from 'clsx'
+import { forwardRef, type InputHTMLAttributes, useId } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 function cn(...inputs: ClassValue[]) {
@@ -12,11 +12,31 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, ...props }, ref) => {
+  (
+    {
+      className,
+      label,
+      error,
+      id,
+      'aria-describedby': describedBy,
+      'aria-invalid': invalid,
+      ...props
+    },
+    ref,
+  ) => {
+    const generatedId = useId()
+    const inputId = id ?? generatedId
+    const errorId = `${inputId}-error`
+    const descriptionIds =
+      [describedBy, error ? errorId : undefined].filter(Boolean).join(' ') ||
+      undefined
     return (
       <div className='space-y-2'>
         {label && (
-          <label className='text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] ml-1'>
+          <label
+            htmlFor={inputId}
+            className='text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] ml-1'
+          >
             {label}
           </label>
         )}
@@ -34,9 +54,16 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
           ref={ref}
           {...props}
+          id={inputId}
+          aria-invalid={error ? true : invalid}
+          aria-describedby={descriptionIds}
         />
         {error && (
-          <p className='text-xs font-medium text-[var(--color-error)] ml-1 animate-in slide-in-from-top-1 fade-in'>
+          <p
+            id={errorId}
+            role='alert'
+            className='text-xs font-medium text-[var(--color-error)] ml-1 animate-in slide-in-from-top-1 fade-in'
+          >
             {error}
           </p>
         )}

@@ -1,10 +1,10 @@
+import { CalendarRange, Star } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { Star, CalendarRange } from 'lucide-react'
-import { type Movie, MovieStatus } from '@/entities/movie/model/movie.types'
-import type { Session } from '@/entities/session/model/session.types'
-import { DEFAULT_SESSION_PRICE } from '@/entities/session/config/session.constants'
-import { getMovieGenres } from '@/entities/movie/lib/movieGenres'
 import { movieCopy } from '@/entities/movie/config/movie.copy'
+import { getMovieGenres } from '@/entities/movie/lib/movieGenres'
+import { type Movie, MovieStatus } from '@/entities/movie/model/movie.types'
+import { DEFAULT_SESSION_PRICE } from '@/entities/session/config/session.constants'
+import type { Session } from '@/entities/session/model/session.types'
 
 interface MovieCardProps {
   movie: Movie
@@ -37,10 +37,10 @@ const MovieCard = ({ movie, sessions, technologies }: MovieCardProps) => {
           loading='lazy'
         />
 
-        <div className='absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center backdrop-blur-[2px] gap-3'>
+        <div className='hover-actions absolute inset-0 bg-black/60 transition-opacity duration-300 flex flex-col items-center justify-center backdrop-blur-[2px] gap-3'>
           <Link
             to={`/movies/${movie.id}`}
-            className='bg-white/10 border border-white/20 text-white font-bold py-2.5 px-6 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:bg-white hover:text-black'
+            className='bg-white/10 border border-white/20 text-white font-bold py-2.5 px-6 rounded-full transform translate-y-4 group-hover:translate-y-0 group-focus-within:translate-y-0 transition-all duration-300 hover:bg-white hover:text-black'
           >
             {movieCopy.card.details}
           </Link>
