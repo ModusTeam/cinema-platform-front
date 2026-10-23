@@ -1,18 +1,17 @@
+import { clsx } from 'clsx'
+import {
+  Coffee,
+  CupSoda,
+  Flame,
+  type LucideIcon,
+  Package,
+  Pizza,
+  Popcorn,
+  Search,
+  ShoppingBag,
+} from 'lucide-react'
 import { useState } from 'react'
 import { BAR_MENU } from '@/pages/public/data/bar'
-import {
-  type LucideIcon,
-  CupSoda,
-  Coffee,
-  Pizza,
-  Package,
-  ShoppingBag,
-  Flame,
-  Search,
-  Popcorn,
-} from 'lucide-react'
-import { clsx } from 'clsx'
-import { AuroraText } from '@/shared/ui/AuroraText'
 import EmptyState from '@/shared/ui/EmptyState'
 
 const iconMap: Record<string, LucideIcon> = {
@@ -48,9 +47,9 @@ const CinemaBarPage = () => {
           <div className='inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/10 text-xs font-bold text-orange-400 uppercase tracking-widest mb-4 backdrop-blur-md'>
             <Flame size={14} /> Найсмачніша частина фільму
           </div>
-          <h1 className='text-5xl md:text-7xl font-black text-white uppercase tracking-tighter drop-shadow-2xl mb-4'>
+          <h1 className='type-display text-5xl md:text-7xl text-white uppercase tracking-tighter mb-4'>
             Кіно
-            <AuroraText className='font-black'>Бар</AuroraText>
+            <span className='text-[var(--color-primary)]'>Бар</span>
           </h1>
           <p className='text-[var(--text-muted)] text-lg max-w-lg mx-auto'>
             Хрусткий попкорн, крижані напої та снеки для ідеального перегляду.

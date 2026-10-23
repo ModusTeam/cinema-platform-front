@@ -1,17 +1,11 @@
 @import "tailwindcss";
+@import "./fonts.css";
+@import "./foundation.css";
 
 @theme {
-  --animate-aurora: aurora 60s linear infinite;
+  --font-sans: 'Montserrat Variable', ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --animate-flip-words: flip-words 8s infinite;
-  
-  @keyframes aurora {
-    from {
-      background-position: 50% 50%, 50% 50%;
-    }
-    to {
-      background-position: 350% 50%, 350% 50%;
-    }
-  }
 }
 
 :root {
@@ -29,12 +23,35 @@
 
   --color-error: #ef4444;
   --color-success: #22c55e;
+
+  /* Action fills are separate from the existing brand and status colors. */
+  --action-primary: #dc2626;
+  --action-primary-hover: #b91c1c;
+  --action-primary-active: #991b1b;
+  --action-secondary: var(--bg-hover);
+  --action-secondary-hover: #333333;
+  --action-secondary-active: #404040;
+  --action-destructive: #b91c1c;
+  --action-destructive-hover: #991b1b;
+  --action-destructive-active: #7f1d1d;
+  --action-success: #15803d;
+  --action-success-hover: #166534;
+  --action-success-active: #14532d;
+  --text-on-action: var(--color-on-primary);
+
+  --surface-muted: #111111;
+  --surface-elevated: #1c1c1c;
+  --border-default: #404040;
+  --border-field: #737373;
+  --focus-ring: #fca5a5;
+  --selection-bg: #321818;
+  --selection-border: var(--color-primary);
 }
 
 body {
   background-color: var(--bg-main);
   color: var(--text-main);
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   background-image: radial-gradient(
     circle at 50% -20%,
@@ -71,15 +88,34 @@ body::before {
   background: var(--color-primary);
 }
 
-.text-gradient {
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  background-image: linear-gradient(to right, var(--color-primary), #fca5a5);
-}
-
 .glass-panel {
   background: rgba(23, 23, 23, 0.7);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+.hover-actions {
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hover-actions {
+    opacity: 0;
+  }
+
+  .group:hover .hover-actions,
+  .group:focus-within .hover-actions {
+    opacity: 1;
+  }
+}
+
+@media (any-pointer: coarse) {
+  .hover-actions {
+    opacity: 1;
+  }
 }

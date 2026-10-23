@@ -41,8 +41,8 @@ const AdminLayout = () => {
 
   return (
     <div className='flex min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] selection:bg-[var(--color-primary)]/30'>
-      <aside className='fixed left-0 top-0 z-40 h-screen w-64 border-r border-white/5 bg-[var(--bg-card)]'>
-        <div className='flex h-16 items-center px-6 border-b border-white/5'>
+      <aside className='fixed left-0 top-0 z-40 flex h-dvh w-44 lg:w-64 flex-col border-r border-white/5 bg-[var(--bg-card)]'>
+        <div className='flex h-16 shrink-0 items-center px-3 lg:px-6 border-b border-white/5'>
           <Link
             to='/'
             className='text-xl font-bold tracking-tighter uppercase text-white'
@@ -52,38 +52,42 @@ const AdminLayout = () => {
           </Link>
         </div>
 
-        <nav className='flex flex-col gap-1 p-4'>
+        <nav
+          aria-label='Адміністрування'
+          className='flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto overscroll-contain p-2 lg:p-4'
+        >
           {MENU_ITEMS.map(item => {
             const isActive = location.pathname === item.href
             return (
               <Link
                 key={item.href}
                 to={item.href}
-                className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all ${
+                aria-current={isActive ? 'page' : undefined}
+                className={`flex items-center gap-3 rounded-lg px-3 lg:px-4 py-3 text-sm font-medium transition-all ${
                   isActive
                     ? 'bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/20'
                     : 'text-[var(--text-muted)] hover:bg-white/5 hover:text-white'
                 }`}
               >
-                <item.icon size={18} />
+                <item.icon size={18} className='shrink-0' aria-hidden='true' />
                 {item.label}
               </Link>
             )
           })}
         </nav>
 
-        <div className='absolute bottom-4 left-0 w-full px-4'>
+        <div className='w-full shrink-0 p-2 lg:p-4 border-t border-white/5'>
           <Link
             to='/profile'
-            className='flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-[var(--text-muted)] transition-colors hover:bg-white/5 hover:text-white'
+            className='flex w-full items-center gap-3 rounded-lg px-3 lg:px-4 py-3 text-sm font-medium text-[var(--text-muted)] transition-colors hover:bg-white/5 hover:text-white'
           >
-            <ArrowLeft size={18} />
+            <ArrowLeft size={18} className='shrink-0' aria-hidden='true' />
             Назад у Профіль
           </Link>
         </div>
       </aside>
 
-      <main className='ml-64 flex-1 p-8'>
+      <main className='ml-44 lg:ml-64 min-w-0 flex-1 p-4 lg:p-8'>
         <Suspense
           fallback={
             <div className='flex h-[50vh] w-full items-center justify-center'>

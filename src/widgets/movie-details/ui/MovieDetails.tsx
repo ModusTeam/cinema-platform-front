@@ -1,17 +1,18 @@
 import {
-  Star,
+  ArrowLeft,
   Calendar,
   Clock,
-  Play,
-  ArrowLeft,
-  Users,
   Film,
+  Play,
+  Star,
+  Users,
 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
-import type { Movie } from '@/entities/movie/model/movie.types'
-import { getMovieGenres } from '@/entities/movie/lib/movieGenres'
 import { movieCopy } from '@/entities/movie/config/movie.copy'
+import { getMovieGenres } from '@/entities/movie/lib/movieGenres'
+import type { Movie } from '@/entities/movie/model/movie.types'
 import { useAuth } from '@/features/auth/model/AuthContext'
+import Button from '@/shared/ui/Button'
 
 interface MovieDetailsProps {
   movie: Movie
@@ -102,19 +103,19 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
               </div>
             </div>
 
-            <h1 className='mb-10 text-5xl font-black tracking-tighter sm:text-7xl lg:text-8xl text-white drop-shadow-2xl leading-[0.9] max-w-4xl'>
+            <h1 className='type-display mb-10 text-5xl tracking-tighter sm:text-7xl lg:text-8xl text-white drop-shadow-2xl leading-[0.9] max-w-4xl'>
               {movie.title}
             </h1>
 
             <div className='hidden sm:flex flex-wrap gap-4'>
-              <button
+              <Button
                 type='button'
                 onClick={handleBookingClick}
-                className='group flex items-center gap-3 rounded-full bg-[var(--color-primary)] px-10 py-4 text-lg font-bold text-white transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(239,68,68,0.4)] hover:shadow-[0_0_50px_rgba(239,68,68,0.6)]'
+                className='group gap-3 rounded-full px-10 py-4 text-lg'
               >
                 <Play className='fill-current' size={20} />
                 {movieCopy.details.buyTicket}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -124,18 +125,18 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
         <div className='grid gap-16 lg:grid-cols-[2fr_1fr]'>
           <div className='space-y-16'>
             <section>
-              <h3 className='mb-6 text-xl font-bold uppercase tracking-wider text-white flex items-center gap-2'>
+              <h3 className='mb-6 type-section uppercase tracking-wider text-white flex items-center gap-2'>
                 <span className='w-8 h-1 bg-[var(--color-primary)] rounded-full'></span>
                 {movieCopy.details.story}
               </h3>
-              <p className='text-lg leading-relaxed text-[var(--text-muted)]'>
+              <p className='type-body text-lg text-[var(--text-muted)]'>
                 {movie.description}
               </p>
             </section>
 
             {movie.cast && movie.cast.length > 0 && (
               <section>
-                <h3 className='mb-8 text-xl font-bold uppercase tracking-wider text-white flex items-center gap-2'>
+                <h3 className='mb-8 type-section uppercase tracking-wider text-white flex items-center gap-2'>
                   <span className='w-8 h-1 bg-[var(--color-primary)] rounded-full'></span>
                   {movieCopy.details.cast}
                 </h3>
@@ -182,11 +183,11 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
 
             {trailerEmbedUrl && (
               <section>
-                <h3 className='mb-8 text-xl font-bold uppercase tracking-wider text-white flex items-center gap-2'>
+                <h3 className='mb-8 type-section uppercase tracking-wider text-white flex items-center gap-2'>
                   <span className='w-8 h-1 bg-[var(--color-primary)] rounded-full'></span>
                   {movieCopy.details.trailer}
                 </h3>
-                <div className='relative aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl'>
+                <div className='relative aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-black shadow-sm'>
                   <iframe
                     src={trailerEmbedUrl}
                     title={`${movie.title} Trailer`}
@@ -201,16 +202,16 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
 
           <div className='space-y-8'>
             {movie.posterUrl && (
-              <div className='glass-panel rounded-2xl p-2 border border-white/10 shadow-2xl'>
+              <div className='overflow-hidden rounded-2xl shadow-lg'>
                 <img
                   src={movie.posterUrl}
                   alt={movie.title}
-                  className='w-full rounded-xl shadow-inner'
+                  className='w-full'
                 />
               </div>
             )}
 
-            <div className='glass-panel rounded-2xl p-8 h-fit shadow-2xl space-y-6'>
+            <div className='rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 h-fit space-y-6'>
               <div className='space-y-2'>
                 <div className='text-xs text-[var(--text-muted)] uppercase tracking-widest flex items-center gap-2'>
                   <Film size={14} /> {movieCopy.details.genres}
@@ -242,14 +243,14 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                 </div>
               </div>
 
-              <button
+              <Button
                 type='button'
                 onClick={handleBookingClick}
-                className='w-full group flex items-center justify-center gap-3 rounded-full bg-[var(--color-primary)] py-4 text-lg font-bold text-white transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(239,68,68,0.4)] hover:shadow-[0_0_50px_rgba(239,68,68,0.6)] mt-4'
+                className='w-full group gap-3 rounded-full py-4 text-lg mt-4'
               >
                 <Play className='fill-current' size={20} />
                 {movieCopy.details.buyTicket}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

@@ -1,42 +1,56 @@
-import { type InputHTMLAttributes, forwardRef } from 'react'
-import { clsx, type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
-
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
+import { forwardRef, type InputHTMLAttributes, useId } from 'react'
+import { cn } from '@/shared/lib/utils'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
   error?: string
+  hint?: string
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, ...props }, ref) => {
+  (
+    {
+      className,
+      label,
+      error,
+      hint,
+      id,
+      'aria-describedby': describedBy,
+      'aria-invalid': invalid,
+      ...props
+    },
+    ref,
+  ) => {
+    const generatedId = useId()
+    const inputId = id ?? generatedId
+    const errorId = `${inputId}-error`
+    const hintId = `${inputId}-hint`
+    const descriptionIds =
+      [describedBy, hint ? hintId : undefined, error ? errorId : undefined]
+        .filter(Boolean)
+        .join(' ') || undefined
     return (
       <div className='space-y-2'>
         {label && (
-          <label className='text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] ml-1'>
+          <label htmlFor={inputId} className='field-label'>
             {label}
           </label>
         )}
         <input
-          className={cn(
-            'flex h-12 w-full px-4 py-2 transition-all duration-200',
-            'text-base md:text-sm',
-            'rounded-xl border border-white/10',
-            'bg-[var(--bg-main)] text-white placeholder:text-zinc-600',
-            'focus-visible:outline-none focus-visible:border-[var(--color-primary)] focus-visible:ring-1 focus-visible:ring-[var(--color-primary)] focus-visible:shadow-[0_0_15px_-3px_rgba(239,68,68,0.2)]',
-            'disabled:cursor-not-allowed disabled:opacity-50',
-            error &&
-              'border-[var(--color-error)] text-[var(--color-error)] focus-visible:ring-[var(--color-error)] focus-visible:border-[var(--color-error)] placeholder:text-[var(--color-error)]/50',
-            className,
-          )}
+          className={cn('field', className)}
           ref={ref}
           {...props}
+          id={inputId}
+          aria-invalid={error ? true : invalid}
+          aria-describedby={descriptionIds}
         />
+        {hint && (
+          <p id={hintId} className='field-hint'>
+            {hint}
+          </p>
+        )}
         {error && (
-          <p className='text-xs font-medium text-[var(--color-error)] ml-1 animate-in slide-in-from-top-1 fade-in'>
+          <p id={errorId} role='alert' className='field-error'>
             {error}
           </p>
         )}

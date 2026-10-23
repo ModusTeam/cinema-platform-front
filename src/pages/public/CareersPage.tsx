@@ -1,14 +1,13 @@
 import {
+  ArrowRight,
   Briefcase,
+  Clock,
   Code,
   Heart,
   Mail,
   MapPin,
-  Clock,
-  ArrowRight,
 } from 'lucide-react'
 import { motion } from 'motion/react'
-import { AuroraText } from '@/shared/ui/AuroraText'
 
 const VACANCIES = [
   {
@@ -88,9 +87,9 @@ const CareersPage = () => {
           <span className='inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold uppercase tracking-widest text-[var(--color-primary)]'>
             Join the Team
           </span>
-          <h1 className='text-4xl md:text-6xl font-black text-white leading-tight'>
+          <h1 className='type-display text-4xl sm:text-4xl md:text-6xl text-white leading-tight'>
             Створюй майбутнє <br />
-            <AuroraText>разом з Cinema.</AuroraText>
+            <span className='text-[var(--color-primary)]'>разом з Cinema.</span>
           </h1>
           <p className='text-lg text-[var(--text-muted)] max-w-2xl mx-auto'>
             Ми шукаємо талановитих людей, які розділяють нашу пристрасть до кіно
@@ -101,7 +100,7 @@ const CareersPage = () => {
         <div className='grid md:grid-cols-3 gap-6 mb-20'>
           {PERKS.map((perk, idx) => (
             <motion.div
-              key={idx}
+              key={perk.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}

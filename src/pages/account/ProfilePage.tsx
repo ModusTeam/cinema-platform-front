@@ -1,5 +1,3 @@
-import { useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { clsx } from 'clsx'
 import {
@@ -13,28 +11,29 @@ import {
   LayoutDashboard,
   Lock,
   LogOut,
+  type LucideIcon,
   Save,
   Settings,
   Shield,
   Sparkles,
   Ticket,
   User,
-  type LucideIcon,
 } from 'lucide-react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { Link, useNavigate } from 'react-router-dom'
 import * as z from 'zod'
-
-import { AuroraText } from '@/shared/ui/AuroraText'
-import EmptyState from '@/shared/ui/EmptyState'
-import UnavailableState from '@/shared/ui/UnavailableState'
-import { GridLoader } from '@/shared/ui/GridLoader'
-import Input from '@/shared/ui/Input'
+import type { LoyaltyTier } from '@/entities/account/model/account.types'
+import AchievementsTabPanel from '@/features/loyalty/achievements/AchievementsTabPanel'
 import { LOYALTY_TIER_THRESHOLDS } from '@/features/loyalty/config/loyalty'
 import { useLoyalty } from '@/features/loyalty/model/useLoyalty'
-import AchievementsTabPanel from '@/features/loyalty/achievements/AchievementsTabPanel'
-import TicketCard from '@/features/profile/ui/TicketCard'
 import { type TabType, useProfile } from '@/features/profile/model/useProfile'
-import type { LoyaltyTier } from '@/entities/account/model/account.types'
+import TicketCard from '@/features/profile/ui/TicketCard'
+import { buttonStyles } from '@/shared/ui/Button'
+import EmptyState from '@/shared/ui/EmptyState'
+import { GridLoader } from '@/shared/ui/GridLoader'
+import Input from '@/shared/ui/Input'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 const profileSchema = z
   .object({
@@ -166,7 +165,7 @@ const StatItem = ({
   value: string | number
   icon: LucideIcon
 }) => (
-  <div className='rounded-xl border border-white/5 bg-white/[0.025] p-3'>
+  <div className='py-1'>
     <div className='mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-zinc-500'>
       <Icon size={13} />
       {label}
@@ -282,9 +281,6 @@ const ProfilePage = () => {
 
   return (
     <div className='relative min-h-screen overflow-hidden bg-[var(--bg-main)]'>
-      <div className='pointer-events-none absolute left-1/4 top-0 h-[460px] w-[460px] rounded-full bg-[var(--color-primary)]/10 blur-[120px]' />
-      <div className='pointer-events-none absolute bottom-0 right-0 h-[420px] w-[420px] rounded-full bg-white/[0.03] blur-[120px]' />
-
       <div className='container relative z-10 mx-auto max-w-6xl px-4 py-10'>
         <header className='mb-8 flex flex-col gap-5 border-b border-white/5 pb-8 md:flex-row md:items-end md:justify-between'>
           <div>
@@ -292,8 +288,8 @@ const ProfilePage = () => {
               <User size={14} />
               Персональний простір
             </span>
-            <h1 className='text-4xl font-black uppercase tracking-tighter text-white md:text-5xl'>
-              Особистий <AuroraText className='font-black'>Кабінет</AuroraText>
+            <h1 className='type-display uppercase tracking-tighter text-white sm:text-4xl md:text-5xl'>
+              Особистий Кабінет
             </h1>
             <p className='mt-2 max-w-xl text-base text-[var(--text-muted)]'>
               Квитки, історія, статус лояльності та налаштування акаунту в
@@ -304,7 +300,7 @@ const ProfilePage = () => {
           {user.role === 'admin' && (
             <Link
               to='/admin'
-              className='group flex w-fit items-center gap-3 rounded-xl bg-white px-5 py-3 text-sm font-bold text-black shadow-xl transition-all hover:bg-zinc-200 active:scale-95'
+              className='group flex w-fit items-center gap-3 rounded-xl bg-white px-5 py-3 text-sm font-bold text-black transition-all hover:bg-zinc-200 active:scale-95'
             >
               <LayoutDashboard
                 size={18}
@@ -316,20 +312,17 @@ const ProfilePage = () => {
         </header>
 
         <div className='grid gap-6 lg:grid-cols-[320px_1fr] lg:items-start'>
-          <aside className='rounded-3xl border border-white/10 bg-black/35 p-5 shadow-2xl backdrop-blur-xl'>
+          <aside className='rounded-3xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5'>
             <div className='flex items-center gap-4 border-b border-white/5 pb-5'>
               <div className='relative'>
-                <div className='absolute inset-0 rounded-full bg-[var(--color-primary)] opacity-20 blur-xl' />
-                <div className='relative flex h-18 w-18 items-center justify-center rounded-full border border-white/10 bg-gradient-to-br from-zinc-800 to-black text-2xl font-black text-white shadow-inner'>
+                <div className='relative flex h-18 w-18 items-center justify-center rounded-full border border-white/10 bg-[var(--surface-elevated)] text-2xl font-black text-white'>
                   {initials}
                 </div>
                 <div className='absolute bottom-1 right-1 rounded-full border border-black bg-emerald-500 p-1.5' />
               </div>
 
               <div className='min-w-0'>
-                <h2 className='truncate text-xl font-bold text-white'>
-                  {fullName}
-                </h2>
+                <h2 className='type-section truncate text-white'>{fullName}</h2>
                 <div className='mt-1 flex flex-wrap items-center gap-2 text-xs text-zinc-500'>
                   <span className='inline-flex items-center gap-1 rounded-full bg-white/5 px-2 py-1 capitalize'>
                     <Shield size={12} />
@@ -343,7 +336,7 @@ const ProfilePage = () => {
               </div>
             </div>
 
-            <div className='mt-5 grid grid-cols-2 gap-3'>
+            <div className='mt-5 grid grid-cols-2 gap-3 divide-x divide-[var(--border-default)] [&>div+div]:pl-3'>
               <StatItem
                 icon={Ticket}
                 label='Активні'
@@ -356,7 +349,7 @@ const ProfilePage = () => {
               />
             </div>
 
-            <div className='mt-5 rounded-2xl border border-white/5 bg-white/[0.025] p-4'>
+            <div className='mt-5 border-t border-[var(--border-default)] pt-5'>
               <div className='mb-3 flex items-center justify-between gap-3 text-xs'>
                 <span className='flex items-center gap-2 font-bold uppercase tracking-wider text-zinc-500'>
                   <BadgeCheck size={14} />
@@ -376,7 +369,7 @@ const ProfilePage = () => {
               </div>
               <div className='h-1.5 overflow-hidden rounded-full bg-white/5'>
                 <div
-                  className='h-full rounded-full bg-gradient-to-r from-[var(--color-primary)] to-orange-500'
+                  className='h-full rounded-full bg-[var(--color-primary)]'
                   style={{ width: `${loyaltyProgressPercent}%` }}
                 />
               </div>
@@ -417,8 +410,8 @@ const ProfilePage = () => {
             </button>
           </aside>
 
-          <main className='min-w-0 rounded-3xl border border-white/10 bg-black/30 p-4 shadow-2xl backdrop-blur-xl md:p-6'>
-            <nav className='mb-6 grid gap-2 rounded-2xl border border-white/5 bg-black/35 p-1.5 sm:grid-cols-2 xl:grid-cols-4'>
+          <main className='min-w-0 rounded-3xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-6'>
+            <nav className='mb-6 grid gap-2 border-b border-[var(--border-default)] pb-5 sm:grid-cols-2 xl:grid-cols-4'>
               {TABS.map(tab => {
                 const Icon = tab.icon
 
@@ -427,12 +420,8 @@ const ProfilePage = () => {
                     key={tab.id}
                     type='button'
                     onClick={() => setActiveTab(tab.id)}
-                    className={clsx(
-                      'flex items-center gap-3 rounded-xl px-4 py-3 text-left transition-all',
-                      activeTab === tab.id
-                        ? 'bg-white/10 text-white shadow-lg ring-1 ring-white/10'
-                        : 'text-zinc-500 hover:bg-white/5 hover:text-white',
-                    )}
+                    aria-pressed={activeTab === tab.id}
+                    className='selection-control flex items-center gap-3 rounded-xl px-4 py-3 text-left'
                   >
                     <Icon
                       size={17}
@@ -509,7 +498,7 @@ const ProfilePage = () => {
               {activeTab === 'settings' && (
                 <div className='animate-in fade-in zoom-in-95 duration-300'>
                   <form onSubmit={handleSubmit(onSubmit)} className='space-y-7'>
-                    <div className='rounded-2xl border border-white/5 bg-white/[0.025] p-5'>
+                    <div className='border-b border-[var(--border-default)] pb-7'>
                       <h3 className='mb-5 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[var(--color-primary)]'>
                         <User size={14} />
                         Особисті дані
@@ -546,7 +535,7 @@ const ProfilePage = () => {
                       </div>
                     </div>
 
-                    <div className='rounded-2xl border border-white/5 bg-white/[0.025] p-5'>
+                    <div className='border-b border-[var(--border-default)] pb-7'>
                       <div className='mb-5 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between'>
                         <div>
                           <h3 className='flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[var(--color-primary)]'>
@@ -568,12 +557,6 @@ const ProfilePage = () => {
 
                       <div className='grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end'>
                         <div className='relative'>
-                          {!hasDateOfBirth && (
-                            <div
-                              aria-hidden='true'
-                              className='pointer-events-none absolute -left-2 top-[39px] hidden h-4 w-4 rotate-45 rounded-sm border-b border-l border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 md:block'
-                            />
-                          )}
                           <Input
                             label='Ваша дата'
                             type='date'
@@ -596,7 +579,7 @@ const ProfilePage = () => {
                               !dateOfBirthValue ||
                               !isDateOfBirthValid
                             }
-                            className='flex h-12 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 text-sm font-bold text-white shadow-lg shadow-emerald-500/15 transition-all hover:bg-emerald-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60'
+                            className={`${buttonStyles('success')} h-12 px-5`}
                           >
                             {isSavingDateOfBirth ? (
                               <GridLoader className='h-4 w-4 animate-spin' />
@@ -608,9 +591,9 @@ const ProfilePage = () => {
                         )}
                       </div>
 
-                      <div className='mt-4 rounded-xl border border-white/5 bg-black/25 p-4'>
+                      <div className='mt-4'>
                         <div className='flex gap-3'>
-                          <div className='mt-0.5 shrink-0 rounded-full bg-[var(--color-primary)]/10 p-2 text-[var(--color-primary)]'>
+                          <div className='mt-0.5 shrink-0 text-[var(--color-primary)]'>
                             {hasDateOfBirth ? (
                               <Info size={16} />
                             ) : (
@@ -626,7 +609,7 @@ const ProfilePage = () => {
                       </div>
                     </div>
 
-                    <div className='rounded-2xl border border-white/5 bg-white/[0.025] p-5'>
+                    <div className='border-b border-[var(--border-default)] pb-7'>
                       <h3 className='mb-5 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[var(--color-primary)]'>
                         <Lock size={14} /> Безпека
                       </h3>
@@ -665,7 +648,7 @@ const ProfilePage = () => {
                       <button
                         type='submit'
                         disabled={isSaving}
-                        className='flex items-center gap-2 rounded-xl bg-[var(--color-primary)] px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-[var(--color-primary)]/20 transition-all hover:bg-[var(--color-primary-hover)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-70'
+                        className={`${buttonStyles()} px-7 py-3.5`}
                       >
                         {isSaving ? (
                           <GridLoader className='h-4 w-4 animate-spin' />

@@ -1,0 +1,164 @@
+/* Opt-in roles: local utilities may retain intentional cinematic proportions. */
+@utility type-display {
+  @apply text-4xl font-black leading-tight tracking-tight sm:text-5xl;
+}
+@utility type-page {
+  @apply text-3xl font-bold leading-tight tracking-tight;
+}
+@utility type-section {
+  @apply text-xl font-bold leading-snug;
+}
+@utility type-body {
+  @apply text-base leading-relaxed;
+}
+@utility type-label {
+  @apply text-xs font-semibold leading-normal;
+}
+@utility type-caption {
+  @apply text-xs font-medium leading-normal;
+}
+
+@layer components {
+  .action {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid transparent;
+    border-radius: 0.75rem;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.5;
+    text-align: center;
+    color: var(--text-on-action);
+    background-color: var(--action-fill);
+    cursor: pointer;
+    transition: background-color 150ms, border-color 150ms;
+  }
+  .action-primary {
+    --action-fill: var(--action-primary);
+    --action-hover: var(--action-primary-hover);
+    --action-active: var(--action-primary-active);
+  }
+  .action-secondary {
+    --action-fill: var(--action-secondary);
+    --action-hover: var(--action-secondary-hover);
+    --action-active: var(--action-secondary-active);
+    border-color: var(--border-default);
+  }
+  .action-destructive {
+    --action-fill: var(--action-destructive);
+    --action-hover: var(--action-destructive-hover);
+    --action-active: var(--action-destructive-active);
+  }
+  .action-success {
+    --action-fill: var(--action-success);
+    --action-hover: var(--action-success-hover);
+    --action-active: var(--action-success-active);
+  }
+  .action-ghost {
+    --action-fill: transparent;
+    --action-hover: var(--bg-hover);
+    --action-active: var(--action-secondary-active);
+    color: var(--text-main);
+  }
+  @media (hover: hover) {
+    .action:where(:not(:disabled):not([aria-disabled='true'])):hover {
+      background-color: var(--action-hover);
+    }
+  }
+  .action:where(:not(:disabled):not([aria-disabled='true'])):active {
+    background-color: var(--action-active);
+  }
+  .action:focus-visible,
+  .field:focus-visible,
+  .selection-control:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 3px;
+  }
+  .action:disabled,
+  .action[aria-disabled='true'],
+  .field:disabled,
+  .selection-control:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .field {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    height: 3rem;
+    border: 1px solid var(--border-field);
+    border-radius: 0.75rem;
+    padding: 0.5rem 1rem;
+    background: var(--bg-main);
+    color: var(--text-main);
+    color-scheme: dark;
+    font-size: 1rem;
+    line-height: 1.5;
+    transition: border-color 150ms;
+  }
+  .field::placeholder {
+    color: var(--text-muted);
+  }
+  .field:focus-visible {
+    border-color: var(--focus-ring);
+  }
+  .field[aria-invalid='true'] {
+    border-color: var(--color-error);
+  }
+  select.field {
+    appearance: auto;
+    padding-inline-end: 0.5rem;
+  }
+  textarea.field {
+    height: auto;
+    min-height: 7rem;
+    resize: vertical;
+  }
+  .field-label {
+    display: inline-block;
+    margin-inline-start: 0.25rem;
+    color: var(--text-muted);
+    @apply type-label;
+  }
+  .field-hint,
+  .field-error {
+    margin-inline-start: 0.25rem;
+    @apply type-caption;
+  }
+  .field-hint {
+    color: var(--text-muted);
+  }
+  .field-error {
+    color: var(--color-error);
+  }
+  @media (min-width: 48rem) {
+    .field { font-size: 0.875rem; }
+  }
+
+  /* Selection uses a tinted surface and border, leaving VIP/warnings yellow.
+     Available controls are neutral; disabled uses native disabled semantics.
+     Errors and information retain their contextual status colors and labels. */
+  .selection-control {
+    border: 1px solid var(--border-default);
+    color: var(--text-muted);
+    background-color: var(--bg-card);
+    transition: background-color 150ms, border-color 150ms;
+  }
+  .selection-control:where(:not(:disabled)):hover {
+    color: var(--text-main);
+    background-color: var(--bg-hover);
+  }
+  .selection-control[aria-pressed='true'] {
+    color: var(--text-main);
+    border-color: var(--selection-border);
+    background-color: var(--selection-bg);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .action, .field, .selection-control { transition: none; }
+  }
+}

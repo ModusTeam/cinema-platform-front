@@ -7,36 +7,34 @@ const RulesPage = () => {
       subtitle='Взаємоповага та безпека — наші головні пріоритети.'
     >
       <div className='space-y-12'>
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-          <div className='relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 transition-all hover:bg-white/10'>
-            <div className='mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-primary)] text-white font-bold'>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6'>
+          <div className='border-b border-[var(--border-default)] pb-6'>
+            <div className='mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--action-primary)] text-white font-bold'>
               1
             </div>
-            <h3 className='text-xl font-bold text-white mb-2'>Вхід до зали</h3>
+            <h3 className='type-section text-white mb-2'>Вхід до зали</h3>
             <p className='text-zinc-400 text-sm leading-relaxed'>
               Вхід можливий тільки за наявності дійсного квитка (електронного на
               смартфоні або роздрукованого). Зберігайте квиток до кінця сеансу.
             </p>
           </div>
 
-          <div className='relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 transition-all hover:bg-white/10'>
-            <div className='mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 text-white font-bold'>
+          <div className='border-b border-[var(--border-default)] pb-6'>
+            <div className='mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--surface-elevated)] text-[var(--text-main)] font-bold'>
               2
             </div>
-            <h3 className='text-xl font-bold text-white mb-2'>Їжа та напої</h3>
+            <h3 className='type-section text-white mb-2'>Їжа та напої</h3>
             <p className='text-zinc-400 text-sm leading-relaxed'>
               Вхід зі своїми продуктами харчування та напоями заборонений. Ви
               можете насолодитися попкорном та напоями з нашого кінобару.
             </p>
           </div>
 
-          <div className='relative overflow-hidden rounded-2xl border border-red-500/20 bg-gradient-to-br from-red-900/10 to-transparent p-6 transition-all hover:border-red-500/40'>
-            <div className='mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-red-600 text-white font-bold'>
+          <div className='border-b border-[var(--border-default)] pb-6'>
+            <div className='mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--action-primary)] text-white font-bold'>
               3
             </div>
-            <h3 className='text-xl font-bold text-white mb-2'>
-              Зйомка заборонена
-            </h3>
+            <h3 className='type-section text-white mb-2'>Зйомка заборонена</h3>
             <p className='text-zinc-400 text-sm leading-relaxed'>
               Будь-яка фото- та відеозйомка екрану під час фільму суворо
               заборонена (Закон про авторське право). Порушники будуть виведені
@@ -44,13 +42,11 @@ const RulesPage = () => {
             </p>
           </div>
 
-          <div className='relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 transition-all hover:bg-white/10'>
-            <div className='mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-zinc-700 text-white font-bold'>
+          <div className='border-b border-[var(--border-default)] pb-6'>
+            <div className='mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--surface-elevated)] text-[var(--text-main)] font-bold'>
               4
             </div>
-            <h3 className='text-xl font-bold text-white mb-2'>
-              Дрес-код та стан
-            </h3>
+            <h3 className='type-section text-white mb-2'>Дрес-код та стан</h3>
             <p className='text-zinc-400 text-sm leading-relaxed'>
               Адміністрація має право відмовити у вході особам у стані сильного
               алкогольного або наркотичного сп&apos;яніння, а також у брудному
@@ -59,8 +55,8 @@ const RulesPage = () => {
           </div>
         </div>
 
-        <div className='rounded-2xl border border-blue-500/20 bg-blue-900/10 p-6 flex flex-col md:flex-row gap-6 items-center'>
-          <div className='h-12 w-12 shrink-0 flex items-center justify-center rounded-full bg-blue-500/20 text-2xl'>
+        <div className='flex flex-col md:flex-row gap-6 items-start'>
+          <div className='h-12 w-12 shrink-0 flex items-center justify-center text-2xl'>
             👶
           </div>
           <div>

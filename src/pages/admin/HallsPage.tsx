@@ -14,6 +14,7 @@ import type {
 import { useHallEditor } from '@/features/admin/model/useHallEditor'
 import { useHalls } from '@/features/admin/model/useHalls'
 import HallBuilder from '@/features/admin/ui/HallBuilder'
+import Button from '@/shared/ui/Button'
 import EmptyState from '@/shared/ui/EmptyState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import ConfirmModal from '@/shared/ui/modals/ConfirmModal'
@@ -122,22 +123,19 @@ const HallsPage = () => {
 
   return (
     <div className='space-y-8'>
-      <div className='flex items-center justify-between'>
+      <div className='flex flex-wrap items-center justify-between gap-4'>
         <div>
-          <h1 className='text-3xl font-bold text-white'>Управління залами</h1>
+          <h1 className='type-page text-white'>Управління залами</h1>
           <p className='text-[var(--text-muted)] mt-1'>
             Створюйте схеми залів та керуйте місцями
           </p>
         </div>
 
-        <button
+        <Button
           type='button'
           onClick={mode === 'list' ? handleCreateClick : handleBackToList}
-          className={`rounded-xl px-6 py-3 text-sm font-bold transition-all flex items-center gap-2 ${
-            mode !== 'list'
-              ? 'bg-[var(--bg-card)] text-[var(--text-muted)] hover:text-white border border-white/10'
-              : 'bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] shadow-lg shadow-[var(--color-primary)]/20'
-          }`}
+          variant={mode === 'list' ? 'primary' : 'secondary'}
+          className='px-6 py-3'
         >
           {mode !== 'list' ? (
             'Скасувати'
@@ -146,7 +144,7 @@ const HallsPage = () => {
               <Plus size={18} /> Створити новий зал
             </>
           )}
-        </button>
+        </Button>
       </div>
 
       {isProcessingSeats && (
@@ -167,7 +165,7 @@ const HallsPage = () => {
           </div>
         ) : (
           <div className='animate-in fade-in slide-in-from-top-4'>
-            <h2 className='text-xl font-bold text-white mb-4'>
+            <h2 className='type-section text-white mb-4'>
               {mode === 'edit' ? 'Редагування залу' : 'Створення нового залу'}
             </h2>
             <HallBuilder

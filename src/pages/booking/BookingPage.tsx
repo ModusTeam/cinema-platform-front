@@ -9,17 +9,8 @@ import {
 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-
-import EmptyState from '@/shared/ui/EmptyState'
-import UnavailableState from '@/shared/ui/UnavailableState'
-import { GridLoader } from '@/shared/ui/GridLoader'
-import { useLoyalty } from '@/features/loyalty/model/useLoyalty'
 import { useAuth } from '@/features/auth/model/AuthContext'
 import { useCheckoutPreview } from '@/features/booking/api/useCheckoutPreview'
-import SeatSelector from '@/features/booking/ui/SeatSelector'
-import SessionSelector from '@/features/booking/ui/SessionSelector'
-import { useBooking } from '@/features/booking/model/useBooking'
-import CheckoutToggle from '@/features/booking/ui/CheckoutToggle'
 import {
   bookingCopy,
   GOLD_UPGRADE_REJECTION_CODES,
@@ -30,6 +21,16 @@ import {
   formatBookingSessionDateTime,
   formatCheckoutAmount,
 } from '@/features/booking/lib/bookingDisplay'
+import { useBooking } from '@/features/booking/model/useBooking'
+import CheckoutToggle from '@/features/booking/ui/CheckoutToggle'
+import SeatSelector from '@/features/booking/ui/SeatSelector'
+import SessionSelector from '@/features/booking/ui/SessionSelector'
+import { useLoyalty } from '@/features/loyalty/model/useLoyalty'
+import { cn } from '@/shared/lib/utils'
+import Button, { buttonStyles } from '@/shared/ui/Button'
+import EmptyState from '@/shared/ui/EmptyState'
+import { GridLoader } from '@/shared/ui/GridLoader'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 const BookingPage = () => {
   const { id } = useParams<{ id: string }>()
@@ -178,7 +179,8 @@ const BookingPage = () => {
         LOYALTY_POINTS_REJECTION_CODES.has(preview.loyaltyPoints.reasonCode)
       ) {
         setLoyaltyPointsBlockedReason(
-          preview.loyaltyPoints.reason || bookingCopy.checkout.loyaltyUnavailable,
+          preview.loyaltyPoints.reason ||
+            bookingCopy.checkout.loyaltyUnavailable,
         )
       }
     }
@@ -211,16 +213,10 @@ const BookingPage = () => {
             {bookingCopy.success.description}
           </p>
           <div className='flex gap-4'>
-            <Link
-              to='/profile'
-              className='rounded-xl bg-white px-8 py-3 font-bold text-black hover:bg-zinc-200 transition-colors'
-            >
+            <Link to='/profile' className={cn(buttonStyles(), 'px-8 py-3')}>
               {bookingCopy.success.profile}
             </Link>
-            <Link
-              to='/'
-              className='rounded-xl border border-white/10 bg-white/5 px-8 py-3 font-bold text-white hover:bg-white/10 transition-colors'
-            >
+            <Link to='/' className={cn(buttonStyles('secondary'), 'px-8 py-3')}>
               {bookingCopy.success.home}
             </Link>
           </div>
@@ -239,9 +235,7 @@ const BookingPage = () => {
     : bookingCopy.fallbackSessionDate
   const selectedSeatsLabel =
     selectedSeats.length > 0
-      ? selectedSeats
-          .map(formatBookingSeat)
-          .join(', ')
+      ? selectedSeats.map(formatBookingSeat).join(', ')
       : bookingCopy.fallbackSeats
   const currency = preview?.currency || '₴'
   const previewErrorMessage =
@@ -249,7 +243,10 @@ const BookingPage = () => {
       ? previewError.message
       : bookingCopy.checkout.previewUnavailable
   const canPay =
-    canCheckout && Boolean(preview?.canCheckout) && !isPreviewError && !isPreviewLoading
+    canCheckout &&
+    Boolean(preview?.canCheckout) &&
+    !isPreviewError &&
+    !isPreviewLoading
   const formatAmount = (amount?: number) =>
     formatCheckoutAmount(amount, currency)
   const isGoldUpgradeRejected =
@@ -308,17 +305,28 @@ const BookingPage = () => {
 
       <main className='container mx-auto px-4 py-8'>
         {(step === 2 || step === 3) && !isAvailabilityVerified && (
-          <div role='status' className='mb-4 flex flex-wrap items-center gap-3 text-sm text-[var(--text-muted)]'>
-            <span>{isAvailabilityError ? bookingCopy.availability.error : bookingCopy.availability.checking}</span>
-            <button type='button' onClick={() => void refreshOccupancy()} className='underline underline-offset-4'>
+          <output className='mb-4 flex flex-wrap items-center gap-3 text-sm text-[var(--text-muted)]'>
+            <span>
+              {isAvailabilityError
+                ? bookingCopy.availability.error
+                : bookingCopy.availability.checking}
+            </span>
+            <button
+              type='button'
+              onClick={() => void refreshOccupancy()}
+              className='underline underline-offset-4'
+            >
               {bookingCopy.availability.retry}
             </button>
-          </div>
+          </output>
         )}
         {step === 1 && (
           <div className='animate-in fade-in slide-in-from-left-4 duration-500'>
             {isSessionsError && sessions.length === 0 ? (
-              <UnavailableState onRetry={() => void refetchSessions()} className='min-h-[300px]' />
+              <UnavailableState
+                onRetry={() => void refetchSessions()}
+                className='min-h-[300px]'
+              />
             ) : sessions.length > 0 ? (
               <SessionSelector
                 sessions={sessions}
@@ -341,18 +349,18 @@ const BookingPage = () => {
         {step === 2 && (
           <div className='animate-in fade-in slide-in-from-right-4 duration-500'>
             <div className='mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
-              <h2 className='flex items-center gap-3 text-2xl font-bold text-white'>
+              <h2 className='type-section flex items-center gap-3 text-2xl text-white'>
                 <Ticket className='text-[var(--color-primary)]' />{' '}
                 {bookingCopy.selectSeats}
               </h2>
-              <button
+              <Button
                 type='button'
                 disabled={!canCheckout}
                 onClick={goToCheckout}
-                className='rounded-xl bg-red-600 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-red-600/25 transition-all hover:bg-red-500 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-white/40 disabled:shadow-none'
+                className='px-8 py-3'
               >
                 {bookingCopy.continue}
-              </button>
+              </Button>
             </div>
 
             {isLoadingDetails ? (
@@ -373,20 +381,21 @@ const BookingPage = () => {
             ) : null}
 
             <div className='mt-8 flex justify-center'>
-              <button
+              <Button
                 type='button'
                 onClick={resetSession}
-                className='py-2 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] transition-colors hover:text-white'
+                variant='ghost'
+                className='text-xs uppercase tracking-wider'
               >
                 {bookingCopy.changeSession}
-              </button>
+              </Button>
             </div>
           </div>
         )}
 
         {step === 3 && (
           <div className='mx-auto max-w-6xl animate-in fade-in slide-in-from-bottom-4 duration-500'>
-            <div className='overflow-hidden rounded-3xl bg-[#111111] shadow-2xl shadow-black/40 lg:grid lg:min-h-[680px] lg:grid-cols-[65fr_35fr]'>
+            <div className='overflow-hidden rounded-3xl bg-[var(--surface-muted)] shadow-2xl shadow-black/40 lg:grid lg:min-h-[680px] lg:grid-cols-[65fr_35fr]'>
               <div className='relative min-h-[420px] lg:min-h-full'>
                 <img
                   src={movie?.posterUrl || movie?.backdropUrl}
@@ -429,7 +438,7 @@ const BookingPage = () => {
                 </div>
               </div>
 
-              <aside className='relative flex flex-col bg-[#151515] p-6 sm:p-8'>
+              <aside className='relative flex flex-col bg-[var(--bg-card)] p-6 sm:p-8'>
                 <div className='mb-8 flex items-start justify-between gap-4'>
                   <div className='border-l-4 border-red-600 pl-3'>
                     <h2 className='mt-2 text-2xl font-black text-white'>
@@ -470,7 +479,7 @@ const BookingPage = () => {
 
                 <div className='relative mt-8 min-h-48 space-y-4 text-sm'>
                   {isPreviewLoading && (
-                    <div className='absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-[#151515]/80 backdrop-blur-sm'>
+                    <div className='absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-[var(--bg-card)]/80 backdrop-blur-sm'>
                       <GridLoader className='animate-spin text-red-400' />
                     </div>
                   )}
@@ -531,7 +540,7 @@ const BookingPage = () => {
                     </span>
                   </div>
 
-                  <button
+                  <Button
                     type='button'
                     disabled={
                       isProcessingPayment ||
@@ -540,24 +549,21 @@ const BookingPage = () => {
                       isPreviewLoading
                     }
                     onClick={handleSubmitOrder}
-                    className='flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-500 to-red-600 py-4 text-base font-black text-white shadow-lg shadow-red-600/30 transition-all hover:scale-[1.01] hover:from-red-400 hover:to-red-500 active:scale-100 disabled:cursor-not-allowed disabled:opacity-50'
+                    isLoading={isProcessingPayment}
+                    className='w-full rounded-2xl py-4 text-base'
                   >
-                    {isProcessingPayment ? (
-                      <GridLoader className='animate-spin' />
-                    ) : (
-                      <>
-                        <Ticket size={20} /> {bookingCopy.checkout.pay}
-                      </>
-                    )}
-                  </button>
+                    <Ticket size={20} aria-hidden='true' />{' '}
+                    {bookingCopy.checkout.pay}
+                  </Button>
 
-                  <button
+                  <Button
                     type='button'
                     onClick={backToSeats}
-                    className='mt-5 w-full py-2 text-xs font-bold uppercase tracking-wider text-zinc-500 transition-colors hover:text-white'
+                    variant='secondary'
+                    className='mt-5 w-full text-xs'
                   >
                     {bookingCopy.checkout.backToSeats}
-                  </button>
+                  </Button>
                 </div>
               </aside>
             </div>

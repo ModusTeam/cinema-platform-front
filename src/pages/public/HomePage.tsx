@@ -1,14 +1,14 @@
+import { ArrowRight, Film } from 'lucide-react'
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { Film, ArrowRight } from 'lucide-react'
+import { MovieStatus } from '@/entities/movie/model/movie.types'
+import HeroSection from '@/features/movies/ui/HeroSection'
+import MovieCard from '@/features/movies/ui/MovieCard'
 import EmptyState from '@/shared/ui/EmptyState'
 import { GridLoader } from '@/shared/ui/GridLoader'
-import MovieCard from '@/features/movies/ui/MovieCard'
-import PromoSection from '@/widgets/home/ui/PromoSection'
-import HeroSection from '@/features/movies/ui/HeroSection'
-import { useHomeMovies } from '@/widgets/home/model/useHomeMovies'
-import { MovieStatus } from '@/entities/movie/model/movie.types'
 import UnavailableState from '@/shared/ui/UnavailableState'
+import { useHomeMovies } from '@/widgets/home/model/useHomeMovies'
+import PromoSection from '@/widgets/home/ui/PromoSection'
 
 const HomePage = () => {
   const {
@@ -51,11 +51,8 @@ const HomePage = () => {
                 type='button'
                 key={f.id}
                 onClick={() => setActiveFilter(f.id)}
-                className={`px-5 py-2 rounded-lg text-sm font-bold transition-all duration-300 ${
-                  activeFilter === f.id
-                    ? 'bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/25 scale-105'
-                    : 'text-[var(--text-muted)] hover:text-white hover:bg-white/5'
-                }`}
+                aria-pressed={activeFilter === f.id}
+                className='selection-control px-5 py-2 rounded-lg text-sm font-bold'
               >
                 {f.label}
               </button>
@@ -80,7 +77,7 @@ const HomePage = () => {
             }
             actionLabel='Скинути фільтри'
             onAction={() => setActiveFilter('all')}
-            className='py-32 animate-in fade-in zoom-in duration-500'
+            className='py-32'
           />
         ) : (
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 xl:gap-8'>
@@ -98,12 +95,12 @@ const HomePage = () => {
         <div className='mt-12 flex justify-center'>
           <Link
             to='/sessions'
-            className='group flex items-center gap-2 px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-white font-bold transition-all hover:scale-105 active:scale-95'
+            className='group flex items-center gap-2 px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-white font-bold transition-colors duration-150'
           >
             Дивитись повний розклад
             <ArrowRight
               size={18}
-              className='group-hover:translate-x-1 transition-transform'
+              className='motion-safe:group-hover:translate-x-1 transition-transform duration-150'
             />
           </Link>
         </div>

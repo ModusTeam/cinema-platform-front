@@ -1,43 +1,16 @@
+import { clsx } from 'clsx'
+import { motion } from 'motion/react'
 import { Suspense } from 'react'
 import { useLocation, useOutlet } from 'react-router-dom'
-import { AnimatePresence, motion, type Variants } from 'motion/react'
-import Header from '@/app/layouts/components/Header'
 import Footer from '@/app/layouts/components/Footer'
+import Header from '@/app/layouts/components/Header'
 import ScrollToTop from '@/app/ui/ScrollToTop'
-import { clsx } from 'clsx'
+import { useMotionPreference } from '@/shared/lib/useMotionPreference'
 import { GridLoader } from '@/shared/ui/GridLoader'
-
-const pageVariants: Variants = {
-  initial: {
-    opacity: 0,
-    y: 20,
-    scale: 0.99,
-    filter: 'blur(4px)',
-  },
-  animate: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    filter: 'blur(0px)',
-    transition: {
-      duration: 0.5,
-      ease: [0.25, 0.1, 0.25, 1.0],
-    },
-  },
-  exit: {
-    opacity: 0,
-    y: -20,
-    scale: 0.99,
-    filter: 'blur(2px)',
-    transition: {
-      duration: 0.3,
-      ease: 'easeIn',
-    },
-  },
-}
 
 const MainLayout = () => {
   const location = useLocation()
+  const reducedMotion = useMotionPreference()
   const isHomePage = location.pathname === '/'
 
   const element = useOutlet()
@@ -46,32 +19,26 @@ const MainLayout = () => {
     <div className='flex min-h-screen flex-col bg-[var(--bg-main)] text-[var(--text-main)] antialiased selection:bg-[var(--color-primary)]/30'>
       <Header />
 
-      <AnimatePresence mode='wait' initial={false}>
-        <ScrollToTop />
-        <motion.main
-          key={location.pathname}
-          variants={pageVariants}
-          initial='initial'
-          animate='animate'
-          exit='exit'
-          className={clsx(
-            'flex-1 relative z-0',
-            !isHomePage && 'pt-24 md:pt-28',
-          )}
+      <ScrollToTop />
+      <motion.main
+        key={location.pathname}
+        initial={reducedMotion ? false : { opacity: 0.6 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: reducedMotion ? 0 : 0.3, ease: 'easeOut' }}
+        className={clsx('flex-1 relative z-0', !isHomePage && 'pt-24 md:pt-28')}
+      >
+        <Suspense
+          fallback={
+            <div className='flex h-[60vh] w-full items-center justify-center'>
+              <GridLoader className='animate-spin text-[var(--color-primary)] h-12 w-12' />
+            </div>
+          }
         >
-          <Suspense
-            fallback={
-              <div className='flex h-[60vh] w-full items-center justify-center'>
-                <GridLoader className='animate-spin text-[var(--color-primary)] h-12 w-12' />
-              </div>
-            }
-          >
-            {element}
-          </Suspense>
+          {element}
+        </Suspense>
 
-          <Footer />
-        </motion.main>
-      </AnimatePresence>
+        <Footer />
+      </motion.main>
     </div>
   )
 }

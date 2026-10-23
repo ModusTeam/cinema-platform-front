@@ -1,4 +1,4 @@
-import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react'
+import { AlertCircle, AlertTriangle, CheckCircle, Info, X } from 'lucide-react'
 import { useState } from 'react'
 import type { Toast } from '@/shared/ui/toast/toast.types'
 
@@ -28,9 +28,8 @@ const ToastItem = ({
       className={`
         flex items-center gap-3 p-4 rounded-xl shadow-2xl border border-white/10 bg-[#1a1a1a]/95 backdrop-blur-md text-white
         w-full md:min-w-[300px] md:max-w-md
-        transition-all duration-300 ease-in-out transform touch-manipulation
-        ${isExiting ? 'opacity-0 translate-y-full md:translate-x-full md:translate-y-0' : 'opacity-100 translate-y-0 translate-x-0'}
-        animate-in slide-in-from-bottom-5 md:slide-in-from-right-10 fade-in
+        transition-opacity duration-150 touch-manipulation
+        ${isExiting ? 'opacity-0' : 'opacity-100'}
       `}
       role='alert'
     >
@@ -39,7 +38,8 @@ const ToastItem = ({
       <button
         type='button'
         onClick={handleRemove}
-        className='p-2 -mr-2 text-[var(--text-muted)] hover:text-white transition-colors active:scale-95'
+        aria-label='Закрити сповіщення'
+        className='p-2 -mr-2 text-[var(--text-muted)] hover:text-white transition-colors'
       >
         <X size={18} />
       </button>

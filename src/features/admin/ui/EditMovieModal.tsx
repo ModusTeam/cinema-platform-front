@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
-import { GridLoader } from '@/shared/ui/GridLoader'
+import { useEffect, useId, useState } from 'react'
 import { moviesService } from '@/entities/movie/api/movies.service'
 import { type Movie, MovieStatus } from '@/entities/movie/model/movie.types'
+import Button from '@/shared/ui/Button'
 import Input from '@/shared/ui/Input'
+import { Dialog } from '@/shared/ui/modals/Dialog'
 import { useToast } from '@/shared/ui/toast/ToastContext'
 
 interface EditMovieModalProps {
@@ -36,6 +37,8 @@ const EditMovieModal = ({
     status: MovieStatus.Active,
   })
   const [isSaving, setIsSaving] = useState(false)
+  const fieldId = useId()
+  const titleId = `${fieldId}-title`
 
   useEffect(() => {
     if (movie) {
@@ -52,7 +55,7 @@ const EditMovieModal = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!movie) return
+    if (!movie || isSaving) return
 
     setIsSaving(true)
     try {
@@ -76,20 +79,36 @@ const EditMovieModal = ({
   if (!isOpen || !movie) return null
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in'>
-      <div className='w-full max-w-2xl bg-[var(--bg-card)] border border-white/10 rounded-xl shadow-2xl overflow-hidden'>
-        <div className='flex items-center justify-between border-b border-white/10 p-6'>
-          <h2 className='text-xl font-bold text-white'>Редагувати фільм</h2>
-          <button
-            type='button'
-            onClick={onClose}
-            className='text-[var(--text-muted)] hover:text-white'
-          >
-            <X size={24} />
-          </button>
-        </div>
+    <Dialog
+      isOpen={isOpen}
+      onClose={onClose}
+      titleId={titleId}
+      isBusy={isSaving}
+      className='max-w-2xl'
+    >
+      <div className='flex shrink-0 items-center justify-between border-b border-white/10 p-6'>
+        <h2
+          id={titleId}
+          tabIndex={-1}
+          data-modal-initial-focus
+          className='type-section text-white'
+        >
+          Редагувати фільм
+        </h2>
+        <Button
+          type='button'
+          onClick={onClose}
+          disabled={isSaving}
+          aria-label='Закрити діалог'
+          variant='ghost'
+          className='min-h-0 p-0'
+        >
+          <X size={24} />
+        </Button>
+      </div>
 
-        <form onSubmit={handleSubmit} className='p-6 space-y-4'>
+      <form onSubmit={handleSubmit} className='flex min-h-0 flex-col'>
+        <div className='min-h-0 overflow-y-auto overscroll-contain p-6 space-y-4'>
           <div className='grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4'>
             <Input
               label='Назва'
@@ -99,11 +118,12 @@ const EditMovieModal = ({
               }
             />
 
-            <div className='space-y-1.5'>
-              <label className='text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider ml-1'>
+            <div className='space-y-2'>
+              <label htmlFor={`${fieldId}-status`} className='field-label'>
                 Статус
               </label>
               <select
+                id={`${fieldId}-status`}
                 value={formData.status}
                 onChange={e =>
                   setFormData({
@@ -111,7 +131,7 @@ const EditMovieModal = ({
                     status: Number(e.target.value) as MovieStatus,
                   })
                 }
-                className='w-full rounded-xl border border-white/10 bg-[var(--bg-main)] px-4 py-3 text-sm text-white focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] appearance-none cursor-pointer'
+                className='field'
               >
                 <option value={MovieStatus.ComingSoon}>Скоро у кіно</option>
                 <option value={MovieStatus.Active}>У прокаті (Active)</option>
@@ -120,16 +140,17 @@ const EditMovieModal = ({
             </div>
           </div>
 
-          <div className='space-y-1.5'>
-            <label className='text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider ml-1'>
+          <div className='space-y-2'>
+            <label htmlFor={`${fieldId}-description`} className='field-label'>
               Опис
             </label>
             <textarea
+              id={`${fieldId}-description`}
               value={formData.description}
               onChange={e =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className='w-full rounded-xl border border-white/10 bg-[var(--bg-main)] px-4 py-3 text-sm text-white placeholder:text-white/20 focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] min-h-[100px]'
+              className='field'
             />
           </div>
 
@@ -157,27 +178,22 @@ const EditMovieModal = ({
               setFormData({ ...formData, videoUrl: e.target.value })
             }
           />
-
-          <div className='flex justify-end gap-3 pt-4 mt-6 border-t border-white/10'>
-            <button
-              type='button'
-              onClick={onClose}
-              className='px-6 py-2 rounded-lg text-sm font-bold text-[var(--text-muted)] hover:text-white transition-colors'
-            >
-              Скасувати
-            </button>
-            <button
-              type='submit'
-              disabled={isSaving}
-              className='flex items-center gap-2 bg-[var(--color-primary)] text-white px-6 py-2 rounded-lg font-bold hover:bg-[var(--color-primary-hover)] transition-all shadow-lg disabled:opacity-50'
-            >
-              {isSaving && <GridLoader className='animate-spin' size={16} />}
-              Зберегти
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        </div>
+        <div className='flex shrink-0 justify-end gap-3 p-6 pt-4 border-t border-white/10'>
+          <Button
+            type='button'
+            onClick={onClose}
+            disabled={isSaving}
+            variant='secondary'
+          >
+            Скасувати
+          </Button>
+          <Button type='submit' disabled={isSaving} isLoading={isSaving}>
+            Зберегти
+          </Button>
+        </div>
+      </form>
+    </Dialog>
   )
 }
 

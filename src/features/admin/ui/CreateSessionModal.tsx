@@ -1,7 +1,10 @@
-import { X, Calendar, Clock, DollarSign, Film, MonitorPlay } from 'lucide-react'
-import { GridLoader } from '@/shared/ui/GridLoader'
-import UnavailableState from '@/shared/ui/UnavailableState'
+import { Calendar, Clock, DollarSign, Film, MonitorPlay, X } from 'lucide-react'
+import { useId } from 'react'
 import { useCreateSession } from '@/features/admin/model/useCreateSession'
+import Button from '@/shared/ui/Button'
+import { GridLoader } from '@/shared/ui/GridLoader'
+import { Dialog } from '@/shared/ui/modals/Dialog'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 interface CreateSessionModalProps {
   isOpen: boolean
@@ -14,6 +17,8 @@ const CreateSessionModal = ({
   onClose,
   onSuccess,
 }: CreateSessionModalProps) => {
+  const fieldId = useId()
+  const titleId = `${fieldId}-title`
   const {
     movies,
     halls,
@@ -38,38 +43,67 @@ const CreateSessionModal = ({
   if (!isOpen) return null
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200'>
-      <div className='w-full max-w-lg rounded-xl border border-white/10 bg-[var(--bg-card)] p-6 shadow-2xl scale-100 animate-in zoom-in-95 duration-200'>
-        <div className='flex items-center justify-between mb-6 border-b border-white/5 pb-4'>
-          <h2 className='text-xl font-bold text-white'>Додати сеанс</h2>
-          <button
-            type='button'
-            onClick={onClose}
-            className='text-[var(--text-muted)] hover:text-white transition-colors'
-          >
-            <X size={24} />
-          </button>
-        </div>
+    <Dialog
+      isOpen={isOpen}
+      onClose={onClose}
+      titleId={titleId}
+      isBusy={isSubmitting}
+      className='max-w-lg p-6 scale-100 animate-in zoom-in-95 duration-200'
+    >
+      <div className='flex shrink-0 items-center justify-between mb-6 border-b border-white/5 pb-4'>
+        <h2
+          id={titleId}
+          tabIndex={-1}
+          data-modal-initial-focus
+          className='type-section text-white'
+        >
+          Додати сеанс
+        </h2>
+        <Button
+          type='button'
+          onClick={onClose}
+          disabled={isSubmitting}
+          aria-label='Закрити діалог'
+          variant='ghost'
+          className='min-h-0 p-0'
+        >
+          <X size={24} />
+        </Button>
+      </div>
 
-        {isLoadingData ? (
-          <div className='py-12 flex justify-center'>
-            <GridLoader className='h-8 w-8 animate-spin text-[var(--text-muted)]' />
-          </div>
-        ) : isDataError ? (
-          <UnavailableState
-            onRetry={() => void retryData()}
-            className='border-0 bg-transparent py-12'
-          />
-        ) : (
-          <form onSubmit={submit} className='space-y-5'>
+      {isLoadingData ? (
+        <div className='min-h-0 overflow-y-auto py-12 flex justify-center'>
+          <GridLoader className='h-8 w-8 animate-spin text-[var(--text-muted)]' />
+        </div>
+      ) : isDataError ? (
+        <UnavailableState
+          onRetry={() => void retryData()}
+          className='min-h-0 overflow-y-auto border-0 bg-transparent py-12'
+        />
+      ) : (
+        <form
+          onSubmit={e => {
+            if (isSubmitting) {
+              e.preventDefault()
+              return
+            }
+            void submit(e)
+          }}
+          className='flex min-h-0 flex-col'
+        >
+          <div className='min-h-0 overflow-y-auto overscroll-contain space-y-5'>
             <div>
-              <label className='text-xs font-medium text-[var(--text-muted)] mb-1.5 flex items-center gap-2'>
+              <label
+                htmlFor={`${fieldId}-movie`}
+                className='field-label mb-2 flex items-center gap-2'
+              >
                 <Film size={14} /> Фільм
               </label>
               <select
+                id={`${fieldId}-movie`}
                 value={movieId}
                 onChange={e => setMovieId(e.target.value)}
-                className='w-full rounded-lg bg-[var(--bg-main)] border border-white/10 p-3 text-white focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all appearance-none cursor-pointer hover:bg-[var(--bg-hover)]'
+                className='field'
               >
                 {movies.map(m => (
                   <option key={m.id} value={m.id}>
@@ -81,13 +115,17 @@ const CreateSessionModal = ({
 
             <div className='grid grid-cols-2 gap-4'>
               <div>
-                <label className='text-xs font-medium text-[var(--text-muted)] mb-1.5 flex items-center gap-2'>
+                <label
+                  htmlFor={`${fieldId}-hall`}
+                  className='field-label mb-2 flex items-center gap-2'
+                >
                   <MonitorPlay size={14} /> Зал
                 </label>
                 <select
+                  id={`${fieldId}-hall`}
                   value={hallId}
                   onChange={e => setHallId(e.target.value)}
-                  className='w-full rounded-lg bg-[var(--bg-main)] border border-white/10 p-3 text-white focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all appearance-none cursor-pointer hover:bg-[var(--bg-hover)]'
+                  className='field'
                 >
                   {halls.map(h => (
                     <option key={h.id} value={h.id}>
@@ -98,13 +136,17 @@ const CreateSessionModal = ({
               </div>
 
               <div>
-                <label className='text-xs font-medium text-[var(--text-muted)] mb-1.5 flex items-center gap-2'>
+                <label
+                  htmlFor={`${fieldId}-pricing`}
+                  className='field-label mb-2 flex items-center gap-2'
+                >
                   <DollarSign size={14} /> Тариф
                 </label>
                 <select
+                  id={`${fieldId}-pricing`}
                   value={pricingId}
                   onChange={e => setPricingId(e.target.value)}
-                  className='w-full rounded-lg bg-[var(--bg-main)] border border-white/10 p-3 text-white focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all appearance-none cursor-pointer hover:bg-[var(--bg-hover)]'
+                  className='field'
                 >
                   {pricings.length === 0 && (
                     <option disabled>Немає тарифів</option>
@@ -120,55 +162,59 @@ const CreateSessionModal = ({
 
             <div className='grid grid-cols-2 gap-4'>
               <div>
-                <label className='text-xs font-medium text-[var(--text-muted)] mb-1.5 flex items-center gap-2'>
+                <label
+                  htmlFor={`${fieldId}-date`}
+                  className='field-label mb-2 flex items-center gap-2'
+                >
                   <Calendar size={14} /> Дата
                 </label>
                 <input
+                  id={`${fieldId}-date`}
                   type='date'
                   value={date}
                   onChange={e => setDate(e.target.value)}
-                  className='w-full rounded-lg bg-[var(--bg-main)] border border-white/10 p-3 text-white focus:border-[var(--color-primary)] [color-scheme:dark]'
+                  className='field'
                   min={new Date().toISOString().split('T')[0]}
                 />
               </div>
               <div>
-                <label className='text-xs font-medium text-[var(--text-muted)] mb-1.5 flex items-center gap-2'>
+                <label
+                  htmlFor={`${fieldId}-time`}
+                  className='field-label mb-2 flex items-center gap-2'
+                >
                   <Clock size={14} /> Час початку
                 </label>
                 <input
+                  id={`${fieldId}-time`}
                   type='time'
                   value={time}
                   onChange={e => setTime(e.target.value)}
-                  className='w-full rounded-lg bg-[var(--bg-main)] border border-white/10 p-3 text-white focus:border-[var(--color-primary)] [color-scheme:dark]'
+                  className='field'
                 />
               </div>
             </div>
-
-            <div className='pt-4 flex justify-end gap-3 border-t border-white/5 mt-6'>
-              <button
-                type='button'
-                onClick={onClose}
-                className='px-5 py-2.5 rounded-lg text-sm font-medium text-[var(--text-muted)] hover:text-white hover:bg-white/5 transition-colors'
-              >
-                Скасувати
-              </button>
-              <button
-                type='submit'
-                disabled={isSubmitting}
-                className='bg-[var(--color-primary)] text-white text-sm font-bold px-6 py-2.5 rounded-lg hover:bg-[var(--color-primary-hover)] disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2 transition-colors shadow-lg shadow-[var(--color-primary)]/20'
-              >
-                {isSubmitting ? (
-                  <GridLoader size={16} className='animate-spin' />
-                ) : (
-                  <Calendar size={16} />
-                )}
-                {isSubmitting ? 'Створення...' : 'Запланувати'}
-              </button>
-            </div>
-          </form>
-        )}
-      </div>
-    </div>
+          </div>
+          <div className='shrink-0 pt-4 flex justify-end gap-3 border-t border-white/5 mt-6'>
+            <Button
+              type='button'
+              onClick={onClose}
+              disabled={isSubmitting}
+              variant='secondary'
+            >
+              Скасувати
+            </Button>
+            <Button
+              type='submit'
+              disabled={isSubmitting}
+              isLoading={isSubmitting}
+            >
+              {!isSubmitting && <Calendar size={16} aria-hidden='true' />}
+              {isSubmitting ? 'Створення...' : 'Запланувати'}
+            </Button>
+          </div>
+        </form>
+      )}
+    </Dialog>
   )
 }
 

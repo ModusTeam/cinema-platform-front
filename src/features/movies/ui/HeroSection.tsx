@@ -1,7 +1,9 @@
-import { Play, Info, Star, Calendar, Clock } from 'lucide-react'
-import { GridLoader } from '@/shared/ui/GridLoader'
+import { Calendar, Clock, Info, Pause, Play, Star } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useHeroSlider } from '@/features/movies/model/useHeroSlider'
+import Button, { buttonStyles } from '@/shared/ui/Button'
+import { GridLoader } from '@/shared/ui/GridLoader'
+import { heroCopy } from '../config/hero.copy'
 
 const HeroSection = () => {
   const {
@@ -9,7 +11,13 @@ const HeroSection = () => {
     activeMovie,
     currentIndex,
     isLoading,
-    isAnimating,
+    reducedMotion,
+    isPaused,
+    isAutoplaying,
+    autoplayKey,
+    setIsHovered,
+    setHasFocus,
+    toggleAutoplay,
     handleManualSelect,
     handleBuyTicket,
     AUTO_PLAY_INTERVAL,
@@ -28,13 +36,24 @@ const HeroSection = () => {
   }
 
   return (
-    <section className='relative min-h-[85svh] w-full overflow-hidden bg-black group'>
-      <div className='absolute inset-0 transition-opacity duration-700 ease-in-out'>
+    <section
+      aria-label={heroCopy.label}
+      aria-roledescription={heroCopy.carousel}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocusCapture={() => setHasFocus(true)}
+      onBlurCapture={event => {
+        if (!event.currentTarget.contains(event.relatedTarget))
+          setHasFocus(false)
+      }}
+      className='relative min-h-[85svh] w-full overflow-hidden bg-black'
+    >
+      <div className='absolute inset-0'>
         <img
           key={activeMovie.id}
           src={activeMovie.backdropUrl}
           alt={activeMovie.title}
-          className={`h-full w-full object-cover object-center transition-transform duration-[20s] ease-linear scale-105 group-hover:scale-110 animate-in fade-in zoom-in-95 duration-1000`}
+          className='hero-image h-full w-full object-cover object-center'
         />
 
         <div className='absolute inset-0 bg-gradient-to-t from-[var(--bg-main)] via-[var(--bg-main)]/50 to-transparent' />
@@ -44,9 +63,7 @@ const HeroSection = () => {
 
       <div className='relative container mx-auto flex min-h-[85svh] items-end px-4 pb-20 pt-28'>
         <div className='grid w-full lg:grid-cols-[1fr_350px] gap-12'>
-          <div
-            className={`max-w-3xl space-y-6 transition-all duration-500 ${isAnimating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}
-          >
+          <div className='max-w-3xl space-y-6'>
             <div className='flex flex-wrap items-center gap-3 text-xs font-bold uppercase tracking-wider text-zinc-300'>
               <span className='bg-[var(--color-primary)] text-white px-2 py-1 rounded shadow-[0_0_15px_rgba(239,68,68,0.4)]'>
                 Прем'єра
@@ -72,18 +89,17 @@ const HeroSection = () => {
             </p>
 
             <div className='flex flex-wrap gap-4 pt-4'>
-              <button
-                type='button'
+              <Button
                 onClick={handleBuyTicket}
-                className='group flex items-center gap-2 rounded-full bg-[var(--color-primary)] px-8 py-4 text-base font-bold text-white transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(239,68,68,0.5)] active:scale-95'
+                className='rounded-full px-8 py-4 text-base'
               >
                 <Play className='size-5 fill-current' />
                 Купити квиток
-              </button>
+              </Button>
 
               <Link
                 to={`/movies/${activeMovie.id}`}
-                className='flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-8 py-4 text-base font-bold text-white backdrop-blur-md transition-colors hover:bg-white/20 hover:border-white active:scale-95'
+                className={`${buttonStyles('secondary')} rounded-full px-8 py-4 text-base`}
               >
                 <Info className='size-5' />
                 Детальніше
@@ -103,9 +119,11 @@ const HeroSection = () => {
                   type='button'
                   key={m.id}
                   onClick={() => handleManualSelect(idx)}
-                  className={`group relative flex items-center gap-4 p-2 rounded-xl transition-all duration-300 text-left border ${
+                  aria-label={heroCopy.select(m.title, idx + 1, movies.length)}
+                  aria-pressed={isActive}
+                  className={`group relative flex items-center gap-4 p-2 rounded-xl transition-colors duration-150 text-left border ${
                     isActive
-                      ? 'bg-white/10 border-white/20 scale-105 shadow-xl'
+                      ? 'bg-white/10 border-white/20'
                       : 'bg-transparent border-transparent hover:bg-white/5 opacity-60 hover:opacity-100'
                   }`}
                 >
@@ -117,7 +135,7 @@ const HeroSection = () => {
                     />
                     {isActive && (
                       <div className='absolute inset-0 bg-black/40 flex items-center justify-center'>
-                        <div className='w-2 h-2 bg-[var(--color-primary)] rounded-full animate-ping'></div>
+                        <div className='w-2 h-2 bg-[var(--color-primary)] rounded-full'></div>
                       </div>
                     )}
                   </div>
@@ -133,10 +151,14 @@ const HeroSection = () => {
                     </div>
                   </div>
 
-                  {isActive && (
-                    <div className='absolute bottom-0 left-2 right-2 h-[2px] bg-white/10 rounded-full overflow-hidden'>
+                  {isActive && isAutoplaying && (
+                    <div
+                      aria-hidden='true'
+                      className='absolute bottom-0 left-2 right-2 h-[2px] bg-white/10 rounded-full overflow-hidden'
+                    >
                       <div
-                        className='h-full bg-[var(--color-primary)] origin-left animate-progress'
+                        key={`${m.id}-${autoplayKey}`}
+                        className='hero-progress h-full bg-[var(--color-primary)] origin-left'
                         style={{ animationDuration: `${AUTO_PLAY_INTERVAL}ms` }}
                       ></div>
                     </div>
@@ -147,30 +169,79 @@ const HeroSection = () => {
           </div>
         </div>
 
-        <div className='lg:hidden absolute bottom-8 left-0 right-0 flex justify-center gap-2'>
+        <div className='lg:hidden absolute bottom-3 left-0 right-0 flex justify-center gap-2'>
           {movies.map((movie, idx) => (
             <button
               type='button'
               key={movie.id}
               onClick={() => handleManualSelect(idx)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                idx === currentIndex
-                  ? 'w-8 bg-[var(--color-primary)]'
-                  : 'w-2 bg-white/20'
-              }`}
-            />
+              aria-label={heroCopy.select(movie.title, idx + 1, movies.length)}
+              aria-pressed={idx === currentIndex}
+              className='flex h-10 w-10 items-center justify-center rounded-full'
+            >
+              <span
+                aria-hidden='true'
+                className={`h-1.5 rounded-full ${
+                  idx === currentIndex
+                    ? 'w-8 bg-[var(--color-primary)]'
+                    : 'w-2 bg-white/20'
+                }`}
+              />
+            </button>
           ))}
         </div>
       </div>
 
+      {movies.length > 1 && (
+        <div className='absolute right-4 top-24 md:top-28 z-10'>
+          <Button
+            variant='secondary'
+            onClick={toggleAutoplay}
+            disabled={reducedMotion}
+            aria-label={
+              reducedMotion
+                ? heroCopy.reducedMotion
+                : isPaused
+                  ? heroCopy.resume
+                  : heroCopy.pause
+            }
+            title={
+              reducedMotion
+                ? heroCopy.reducedMotion
+                : isPaused
+                  ? heroCopy.resume
+                  : heroCopy.pause
+            }
+            className='rounded-full bg-black/70'
+          >
+            {isPaused || reducedMotion ? (
+              <Play size={16} aria-hidden='true' />
+            ) : (
+              <Pause size={16} aria-hidden='true' />
+            )}
+            <span className='text-xs'>
+              {reducedMotion
+                ? heroCopy.manual
+                : isPaused
+                  ? heroCopy.resumeShort
+                  : heroCopy.pauseShort}
+            </span>
+          </Button>
+        </div>
+      )}
+
       <style>{`
-        @keyframes progress {
-            from { transform: scaleX(0); }
-            to { transform: scaleX(1); }
+        @keyframes hero-progress {
+          from { transform: scaleX(0); }
+          to { transform: scaleX(1); }
         }
-        .animate-progress {
-            animation-name: progress;
-            animation-timing-function: linear;
+        @keyframes hero-image {
+          from { opacity: 0.6; }
+          to { opacity: 1; }
+        }
+        @media (prefers-reduced-motion: no-preference) {
+          .hero-progress { animation: hero-progress linear forwards; }
+          .hero-image { animation: hero-image 250ms ease-out; }
         }
       `}</style>
     </section>
