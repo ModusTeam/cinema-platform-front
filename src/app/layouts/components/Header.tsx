@@ -23,8 +23,7 @@ const RollingText = ({ text }: { text: string }) => {
         <span
           // biome-ignore lint/suspicious/noArrayIndexKey: Fixed decorative text positions control the existing animation.
           key={i}
-          className='inline-block transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-full'
-          style={{ transitionDelay: `${i * 25}ms` }}
+          className='inline-block motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover:-translate-y-full'
         >
           <span className='block h-[1.2em]'>
             {char === ' ' ? '\u00A0' : char}
@@ -73,7 +72,7 @@ const Header = () => {
     >
       <header
         className={clsx(
-          'fixed top-0 left-0 right-0 z-[60] transition-all duration-500 border-b border-transparent',
+          'fixed top-0 left-0 right-0 z-[60] transition-colors duration-150 border-b border-transparent',
           !isMenuOpen && isScrolled
             ? 'bg-black/60 backdrop-blur-xl border-white/5 py-3'
             : 'bg-transparent py-4 md:py-6',
@@ -87,7 +86,7 @@ const Header = () => {
           >
             <span>
               Cine
-              <span className='text-[var(--color-primary)] transition-all duration-300 group-hover:text-white'>
+              <span className='text-[var(--color-primary)] transition-colors duration-150 group-hover:text-white'>
                 ma
               </span>
               .
@@ -96,7 +95,7 @@ const Header = () => {
 
           <div className='relative z-[70] flex items-center gap-4 md:gap-6'>
             {!isMenuOpen && (
-              <div className='hidden md:flex items-center gap-6 animate-in fade-in duration-300'>
+              <div className='hidden md:flex items-center gap-6 transition-opacity duration-150'>
                 {user ? (
                   <Link
                     to='/profile'
@@ -135,19 +134,19 @@ const Header = () => {
               <div className='relative w-5 h-5'>
                 <span
                   className={clsx(
-                    'absolute top-1/2 left-0 h-0.5 w-5 bg-white transition-all duration-300 -translate-y-1.5',
+                    'absolute top-1/2 left-0 h-0.5 w-5 bg-white transition-[transform,opacity,width] duration-150 motion-reduce:transition-none -translate-y-1.5',
                     isMenuOpen && 'translate-y-0 rotate-45',
                   )}
                 />
                 <span
                   className={clsx(
-                    'absolute top-1/2 left-0 h-0.5 bg-white transition-all duration-300 w-3 group-hover:w-5',
+                    'absolute top-1/2 left-0 h-0.5 bg-white transition-[transform,opacity,width] duration-150 motion-reduce:transition-none w-3 group-hover:w-5',
                     isMenuOpen ? 'opacity-0 w-0' : 'w-3',
                   )}
                 />
                 <span
                   className={clsx(
-                    'absolute top-1/2 left-0 h-0.5 w-5 bg-white transition-all duration-300 translate-y-1.5',
+                    'absolute top-1/2 left-0 h-0.5 w-5 bg-white transition-[transform,opacity,width] duration-150 motion-reduce:transition-none translate-y-1.5',
                     isMenuOpen && 'translate-y-0 -rotate-45',
                   )}
                 />
@@ -162,7 +161,7 @@ const Header = () => {
         inert={!isMenuOpen}
         aria-hidden={!isMenuOpen}
         className={clsx(
-          'fixed inset-0 z-50 flex flex-col bg-[#050505]/95 backdrop-blur-2xl transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]',
+          'fixed inset-0 z-50 flex flex-col bg-[#050505]/95 backdrop-blur-2xl transition-opacity duration-150',
           isMenuOpen
             ? 'opacity-100 visible'
             : 'opacity-0 invisible pointer-events-none',
@@ -176,7 +175,7 @@ const Header = () => {
             aria-label='Головна навігація'
             className='flex flex-col justify-center space-y-4 lg:space-y-6 relative z-10'
           >
-            {NAV_ITEMS.map((item, index) => (
+            {NAV_ITEMS.map(item => (
               <Link
                 key={item.label}
                 to={item.href}
@@ -185,15 +184,12 @@ const Header = () => {
                   location.pathname === item.href ? 'page' : undefined
                 }
                 className={clsx(
-                  'group flex items-center justify-between py-2 border-b border-white/5 lg:border-none lg:py-0 transition-all duration-500 ease-out',
-                  isMenuOpen
-                    ? 'translate-y-0 opacity-100'
-                    : 'translate-y-10 opacity-0',
+                  'group flex items-center justify-between py-2 border-b border-white/5 lg:border-none lg:py-0 transition-opacity duration-150',
+                  isMenuOpen ? 'opacity-100' : 'opacity-0',
                 )}
-                style={{ transitionDelay: `${index * 50}ms` }}
                 onClick={() => setIsMenuOpen(false)}
               >
-                <span className='text-4xl sm:text-5xl lg:text-7xl font-black text-zinc-500 group-hover:text-white transition-colors duration-500 uppercase tracking-tight'>
+                <span className='text-4xl sm:text-5xl lg:text-7xl font-black text-zinc-500 group-hover:text-white transition-colors duration-150 uppercase tracking-tight'>
                   <RollingText text={item.label} />
                 </span>
                 <span className='lg:hidden text-[var(--color-primary)] opacity-0 group-hover:opacity-100 transition-opacity'>
@@ -205,10 +201,8 @@ const Header = () => {
 
           <div
             className={clsx(
-              'flex flex-col justify-end lg:justify-center lg:items-start lg:pl-12 lg:border-l lg:border-white/5 space-y-8 transition-all duration-700 delay-300 mt-10 lg:mt-0',
-              isMenuOpen
-                ? 'opacity-100 translate-y-0'
-                : 'opacity-0 translate-y-10',
+              'flex flex-col justify-end lg:justify-center lg:items-start lg:pl-12 lg:border-l lg:border-white/5 space-y-8 transition-opacity duration-150 mt-10 lg:mt-0',
+              isMenuOpen ? 'opacity-100' : 'opacity-0',
             )}
           >
             {user ? (
@@ -254,7 +248,7 @@ const Header = () => {
                 </p>
                 <Link
                   to='/auth/login'
-                  className='flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] py-3 md:py-4 font-bold text-white shadow-lg hover:scale-[1.02] transition-transform text-sm md:text-base'
+                  className='flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] py-3 md:py-4 font-bold text-white hover:bg-[var(--color-primary-hover)] transition-colors duration-150 text-sm md:text-base'
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Увійти або Зареєструватися

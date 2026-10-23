@@ -27,7 +27,7 @@ export const Dialog = ({
   if (!isOpen) return null
 
   return createPortal(
-    <div className='fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200'>
+    <div className='fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 motion-reduce:animate-none animate-in fade-in duration-200'>
       <div
         ref={ref}
         role='dialog'

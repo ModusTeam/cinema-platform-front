@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
+import { useCallback, useEffect, useState } from 'react'
+import { useMotionPreference } from '@/shared/lib/useMotionPreference'
 import { cn } from '@/shared/lib/utils'
 
 export const FlipWords = ({
@@ -11,6 +12,7 @@ export const FlipWords = ({
   duration?: number
   className?: string
 }) => {
+  const reducedMotion = useMotionPreference()
   const [currentWord, setCurrentWord] = useState(words[0])
   const [isAnimating, setIsAnimating] = useState<boolean>(false)
 
@@ -21,11 +23,22 @@ export const FlipWords = ({
   }, [currentWord, words])
 
   useEffect(() => {
-    if (!isAnimating)
-      setTimeout(() => {
-        startAnimation()
-      }, duration)
-  }, [isAnimating, duration, startAnimation])
+    if (reducedMotion) {
+      setIsAnimating(false)
+      return
+    }
+    if (isAnimating || words.length < 2) return
+    const timer = setTimeout(startAnimation, duration)
+    return () => clearTimeout(timer)
+  }, [reducedMotion, isAnimating, duration, startAnimation, words.length])
+
+  if (reducedMotion) {
+    return (
+      <span className={cn('text-[var(--color-primary)] px-2', className)}>
+        {words[0]}
+      </span>
+    )
+  }
 
   return (
     <AnimatePresence
@@ -53,6 +66,7 @@ export const FlipWords = ({
       >
         {currentWord.split(' ').map((word, wordIndex) => (
           <motion.span
+            // biome-ignore lint/suspicious/noArrayIndexKey: Fixed word positions within a keyed decorative phrase.
             key={word + wordIndex}
             initial={{ opacity: 0, y: 10, filter: 'blur(8px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -64,6 +78,7 @@ export const FlipWords = ({
           >
             {word.split('').map((letter, letterIndex) => (
               <motion.span
+                // biome-ignore lint/suspicious/noArrayIndexKey: Fixed character positions within a keyed decorative word.
                 key={word + letterIndex}
                 initial={{ opacity: 0, y: 10, filter: 'blur(8px)' }}
                 animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}

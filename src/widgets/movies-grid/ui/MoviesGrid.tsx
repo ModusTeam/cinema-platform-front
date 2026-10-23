@@ -138,8 +138,7 @@ const MoviesGrid = () => {
                     aria-pressed={isSelected}
                     className={clsx(
                       'selection-control flex flex-col items-center justify-center w-14 h-16 rounded-xl',
-                      isSelected &&
-                        'shadow-[0_0_15px_rgba(239,68,68,0.3)] scale-110 z-10 font-bold',
+                      isSelected && 'font-bold',
                     )}
                   >
                     <span className='text-[10px] uppercase tracking-wider opacity-80'>

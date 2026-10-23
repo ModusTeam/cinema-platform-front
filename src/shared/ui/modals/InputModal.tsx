@@ -58,7 +58,7 @@ const InputModal = ({
       onClose={onClose}
       titleId={titleId}
       isBusy={isSubmitting}
-      className='max-w-md p-6 scale-100 animate-in zoom-in-95 duration-200 relative'
+      className='max-w-md p-6 scale-100 motion-reduce:animate-none animate-in zoom-in-95 duration-200 relative'
     >
       <Button
         type='button'

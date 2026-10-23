@@ -1,13 +1,13 @@
-import { Armchair } from 'lucide-react'
+import { Armchair, CircleHelp, LockKeyhole, Wrench, X } from 'lucide-react'
 import { useMemo } from 'react'
-import type { SessionAvailability } from '@/entities/session/model/session.types'
-import { normalizeId } from '@/shared/lib/normalizeId'
-import { classifySeat } from '../lib/seatState'
 import { getSeatBounds } from '@/entities/hall/lib/seatGeometry'
 import type { Hall, Seat } from '@/entities/hall/model/hall.types'
+import type { SessionAvailability } from '@/entities/session/model/session.types'
 import { bookingCopy } from '@/features/booking/config/booking.copy'
 import { formatBookingSeat } from '@/features/booking/lib/bookingDisplay'
+import { normalizeId } from '@/shared/lib/normalizeId'
 import { GridLoader } from '@/shared/ui/GridLoader'
+import { classifySeat } from '../lib/seatState'
 
 const seatDescriptions = {
   selected: bookingCopy.seats.selected,
@@ -30,11 +30,11 @@ interface SeatSelectorProps {
 const getSeatTypeStyle = (typeName: string = 'Standard') => {
   const lowerName = typeName.toLowerCase()
   if (lowerName.includes('vip') || lowerName.includes('lux'))
-    return 'text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.3)]'
+    return 'text-yellow-500'
   if (lowerName.includes('love') || lowerName.includes('sofa'))
-    return 'text-pink-500 drop-shadow-[0_0_8px_rgba(236,72,153,0.3)]'
+    return 'text-pink-500'
 
-  return 'text-zinc-500 hover:text-zinc-300'
+  return 'text-zinc-400'
 }
 
 const SeatSelector = ({
@@ -61,41 +61,44 @@ const SeatSelector = ({
   }, [hall.seats])
 
   return (
-    <div className='space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700'>
+    <div className='space-y-8'>
       <div className='flex flex-wrap justify-center gap-6 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]'>
         <div className='flex items-center gap-2'>
-          <Armchair size={18} className='text-zinc-600' />
+          <Armchair size={18} className='text-zinc-400' />
           <span>{bookingCopy.seats.available}</span>
         </div>
         <div className='flex items-center gap-2'>
           <Armchair
             size={18}
-            className='text-[var(--color-primary)] drop-shadow-[0_0_10px_rgba(239,68,68,0.6)]'
+            className='text-[var(--color-primary)]'
             fill='currentColor'
           />
           <span className='text-white'>{bookingCopy.seats.selected}</span>
         </div>
         <div className='flex items-center gap-2'>
-          <Armchair
-            size={18}
-            className='text-zinc-800'
-            fill='currentColor'
-            fillOpacity={0.2}
-          />
-          <span className='opacity-40'>{bookingCopy.seats.occupied}</span>
+          <X size={18} className='text-zinc-400' />
+          <span>{bookingCopy.seats.occupied}</span>
         </div>
 
         <div className='flex items-center gap-2'>
-          <Armchair size={18} className='text-amber-500' />
+          <LockKeyhole
+            size={18}
+            className='text-sky-400 border border-dashed border-sky-400/60 rounded'
+          />
           <span>{bookingCopy.seats.locked}</span>
         </div>
         <div className='flex items-center gap-2'>
-          <Armchair size={18} className='text-[var(--text-faint)]' />
+          <Wrench size={18} className='text-zinc-400' />
           <span>{bookingCopy.seats.maintenance}</span>
         </div>
         <div className='flex items-center gap-2'>
           <GridLoader size={16} />
           <span>{bookingCopy.seats.pending}</span>
+        </div>
+
+        <div className='flex items-center gap-2'>
+          <CircleHelp size={18} className='text-zinc-400' />
+          <span>{bookingCopy.seats.unknown}</span>
         </div>
 
         {availableTypes.map(type => {
@@ -154,38 +157,30 @@ const SeatSelector = ({
                   : bookingCopy.seats.unknown
                 : seatDescriptions[state]
 
-            let seatClasses =
-              'transition-all duration-300 transform focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] '
-            let iconFill = 'none'
-            let fillOpacity = 0
-
-            if (isOccupied) {
-              seatClasses +=
-                state === 'locked'
-                  ? 'text-amber-500 cursor-not-allowed opacity-70'
-                  : state === 'maintenance' || state === 'unknown'
-                    ? 'text-[var(--text-faint)] cursor-not-allowed opacity-50'
-                    : 'text-zinc-700 cursor-not-allowed opacity-60'
-              iconFill = 'currentColor'
-              fillOpacity = 0.2
-            } else if (isLocking) {
-              seatClasses +=
-                'text-[var(--color-primary)] opacity-50 cursor-wait scale-90'
-            } else if (isSelected) {
-              seatClasses +=
-                'text-[var(--color-primary)] scale-110 drop-shadow-[0_0_12px_rgba(239,68,68,0.6)] z-10'
-              iconFill = 'currentColor'
-              fillOpacity = 1
-            } else {
-              seatClasses +=
-                getSeatTypeStyle(seat.seatTypeName) +
-                ' hover:scale-125 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] opacity-80'
-
-              if (seat.seatTypeName.toLowerCase().includes('vip')) {
-                iconFill = 'currentColor'
-                fillOpacity = 0.3
-              }
-            }
+            const visualState =
+              !availabilityVerified && state === 'available' ? 'unknown' : state
+            const SeatIcon =
+              visualState === 'locked'
+                ? LockKeyhole
+                : visualState === 'sold'
+                  ? X
+                  : visualState === 'maintenance'
+                    ? Wrench
+                    : visualState === 'unknown'
+                      ? CircleHelp
+                      : Armchair
+            const seatClasses =
+              isOccupied || visualState === 'unknown'
+                ? state === 'locked'
+                  ? 'text-sky-400 border-sky-400/60 border-dashed bg-sky-400/5 cursor-not-allowed'
+                  : 'text-zinc-400 border-transparent cursor-not-allowed'
+                : isLocking
+                  ? 'text-[var(--color-primary)] border-transparent cursor-wait'
+                  : isSelected
+                    ? 'text-[var(--color-primary)] border-[var(--color-primary)] bg-[var(--selection-bg)]'
+                    : `${getSeatTypeStyle(seat.seatTypeName)} border-transparent hover:bg-white/10 hover:border-white/30`
+            const typeStyle = getSeatTypeStyle(seat.seatTypeName)
+            const isSpecialType = typeStyle !== 'text-zinc-400'
 
             return (
               <button
@@ -199,7 +194,7 @@ const SeatSelector = ({
                 onClick={() => {
                   if (!disabled) onToggleSeat(seat)
                 }}
-                className={`group relative flex h-8 w-8 items-center justify-center ${seatClasses}`}
+                className={`group relative flex h-8 w-8 items-center justify-center rounded border transition-colors duration-150 ${seatClasses}`}
                 title={description}
               >
                 {isLocking ? (
@@ -208,21 +203,23 @@ const SeatSelector = ({
                     className='animate-spin motion-reduce:animate-none'
                   />
                 ) : (
-                  <Armchair
-                    size={
-                      isSelected ||
-                      seat.seatTypeName.toLowerCase().includes('vip')
-                        ? 24
-                        : 20
-                    }
+                  <SeatIcon
+                    aria-hidden='true'
+                    size={22}
                     strokeWidth={2}
-                    fill={iconFill}
-                    fillOpacity={fillOpacity}
+                    fill={isSelected ? 'currentColor' : 'none'}
                   />
                 )}
 
-                {!isLocking && !isOccupied && (
-                  <div className='absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 whitespace-nowrap z-20 scale-90 group-hover:scale-100'>
+                {isSpecialType && (
+                  <span
+                    aria-hidden='true'
+                    className={`absolute bottom-0 left-2 right-2 h-0.5 rounded-full bg-current ${typeStyle}`}
+                  />
+                )}
+
+                {!disabled && (
+                  <div className='absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap z-20'>
                     {bookingCopy.seats.hoverLabel(seat.row, seat.number)}
                   </div>
                 )}

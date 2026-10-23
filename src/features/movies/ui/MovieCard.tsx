@@ -28,7 +28,7 @@ const MovieCard = ({ movie, sessions, technologies }: MovieCardProps) => {
     : movieCopy.card.missingGenre
 
   return (
-    <div className='group relative bg-[var(--bg-card)] rounded-2xl overflow-hidden border border-white/5 transition-all duration-300 hover:border-[var(--color-primary)]/30 hover:shadow-2xl hover:-translate-y-1 h-full flex flex-col'>
+    <div className='group relative bg-[var(--bg-card)] rounded-2xl overflow-hidden border border-white/5 transition-colors duration-150 hover:border-[var(--color-primary)]/30 focus-within:border-[var(--color-primary)]/30 h-full flex flex-col'>
       <div className='relative aspect-[2/3] overflow-hidden bg-zinc-900'>
         <img
           src={movie.posterUrl || movie.backdropUrl}
@@ -37,10 +37,10 @@ const MovieCard = ({ movie, sessions, technologies }: MovieCardProps) => {
           loading='lazy'
         />
 
-        <div className='hover-actions absolute inset-0 bg-black/60 transition-opacity duration-300 flex flex-col items-center justify-center backdrop-blur-[2px] gap-3'>
+        <div className='hover-actions absolute inset-0 bg-black/60 transition-opacity duration-150 flex flex-col items-center justify-center backdrop-blur-[2px] gap-3'>
           <Link
             to={`/movies/${movie.id}`}
-            className='bg-white/10 border border-white/20 text-white font-bold py-2.5 px-6 rounded-full transform translate-y-4 group-hover:translate-y-0 group-focus-within:translate-y-0 transition-all duration-300 hover:bg-white hover:text-black'
+            className='bg-white/10 border border-white/20 text-white font-bold py-2.5 px-6 rounded-full transition-colors duration-150 hover:bg-white hover:text-black'
           >
             {movieCopy.card.details}
           </Link>
@@ -79,7 +79,7 @@ const MovieCard = ({ movie, sessions, technologies }: MovieCardProps) => {
                     key={st.id}
                     to={`/booking/${movie.id}`}
                     state={{ sessionId: st.id }}
-                    className='bg-white/5 hover:bg-[var(--color-primary)] hover:text-white border border-white/10 hover:border-[var(--color-primary)] rounded-lg px-2.5 py-1.5 text-center transition-all duration-200 flex-grow sm:flex-grow-0 min-w-[55px] group/btn'
+                    className='bg-white/5 hover:bg-[var(--color-primary)] hover:text-white border border-white/10 hover:border-[var(--color-primary)] rounded-lg px-2.5 py-1.5 text-center transition-colors duration-150 flex-grow sm:flex-grow-0 min-w-[55px] group/btn'
                   >
                     <span className='block text-sm font-bold leading-none mb-0.5'>
                       {new Date(st.startTime).toLocaleTimeString([], {

@@ -50,7 +50,7 @@ const ConfirmModal = ({
       titleId={titleId}
       descriptionId={messageId}
       isBusy={isBusy}
-      className='max-w-sm rounded-2xl p-6 scale-100 animate-in zoom-in-95 duration-200'
+      className='max-w-sm rounded-2xl p-6 scale-100 motion-reduce:animate-none animate-in zoom-in-95 duration-200'
     >
       <div className='flex min-h-0 items-start gap-4 mb-4 overflow-y-auto overscroll-contain'>
         <div

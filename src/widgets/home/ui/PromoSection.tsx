@@ -50,7 +50,7 @@ const PromoSection = () => {
             </div>
 
             <div className='md:w-1/2 flex justify-center perspective-[1000px]'>
-              <div className='relative w-80 max-w-full h-52 bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl shadow-lg transform rotate-6 group-hover:rotate-3 transition-all duration-700 ease-out flex flex-col justify-between p-6 select-none overflow-hidden'>
+              <div className='relative w-80 max-w-full h-52 bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl shadow-lg motion-safe:rotate-6 motion-safe:group-hover:rotate-3 transition-transform duration-200 ease-out flex flex-col justify-between p-6 select-none overflow-hidden'>
                 <div className='flex justify-between items-start relative z-10'>
                   <div>
                     <span className='block text-xl font-black text-white tracking-widest italic'>

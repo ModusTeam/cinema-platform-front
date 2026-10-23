@@ -25,9 +25,9 @@ const SessionSelector = ({
   )
 
   return (
-    <div className='space-y-8 animate-in fade-in slide-in-from-left-4 duration-500'>
+    <div className='space-y-8'>
       <div className='flex items-center gap-3'>
-        <div className='h-8 w-1 bg-[var(--color-primary)] rounded-full shadow-[0_0_15px_var(--color-primary)]'></div>
+        <div className='h-8 w-1 bg-[var(--color-primary)] rounded-full'></div>
         <h2 className='type-section text-2xl text-white'>
           {bookingCopy.selectSession}
         </h2>
@@ -76,14 +76,7 @@ const SessionSelector = ({
                       key={session.id}
                       onClick={() => onSelect(session)}
                       aria-pressed={isSelected}
-                      className={`
-                                selection-control group relative overflow-hidden rounded-xl px-5 py-3 flex flex-col items-center min-w-[100px]
-                                ${
-                                  isSelected
-                                    ? 'shadow-[0_0_20px_rgba(239,68,68,0.4)] scale-105'
-                                    : ''
-                                }
-                            `}
+                      className='selection-control group relative overflow-hidden rounded-xl px-5 py-3 flex flex-col items-center min-w-[100px]'
                     >
                       <div className='flex items-center gap-1.5 text-lg font-bold leading-none'>
                         <Clock
