@@ -2,7 +2,7 @@ import { X } from 'lucide-react'
 import { useEffect, useId, useState } from 'react'
 import { moviesService } from '@/entities/movie/api/movies.service'
 import { type Movie, MovieStatus } from '@/entities/movie/model/movie.types'
-import { GridLoader } from '@/shared/ui/GridLoader'
+import Button from '@/shared/ui/Button'
 import Input from '@/shared/ui/Input'
 import { Dialog } from '@/shared/ui/modals/Dialog'
 import { useToast } from '@/shared/ui/toast/ToastContext'
@@ -91,19 +91,20 @@ const EditMovieModal = ({
           id={titleId}
           tabIndex={-1}
           data-modal-initial-focus
-          className='text-xl font-bold text-white'
+          className='type-section text-white'
         >
           Редагувати фільм
         </h2>
-        <button
+        <Button
           type='button'
           onClick={onClose}
           disabled={isSaving}
           aria-label='Закрити діалог'
-          className='text-[var(--text-muted)] hover:text-white'
+          variant='ghost'
+          className='min-h-0 p-0'
         >
           <X size={24} />
-        </button>
+        </Button>
       </div>
 
       <form onSubmit={handleSubmit} className='flex min-h-0 flex-col'>
@@ -117,11 +118,8 @@ const EditMovieModal = ({
               }
             />
 
-            <div className='space-y-1.5'>
-              <label
-                htmlFor={`${fieldId}-status`}
-                className='text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider ml-1'
-              >
+            <div className='space-y-2'>
+              <label htmlFor={`${fieldId}-status`} className='field-label'>
                 Статус
               </label>
               <select
@@ -133,7 +131,7 @@ const EditMovieModal = ({
                     status: Number(e.target.value) as MovieStatus,
                   })
                 }
-                className='w-full rounded-xl border border-white/10 bg-[var(--bg-main)] px-4 py-3 text-sm text-white focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] appearance-none cursor-pointer'
+                className='field'
               >
                 <option value={MovieStatus.ComingSoon}>Скоро у кіно</option>
                 <option value={MovieStatus.Active}>У прокаті (Active)</option>
@@ -142,11 +140,8 @@ const EditMovieModal = ({
             </div>
           </div>
 
-          <div className='space-y-1.5'>
-            <label
-              htmlFor={`${fieldId}-description`}
-              className='text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider ml-1'
-            >
+          <div className='space-y-2'>
+            <label htmlFor={`${fieldId}-description`} className='field-label'>
               Опис
             </label>
             <textarea
@@ -155,7 +150,7 @@ const EditMovieModal = ({
               onChange={e =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className='w-full rounded-xl border border-white/10 bg-[var(--bg-main)] px-4 py-3 text-sm text-white placeholder:text-white/20 focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] min-h-[100px]'
+              className='field'
             />
           </div>
 
@@ -185,22 +180,17 @@ const EditMovieModal = ({
           />
         </div>
         <div className='flex shrink-0 justify-end gap-3 p-6 pt-4 border-t border-white/10'>
-          <button
+          <Button
             type='button'
             onClick={onClose}
             disabled={isSaving}
-            className='px-6 py-2 rounded-lg text-sm font-bold text-[var(--text-muted)] hover:text-white transition-colors'
+            variant='secondary'
           >
             Скасувати
-          </button>
-          <button
-            type='submit'
-            disabled={isSaving}
-            className='flex items-center gap-2 bg-[var(--color-primary)] text-white px-6 py-2 rounded-lg font-bold hover:bg-[var(--color-primary-hover)] transition-all shadow-lg disabled:opacity-50'
-          >
-            {isSaving && <GridLoader className='animate-spin' size={16} />}
+          </Button>
+          <Button type='submit' disabled={isSaving} isLoading={isSaving}>
             Зберегти
-          </button>
+          </Button>
         </div>
       </form>
     </Dialog>

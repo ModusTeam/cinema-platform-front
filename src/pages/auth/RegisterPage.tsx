@@ -1,13 +1,13 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
+import { ArrowRight, Ticket } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
 import { Link, useNavigate } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
+import * as z from 'zod'
 import { authService } from '@/features/auth/api/auth.service'
+import Button from '@/shared/ui/Button'
 import Input from '@/shared/ui/Input'
-import { Ticket, ArrowRight } from 'lucide-react'
-import { GridLoader } from '@/shared/ui/GridLoader'
 
 const registerSchema = z
   .object({
@@ -50,7 +50,9 @@ const RegisterPage = () => {
     },
     onError: (error: unknown) => {
       console.error(error)
-      setServerError(error instanceof Error ? error.message : 'Помилка реєстрації')
+      setServerError(
+        error instanceof Error ? error.message : 'Помилка реєстрації',
+      )
     },
   })
 
@@ -70,7 +72,7 @@ const RegisterPage = () => {
           <div className='w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-8 border border-white/20 transform -rotate-3'>
             <Ticket size={32} className='text-[var(--color-primary)]' />
           </div>
-          <h2 className='text-4xl font-black text-white mb-4 tracking-tight leading-tight'>
+          <h2 className='type-display text-white mb-4 sm:text-4xl'>
             Приєднуйся до клубу
           </h2>
           <p className='text-lg text-[var(--text-muted)]'>
@@ -85,10 +87,8 @@ const RegisterPage = () => {
 
         <div className='w-full max-w-md space-y-8 glass-panel p-8 sm:p-10 rounded-3xl shadow-2xl relative z-10 animate-in fade-in zoom-in-95 duration-500'>
           <div className='text-center'>
-            <h2 className='text-3xl font-bold tracking-tight text-white mb-2'>
-              Створити акаунт
-            </h2>
-            <p className='text-sm text-[var(--text-muted)]'>
+            <h2 className='type-page text-white mb-2'>Створити акаунт</h2>
+            <p className='type-caption text-sm text-[var(--text-muted)]'>
               Заповніть форму для реєстрації
             </p>
           </div>
@@ -139,22 +139,16 @@ const RegisterPage = () => {
               {...register('confirmPassword')}
             />
 
-            <button
+            <Button
               type='submit'
-              disabled={isSubmitting}
-              className='w-full flex items-center justify-center gap-2 rounded-xl bg-white py-3.5 text-sm font-bold text-black transition-all hover:bg-zinc-200 hover:shadow-lg active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed mt-4'
+              isLoading={isSubmitting}
+              className='w-full py-3.5 mt-4'
             >
-              {isSubmitting ? (
-                <GridLoader className='mr-2 h-5 w-5 animate-spin' />
-              ) : (
-                <>
-                  Створити акаунт <ArrowRight size={16} />
-                </>
-              )}
-            </button>
+              Створити акаунт <ArrowRight size={16} aria-hidden='true' />
+            </Button>
           </form>
 
-          <p className='text-center text-sm text-[var(--text-muted)]'>
+          <p className='text-center type-caption text-sm text-[var(--text-muted)]'>
             Вже є акаунт?{' '}
             <Link
               to='/auth/login'

@@ -1,15 +1,15 @@
-import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import EmptyState from '@/shared/ui/EmptyState'
-import { MovieStatus } from '@/entities/movie/model/movie.types'
-import { moviesService } from '@/entities/movie/api/movies.service'
-import { sessionsService } from '@/entities/session/api/sessions.service'
-import { hallsService } from '@/entities/hall/api/halls.service'
-import MovieCard from '@/features/movies/ui/MovieCard'
-import { CalendarDays, Clock, Calendar } from 'lucide-react'
-import { GridLoader } from '@/shared/ui/GridLoader'
 import { clsx } from 'clsx'
+import { Calendar, CalendarDays, Clock } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { hallsService } from '@/entities/hall/api/halls.service'
+import { moviesService } from '@/entities/movie/api/movies.service'
+import { MovieStatus } from '@/entities/movie/model/movie.types'
+import { sessionsService } from '@/entities/session/api/sessions.service'
 import { addMovieSessionMetadata } from '@/features/movies/lib/movieSessionMetadata'
+import MovieCard from '@/features/movies/ui/MovieCard'
+import EmptyState from '@/shared/ui/EmptyState'
+import { GridLoader } from '@/shared/ui/GridLoader'
 import UnavailableState from '@/shared/ui/UnavailableState'
 
 const generateDates = () => {
@@ -37,7 +37,12 @@ const MoviesGrid = () => {
 
   const dates = generateDates()
 
-  const { data: movies = [], isLoading, isError, refetch } = useQuery({
+  const {
+    data: movies = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ['home-movies-aggregated'],
     queryFn: async () => {
       const [moviesData, allSessions, hallsData] = await Promise.all([
@@ -92,11 +97,10 @@ const MoviesGrid = () => {
           <button
             type='button'
             onClick={() => setActiveTab('now')}
+            aria-pressed={activeTab === 'now'}
             className={clsx(
-              'px-6 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all',
-              activeTab === 'now'
-                ? 'bg-[var(--color-primary)] text-white shadow-lg'
-                : 'text-[var(--text-muted)] hover:text-white hover:bg-white/5',
+              'selection-control px-6 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2',
+              activeTab === 'now' && 'shadow-lg',
             )}
           >
             <CalendarDays size={16} /> Розклад
@@ -104,11 +108,10 @@ const MoviesGrid = () => {
           <button
             type='button'
             onClick={() => setActiveTab('soon')}
+            aria-pressed={activeTab === 'soon'}
             className={clsx(
-              'px-6 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all',
-              activeTab === 'soon'
-                ? 'bg-yellow-500 text-black shadow-lg'
-                : 'text-[var(--text-muted)] hover:text-white hover:bg-white/5',
+              'selection-control px-6 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2',
+              activeTab === 'soon' && 'shadow-lg',
             )}
           >
             <Clock size={16} /> Скоро
@@ -132,11 +135,11 @@ const MoviesGrid = () => {
                     type='button'
                     key={date.toDateString()}
                     onClick={() => setSelectedDate(date)}
+                    aria-pressed={isSelected}
                     className={clsx(
-                      'flex flex-col items-center justify-center w-14 h-16 rounded-xl border transition-all duration-300',
-                      isSelected
-                        ? 'bg-white text-black border-white shadow-[0_0_15px_rgba(255,255,255,0.3)] scale-110 z-10 font-bold'
-                        : 'bg-[var(--bg-card)] text-[var(--text-muted)] border-white/5 hover:border-white/20 hover:text-white hover:bg-white/5',
+                      'selection-control flex flex-col items-center justify-center w-14 h-16 rounded-xl',
+                      isSelected &&
+                        'shadow-[0_0_15px_rgba(239,68,68,0.3)] scale-110 z-10 font-bold',
                     )}
                   >
                     <span className='text-[10px] uppercase tracking-wider opacity-80'>

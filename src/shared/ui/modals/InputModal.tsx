@@ -1,5 +1,6 @@
-import { Loader2, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import { useEffect, useId, useState } from 'react'
+import Button from '@/shared/ui/Button'
 import Input from '@/shared/ui/Input'
 import { Dialog } from './Dialog'
 
@@ -59,20 +60,18 @@ const InputModal = ({
       isBusy={isSubmitting}
       className='max-w-md p-6 scale-100 animate-in zoom-in-95 duration-200 relative'
     >
-      <button
+      <Button
         type='button'
         onClick={onClose}
         disabled={isSubmitting}
         aria-label='Закрити діалог'
-        className='absolute top-4 right-4 text-[var(--text-muted)] hover:text-white transition-colors'
+        variant='ghost'
+        className='absolute top-4 right-4 min-h-0 p-0'
       >
         <X size={20} />
-      </button>
+      </Button>
 
-      <h2
-        id={titleId}
-        className='shrink-0 text-xl font-bold text-white mb-6 pr-6'
-      >
+      <h2 id={titleId} className='shrink-0 type-section text-white mb-6 pr-6'>
         {title}
       </h2>
 
@@ -91,22 +90,21 @@ const InputModal = ({
         </div>
 
         <div className='flex shrink-0 justify-end gap-3'>
-          <button
+          <Button
             type='button'
             onClick={onClose}
             disabled={isSubmitting}
-            className='px-4 py-2 rounded-lg text-sm font-bold text-[var(--text-muted)] hover:text-white hover:bg-white/5 transition-colors'
+            variant='secondary'
           >
             Скасувати
-          </button>
-          <button
+          </Button>
+          <Button
             type='submit'
             disabled={isSubmitting || !value.trim()}
-            className='flex items-center gap-2 px-6 py-2 rounded-lg text-sm font-bold text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] transition-all shadow-lg shadow-[var(--color-primary)]/20 disabled:opacity-50 disabled:cursor-not-allowed'
+            isLoading={isSubmitting}
           >
-            {isSubmitting && <Loader2 size={16} className='animate-spin' />}
             {confirmText}
-          </button>
+          </Button>
         </div>
       </form>
     </Dialog>

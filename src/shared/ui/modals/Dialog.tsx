@@ -37,7 +37,7 @@ export const Dialog = ({
         aria-busy={isBusy || undefined}
         tabIndex={-1}
         className={cn(
-          'flex max-h-[calc(100dvh-2rem)] min-h-0 w-full flex-col overflow-hidden bg-[var(--bg-card)] border border-white/10 rounded-xl shadow-2xl',
+          'flex max-h-[calc(100dvh-2rem)] min-h-0 w-full flex-col overflow-hidden bg-[var(--surface-elevated)] border border-[var(--border-default)] rounded-xl shadow-2xl',
           className,
         )}
       >

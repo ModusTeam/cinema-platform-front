@@ -63,4 +63,24 @@ describe('shared Input accessibility markup', () => {
     assert.ok(!markup.includes('role="alert"'))
     assert.ok(!markup.includes('-error'))
   })
+
+  it('associates hints and errors alongside external descriptions', () => {
+    const markup = renderToStaticMarkup(
+      createElement(Input, {
+        id: 'password',
+        label: 'Пароль',
+        hint: 'Мінімум 6 символів',
+        error: 'Введіть пароль',
+        'aria-describedby': 'external-help',
+      }),
+    )
+    assert.ok(markup.includes('id="password-hint"'))
+    assert.ok(markup.includes('Мінімум 6 символів'))
+    assert.ok(
+      markup.includes(
+        'aria-describedby="external-help password-hint password-error"',
+      ),
+    )
+    assert.ok(markup.includes('aria-invalid="true"'))
+  })
 })

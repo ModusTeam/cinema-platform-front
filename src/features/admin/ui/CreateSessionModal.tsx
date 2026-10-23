@@ -1,6 +1,7 @@
 import { Calendar, Clock, DollarSign, Film, MonitorPlay, X } from 'lucide-react'
 import { useId } from 'react'
 import { useCreateSession } from '@/features/admin/model/useCreateSession'
+import Button from '@/shared/ui/Button'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import { Dialog } from '@/shared/ui/modals/Dialog'
 import UnavailableState from '@/shared/ui/UnavailableState'
@@ -54,19 +55,20 @@ const CreateSessionModal = ({
           id={titleId}
           tabIndex={-1}
           data-modal-initial-focus
-          className='text-xl font-bold text-white'
+          className='type-section text-white'
         >
           Додати сеанс
         </h2>
-        <button
+        <Button
           type='button'
           onClick={onClose}
           disabled={isSubmitting}
           aria-label='Закрити діалог'
-          className='text-[var(--text-muted)] hover:text-white transition-colors'
+          variant='ghost'
+          className='min-h-0 p-0'
         >
           <X size={24} />
-        </button>
+        </Button>
       </div>
 
       {isLoadingData ? (
@@ -93,7 +95,7 @@ const CreateSessionModal = ({
             <div>
               <label
                 htmlFor={`${fieldId}-movie`}
-                className='text-xs font-medium text-[var(--text-muted)] mb-1.5 flex items-center gap-2'
+                className='field-label mb-2 flex items-center gap-2'
               >
                 <Film size={14} /> Фільм
               </label>
@@ -101,7 +103,7 @@ const CreateSessionModal = ({
                 id={`${fieldId}-movie`}
                 value={movieId}
                 onChange={e => setMovieId(e.target.value)}
-                className='w-full rounded-lg bg-[var(--bg-main)] border border-white/10 p-3 text-white focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all appearance-none cursor-pointer hover:bg-[var(--bg-hover)]'
+                className='field'
               >
                 {movies.map(m => (
                   <option key={m.id} value={m.id}>
@@ -115,7 +117,7 @@ const CreateSessionModal = ({
               <div>
                 <label
                   htmlFor={`${fieldId}-hall`}
-                  className='text-xs font-medium text-[var(--text-muted)] mb-1.5 flex items-center gap-2'
+                  className='field-label mb-2 flex items-center gap-2'
                 >
                   <MonitorPlay size={14} /> Зал
                 </label>
@@ -123,7 +125,7 @@ const CreateSessionModal = ({
                   id={`${fieldId}-hall`}
                   value={hallId}
                   onChange={e => setHallId(e.target.value)}
-                  className='w-full rounded-lg bg-[var(--bg-main)] border border-white/10 p-3 text-white focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all appearance-none cursor-pointer hover:bg-[var(--bg-hover)]'
+                  className='field'
                 >
                   {halls.map(h => (
                     <option key={h.id} value={h.id}>
@@ -136,7 +138,7 @@ const CreateSessionModal = ({
               <div>
                 <label
                   htmlFor={`${fieldId}-pricing`}
-                  className='text-xs font-medium text-[var(--text-muted)] mb-1.5 flex items-center gap-2'
+                  className='field-label mb-2 flex items-center gap-2'
                 >
                   <DollarSign size={14} /> Тариф
                 </label>
@@ -144,7 +146,7 @@ const CreateSessionModal = ({
                   id={`${fieldId}-pricing`}
                   value={pricingId}
                   onChange={e => setPricingId(e.target.value)}
-                  className='w-full rounded-lg bg-[var(--bg-main)] border border-white/10 p-3 text-white focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all appearance-none cursor-pointer hover:bg-[var(--bg-hover)]'
+                  className='field'
                 >
                   {pricings.length === 0 && (
                     <option disabled>Немає тарифів</option>
@@ -162,7 +164,7 @@ const CreateSessionModal = ({
               <div>
                 <label
                   htmlFor={`${fieldId}-date`}
-                  className='text-xs font-medium text-[var(--text-muted)] mb-1.5 flex items-center gap-2'
+                  className='field-label mb-2 flex items-center gap-2'
                 >
                   <Calendar size={14} /> Дата
                 </label>
@@ -171,14 +173,14 @@ const CreateSessionModal = ({
                   type='date'
                   value={date}
                   onChange={e => setDate(e.target.value)}
-                  className='w-full rounded-lg bg-[var(--bg-main)] border border-white/10 p-3 text-white focus:border-[var(--color-primary)] [color-scheme:dark]'
+                  className='field'
                   min={new Date().toISOString().split('T')[0]}
                 />
               </div>
               <div>
                 <label
                   htmlFor={`${fieldId}-time`}
-                  className='text-xs font-medium text-[var(--text-muted)] mb-1.5 flex items-center gap-2'
+                  className='field-label mb-2 flex items-center gap-2'
                 >
                   <Clock size={14} /> Час початку
                 </label>
@@ -187,32 +189,28 @@ const CreateSessionModal = ({
                   type='time'
                   value={time}
                   onChange={e => setTime(e.target.value)}
-                  className='w-full rounded-lg bg-[var(--bg-main)] border border-white/10 p-3 text-white focus:border-[var(--color-primary)] [color-scheme:dark]'
+                  className='field'
                 />
               </div>
             </div>
           </div>
           <div className='shrink-0 pt-4 flex justify-end gap-3 border-t border-white/5 mt-6'>
-            <button
+            <Button
               type='button'
               onClick={onClose}
               disabled={isSubmitting}
-              className='px-5 py-2.5 rounded-lg text-sm font-medium text-[var(--text-muted)] hover:text-white hover:bg-white/5 transition-colors'
+              variant='secondary'
             >
               Скасувати
-            </button>
-            <button
+            </Button>
+            <Button
               type='submit'
               disabled={isSubmitting}
-              className='bg-[var(--color-primary)] text-white text-sm font-bold px-6 py-2.5 rounded-lg hover:bg-[var(--color-primary-hover)] disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2 transition-colors shadow-lg shadow-[var(--color-primary)]/20'
+              isLoading={isSubmitting}
             >
-              {isSubmitting ? (
-                <GridLoader size={16} className='animate-spin' />
-              ) : (
-                <Calendar size={16} />
-              )}
+              {!isSubmitting && <Calendar size={16} aria-hidden='true' />}
               {isSubmitting ? 'Створення...' : 'Запланувати'}
-            </button>
+            </Button>
           </div>
         </form>
       )}

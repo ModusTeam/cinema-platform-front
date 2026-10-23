@@ -20,6 +20,7 @@ import type {
   HallSaveScope,
 } from '@/features/admin/model/hallBuilder.types'
 import { useHallBuilder } from '@/features/admin/model/useHallBuilder'
+import Button from '@/shared/ui/Button'
 import ConfirmModal from '@/shared/ui/modals/ConfirmModal'
 import UnavailableState from '@/shared/ui/UnavailableState'
 import { HALL_EDITOR_LIMITS } from '../config/hallEditor.config'
@@ -154,10 +155,7 @@ const HallBuilder = ({
             </h4>
             <div className='flex gap-4'>
               <div className='flex flex-col gap-1'>
-                <label
-                  htmlFor='hall-rows'
-                  className='text-xs text-[var(--text-muted)]'
-                >
+                <label htmlFor='hall-rows' className='field-label'>
                   Рядів
                 </label>
                 <input
@@ -167,14 +165,11 @@ const HallBuilder = ({
                   max={maxRows}
                   value={rowInput}
                   onChange={e => setRowInput(e.target.value)}
-                  className='w-20 rounded bg-[var(--bg-main)] px-3 py-2 text-white border border-white/10 disabled:opacity-50 disabled:cursor-not-allowed focus:border-[var(--color-primary)] focus:outline-none'
+                  className='field w-24'
                 />
               </div>
               <div className='flex flex-col gap-1'>
-                <label
-                  htmlFor='hall-cols'
-                  className='text-xs text-[var(--text-muted)]'
-                >
+                <label htmlFor='hall-cols' className='field-label'>
                   Стовпців
                 </label>
                 <input
@@ -184,10 +179,10 @@ const HallBuilder = ({
                   max={maxCols}
                   value={colInput}
                   onChange={e => setColInput(e.target.value)}
-                  className='w-20 rounded bg-[var(--bg-main)] px-3 py-2 text-white border border-white/10 disabled:opacity-50 disabled:cursor-not-allowed focus:border-[var(--color-primary)] focus:outline-none'
+                  className='field w-24'
                 />
               </div>
-              <button
+              <Button
                 type='button'
                 disabled={!validDimensions || !dimensionsChanged}
                 onClick={() => {
@@ -195,13 +190,14 @@ const HallBuilder = ({
                   setColInput(String(Number(colInput)))
                   requestResize(Number(rowInput), Number(colInput))
                 }}
-                className='self-end rounded border border-white/10 px-3 py-2 text-sm text-[var(--text-main)] hover:bg-white/5 disabled:opacity-50'
+                variant='secondary'
+                className='self-end px-3'
               >
                 Застосувати
-              </button>
+              </Button>
             </div>
             {!validDimensions && (
-              <p className='text-xs text-[var(--text-muted)]'>
+              <p className='field-hint'>
                 Рядів: 1–{maxRows}, стовпців: 1–{maxCols}. Вкажіть цілі числа.
               </p>
             )}
@@ -224,7 +220,7 @@ const HallBuilder = ({
                     className={clsx(
                       'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all border',
                       isSelected
-                        ? 'border-white bg-white/10 text-white shadow-lg'
+                        ? 'border-[var(--selection-border)] bg-[var(--selection-bg)] text-[var(--text-main)] shadow-lg'
                         : 'border-transparent hover:bg-white/5 text-[var(--text-muted)]',
                     )}
                   >
@@ -242,7 +238,7 @@ const HallBuilder = ({
                 className={clsx(
                   'flex items-center gap-2 rounded-lg border px-3 py-2 text-sm',
                   tool === 'erase'
-                    ? 'border-white bg-white/10 text-white'
+                    ? 'border-[var(--selection-border)] bg-[var(--selection-bg)] text-[var(--text-main)]'
                     : 'border-transparent text-[var(--text-muted)] hover:bg-white/5',
                 )}
               >
@@ -269,7 +265,7 @@ const HallBuilder = ({
                   className={clsx(
                     'px-3 py-1 text-xs rounded-full border transition-all',
                     selectedTechIds.includes(tech.id)
-                      ? 'bg-[var(--color-primary)]/20 border-[var(--color-primary)] text-[var(--color-primary)]'
+                      ? 'bg-[var(--selection-bg)] border-[var(--selection-border)] text-[var(--text-main)]'
                       : 'bg-[var(--bg-main)] border-white/10 text-[var(--text-muted)] hover:border-white/30',
                   )}
                 >
@@ -279,23 +275,24 @@ const HallBuilder = ({
             </div>
           </div>
           {isEditing && (
-            <button
+            <Button
               type='button'
               onClick={() => handleSave('metadata')}
-              className='rounded-lg border border-white/10 px-4 py-3 text-sm text-[var(--text-main)] hover:bg-white/5'
+              variant='secondary'
             >
               Зберегти лише назву та технології
-            </button>
+            </Button>
           )}
-          <button
+          <Button
             type='button'
             onClick={() => handleSave('all')}
             disabled={!canSaveLayout}
-            className='flex items-center gap-2 rounded-lg bg-[var(--color-success)] px-6 py-3 text-sm font-bold text-white hover:brightness-110 ml-auto shadow-lg shadow-[var(--color-success)]/20 disabled:opacity-50 disabled:cursor-not-allowed'
+            variant='success'
+            className='ml-auto px-6 py-3'
           >
             <Save size={18} />{' '}
             {isEditing ? 'Зберегти зміни' : 'Згенерувати зал'}
-          </button>
+          </Button>
         </div>
         <output className='block text-sm text-[var(--text-muted)]'>
           Місць: {gridConfig?.size ?? 0}

@@ -1,5 +1,3 @@
-import { useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { clsx } from 'clsx'
 import {
@@ -13,28 +11,29 @@ import {
   LayoutDashboard,
   Lock,
   LogOut,
+  type LucideIcon,
   Save,
   Settings,
   Shield,
   Sparkles,
   Ticket,
   User,
-  type LucideIcon,
 } from 'lucide-react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { Link, useNavigate } from 'react-router-dom'
 import * as z from 'zod'
-
-import { AuroraText } from '@/shared/ui/AuroraText'
-import EmptyState from '@/shared/ui/EmptyState'
-import UnavailableState from '@/shared/ui/UnavailableState'
-import { GridLoader } from '@/shared/ui/GridLoader'
-import Input from '@/shared/ui/Input'
+import type { LoyaltyTier } from '@/entities/account/model/account.types'
+import AchievementsTabPanel from '@/features/loyalty/achievements/AchievementsTabPanel'
 import { LOYALTY_TIER_THRESHOLDS } from '@/features/loyalty/config/loyalty'
 import { useLoyalty } from '@/features/loyalty/model/useLoyalty'
-import AchievementsTabPanel from '@/features/loyalty/achievements/AchievementsTabPanel'
-import TicketCard from '@/features/profile/ui/TicketCard'
 import { type TabType, useProfile } from '@/features/profile/model/useProfile'
-import type { LoyaltyTier } from '@/entities/account/model/account.types'
+import TicketCard from '@/features/profile/ui/TicketCard'
+import { AuroraText } from '@/shared/ui/AuroraText'
+import EmptyState from '@/shared/ui/EmptyState'
+import { GridLoader } from '@/shared/ui/GridLoader'
+import Input from '@/shared/ui/Input'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 const profileSchema = z
   .object({
@@ -292,7 +291,7 @@ const ProfilePage = () => {
               <User size={14} />
               Персональний простір
             </span>
-            <h1 className='text-4xl font-black uppercase tracking-tighter text-white md:text-5xl'>
+            <h1 className='type-display uppercase tracking-tighter text-white sm:text-4xl md:text-5xl'>
               Особистий <AuroraText className='font-black'>Кабінет</AuroraText>
             </h1>
             <p className='mt-2 max-w-xl text-base text-[var(--text-muted)]'>
@@ -327,9 +326,7 @@ const ProfilePage = () => {
               </div>
 
               <div className='min-w-0'>
-                <h2 className='truncate text-xl font-bold text-white'>
-                  {fullName}
-                </h2>
+                <h2 className='type-section truncate text-white'>{fullName}</h2>
                 <div className='mt-1 flex flex-wrap items-center gap-2 text-xs text-zinc-500'>
                   <span className='inline-flex items-center gap-1 rounded-full bg-white/5 px-2 py-1 capitalize'>
                     <Shield size={12} />
@@ -427,11 +424,10 @@ const ProfilePage = () => {
                     key={tab.id}
                     type='button'
                     onClick={() => setActiveTab(tab.id)}
+                    aria-pressed={activeTab === tab.id}
                     className={clsx(
-                      'flex items-center gap-3 rounded-xl px-4 py-3 text-left transition-all',
-                      activeTab === tab.id
-                        ? 'bg-white/10 text-white shadow-lg ring-1 ring-white/10'
-                        : 'text-zinc-500 hover:bg-white/5 hover:text-white',
+                      'selection-control flex items-center gap-3 rounded-xl px-4 py-3 text-left',
+                      activeTab === tab.id && 'shadow-lg',
                     )}
                   >
                     <Icon

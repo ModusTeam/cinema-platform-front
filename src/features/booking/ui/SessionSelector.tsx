@@ -1,7 +1,7 @@
-import type { Session } from '@/entities/session/model/session.types'
 import { Clock } from 'lucide-react'
-import { bookingCopy } from '@/features/booking/config/booking.copy'
 import { DEFAULT_SESSION_PRICE } from '@/entities/session/config/session.constants'
+import type { Session } from '@/entities/session/model/session.types'
+import { bookingCopy } from '@/features/booking/config/booking.copy'
 
 interface SessionSelectorProps {
   sessions: Session[]
@@ -28,7 +28,7 @@ const SessionSelector = ({
     <div className='space-y-8 animate-in fade-in slide-in-from-left-4 duration-500'>
       <div className='flex items-center gap-3'>
         <div className='h-8 w-1 bg-[var(--color-primary)] rounded-full shadow-[0_0_15px_var(--color-primary)]'></div>
-        <h2 className='text-2xl font-bold text-white'>
+        <h2 className='type-section text-2xl text-white'>
           {bookingCopy.selectSession}
         </h2>
       </div>
@@ -75,12 +75,13 @@ const SessionSelector = ({
                       type='button'
                       key={session.id}
                       onClick={() => onSelect(session)}
+                      aria-pressed={isSelected}
                       className={`
-                                group relative overflow-hidden rounded-xl px-5 py-3 transition-all duration-300 border flex flex-col items-center min-w-[100px]
+                                selection-control group relative overflow-hidden rounded-xl px-5 py-3 flex flex-col items-center min-w-[100px]
                                 ${
                                   isSelected
-                                    ? 'bg-[var(--color-primary)] border-[var(--color-primary)] text-white shadow-[0_0_20px_rgba(239,68,68,0.4)] scale-105'
-                                    : 'bg-[var(--bg-card)] border-white/10 text-zinc-400 hover:border-white/30 hover:text-white hover:bg-white/5'
+                                    ? 'shadow-[0_0_20px_rgba(239,68,68,0.4)] scale-105'
+                                    : ''
                                 }
                             `}
                     >
@@ -96,7 +97,7 @@ const SessionSelector = ({
                         {time}
                       </div>
                       <div
-                        className={`text-[10px] font-medium mt-1 uppercase tracking-wide transition-colors ${isSelected ? 'text-white/80' : 'text-[var(--text-muted)] group-hover:text-zinc-300'}`}
+                        className={`text-[10px] font-medium mt-1 uppercase tracking-wide transition-colors ${isSelected ? 'text-[var(--text-main)]' : 'text-[var(--text-muted)] group-hover:text-zinc-300'}`}
                       >
                         {session.priceBase || DEFAULT_SESSION_PRICE} ₴
                       </div>

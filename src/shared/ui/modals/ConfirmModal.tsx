@@ -1,5 +1,6 @@
-import { AlertTriangle, Loader2 } from 'lucide-react'
+import { AlertTriangle } from 'lucide-react'
 import { useId, useRef, useState } from 'react'
+import Button from '@/shared/ui/Button'
 import { Dialog } from './Dialog'
 
 interface ConfirmModalProps {
@@ -58,15 +59,12 @@ const ConfirmModal = ({
           <AlertTriangle size={24} />
         </div>
         <div>
-          <h3
-            id={titleId}
-            className='text-lg font-bold text-white leading-tight mb-2'
-          >
+          <h3 id={titleId} className='type-section text-lg text-white mb-2'>
             {title}
           </h3>
           <p
             id={messageId}
-            className='text-[var(--text-muted)] text-sm leading-relaxed'
+            className='type-body text-[var(--text-muted)] text-sm'
           >
             {message}
           </p>
@@ -74,31 +72,26 @@ const ConfirmModal = ({
       </div>
 
       <div className='flex shrink-0 flex-col-reverse sm:flex-row justify-end gap-3 mt-6'>
-        <button
+        <Button
           type='button'
           onClick={onClose}
           disabled={isBusy}
           data-modal-initial-focus
-          className='w-full sm:w-auto px-4 py-3 sm:py-2 rounded-xl text-sm font-bold text-[var(--text-muted)] hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 active:scale-95'
+          variant='secondary'
+          className='w-full sm:w-auto'
         >
           {cancelText}
-        </button>
-        <button
+        </Button>
+        <Button
           type='button'
           onClick={() => void handleConfirm()}
           disabled={isBusy}
-          className={`
-              w-full sm:w-auto flex justify-center items-center gap-2 px-6 py-3 sm:py-2 rounded-xl text-sm font-bold text-white transition-all shadow-lg active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed
-              ${
-                isDestructive
-                  ? 'bg-red-500 hover:bg-red-600 shadow-red-500/20'
-                  : 'bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] shadow-[var(--color-primary)]/20'
-              }
-            `}
+          variant={isDestructive ? 'destructive' : 'primary'}
+          isLoading={isBusy}
+          className='w-full sm:w-auto'
         >
-          {isBusy && <Loader2 size={16} className='animate-spin' />}
           {confirmText}
-        </button>
+        </Button>
       </div>
     </Dialog>
   )

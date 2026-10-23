@@ -163,7 +163,7 @@ const AdminMoviesPage = () => {
     <div className='space-y-6 pb-20'>
       <div className='flex flex-wrap items-center justify-between gap-4'>
         <div>
-          <h1 className='text-3xl font-bold text-white'>Фільми</h1>
+          <h1 className='type-page text-white'>Фільми</h1>
           <p className='text-[var(--text-muted)] mt-1'>
             Управління каталогом кінотеатру
           </p>
@@ -181,22 +181,16 @@ const AdminMoviesPage = () => {
         <button
           type='button'
           onClick={() => setActiveTab('active')}
-          className={`rounded-lg px-4 py-2 text-sm font-bold transition-colors ${
-            activeTab === 'active'
-              ? 'bg-[var(--color-primary)] text-white'
-              : 'text-[var(--text-muted)] hover:text-white'
-          }`}
+          aria-pressed={activeTab === 'active'}
+          className='selection-control rounded-lg px-4 py-2 text-sm font-bold'
         >
           Активні
         </button>
         <button
           type='button'
           onClick={() => setActiveTab('deleted')}
-          className={`rounded-lg px-4 py-2 text-sm font-bold transition-colors ${
-            activeTab === 'deleted'
-              ? 'bg-[var(--color-primary)] text-white'
-              : 'text-[var(--text-muted)] hover:text-white'
-          }`}
+          aria-pressed={activeTab === 'deleted'}
+          className='selection-control rounded-lg px-4 py-2 text-sm font-bold'
         >
           Видалені
         </button>
