@@ -3,6 +3,7 @@ import { LogOut, User } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@/features/auth/model/AuthContext'
+import { useMotionPreference } from '@/shared/lib/useMotionPreference'
 import { useModalFocus } from '@/shared/ui/modals/useModalFocus'
 
 const NAV_ITEMS = [
@@ -23,7 +24,8 @@ const RollingText = ({ text }: { text: string }) => {
         <span
           // biome-ignore lint/suspicious/noArrayIndexKey: Fixed decorative text positions control the existing animation.
           key={i}
-          className='inline-block motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover:-translate-y-full'
+          className='inline-block motion-safe:transition-transform motion-safe:duration-400 motion-safe:ease-[cubic-bezier(0.76,0,0.24,1)] motion-safe:group-hover:-translate-y-full'
+          style={{ transitionDelay: `${i * 8}ms` }}
         >
           <span className='block h-[1.2em]'>
             {char === ' ' ? '\u00A0' : char}
@@ -42,6 +44,7 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const { user, logout } = useAuth()
   const location = useLocation()
+  const reducedMotion = useMotionPreference()
   const menuId = useId()
   const menuRef = useRef<HTMLDivElement>(null)
   useModalFocus(menuRef, isMenuOpen, () => setIsMenuOpen(false))
@@ -72,7 +75,7 @@ const Header = () => {
     >
       <header
         className={clsx(
-          'fixed top-0 left-0 right-0 z-[60] transition-colors duration-150 border-b border-transparent',
+          'fixed top-0 left-0 right-0 z-[60] transition-colors duration-200 motion-reduce:transition-none border-b border-transparent',
           !isMenuOpen && isScrolled
             ? 'bg-black/60 backdrop-blur-xl border-white/5 py-3'
             : 'bg-transparent py-4 md:py-6',
@@ -86,7 +89,7 @@ const Header = () => {
           >
             <span>
               Cine
-              <span className='text-[var(--color-primary)] transition-colors duration-150 group-hover:text-white'>
+              <span className='text-[var(--color-primary)] transition-colors duration-200 motion-reduce:transition-none group-hover:text-white'>
                 ma
               </span>
               .
@@ -95,11 +98,11 @@ const Header = () => {
 
           <div className='relative z-[70] flex items-center gap-4 md:gap-6'>
             {!isMenuOpen && (
-              <div className='hidden md:flex items-center gap-6 transition-opacity duration-150'>
+              <div className='hidden md:flex items-center gap-6 transition-opacity duration-200 motion-reduce:transition-none'>
                 {user ? (
                   <Link
                     to='/profile'
-                    className='flex items-center gap-3 text-sm font-bold text-white hover:text-[var(--color-primary)] transition-colors'
+                    className='flex items-center gap-3 text-sm font-bold text-white hover:text-[var(--color-primary)] transition-colors duration-200 motion-reduce:transition-none'
                   >
                     <span className='text-right leading-tight'>
                       <span className='block text-[10px] text-[var(--text-muted)] uppercase'>
@@ -114,7 +117,7 @@ const Header = () => {
                 ) : (
                   <Link
                     to='/auth/login'
-                    className='text-sm font-bold text-white hover:text-[var(--color-primary)] transition-colors'
+                    className='text-sm font-bold text-white hover:text-[var(--color-primary)] transition-colors duration-200 motion-reduce:transition-none'
                   >
                     Увійти
                   </Link>
@@ -125,7 +128,7 @@ const Header = () => {
             <button
               type='button'
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className='group relative flex h-10 w-10 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors'
+              className='group relative flex h-10 w-10 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors duration-200 motion-reduce:transition-none'
               aria-label={isMenuOpen ? 'Закрити меню' : 'Відкрити меню'}
               aria-expanded={isMenuOpen}
               aria-controls={menuId}
@@ -134,19 +137,19 @@ const Header = () => {
               <div className='relative w-5 h-5'>
                 <span
                   className={clsx(
-                    'absolute top-1/2 left-0 h-0.5 w-5 bg-white transition-[transform,opacity,width] duration-150 motion-reduce:transition-none -translate-y-1.5',
+                    'absolute top-1/2 left-0 h-0.5 w-5 bg-white transition-[transform,opacity,width] duration-200 motion-reduce:transition-none -translate-y-1.5',
                     isMenuOpen && 'translate-y-0 rotate-45',
                   )}
                 />
                 <span
                   className={clsx(
-                    'absolute top-1/2 left-0 h-0.5 bg-white transition-[transform,opacity,width] duration-150 motion-reduce:transition-none w-3 group-hover:w-5',
+                    'absolute top-1/2 left-0 h-0.5 bg-white transition-[transform,opacity,width] duration-200 motion-reduce:transition-none w-3 group-hover:w-5',
                     isMenuOpen ? 'opacity-0 w-0' : 'w-3',
                   )}
                 />
                 <span
                   className={clsx(
-                    'absolute top-1/2 left-0 h-0.5 w-5 bg-white transition-[transform,opacity,width] duration-150 motion-reduce:transition-none translate-y-1.5',
+                    'absolute top-1/2 left-0 h-0.5 w-5 bg-white transition-[transform,opacity,width] duration-200 motion-reduce:transition-none translate-y-1.5',
                     isMenuOpen && 'translate-y-0 -rotate-45',
                   )}
                 />
@@ -158,10 +161,17 @@ const Header = () => {
 
       <div
         id={menuId}
+        style={{
+          transitionProperty: 'opacity, visibility',
+          transitionDuration: reducedMotion ? '0s' : '400ms, 0s',
+          transitionTimingFunction: 'ease-in-out',
+          // Keep the closing overlay visible until its fade completes.
+          transitionDelay: isMenuOpen || reducedMotion ? '0s' : '0s, 400ms',
+        }}
         inert={!isMenuOpen}
         aria-hidden={!isMenuOpen}
         className={clsx(
-          'fixed inset-0 z-50 flex flex-col bg-[#050505]/95 backdrop-blur-2xl transition-opacity duration-150',
+          'fixed inset-0 z-50 flex flex-col bg-[#050505]/95 backdrop-blur-2xl',
           isMenuOpen
             ? 'opacity-100 visible'
             : 'opacity-0 invisible pointer-events-none',
@@ -184,15 +194,15 @@ const Header = () => {
                   location.pathname === item.href ? 'page' : undefined
                 }
                 className={clsx(
-                  'group flex items-center justify-between py-2 border-b border-white/5 lg:border-none lg:py-0 transition-opacity duration-150',
+                  'group flex items-center justify-between py-2 border-b border-white/5 lg:border-none lg:py-0 transition-opacity duration-200 motion-reduce:transition-none',
                   isMenuOpen ? 'opacity-100' : 'opacity-0',
                 )}
                 onClick={() => setIsMenuOpen(false)}
               >
-                <span className='text-4xl sm:text-5xl lg:text-7xl font-black text-zinc-500 group-hover:text-white transition-colors duration-150 uppercase tracking-tight'>
+                <span className='text-4xl sm:text-5xl lg:text-7xl font-black text-zinc-500 group-hover:text-white transition-colors duration-200 motion-reduce:transition-none uppercase tracking-tight'>
                   <RollingText text={item.label} />
                 </span>
-                <span className='lg:hidden text-[var(--color-primary)] opacity-0 group-hover:opacity-100 transition-opacity'>
+                <span className='lg:hidden text-[var(--color-primary)] opacity-0 group-hover:opacity-100 transition-opacity duration-200 motion-reduce:transition-none'>
                   →
                 </span>
               </Link>
@@ -201,7 +211,7 @@ const Header = () => {
 
           <div
             className={clsx(
-              'flex flex-col justify-end lg:justify-center lg:items-start lg:pl-12 lg:border-l lg:border-white/5 space-y-8 transition-opacity duration-150 mt-10 lg:mt-0',
+              'flex flex-col justify-end lg:justify-center lg:items-start lg:pl-12 lg:border-l lg:border-white/5 space-y-8 transition-opacity duration-200 motion-reduce:transition-none mt-10 lg:mt-0',
               isMenuOpen ? 'opacity-100' : 'opacity-0',
             )}
           >
@@ -224,7 +234,7 @@ const Header = () => {
                 <div className='grid grid-cols-2 gap-3'>
                   <Link
                     to='/profile'
-                    className='flex items-center justify-center gap-2 rounded-xl bg-white text-black py-3 md:py-4 font-bold hover:bg-zinc-200 transition-colors text-sm md:text-base'
+                    className='flex items-center justify-center gap-2 rounded-xl bg-white text-black py-3 md:py-4 font-bold hover:bg-zinc-200 transition-colors duration-200 motion-reduce:transition-none text-sm md:text-base'
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <User size={18} /> Кабінет
@@ -232,7 +242,7 @@ const Header = () => {
                   <button
                     type='button'
                     onClick={handleLogout}
-                    className='flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 text-white py-3 md:py-4 font-bold hover:bg-white/10 transition-colors text-sm md:text-base'
+                    className='flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 text-white py-3 md:py-4 font-bold hover:bg-white/10 transition-colors duration-200 motion-reduce:transition-none text-sm md:text-base'
                   >
                     <LogOut size={18} /> Вийти
                   </button>
@@ -248,7 +258,7 @@ const Header = () => {
                 </p>
                 <Link
                   to='/auth/login'
-                  className='flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] py-3 md:py-4 font-bold text-white hover:bg-[var(--color-primary-hover)] transition-colors duration-150 text-sm md:text-base'
+                  className='flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] py-3 md:py-4 font-bold text-white hover:bg-[var(--color-primary-hover)] transition-colors duration-200 motion-reduce:transition-none text-sm md:text-base'
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Увійти або Зареєструватися
@@ -262,13 +272,13 @@ const Header = () => {
               </div>
               <a
                 href='tel:0800500500'
-                className='block text-xl md:text-2xl font-mono text-white hover:text-[var(--color-primary)] transition-colors'
+                className='block text-xl md:text-2xl font-mono text-white hover:text-[var(--color-primary)] transition-colors duration-200 motion-reduce:transition-none'
               >
                 0 800 500 500
               </a>
               <a
                 href='mailto:support@cinema.ua'
-                className='block text-base md:text-lg text-white hover:text-[var(--color-primary)] transition-colors'
+                className='block text-base md:text-lg text-white hover:text-[var(--color-primary)] transition-colors duration-200 motion-reduce:transition-none'
               >
                 support@cinema.ua
               </a>

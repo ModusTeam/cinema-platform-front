@@ -9,7 +9,6 @@ type ButtonVariant =
   | 'success'
   | 'ghost'
 
-// Links can reuse appearance while retaining native navigation semantics.
 export const buttonStyles = (variant: ButtonVariant = 'primary') =>
   `action action-${variant}`
 

@@ -22,9 +22,9 @@ const MainLayout = () => {
       <ScrollToTop />
       <motion.main
         key={location.pathname}
-        initial={reducedMotion ? false : { opacity: 0.85 }}
+        initial={reducedMotion ? false : { opacity: 0.6 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: reducedMotion ? 0 : 0.15 }}
+        transition={{ duration: reducedMotion ? 0 : 0.3, ease: 'easeOut' }}
         className={clsx('flex-1 relative z-0', !isHomePage && 'pt-24 md:pt-28')}
       >
         <Suspense

@@ -10,7 +10,6 @@ export const useMotionPreference = () => {
   )
 
   useEffect(() => {
-    // The installed Motion hook reads the initial preference only.
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)')
     const update = () => setReducedMotion(preference.matches)
     update()
