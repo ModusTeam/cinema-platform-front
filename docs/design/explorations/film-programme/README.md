@@ -1,6 +1,10 @@
 # The Film Programme: visual identity exploration
 
-2026-10-26. Three alternatives for review. None is approved. These are generated
+2026-10-26. Historical three-direction exploration. The user subsequently selected
+Festival Signal for refinement; the earlier Programme Paper recommendation below
+is superseded. No original mockup is an approved implementation specification.
+See `../../festival-signal/visual-direction.md` for the proposed refinement.
+These are generated
 raster concept boards, not running screens, responsive implementations, or a
 production design system. PRODUCT.md remains authoritative; the selected UX
 structure is recorded in `../../cinema-experience-brief.md`.

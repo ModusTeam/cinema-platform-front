@@ -1,7 +1,8 @@
 # Cinema experience: The Film Programme
 
-Status: preferred UX structure selected by the user on 2026-10-26 for further
-exploration. No visual identity or implementation is approved. PRODUCT.md is
+Status: Film Programme UX structure and Festival Signal identity selected by the
+user on 2026-10-26 for further refinement. Refined palette, final mockups, and
+implementation remain unapproved. PRODUCT.md is
 the authoritative product context. This brief preserves the prior Shape work;
 details below remain proposed unless explicitly identified as confirmed.
 
@@ -55,10 +56,20 @@ between same-time screenings, and recovery of the selected session after login.
 Check mobile, keyboard, reduced-motion, empty, and failure paths. These are
 proposed evaluation tasks, not results or numerical success commitments.
 
-Lead-film selection, display timezone, complete schedule retrieval, formal
-accessibility target, and detailed visual identity remain open. Typography,
-palette, motion treatment, and compositions in the exploration directory are
-alternatives for review, not production instructions.
+Lead-film selection, display timezone, complete schedule retrieval, and formal
+accessibility target remain open. Festival Signal is the selected identity;
+its refined palette, typography, motion, and composition specification remain
+proposed in `festival-signal/visual-direction.md` until reviewed.
+
+## Confirmed future experience boundary
+
+Preserve the existing customer-facing interface as Classic. Festival Signal will
+be a separate, selectable frontend experience. The initial default remains
+Classic; an explicit user choice persists across visits. Both experiences share
+business logic, APIs, authentication, seat booking, and payment behavior. A
+visual switch must not create parallel domain logic or reset an active booking.
+Admin workflows remain unchanged. This records a requirement only; no switch,
+storage key, route, source component, or behavior has been implemented.
 
 ## Exploration artifacts
 

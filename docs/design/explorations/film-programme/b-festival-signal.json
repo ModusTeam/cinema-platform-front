@@ -1,6 +1,8 @@
 {
   "schemaVersion": 1,
-  "status": "exploratory",
+  "status": "selected-for-refinement",
+  "selectedByUser": "2026-10-26",
+  "selectionScope": "Preferred identity for refinement; original raster and implementation remain unapproved",
   "approved": false,
   "created": "2026-10-26",
   "tool": "image_gen.imagegen",
