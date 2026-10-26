@@ -9,7 +9,7 @@ const PrivacyPage = () => {
       <div className='space-y-10 text-base md:text-lg leading-relaxed'>
         <div className='border-l-4 border-[var(--color-primary)] bg-white/5 p-6 rounded-r-xl'>
           <p className='text-zinc-300 italic'>
-            Ця Політика конфіденційності пояснює, як &quot;Cinema Platform&quot;
+            Ця Політика конфіденційності пояснює, як &quot;vespre.&quot;
             збирає, використовує та захищає ваші персональні дані. Ми діємо
             відповідно до Закону України «Про захист персональних даних».
           </p>

@@ -89,7 +89,7 @@ const CareersPage = () => {
           </span>
           <h1 className='type-display text-4xl sm:text-4xl md:text-6xl text-white leading-tight'>
             Створюй майбутнє <br />
-            <span className='text-[var(--color-primary)]'>разом з Cinema.</span>
+            <span className='text-[var(--color-primary)]'>разом з vespre.</span>
           </h1>
           <p className='text-lg text-[var(--text-muted)] max-w-2xl mx-auto'>
             Ми шукаємо талановитих людей, які розділяють нашу пристрасть до кіно

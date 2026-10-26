@@ -1,0 +1,192 @@
+{
+  "status": "proposed",
+  "method": "WCAG sRGB relative luminance; opaque solid colors, no screenshot sampling",
+  "source": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+  "thresholds": {
+    "normalText": 4.5,
+    "largeText": 3,
+    "essentialNonTextBoundary": 3
+  },
+  "limitations": "Token calculations only; not a claim of accessibility conformance. No rendering, keyboard, zoom, focus, or assistive technology verification. Pass decisions use unrounded ratios.",
+  "palettes": {
+    "original": {
+      "colors": {
+        "blue": "#173FE5",
+        "chalk": "#F5F4EF",
+        "ink": "#14181F",
+        "yellow": "#F3E45A"
+      },
+      "pairs": [
+        {
+          "foreground": "chalk",
+          "background": "blue",
+          "ratio": 6.6239,
+          "normalTextPass": true,
+          "largeTextPass": true,
+          "nonTextBoundaryPass": true
+        },
+        {
+          "foreground": "ink",
+          "background": "chalk",
+          "ratio": 16.1578,
+          "normalTextPass": true,
+          "largeTextPass": true,
+          "nonTextBoundaryPass": true
+        },
+        {
+          "foreground": "ink",
+          "background": "yellow",
+          "ratio": 13.6046,
+          "normalTextPass": true,
+          "largeTextPass": true,
+          "nonTextBoundaryPass": true
+        },
+        {
+          "foreground": "blue",
+          "background": "ink",
+          "ratio": 2.4393,
+          "normalTextPass": false,
+          "largeTextPass": false,
+          "nonTextBoundaryPass": false
+        },
+        {
+          "foreground": "yellow",
+          "background": "chalk",
+          "ratio": 1.1877,
+          "normalTextPass": false,
+          "largeTextPass": false,
+          "nonTextBoundaryPass": false
+        },
+        {
+          "foreground": "blue",
+          "background": "yellow",
+          "ratio": 5.5772,
+          "normalTextPass": true,
+          "largeTextPass": true,
+          "nonTextBoundaryPass": true
+        }
+      ]
+    },
+    "deep-cobalt": {
+      "colors": {
+        "blue": "#1736A6",
+        "chalk": "#F5F4EF",
+        "ink": "#14181F",
+        "yellow": "#DDD075"
+      },
+      "pairs": [
+        {
+          "foreground": "chalk",
+          "background": "blue",
+          "ratio": 9.0173,
+          "normalTextPass": true,
+          "largeTextPass": true,
+          "nonTextBoundaryPass": true
+        },
+        {
+          "foreground": "ink",
+          "background": "chalk",
+          "ratio": 16.1578,
+          "normalTextPass": true,
+          "largeTextPass": true,
+          "nonTextBoundaryPass": true
+        },
+        {
+          "foreground": "ink",
+          "background": "yellow",
+          "ratio": 11.3149,
+          "normalTextPass": true,
+          "largeTextPass": true,
+          "nonTextBoundaryPass": true
+        },
+        {
+          "foreground": "blue",
+          "background": "ink",
+          "ratio": 1.7919,
+          "normalTextPass": false,
+          "largeTextPass": false,
+          "nonTextBoundaryPass": false
+        },
+        {
+          "foreground": "yellow",
+          "background": "chalk",
+          "ratio": 1.428,
+          "normalTextPass": false,
+          "largeTextPass": false,
+          "nonTextBoundaryPass": false
+        },
+        {
+          "foreground": "blue",
+          "background": "yellow",
+          "ratio": 6.3146,
+          "normalTextPass": true,
+          "largeTextPass": true,
+          "nonTextBoundaryPass": true
+        }
+      ]
+    },
+    "midnight": {
+      "colors": {
+        "blue": "#3260F5",
+        "chalk": "#F5F4EF",
+        "ink": "#14181F",
+        "yellow": "#E9DC70"
+      },
+      "pairs": [
+        {
+          "foreground": "chalk",
+          "background": "blue",
+          "ratio": 4.6203,
+          "normalTextPass": true,
+          "largeTextPass": true,
+          "nonTextBoundaryPass": true
+        },
+        {
+          "foreground": "ink",
+          "background": "chalk",
+          "ratio": 16.1578,
+          "normalTextPass": true,
+          "largeTextPass": true,
+          "nonTextBoundaryPass": true
+        },
+        {
+          "foreground": "ink",
+          "background": "yellow",
+          "ratio": 12.6556,
+          "normalTextPass": true,
+          "largeTextPass": true,
+          "nonTextBoundaryPass": true
+        },
+        {
+          "foreground": "blue",
+          "background": "ink",
+          "ratio": 3.4972,
+          "normalTextPass": false,
+          "largeTextPass": true,
+          "nonTextBoundaryPass": true
+        },
+        {
+          "foreground": "yellow",
+          "background": "chalk",
+          "ratio": 1.2767,
+          "normalTextPass": false,
+          "largeTextPass": false,
+          "nonTextBoundaryPass": false
+        },
+        {
+          "foreground": "blue",
+          "background": "yellow",
+          "ratio": 3.6188,
+          "normalTextPass": false,
+          "largeTextPass": true,
+          "nonTextBoundaryPass": true
+        }
+      ]
+    }
+  },
+  "sharedSecondaryText": {
+    "foreground": "#4D5360",
+    "background": "#F5F4EF",
+    "ratio": 7.0062
+  }
+}

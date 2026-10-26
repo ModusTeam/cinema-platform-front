@@ -19,10 +19,10 @@ const Footer = () => {
           <div className='lg:col-span-1 md:col-span-2 lg:col-auto mb-6 lg:mb-0'>
             <Link
               to='/'
-              className='flex items-center gap-2 text-2xl font-black tracking-tighter text-white uppercase mb-6'
+              className='flex items-center gap-2 text-2xl font-black tracking-tighter text-white mb-6'
             >
               <Film size={24} className='text-[var(--color-primary)]' />
-              Cinema.
+              vespre.
             </Link>
             <p className='text-zinc-500 mb-8 leading-relaxed max-w-sm'>
               Створюємо магію кіно, поєднуючи передові технології та бездоганний
@@ -111,7 +111,7 @@ const Footer = () => {
 
         <div className='border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-zinc-600'>
           <div className='text-center md:text-left'>
-            © {new Date().getFullYear()} Cinema Platform. All rights reserved.
+            © {new Date().getFullYear()} vespre. All rights reserved.
           </div>
           <div className='flex gap-4'>
             <Link to='/sitemap' className='hover:text-zinc-400'>

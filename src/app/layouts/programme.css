@@ -1,0 +1,15 @@
+.programme-shell {
+  --signal-ink: #14181f;
+  --signal-chalk: #f5f4ef;
+  --signal-blue: #3260f5;
+  --signal-yellow: #e9dc70;
+  --signal-divider: #a5a6a3;
+  --signal-artwork: #e3e3df;
+  --bg-card: var(--signal-chalk);
+  --text-main: var(--signal-ink);
+  --text-muted: #4d5360;
+  --text-faint: #4d5360;
+  --action-primary: var(--signal-blue);
+  --action-primary-hover: #244bd0;
+  --focus-ring: var(--signal-ink);
+}

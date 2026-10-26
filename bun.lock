@@ -5,7 +5,9 @@
     "": {
       "name": "cinema-platform-front",
       "dependencies": {
+        "@fontsource-variable/golos-text": "^5.3.0",
         "@fontsource-variable/montserrat": "^5.3.0",
+        "@fontsource-variable/roboto-condensed": "^5.3.0",
         "@hookform/resolvers": "^5.2.2",
         "@microsoft/signalr": "^10.0.0",
         "@tailwindcss/vite": "^4.1.18",
@@ -146,7 +148,11 @@
 
     "@esbuild/win32-x64": ["@esbuild/win32-x64@0.27.2", "", { "os": "win32", "cpu": "x64" }, "sha512-sRdU18mcKf7F+YgheI/zGf5alZatMUTKj/jNS6l744f9u3WFu4v7twcUI9vu4mknF4Y9aDlblIie0IM+5xxaqQ=="],
 
+    "@fontsource-variable/golos-text": ["@fontsource-variable/golos-text@5.3.0", "", {}, "sha512-D+Evz5yqXYh6tsalc537FS+cPDWn2FTdO8j/K1ZZuFAvA7ib6WnusTiihciq7mMnm6GBo6XTlh0JXPrhBsam2g=="],
+
     "@fontsource-variable/montserrat": ["@fontsource-variable/montserrat@5.3.0", "", {}, "sha512-7PaZoxaxrWLAyrhO46v65An9LhUhfkTExWLhfbywYZCnZEgg/W1rEHnlNmZKjNZ3nJTVYyicqxlJt10z/26yTA=="],
+
+    "@fontsource-variable/roboto-condensed": ["@fontsource-variable/roboto-condensed@5.3.0", "", {}, "sha512-RpYyF6G0h0nsVcCDLRIbZbK+l8cVDoe1PVbzvzVhtLzCiPqIEEGDs9xB9ZWPJawKS4bJzpKn42KgZFISF/AOuQ=="],
 
     "@hookform/resolvers": ["@hookform/resolvers@5.2.2", "", { "dependencies": { "@standard-schema/utils": "^0.3.0" }, "peerDependencies": { "react-hook-form": "^7.55.0" } }, "sha512-A/IxlMLShx3KjV/HeTcTfaMxdwy690+L/ZADoeaTltLx+CVuzkeVIPuybK3jrRfw7YZnmdKsVVHAlEPIAEUNlA=="],
 
