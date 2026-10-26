@@ -35,6 +35,10 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.11",
+    "@fontsource-variable/golos-text": "^5.3.0",
+    "@fontsource-variable/onest": "^5.3.1",
+    "@fontsource-variable/roboto-condensed": "^5.3.0",
+    "@fontsource-variable/unbounded": "^5.3.0",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",

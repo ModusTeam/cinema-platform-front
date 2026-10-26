@@ -1,0 +1,58 @@
+{
+  "results": [
+    {
+      "width": 1440,
+      "path": "/",
+      "heading": "Бійцівський клуб",
+      "overflow": false,
+      "font": "\"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    },
+    {
+      "width": 1440,
+      "path": "/sessions",
+      "heading": "АФІША КІНОТЕАТРУ",
+      "overflow": false,
+      "font": "\"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    },
+    {
+      "width": 1440,
+      "path": "/movies/750828f9-c778-44f4-b010-7416abe6aa01",
+      "heading": "Бійцівський клуб",
+      "overflow": false,
+      "font": "\"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    },
+    {
+      "width": 390,
+      "path": "/",
+      "heading": "Бійцівський клуб",
+      "overflow": false,
+      "font": "\"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    },
+    {
+      "width": 390,
+      "path": "/sessions",
+      "heading": "АФІША КІНОТЕАТРУ",
+      "overflow": false,
+      "font": "\"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    },
+    {
+      "width": 390,
+      "path": "/movies/750828f9-c778-44f4-b010-7416abe6aa01",
+      "heading": "Бійцівський клуб",
+      "overflow": false,
+      "font": "\"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+    }
+  ],
+  "readRequests": [
+    "/api/movies",
+    "/api/movies",
+    "/api/movies",
+    "/api/movies",
+    "/api/movies",
+    "/api/movies"
+  ],
+  "candidateFonts": [],
+  "mutationRequests": [],
+  "errors": [],
+  "note": "Read-only production-entry smoke with fixtures. Grain/texture intercepted; no real backend, auth, checkout or admin flow tested."
+}
