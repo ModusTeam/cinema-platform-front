@@ -526,7 +526,7 @@ const ProfilePage = () => {
                           type='email'
                           disabled
                           {...register('email')}
-                          className='cursor-not-allowed bg-black/30 pl-10 opacity-50'
+                          className='pl-10'
                         />
                         <Lock
                           size={14}

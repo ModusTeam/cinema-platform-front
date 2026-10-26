@@ -1,5 +1,10 @@
 # UI experience polish: Phase 1
 
+Phase 1 below is a historical checkpoint. Production adoption is now documented
+in the [Phase 2 review](phase-2.md), including the
+[before/after screenshot index](screenshots/phase-2/README.md).
+The lab remains temporary and excluded from the production build.
+
 Review checkpoint, 26 October 2026. Working branch: `feat/ui-experience-polish`.
 The brief names `ui-experience-polish` and `develop`; the existing checkout was
 retained. No branch switch, commit, push, PR or merge was performed.

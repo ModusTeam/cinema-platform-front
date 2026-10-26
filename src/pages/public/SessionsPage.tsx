@@ -2,11 +2,11 @@ import MoviesGrid from '@/widgets/movies-grid/ui/MoviesGrid'
 
 const SessionsPage = () => {
   return (
-    <div className='min-h-screen bg-[var(--bg-main)] py-12'>
+    <div className='font-public min-h-screen bg-[var(--bg-main)] py-12'>
       <div className='container mx-auto px-4'>
         <div className='mb-8 animate-in fade-in slide-in-from-top-4 duration-500 flex flex-col md:flex-row md:items-end justify-between gap-4'>
           <div>
-            <h1 className='type-display text-4xl sm:text-4xl text-white uppercase tracking-tighter'>
+            <h1 className='type-public-display text-[var(--text-main)]'>
               Афіша{' '}
               <span className='text-[var(--color-primary)]'>Кінотеатру</span>
             </h1>

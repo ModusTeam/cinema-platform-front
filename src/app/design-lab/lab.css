@@ -14,6 +14,33 @@ body:has(.design-lab)::before { display: none; }
 .design-lab[data-variant='b'] { --lab-heading: 'Unbounded Variable', sans-serif; --lab-body: 'Onest Variable', sans-serif; }
 /* This Fontsource Roboto Condensed build lacks ₴; use the paired face explicitly. */
 .design-lab[data-variant='c'] { --lab-heading: 'Roboto Condensed Variable', 'Golos Text Variable', sans-serif; --lab-body: 'Golos Text Variable', sans-serif; }
+/* Freeze the Phase 1 surface comparison as production tokens evolve. */
+.design-lab[data-treatment='current'] {
+  --bg-main: #0a0a0a;
+  --bg-card: #171717;
+  --bg-hover: #262626;
+  --surface-muted: #111111;
+  --surface-elevated: #1c1c1c;
+  --color-primary: #ef4444;
+  --color-primary-hover: #dc2626;
+  --action-primary: #dc2626;
+  --action-primary-hover: #b91c1c;
+  --action-primary-active: #991b1b;
+  --action-secondary-hover: #333333;
+  --action-secondary-active: #404040;
+  --action-destructive: #b91c1c;
+  --action-destructive-hover: #991b1b;
+  --action-destructive-active: #7f1d1d;
+  --text-main: #fafafa;
+  --text-muted: #a3a3a3;
+  --text-faint: #737373;
+  --color-error: #ef4444;
+  --color-success: #22c55e;
+  --border-default: #404040;
+  --border-field: #737373;
+  --focus-ring: #fca5a5;
+  --selection-bg: #321818;
+}
 .design-lab[data-treatment='proposed'] {
   --bg-main: #0c0c0e;
   --bg-card: #19191c;
@@ -86,6 +113,7 @@ body:has(.design-lab)::before { display: none; }
 .lab-section-header h2, .lab-panel h2, .lab-type-specimen h2 { font-size: 24px; font-weight: 600; line-height: 1.3; margin-bottom: 8px; letter-spacing: -0.02em; }
 .lab-section-header > span, .lab-caption { font-size: 12px; line-height: 1.6; color: var(--text-muted); }
 .lab-movie-card { max-width: 400px; }
+.lab-movie-card > div { font-family: var(--lab-body); }
 .lab-movie-card + .lab-caption { margin-top: 12px; max-width: 44ch; }
 .design-lab[data-treatment='proposed'] .lab-movie-card > div { border-color: transparent; box-shadow: none; border-radius: 12px; }
 .design-lab[data-treatment='proposed'] .lab-movie-card h3 { color: var(--text-main); font-size: 22px; font-weight: 600; line-height: 1.3; }

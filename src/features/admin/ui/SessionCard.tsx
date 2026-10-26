@@ -82,7 +82,7 @@ const SessionCard = ({ session, onReschedule, onDelete }: SessionCardProps) => {
             type='button'
             onClick={() => onDelete(session.id)}
             aria-label={`${adminSessionsCopy.cancelTitle}: ${session.movieTitle}`}
-            className='p-2 bg-[var(--bg-hover)] rounded-lg text-[var(--text-muted)] hover:text-white hover:bg-[var(--color-error)] shadow-lg transition-colors'
+            className='p-2 bg-[var(--bg-hover)] rounded-lg text-[var(--text-muted)] hover:text-white hover:bg-[var(--action-destructive)] shadow-lg transition-colors'
           >
             <Trash2 size={16} />
           </button>

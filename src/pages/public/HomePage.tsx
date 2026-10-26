@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { MovieStatus } from '@/entities/movie/model/movie.types'
 import HeroSection from '@/features/movies/ui/HeroSection'
 import MovieCard from '@/features/movies/ui/MovieCard'
+import { buttonStyles } from '@/shared/ui/Button'
 import EmptyState from '@/shared/ui/EmptyState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import UnavailableState from '@/shared/ui/UnavailableState'
@@ -36,23 +37,23 @@ const HomePage = () => {
   }
 
   return (
-    <div className='min-h-screen bg-[var(--bg-main)] font-sans pb-20'>
+    <div className='font-public min-h-screen bg-[var(--bg-main)] pb-20'>
       <HeroSection />
 
       <div className='container relative z-10 mx-auto px-4 pt-10'>
-        <div className='flex flex-col md:flex-row justify-between items-end mb-8 gap-6'>
-          <h2 className='text-3xl font-black text-white pl-4 border-l-4 border-[var(--color-primary)] leading-none uppercase tracking-wide'>
+        <div className='flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-6'>
+          <h2 className='type-public-section text-[var(--text-main)] pl-4 border-l-4 border-[var(--color-primary)]'>
             Зараз у кіно
           </h2>
 
-          <div className='flex flex-wrap gap-2 p-1.5 bg-[var(--bg-card)]/80 backdrop-blur-md rounded-xl border border-white/5 shadow-lg'>
+          <div className='flex flex-wrap gap-2'>
             {filters.map(f => (
               <button
                 type='button'
                 key={f.id}
                 onClick={() => setActiveFilter(f.id)}
                 aria-pressed={activeFilter === f.id}
-                className='selection-control px-5 py-2 rounded-lg text-sm font-bold'
+                className='selection-control px-4 py-2 rounded-lg text-sm font-medium'
               >
                 {f.label}
               </button>
@@ -95,7 +96,7 @@ const HomePage = () => {
         <div className='mt-12 flex justify-center'>
           <Link
             to='/sessions'
-            className='group flex items-center gap-2 px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-white font-bold transition-colors duration-150'
+            className={`${buttonStyles('secondary')} group px-6 py-4`}
           >
             Дивитись повний розклад
             <ArrowRight

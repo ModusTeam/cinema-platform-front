@@ -235,7 +235,7 @@ const PricingRulesEditor = ({
             type='button'
             onClick={handleSave}
             disabled={isSaving || isError || seatTypes.length === 0}
-            className='flex items-center gap-2 bg-[var(--color-success)] text-white px-8 py-2 rounded-lg font-bold hover:brightness-110 shadow-lg shadow-[var(--color-success)]/20 transition-all'
+            className='flex items-center gap-2 bg-[var(--action-success)] text-white px-8 py-2 rounded-lg font-bold hover:bg-[var(--action-success-hover)] shadow-lg transition-colors'
           >
             {isSaving ? (
               <GridLoader className='animate-spin' />

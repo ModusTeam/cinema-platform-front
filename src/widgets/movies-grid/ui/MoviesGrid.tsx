@@ -93,15 +93,12 @@ const MoviesGrid = () => {
   return (
     <div className='space-y-8'>
       <div className='flex flex-col lg:flex-row gap-8 items-start lg:items-center justify-between'>
-        <div className='bg-[var(--bg-card)] p-1 rounded-xl border border-white/10 flex'>
+        <div className='flex gap-2'>
           <button
             type='button'
             onClick={() => setActiveTab('now')}
             aria-pressed={activeTab === 'now'}
-            className={clsx(
-              'selection-control px-6 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2',
-              activeTab === 'now' && 'shadow-lg',
-            )}
+            className='selection-control flex items-center justify-center px-5 py-2.5 rounded-lg text-sm font-medium gap-2'
           >
             <CalendarDays size={16} /> Розклад
           </button>
@@ -109,10 +106,7 @@ const MoviesGrid = () => {
             type='button'
             onClick={() => setActiveTab('soon')}
             aria-pressed={activeTab === 'soon'}
-            className={clsx(
-              'selection-control px-6 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2',
-              activeTab === 'soon' && 'shadow-lg',
-            )}
+            className='selection-control flex items-center justify-center px-5 py-2.5 rounded-lg text-sm font-medium gap-2'
           >
             <Clock size={16} /> Скоро
           </button>
@@ -137,11 +131,11 @@ const MoviesGrid = () => {
                     onClick={() => setSelectedDate(date)}
                     aria-pressed={isSelected}
                     className={clsx(
-                      'selection-control flex flex-col items-center justify-center w-14 h-16 rounded-xl',
-                      isSelected && 'font-bold',
+                      'selection-control flex flex-col items-center justify-center w-14 h-16 rounded-lg tabular-nums',
+                      isSelected && 'font-semibold',
                     )}
                   >
-                    <span className='text-[10px] uppercase tracking-wider opacity-80'>
+                    <span className='text-xs'>
                       {isToday ? 'Сьог' : dayName}
                     </span>
                     <span className='text-xl leading-none mt-0.5'>

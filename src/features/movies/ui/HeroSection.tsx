@@ -61,30 +61,30 @@ const HeroSection = () => {
         <div className='hidden lg:block absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-[var(--bg-main)]/90 to-transparent pointer-events-none' />
       </div>
 
-      <div className='relative container mx-auto flex min-h-[85svh] items-end px-4 pb-20 pt-28'>
+      <div className='relative container mx-auto flex min-h-[85svh] items-end px-4 pb-20 pt-40 lg:pt-28'>
         <div className='grid w-full lg:grid-cols-[1fr_350px] gap-12'>
           <div className='max-w-3xl space-y-6'>
-            <div className='flex flex-wrap items-center gap-3 text-xs font-bold uppercase tracking-wider text-zinc-300'>
-              <span className='bg-[var(--color-primary)] text-white px-2 py-1 rounded shadow-[0_0_15px_rgba(239,68,68,0.4)]'>
+            <div className='flex flex-wrap items-center gap-3 text-xs font-medium text-[var(--text-main)]'>
+              <span className='bg-[var(--surface-elevated)] text-[var(--text-main)] px-2.5 py-1 rounded-md'>
                 Прем'єра
               </span>
-              <span className='flex items-center gap-1 bg-white/10 backdrop-blur-md px-2 py-1 rounded border border-white/10'>
-                <Star size={12} className='text-yellow-500 fill-yellow-500' />{' '}
+              <span className='rating-badge'>
+                <Star size={12} className='fill-current' aria-hidden='true' />{' '}
                 {activeMovie.rating}
               </span>
-              <span className='flex items-center gap-1 bg-white/10 backdrop-blur-md px-2 py-1 rounded border border-white/10'>
+              <span className='flex items-center gap-1.5'>
                 <Calendar size={12} /> {activeMovie.year}
               </span>
-              <span className='flex items-center gap-1 bg-white/10 backdrop-blur-md px-2 py-1 rounded border border-white/10'>
+              <span className='flex items-center gap-1.5'>
                 <Clock size={12} /> {activeMovie.duration} хв
               </span>
             </div>
 
-            <h1 className='text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-tight drop-shadow-2xl'>
+            <h1 className='type-public-display text-white'>
               {activeMovie.title}
             </h1>
 
-            <p className='line-clamp-3 text-lg text-zinc-300 sm:text-xl max-w-2xl drop-shadow-md'>
+            <p className='line-clamp-3 text-base leading-relaxed text-zinc-300 sm:text-lg max-w-2xl'>
               {activeMovie.description}
             </p>
 
@@ -108,7 +108,7 @@ const HeroSection = () => {
           </div>
 
           <div className='hidden lg:flex flex-col justify-end gap-3'>
-            <h3 className='text-sm font-bold text-[var(--text-muted)] uppercase tracking-widest mb-2 pl-1'>
+            <h3 className='text-sm font-medium text-[var(--text-muted)] mb-2 pl-1'>
               Далі у прокаті
             </h3>
 
@@ -124,7 +124,7 @@ const HeroSection = () => {
                   className={`group relative flex items-center gap-4 p-2 rounded-xl transition-colors duration-150 text-left border ${
                     isActive
                       ? 'bg-white/10 border-white/20'
-                      : 'bg-transparent border-transparent hover:bg-white/5 opacity-60 hover:opacity-100'
+                      : 'bg-transparent border-transparent hover:bg-white/5'
                   }`}
                 >
                   <div className='relative h-16 w-12 shrink-0 overflow-hidden rounded-lg bg-zinc-800'>
@@ -142,11 +142,11 @@ const HeroSection = () => {
 
                   <div className='flex-1 min-w-0'>
                     <div
-                      className={`font-bold text-sm truncate transition-colors ${isActive ? 'text-white' : 'text-zinc-400 group-hover:text-white'}`}
+                      className={`font-medium text-sm truncate transition-colors ${isActive ? 'text-white' : 'text-[var(--text-muted)] group-hover:text-white'}`}
                     >
                       {m.title}
                     </div>
-                    <div className='text-xs text-zinc-500 truncate'>
+                    <div className='text-xs text-[var(--text-muted)] truncate'>
                       {m.genres[0]} • {m.year}
                     </div>
                   </div>

@@ -12,7 +12,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/golos-text": "^5.3.0",
     "@fontsource-variable/montserrat": "^5.3.0",
+    "@fontsource-variable/roboto-condensed": "^5.3.0",
     "@hookform/resolvers": "^5.2.2",
     "@microsoft/signalr": "^10.0.0",
     "@tailwindcss/vite": "^4.1.18",
@@ -35,9 +37,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.11",
-    "@fontsource-variable/golos-text": "^5.3.0",
     "@fontsource-variable/onest": "^5.3.1",
-    "@fontsource-variable/roboto-condensed": "^5.3.0",
     "@fontsource-variable/unbounded": "^5.3.0",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",

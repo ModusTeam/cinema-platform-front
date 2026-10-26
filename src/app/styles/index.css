@@ -9,43 +9,48 @@
 }
 
 :root {
-  --bg-main: #0a0a0a;
-  --bg-card: #171717;
-  --bg-hover: #262626;
+  --bg-main: #0c0c0e;
+  --bg-card: #19191c;
+  --bg-hover: #29292e;
 
-  --color-primary: #ef4444;
-  --color-primary-hover: #dc2626;
+  --color-primary: #e5484d;
+  /* Legacy consumers also use this for filled actions. Keep white labels legible. */
+  --color-primary-hover: var(--action-primary-hover);
   --color-on-primary: #ffffff;
 
-  --text-main: #fafafa;
-  --text-muted: #a3a3a3;
-  --text-faint: #737373;
+  --text-main: #f4f4f5;
+  --text-muted: #b5b5be;
+  --text-faint: #94949f;
 
-  --color-error: #ef4444;
-  --color-success: #22c55e;
+  --color-error: #ff929b;
+  --color-success: #78dbaa;
+  --color-warning: #edc36c;
 
   /* Action fills are separate from the existing brand and status colors. */
-  --action-primary: #dc2626;
-  --action-primary-hover: #b91c1c;
-  --action-primary-active: #991b1b;
+  --action-primary: #c52f3a;
+  --action-primary-hover: #b32732;
+  --action-primary-active: #9e202b;
   --action-secondary: var(--bg-hover);
-  --action-secondary-hover: #333333;
-  --action-secondary-active: #404040;
-  --action-destructive: #b91c1c;
-  --action-destructive-hover: #991b1b;
-  --action-destructive-active: #7f1d1d;
+  --action-secondary-hover: #34343a;
+  --action-secondary-active: #3e3e46;
+  --action-destructive: #a82732;
+  --action-destructive-hover: #92202a;
+  --action-destructive-active: #7b1b24;
   --action-success: #15803d;
   --action-success-hover: #166534;
   --action-success-active: #14532d;
   --text-on-action: var(--color-on-primary);
 
-  --surface-muted: #111111;
-  --surface-elevated: #1c1c1c;
-  --border-default: #404040;
-  --border-field: #737373;
-  --focus-ring: #fca5a5;
-  --selection-bg: #321818;
+  --surface-muted: #131315;
+  --surface-elevated: #222226;
+  --border-default: #3c3c44;
+  --border-field: #777782;
+  --focus-ring: #ffafb3;
+  --selection-bg: #351b23;
   --selection-border: var(--color-primary);
+  --radius-control: 0.5rem;
+  --font-public: 'Golos Text Variable', var(--font-sans);
+  --font-public-display: 'Roboto Condensed Variable', 'Golos Text Variable', sans-serif;
 }
 
 body {
@@ -59,19 +64,6 @@ body {
     var(--bg-main) 50%
   );
   min-height: 100vh;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
-  opacity: 0.03;
-  pointer-events: none;
-  z-index: 50;
 }
 
 ::-webkit-scrollbar {
