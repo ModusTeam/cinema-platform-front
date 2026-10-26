@@ -1,3 +1,6 @@
+@import '@fontsource-variable/roboto-condensed/wght.css';
+@import '@fontsource-variable/golos-text/wght.css';
+
 /* Normal variable weights only. Cyrillic Extended supplies the hryvnia sign. */
 @font-face {
   font-family: 'Montserrat Variable';

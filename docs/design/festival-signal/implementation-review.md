@@ -109,3 +109,102 @@ text enlargement rather than browser-native zoom. Real payments and seat-lock
 transactions were outside this presentation iteration.
 
 Suggested commit: `feat(home): add vespre new experience with classic preference`
+
+## Technical refinement of PR #52
+
+2026-10-26. Existing branch: `design/cinema-experience-exploration`. This is a
+technical refinement of the approved foundation; no new PR or merge is created.
+The initial implementation record above is historical evidence.
+
+### Changes and file inventory
+
+- `package.json` and `bun.lock`: Bun-installed
+  `@fontsource-variable/roboto-condensed` and `@fontsource-variable/golos-text`,
+  both 5.3.0. The npm lockfile is unchanged.
+- `src/app/styles/fonts.css`: imports each normal variable `wght.css` once.
+  `src/app/styles/index.css`: adds distinct programme font utilities and a body
+  `100dvh` minimum-height with the existing `100vh` fallback. Classic's root
+  font and palette tokens remain intact.
+- Removed `public/fonts/{RobotoCondensed,GolosText}.ttf` and their two standalone
+  OFL files after verifying the replacement. Fontsource packages retain licenses.
+- `src/app/layouts/MainLayout.tsx`: both shells are minimum-height flex columns;
+  Main grows and Footer is its following sibling. Existing Main route keys,
+  transitions, Suspense and ScrollToTop remain. No provider/cache/auth changes.
+- `ProgrammeHeader.tsx`, `ProgrammeFooter.tsx`, `ProgrammeHome.tsx`: Tailwind
+  utilities replace layout, spacing, typography, surface and state CSS.
+  `ProgrammeBrand.tsx` shares the exact brand treatment between header/footer.
+  `ProgrammeFilm.tsx` keeps the cohesive film/artwork/screening presentation
+  separate from Home's data/date orchestration without changing its logic.
+- `src/app/layouts/programme.css`: reduced from 440 lines to 15 scoped-token
+  lines. Font declarations, media queries and layout rules are removed. The
+  broad `.programme-shell .rounded-2xl` override is replaced by focused feedback
+  call-site utilities. No `@apply` abstractions are added.
+- `PresentationSwitch.tsx`: a borderless Версія trigger and chevron open a
+  presentation-aware dropdown. Menu radio semantics expose selection; keyboard,
+  Escape, outside click, Tab dismissal and focus restoration are implemented.
+  Classic mobile access is inside its existing navigation dialog; New mobile
+  access is in secondary navigation below the primary links.
+- `Header.tsx`: desktop/mobile dropdown placement, still excluded on booking.
+  `presentation-switch.css` is removed entirely (21 lines).
+- `tests/presentation.browser.mjs`: optional, repeatable Playwright regression
+  function with isolated API fixtures and disposable contexts. Pass its contents
+  as the browser tool's `code` argument if `filename` cannot access this workspace.
+  No browser dependency or new runner is installed.
+- `DESIGN.md` and `.impeccable/design.json`: update the actual font families and
+  document the changed layout/style ownership and selector interaction.
+
+### Live API diagnosis
+
+Both local `.env` and `.env.production` configure
+`VITE_API_URL=https://cinemaplatformapi.dev/api`. The value is present, valid,
+and resolves to the same host as the committed Vercel rewrite destination.
+DNS resolves `cinemaplatformapi.dev` to `64.226.93.109` at the time of inspection.
+
+Actual Chromium requests to `/api/movies?pageNumber=1&pageSize=100`,
+`/api/sessions?pageNumber=1&pageSize=1000`, and
+`/api/halls?pageNumber=1&pageSize=100` fail with
+`net::ERR_SSL_PROTOCOL_ERROR`, without an HTTP response. An independent Python
+TLS probe receives `TLSV1_ALERT_INTERNAL_ERROR` from port 443. Plain HTTP port 80
+returns a Caddy/Next.js HTML 404 for `/api/movies`.
+
+The precise blocker is the configured host's TLS/connectivity failure before
+HTTP. Its HTTP route also does not currently expose the expected cinema API.
+This points to host/deployment/TLS routing rather than missing Vite config,
+authentication, CORS response handling or DTO parsing. The evidence does not
+establish whether the backend application behind that host is running.
+No API URL, auth, services, fallback data or production error handling was changed.
+The domain's TLS and API routing need to be checked by its deployment owner.
+
+### Refinement verification
+
+- `bun run build`: passed, with existing SignalR PURE-annotation warnings.
+- `bun run test`: passed, 84 tests and zero failures. Bun still prints its
+  pre-existing directory-mismatch diagnostic; exit status is zero.
+- `bun run lint`: 18 errors, 29 warnings and one info, matching the captured
+  pre-refinement baseline. No unrelated lint fixes were made.
+- Focused lint/check of changed TSX components: passed.
+- `git diff --check`: passed.
+- Browser plugin is unavailable; the provided Playwright tools ran the new
+  regression function successfully: 87 checks. It covers Classic/New desktop
+  and mobile, dropdown input/dismissal/focus, localStorage persistence, shared
+  form preservation, booking exclusion, short/loading/error/empty/long footer
+  behavior and overflow at 320/390/768/1440px. New also passes 200% text at 768px.
+- Before/after desktop/mobile captures retain the programme composition. With
+  the same fixture, desktop lead title/row heights remain approximately
+  266px/604px, and mobile approximately 83px/689px. The intentional mobile header
+  difference is secondary version access outside the masthead's account row.
+- Fontsource browser proof loaded Roboto weights 700/800 and Golos 400/600 for
+  the requested Ukrainian specimen. Chromium platform-font inspection showed
+  Roboto glyphs with Golos fallback; blocked-font requests retained readable
+  fallback text without horizontal overflow. Classic still uses Montserrat.
+- API 503 responses in browser tests are explicit test fixtures. Production
+  data remains exclusively API-backed. Photographic parity captures use the
+  temporary QA landscape from the initial review, not a shipped film asset.
+
+Remaining limitations: the live programme cannot be verified until TLS/API
+routing works. Physical-device/Safari/Firefox behavior, real screen-reader
+announcement quality and browser-native zoom remain manual checks. Existing
+pagination caps and movie-based booking handoff are unchanged. No payments,
+reservation locks or authenticated backend mutations were exercised.
+
+Suggested commit: `refactor(home): streamline vespre fonts, layout and version menu`

@@ -12,24 +12,24 @@ colors:
   artwork-fallback: '#E3E3DF'
 typography:
   display:
-    fontFamily: 'Roboto Condensed, Golos Text, sans-serif'
+    fontFamily: 'Roboto Condensed Variable, Golos Text Variable, sans-serif'
     fontSize: 'clamp(3rem, 5.8vw, 5.5rem)'
     fontWeight: 800
     lineHeight: 1.06
     letterSpacing: '-0.025em'
   headline:
-    fontFamily: 'Roboto Condensed, Golos Text, sans-serif'
+    fontFamily: 'Roboto Condensed Variable, Golos Text Variable, sans-serif'
     fontSize: 'clamp(1.875rem, 3vw, 2.75rem)'
     fontWeight: 800
     lineHeight: 1.06
     letterSpacing: '-0.025em'
   body:
-    fontFamily: 'Golos Text, sans-serif'
+    fontFamily: 'Golos Text Variable, sans-serif'
     fontSize: '1rem'
     fontWeight: 400
     lineHeight: 1.5
   screening-time:
-    fontFamily: 'Roboto Condensed, Golos Text, sans-serif'
+    fontFamily: 'Roboto Condensed Variable, Golos Text Variable, sans-serif'
     fontSize: '2rem'
     fontWeight: 700
     lineHeight: 1.1
@@ -116,8 +116,8 @@ links and buttons inside the midnight booking band.
 
 ## Typography
 
-**Display Font:** Roboto Condensed, followed explicitly by Golos Text, sans-serif.
-**Body Font:** Golos Text, sans-serif.
+**Display Font:** Roboto Condensed Variable, followed explicitly by Golos Text Variable, sans-serif.
+**Body Font:** Golos Text Variable, sans-serif.
 
 Titles are uppercase, tightly tracked and naturally wrapping. Body copy stays
 uncondensed. Screening times use tabular numerals. Full film titles remain in
@@ -136,14 +136,20 @@ the reading flow; no fixed title heights, clipping or horizontal type scaling.
 - **Brand:** condensed weight 800, 3rem desktop and 2.375rem mobile, with
   -0.03em tracking. The identity is always lowercase **vespre.**, including period.
 
-Both variable TTFs are self-hosted under `public/fonts`, loaded with `font-display:
-swap`, and accompanied by their original OFL licenses. Source files are Google
-Fonts `main/ofl/robotocondensed/RobotoCondensed[wght].ttf` and
-`main/ofl/golostext/GolosText[wght].ttf`; deployed filenames are
-`RobotoCondensed.ttf` and `GolosText.ttf`. Binary cmap verification established
-Roboto Condensed coverage for `Єє Іі Її Ґґ ’ ʼ`, but it lacks `₴`. Golos Text
-covers all these characters including `₴` and is the explicit display fallback.
-This coverage check does not replace visual shaping, fallback or zoom checks.
+The fonts are provided by `@fontsource-variable/roboto-condensed` and
+`@fontsource-variable/golos-text` (5.3.0), imported once through
+`src/app/styles/fonts.css` using their normal `wght.css` entries. The application
+font theme adds `font-programme-display` and `font-programme-body` utilities;
+only New components apply them. Classic retains Montserrat Variable.
+
+Roboto Condensed supports weights 100–900; Golos Text supports 400–900.
+Both include Latin, Latin Extended, Cyrillic and Cyrillic Extended subsets with
+`font-display: swap`. Browser proof loaded display weights 700/800 and body
+weights 400/600 for `Єє Іі Її Ґґ ’ ʼ ₴`. Chromium's platform-font inspection
+confirmed the explicit Golos fallback supplies the glyph missing from Roboto
+Condensed. Blocking WOFF2 requests still leaves readable system fallback text.
+The old TTF files, standalone license copies and New `@font-face` declarations
+were removed; licenses remain in the installed Fontsource packages.
 
 ## Layout
 
@@ -160,15 +166,23 @@ Mobile secondary artwork has a 3:4 crop; lead artwork uses 16:8. Desktop artwork
 uses 16:9 with `object-fit: cover`.
 
 The masthead wraps from brand/navigation/account to a mobile brand/account row
-and full-width navigation. The footer stacks on mobile. At 1600px and above,
+and full-width navigation. The compact version dropdown sits near account access
+on desktop and below primary navigation on mobile. The footer stacks on mobile. At 1600px and above,
 masthead and footer padding aligns with the centered programme canvas.
+
+Both presentation shells are minimum-height flex columns, using `100dvh` where
+supported with a `100vh` fallback. Main grows; Footer is its normal-flow sibling.
+It reaches the viewport bottom on short pages and follows long content without
+positioning, spacers or viewport-height calculations. Route transitions remain
+on Main, and its existing Suspense boundary and scrolling behavior are preserved.
 
 ## Elevation & Depth
 
 The New Home world has no card shadows, gradients or glass. Depth comes from
 midnight versus chalk bands, film photography, type hierarchy and thin rules.
 Shared feedback components inside New Home receive the scoped surface tokens;
-their large rounded corners are reset to square within the shell.
+their corners are made square at the feedback call sites rather than through a
+broad override of every rounded component in the shell.
 
 ## Shapes
 
@@ -196,7 +210,13 @@ Ukrainian explanation rather than fabricated film art.
 ### Navigation
 
 The masthead exposes Films, Schedule and Tickets, plus account access and the
-Classic / New selector. Links underline on hover and retain offset visible focus.
+borderless **Версія** trigger with a small chevron. Its flat dropdown offers
+Classic and New as menu radio items, with a check and subtle background on the
+active option. Enter/Space, arrows, Home/End and first-letter navigation work;
+Escape restores focus, Tab continues normally and outside clicks dismiss it.
+Classic uses its existing surfaces and restrained rounded menu. Classic mobile
+access lives in its navigation dialog; Escape closes the dropdown first.
+The control remains absent from all booking steps. Links underline on hover and retain offset visible focus.
 The brand and film navigation use condensed type. Footer links use body type.
 
 ### Screening Action
@@ -234,8 +254,12 @@ There are no New Home input fields or form-specific visual tokens to extend.
 - **Don't** ship exploratory generated film rasters as production artwork.
 - **Don't** clip titles or horizontally scale type to enforce a fixed composition.
 
-Source of implementation evidence: `src/app/layouts/programme.css`,
-`ProgrammeHeader.tsx`, `ProgrammeFooter.tsx`, and `ProgrammeHome.tsx`.
+Source of implementation evidence: the scoped tokens in
+`src/app/layouts/programme.css`, font imports/theme in `src/app/styles`, and
+Tailwind utilities in `ProgrammeHeader.tsx`, `ProgrammeFooter.tsx`,
+`ProgrammeBrand.tsx`, `ProgrammeHome.tsx`, `ProgrammeFilm.tsx`, and
+`PresentationSwitch.tsx`. Layout, responsive, typography, surface and interaction
+styles live beside their TSX markup; no new `@apply` layer is introduced.
 Historical concept boards establish composition only; their original blue
 palette is superseded by Midnight Signal. No generated or static film raster
 ships in New Home; all production film artwork remains API-provided.

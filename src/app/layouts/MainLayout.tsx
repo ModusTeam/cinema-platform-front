@@ -23,11 +23,12 @@ const MainLayout = () => {
 
   return (
     <div
-      className={
+      className={clsx(
+        'flex min-h-screen supports-[min-height:100dvh]:min-h-dvh flex-col',
         isNewHome
-          ? 'programme-shell'
-          : 'flex min-h-screen flex-col bg-[var(--bg-main)] text-[var(--text-main)] antialiased selection:bg-[var(--color-primary)]/30'
-      }
+          ? 'programme-shell relative z-[51] bg-[var(--signal-chalk)] font-programme-body text-base leading-normal text-[var(--signal-ink)] underline-offset-5 selection:bg-[var(--signal-yellow)] selection:text-[var(--signal-ink)] [&_a:hover]:underline [&_:is(a,button)]:focus-visible:outline-offset-4'
+          : 'bg-[var(--bg-main)] text-[var(--text-main)] antialiased selection:bg-[var(--color-primary)]/30',
+      )}
     >
       {isNewHome ? <ProgrammeHeader /> : <Header />}
 
@@ -49,9 +50,8 @@ const MainLayout = () => {
         >
           {element}
         </Suspense>
-
-        {isNewHome ? <ProgrammeFooter /> : <Footer />}
       </motion.main>
+      {isNewHome ? <ProgrammeFooter /> : <Footer />}
     </div>
   )
 }

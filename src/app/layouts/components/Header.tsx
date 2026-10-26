@@ -93,7 +93,7 @@ const Header = () => {
 
           <div className='relative z-[70] flex items-center gap-4 md:gap-6'>
             {!location.pathname.startsWith('/booking/') && (
-              <PresentationSwitch />
+              <PresentationSwitch className='hidden md:block' />
             )}
             {!isMenuOpen && (
               <div className='hidden md:flex items-center gap-6 transition-opacity duration-200 motion-reduce:transition-none'>
@@ -213,6 +213,12 @@ const Header = () => {
               isMenuOpen ? 'opacity-100' : 'opacity-0',
             )}
           >
+            {!location.pathname.startsWith('/booking/') && (
+              <PresentationSwitch
+                align='start'
+                className='self-start text-[var(--text-main)] md:hidden'
+              />
+            )}
             {user ? (
               <div className='w-full'>
                 <div className='flex items-center gap-4 mb-6'>

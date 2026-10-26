@@ -1,73 +1,11 @@
 import { ArrowRight, Film } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import type { Movie } from '@/entities/movie/model/movie.types'
-import type { Session } from '@/entities/session/model/session.types'
 import EmptyState from '@/shared/ui/EmptyState'
 import UnavailableState from '@/shared/ui/UnavailableState'
-import {
-  formatProgrammeDate,
-  formatProgrammeTime,
-  programmeDay,
-} from '../lib/programme'
+import { formatProgrammeDate, programmeDay } from '../lib/programme'
 import { useProgramme } from '../model/useProgramme'
-
-function FilmArtwork({ movie, lead }: { movie: Movie; lead: boolean }) {
-  const source = movie.backdropUrl.includes('placehold.co')
-    ? movie.posterUrl
-    : movie.backdropUrl || movie.posterUrl
-  const [failedSource, setFailedSource] = useState<string>()
-  return (
-    <div className='programme-artwork'>
-      {source && failedSource !== source ? (
-        <img
-          src={source}
-          alt={`Кадр або постер фільму «${movie.title}»`}
-          loading={lead ? 'eager' : 'lazy'}
-          onError={() => setFailedSource(source)}
-        />
-      ) : (
-        <div className='programme-missing'>
-          <Film size={40} aria-hidden='true' />
-          <span>Зображення ще немає</span>
-        </div>
-      )}
-    </div>
-  )
-}
-
-function Screenings({
-  movie,
-  sessions,
-  hallNames,
-}: {
-  movie: Movie
-  sessions: Session[]
-  hallNames: Map<string, string>
-}) {
-  return (
-    <div className='programme-screenings'>
-      {sessions.length ? (
-        sessions.map(session => (
-          <Link
-            className='programme-screening'
-            key={session.id}
-            to={`/booking/${movie.id}`}
-            aria-label={`${movie.title}, ${formatProgrammeDate(programmeDay(session.startTime))}, ${formatProgrammeTime(session.startTime)}, ${hallNames.get(session.hallId) || session.hallName}. Перейти до вибору сеансу`}
-          >
-            <time dateTime={session.startTime}>
-              {formatProgrammeTime(session.startTime)}
-            </time>
-            <span>{hallNames.get(session.hallId) || session.hallName}</span>
-            <ArrowRight size={22} aria-hidden='true' />
-          </Link>
-        ))
-      ) : (
-        <p>На цю дату сеансів немає.</p>
-      )}
-    </div>
-  )
-}
+import { ProgrammeFilm } from './ProgrammeFilm'
 
 export default function ProgrammeHome() {
   const { movies, sessions, halls, programme } = useProgramme()
@@ -87,10 +25,14 @@ export default function ProgrammeHome() {
   const hallNames = new Map(halls.data?.map(hall => [hall.id, hall.name]))
 
   const dateControls = (
-    <fieldset className='programme-dates' aria-label='Дата сеансів'>
+    <fieldset
+      className='programme-dates flex min-w-0 flex-[1_1_280px] flex-wrap gap-2'
+      aria-label='Дата сеансів'
+    >
       {programme.dates.map(day => (
         <button
           type='button'
+          className='min-h-12 cursor-pointer border-b-2 border-[var(--signal-blue)] px-3 py-2.5 font-semibold aria-pressed:border-[var(--signal-ink)] aria-pressed:bg-[var(--signal-yellow)] aria-pressed:text-[var(--signal-ink)] aria-pressed:underline md:px-[18px]'
           key={day}
           aria-pressed={day === date}
           onClick={() => setChosenDate(day)}
@@ -102,41 +44,49 @@ export default function ProgrammeHome() {
   )
 
   return (
-    <div className='programme-home'>
-      <h1 className='programme-heading'>Кіно на ваш вечір</h1>
+    <div className='programme-home mx-auto max-w-[1536px] px-4 pb-10 md:px-8 md:pb-16'>
+      <h1 className='pt-5 pb-4 text-lg font-semibold md:pt-6'>
+        Кіно на ваш вечір
+      </h1>
       {movies.isPending ? (
-        <output className='programme-status'>Завантажуємо афішу…</output>
+        <output className='block py-6'>Завантажуємо афішу…</output>
       ) : movies.isError ? (
         <UnavailableState
+          className='rounded-none [&>div]:rounded-none'
           title='Афіша тимчасово недоступна'
           onRetry={() => void movies.refetch()}
         />
       ) : (
         <>
           {sessions.isPending ? (
-            <output className='programme-notice'>Завантажуємо сеанси…</output>
+            <output className='block py-6'>Завантажуємо сеанси…</output>
           ) : sessions.isError ? (
             <UnavailableState
+              className='rounded-none [&>div]:rounded-none'
               title='Не вдалося завантажити сеанси'
               description='Фільми доступні нижче. Спробуйте завантажити розклад ще раз.'
               onRetry={() => void sessions.refetch()}
             />
           ) : programme.dates.length === 0 ? (
-            <p className='programme-notice'>
+            <p className='block py-6'>
               Нові сеанси скоро зʼявляться. Поки оберіть фільм.
             </p>
           ) : null}
           {halls.isError && (
-            <p className='programme-notice'>
+            <p className='block py-6'>
               Назви залів показано з розкладу.{' '}
-              <button type='button' onClick={() => void halls.refetch()}>
+              <button
+                type='button'
+                className='cursor-pointer underline'
+                onClick={() => void halls.refetch()}
+              >
                 Оновити дані залів
               </button>
             </p>
           )}
           {date && (
             <p
-              className='programme-handoff'
+              className='py-3 text-sm text-[var(--text-muted)]'
               aria-live='polite'
               aria-atomic='true'
             >
@@ -146,59 +96,35 @@ export default function ProgrammeHome() {
           )}
           {visibleMovies.length === 0 ? (
             <EmptyState
+              className='rounded-none [&>div]:rounded-none'
               icon={<Film className='h-12 w-12' />}
               title='Афіша скоро поповниться'
               description='Коли фільми зʼявляться у прокаті, ви знайдете їх тут.'
             />
           ) : (
             visibleMovies.map((movie, index) => (
-              <article
-                className={`programme-film ${index === 0 ? 'programme-lead' : ''}`}
+              <ProgrammeFilm
                 // Keep the lead date controls mounted when its film changes.
                 key={index === 0 ? 'lead' : movie.id}
-              >
-                <div className='programme-film-copy'>
-                  <h2>
-                    <Link to={`/movies/${movie.id}`}>{movie.title}</Link>
-                  </h2>
-                  <p className='programme-meta'>
-                    {[
-                      movie.genres.join(', '),
-                      movie.duration > 0 ? `${movie.duration} хв` : '',
-                    ]
-                      .filter(Boolean)
-                      .join(' · ')}
-                  </p>
-                  <p className='programme-description'>{movie.description}</p>
-                  <Link className='programme-detail' to={`/movies/${movie.id}`}>
-                    Про фільм <ArrowRight size={18} aria-hidden='true' />
-                  </Link>
-                </div>
-                <FilmArtwork movie={movie} lead={index === 0} />
-                {!sessions.isPending && !sessions.isError && date && (
-                  <div
-                    className={
-                      index === 0
-                        ? 'programme-booking-band'
-                        : 'programme-other-screenings'
-                    }
-                  >
-                    {index === 0 && dateControls}
-                    <Screenings
-                      movie={movie}
-                      sessions={visibleSessions.filter(
-                        session => session.movieId === movie.id,
-                      )}
-                      hallNames={hallNames}
-                    />
-                  </div>
+                movie={movie}
+                lead={index === 0}
+                sessions={visibleSessions.filter(
+                  session => session.movieId === movie.id,
                 )}
-              </article>
+                hallNames={hallNames}
+                dateControls={dateControls}
+                showScreenings={
+                  !sessions.isPending && !sessions.isError && Boolean(date)
+                }
+              />
             ))
           )}
         </>
       )}
-      <Link className='programme-schedule' to='/sessions'>
+      <Link
+        className='flex justify-between gap-6 border-b-2 border-[var(--signal-blue)] py-6 font-programme-display text-[1.75rem] leading-[1.3] font-semibold'
+        to='/sessions'
+      >
         Перейти до розкладу <ArrowRight aria-hidden='true' />
       </Link>
     </div>
