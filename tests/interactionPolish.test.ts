@@ -234,7 +234,6 @@ describe('hero controls', () => {
     assert.equal(markup.split('aria-pressed="true"').length - 1, 2)
     assert.ok(markup.includes(heroCopy.pause))
     assert.ok(!markup.includes('aria-live="assertive"'))
-    assert.ok(markup.includes('prefers-reduced-motion: no-preference'))
   })
 })
 

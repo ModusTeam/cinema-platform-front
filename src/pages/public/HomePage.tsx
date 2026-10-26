@@ -9,6 +9,8 @@ import EmptyState from '@/shared/ui/EmptyState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import UnavailableState from '@/shared/ui/UnavailableState'
 import { useHomeMovies } from '@/widgets/home/model/useHomeMovies'
+import HomeScroll from '@/widgets/home/ui/HomeScroll'
+import ProgrammeHeading from '@/widgets/home/ui/ProgrammeHeading'
 import PromoSection from '@/widgets/home/ui/PromoSection'
 
 const HomePage = () => {
@@ -31,20 +33,24 @@ const HomePage = () => {
   if (isLoading) {
     return (
       <div className='flex h-screen w-full items-center justify-center bg-[var(--bg-main)]'>
-        <GridLoader className='h-12 w-12 animate-spin text-[var(--color-primary)]' />
+        <GridLoader className='h-12 w-12 animate-spin motion-reduce:animate-none text-[var(--color-primary)]' />
       </div>
     )
   }
 
   return (
     <div className='font-public min-h-screen bg-[var(--bg-main)] pb-20'>
+      <HomeScroll />
       <HeroSection />
 
-      <div className='container relative z-10 mx-auto px-4 pt-10'>
+      <section
+        id='home-programme'
+        aria-label='Програма кінотеатру'
+        tabIndex={-1}
+        className='container relative z-10 mx-auto scroll-mt-28 px-4 pt-10'
+      >
         <div className='flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-6'>
-          <h2 className='type-public-section text-[var(--text-main)] pl-4 border-l-4 border-[var(--color-primary)]'>
-            Зараз у кіно
-          </h2>
+          <ProgrammeHeading />
 
           <div className='flex flex-wrap gap-2'>
             {filters.map(f => (
@@ -105,7 +111,7 @@ const HomePage = () => {
             />
           </Link>
         </div>
-      </div>
+      </section>
 
       <PromoSection />
     </div>

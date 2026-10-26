@@ -1,5 +1,8 @@
 # Motion and future scrolling strategy
 
+Current Phase 3 implementation and verification are in the [Home motion review](phase-3.md).
+The sections below preserve the Phase 1 experiment and its original future plan.
+
 ## Implemented experiment
 
 One ticket-inspired purchase CTA uses the installed `motion/react`: 180ms ease-out,

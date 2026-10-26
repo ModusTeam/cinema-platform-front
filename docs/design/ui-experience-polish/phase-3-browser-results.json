@@ -1,0 +1,968 @@
+{
+  "results": [
+    {
+      "name": "initial Home performance observation",
+      "passed": true,
+      "details": {
+        "imageResources": [
+          {
+            "url": "/placeholder-wip.jpg",
+            "duration": 9.100000001490116
+          }
+        ],
+        "layoutShiftSum": 0.00020327604844443277
+      }
+    },
+    {
+      "name": "motion 1440 identity/layout",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": "none",
+        "heading": "matrix(1, 0, 0, 1, 0, 12.96)",
+        "overflow": false,
+        "overlay": false,
+        "title": "Cinema Platform"
+      }
+    },
+    {
+      "name": "motion 1440 Lenis scope",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": "none",
+        "heading": "matrix(1, 0, 0, 1, 0, 12.96)",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "motion 1440 full long title",
+      "passed": true,
+      "details": {
+        "text": "Бійцівський клуб: спеціальний показ оригінальної режисерської версії",
+        "titleBottom": 627.75,
+        "actionTop": 742.25,
+        "heroBottom": 970.25,
+        "size": "95.04px",
+        "clipped": false
+      }
+    },
+    {
+      "name": "motion 1440 ticket keyboard focus",
+      "passed": true,
+      "details": {
+        "focused": true,
+        "outline": "2px",
+        "mask": "none",
+        "height": 56
+      }
+    },
+    {
+      "name": "motion 768 identity/layout",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": "none",
+        "heading": "matrix(1, 0, 0, 1, 0, 7.84834)",
+        "overflow": false,
+        "overlay": false,
+        "title": "Cinema Platform"
+      }
+    },
+    {
+      "name": "motion 768 Lenis scope",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": "none",
+        "heading": "matrix(1, 0, 0, 1, 0, 7.84834)",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "motion 768 full long title",
+      "passed": true,
+      "details": {
+        "text": "Бійцівський клуб: спеціальний показ оригінальної режисерської версії",
+        "titleBottom": 439.28125,
+        "actionTop": 553.78125,
+        "heroBottom": 781.78125,
+        "size": "59.904px",
+        "clipped": false
+      }
+    },
+    {
+      "name": "motion 768 ticket keyboard focus",
+      "passed": true,
+      "details": {
+        "focused": true,
+        "outline": "2px",
+        "mask": "none",
+        "height": 56
+      }
+    },
+    {
+      "name": "motion 390 identity/layout",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": "none",
+        "heading": "matrix(1, 0, 0, 1, 0, 9.68088)",
+        "overflow": false,
+        "overlay": false,
+        "title": "Cinema Platform"
+      }
+    },
+    {
+      "name": "motion 390 Lenis scope",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": "none",
+        "heading": "matrix(1, 0, 0, 1, 0, 9.68088)",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "motion 390 full long title",
+      "passed": true,
+      "details": {
+        "text": "Бійцівський клуб: спеціальний показ оригінальної режисерської версії",
+        "titleBottom": 409.5625,
+        "actionTop": 543.5625,
+        "heroBottom": 831.5625,
+        "size": "40px",
+        "clipped": false
+      }
+    },
+    {
+      "name": "motion 390 ticket keyboard focus",
+      "passed": true,
+      "details": {
+        "focused": true,
+        "outline": "2px",
+        "mask": "none",
+        "height": 56
+      }
+    },
+    {
+      "name": "motion 320 identity/layout",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": "none",
+        "heading": "matrix(1, 0, 0, 1, 0, 9.68088)",
+        "overflow": false,
+        "overlay": false,
+        "title": "Cinema Platform"
+      }
+    },
+    {
+      "name": "motion 320 Lenis scope",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": "none",
+        "heading": "matrix(1, 0, 0, 1, 0, 9.68088)",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "motion 320 full long title",
+      "passed": true,
+      "details": {
+        "text": "Бійцівський клуб: спеціальний показ оригінальної режисерської версії",
+        "titleBottom": 494.34375,
+        "actionTop": 628.34375,
+        "heroBottom": 916.34375,
+        "size": "40px",
+        "clipped": false
+      }
+    },
+    {
+      "name": "motion 320 ticket keyboard focus",
+      "passed": true,
+      "details": {
+        "focused": true,
+        "outline": "2px",
+        "mask": "none",
+        "height": 56
+      }
+    },
+    {
+      "name": "reduced 1440 identity/layout",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": "none",
+        "heading": "none",
+        "overflow": false,
+        "overlay": false,
+        "title": "Cinema Platform"
+      }
+    },
+    {
+      "name": "reduced 1440 Lenis scope",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": "none",
+        "heading": "none",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "reduced 1440 full long title",
+      "passed": true,
+      "details": {
+        "text": "Бійцівський клуб: спеціальний показ оригінальної режисерської версії",
+        "titleBottom": 627.75,
+        "actionTop": 742.25,
+        "heroBottom": 970.25,
+        "size": "95.04px",
+        "clipped": false
+      }
+    },
+    {
+      "name": "reduced 1440 ticket keyboard focus",
+      "passed": true,
+      "details": {
+        "focused": true,
+        "outline": "2px",
+        "mask": "none",
+        "height": 56
+      }
+    },
+    {
+      "name": "reduced 768 identity/layout",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": "none",
+        "heading": "none",
+        "overflow": false,
+        "overlay": false,
+        "title": "Cinema Platform"
+      }
+    },
+    {
+      "name": "reduced 768 Lenis scope",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": "none",
+        "heading": "none",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "reduced 768 full long title",
+      "passed": true,
+      "details": {
+        "text": "Бійцівський клуб: спеціальний показ оригінальної режисерської версії",
+        "titleBottom": 439.28125,
+        "actionTop": 553.78125,
+        "heroBottom": 781.78125,
+        "size": "59.904px",
+        "clipped": false
+      }
+    },
+    {
+      "name": "reduced 768 ticket keyboard focus",
+      "passed": true,
+      "details": {
+        "focused": true,
+        "outline": "2px",
+        "mask": "none",
+        "height": 56
+      }
+    },
+    {
+      "name": "reduced 390 identity/layout",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": "none",
+        "heading": "none",
+        "overflow": false,
+        "overlay": false,
+        "title": "Cinema Platform"
+      }
+    },
+    {
+      "name": "reduced 390 Lenis scope",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": "none",
+        "heading": "none",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "reduced 390 full long title",
+      "passed": true,
+      "details": {
+        "text": "Бійцівський клуб: спеціальний показ оригінальної режисерської версії",
+        "titleBottom": 409.5625,
+        "actionTop": 543.5625,
+        "heroBottom": 831.5625,
+        "size": "40px",
+        "clipped": false
+      }
+    },
+    {
+      "name": "reduced 390 ticket keyboard focus",
+      "passed": true,
+      "details": {
+        "focused": true,
+        "outline": "2px",
+        "mask": "none",
+        "height": 56
+      }
+    },
+    {
+      "name": "reduced 320 identity/layout",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": "none",
+        "heading": "none",
+        "overflow": false,
+        "overlay": false,
+        "title": "Cinema Platform"
+      }
+    },
+    {
+      "name": "reduced 320 Lenis scope",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": "none",
+        "heading": "none",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "reduced 320 full long title",
+      "passed": true,
+      "details": {
+        "text": "Бійцівський клуб: спеціальний показ оригінальної режисерської версії",
+        "titleBottom": 494.34375,
+        "actionTop": 628.34375,
+        "heroBottom": 916.34375,
+        "size": "40px",
+        "clipped": false
+      }
+    },
+    {
+      "name": "reduced 320 ticket keyboard focus",
+      "passed": true,
+      "details": {
+        "focused": true,
+        "outline": "2px",
+        "mask": "none",
+        "height": 56
+      }
+    },
+    {
+      "name": "direct Home hash entry",
+      "passed": true,
+      "details": {
+        "top": 112
+      }
+    },
+    {
+      "name": "autoplay explicit pause",
+      "passed": true
+    },
+    {
+      "name": "film crossfade finishes",
+      "passed": true,
+      "details": [
+        [
+          {
+            "opacity": "1",
+            "src": "/placeholder-wip.jpg"
+          },
+          {
+            "opacity": "0",
+            "src": "/placeholder-wip.jpg"
+          }
+        ],
+        [
+          {
+            "opacity": "1",
+            "src": "/placeholder-wip.jpg"
+          }
+        ],
+        [
+          {
+            "opacity": "1",
+            "src": "/placeholder-wip.jpg"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "wheel smoothing and scroll-driven depth",
+      "passed": true,
+      "details": [
+        {
+          "y": 0,
+          "lenis": true,
+          "wheelListeners": 1,
+          "depth": "none",
+          "heading": "matrix(1, 0, 0, 1, 0, 12.96)",
+          "overflow": false,
+          "overlay": false
+        },
+        {
+          "y": 239,
+          "lenis": true,
+          "wheelListeners": 1,
+          "depth": "matrix(1.0086, 0, 0, 1.0086, 0, 12.2311)",
+          "heading": "matrix(1, 0, 0, 1, 0, 3.78667)",
+          "overflow": false,
+          "overlay": false
+        },
+        {
+          "y": 613,
+          "lenis": true,
+          "wheelListeners": 1,
+          "depth": "matrix(1.0306, 0, 0, 1.0306, 0, 43.52)",
+          "heading": "none",
+          "overflow": false,
+          "overlay": false
+        },
+        {
+          "y": 620,
+          "lenis": true,
+          "wheelListeners": 1,
+          "depth": "matrix(1.031, 0, 0, 1.031, 0, 44.0889)",
+          "heading": "none",
+          "overflow": false,
+          "overlay": false
+        }
+      ]
+    },
+    {
+      "name": "programme reveal progresses",
+      "passed": true,
+      "details": [
+        {
+          "y": 0,
+          "lenis": true,
+          "wheelListeners": 1,
+          "depth": "none",
+          "heading": "matrix(1, 0, 0, 1, 0, 12.96)",
+          "overflow": false,
+          "overlay": false
+        },
+        {
+          "y": 239,
+          "lenis": true,
+          "wheelListeners": 1,
+          "depth": "matrix(1.0086, 0, 0, 1.0086, 0, 12.2311)",
+          "heading": "matrix(1, 0, 0, 1, 0, 3.78667)",
+          "overflow": false,
+          "overlay": false
+        },
+        {
+          "y": 613,
+          "lenis": true,
+          "wheelListeners": 1,
+          "depth": "matrix(1.0306, 0, 0, 1.0306, 0, 43.52)",
+          "heading": "none",
+          "overflow": false,
+          "overlay": false
+        },
+        {
+          "y": 620,
+          "lenis": true,
+          "wheelListeners": 1,
+          "depth": "matrix(1.031, 0, 0, 1.031, 0, 44.0889)",
+          "heading": "none",
+          "overflow": false,
+          "overlay": false
+        }
+      ]
+    },
+    {
+      "name": "keyboard Home",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": "none",
+        "heading": "matrix(1, 0, 0, 1, 0, 12.96)",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "keyboard PageDown",
+      "passed": true,
+      "details": {
+        "y": 875,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": "matrix(1.04375, 0, 0, 1.04375, 0, 62.2222)",
+        "heading": "none",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "native anchor URL and target",
+      "passed": true,
+      "details": {
+        "focused": true,
+        "top": 112
+      }
+    },
+    {
+      "name": "same-page anchor Back",
+      "passed": true,
+      "details": {
+        "y": 875,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": "matrix(1.04375, 0, 0, 1.04375, 0, 62.2222)",
+        "heading": "none",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "keyboard interrupts inertia",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": "none",
+        "heading": "matrix(1, 0, 0, 1, 0, 12.96)",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "nested native wheel",
+      "passed": true,
+      "details": {
+        "panel": 240,
+        "page": 0
+      }
+    },
+    {
+      "name": "Home exit cleanup",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": null,
+        "heading": null,
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "Back restores Home scroll",
+      "passed": true,
+      "details": {
+        "expected": 500,
+        "y": 500,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": "matrix(1.025, 0, 0, 1.025, 0, 35.5556)",
+        "heading": "none",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "Forward removes Lenis",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": null,
+        "heading": null,
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "StrictMode reentry 0",
+      "passed": true,
+      "details": {
+        "y": 500,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": "matrix(1.025, 0, 0, 1.025, 0, 35.5556)",
+        "heading": "none",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "route cleanup 0",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": null,
+        "heading": null,
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "StrictMode reentry 1",
+      "passed": true,
+      "details": {
+        "y": 500,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": "matrix(1.025, 0, 0, 1.025, 0, 35.5556)",
+        "heading": "none",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "route cleanup 1",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": null,
+        "heading": null,
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "StrictMode reentry 2",
+      "passed": true,
+      "details": {
+        "y": 500,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": "matrix(1.025, 0, 0, 1.025, 0, 35.5556)",
+        "heading": "none",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "route cleanup 2",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": null,
+        "heading": null,
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "runtime reduce destroys Lenis",
+      "passed": true,
+      "details": {
+        "y": 77,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": "none",
+        "heading": "none",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "native scrolling after reduction",
+      "passed": true,
+      "details": {
+        "y": 277,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": "none",
+        "heading": "none",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "runtime normal mounts once",
+      "passed": true,
+      "details": {
+        "y": 277,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": "matrix(1.01385, 0, 0, 1.01385, 0, 19.6978)",
+        "heading": "none",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "native touch scrolling",
+      "passed": true,
+      "details": {
+        "y": 295,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": "none",
+        "heading": "none",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "ticket preserves booking movie route and auth guard",
+      "passed": true,
+      "details": {
+        "bookingEntries": [
+          "/booking/750828f9-c778-44f4-b010-7416abe6aa01",
+          "/auth/login",
+          "/auth/login"
+        ],
+        "url": "http://127.0.0.1:5174/auth/login",
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": null,
+        "heading": null,
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "excluded route /auth/login",
+      "passed": true,
+      "details": {
+        "renderedPath": "/auth/login",
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": null,
+        "heading": null,
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "excluded route /profile",
+      "passed": true,
+      "details": {
+        "renderedPath": "/profile",
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": null,
+        "heading": null,
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "excluded route /account/loyalty",
+      "passed": true,
+      "details": {
+        "renderedPath": "/account/loyalty",
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": null,
+        "heading": null,
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "excluded route /admin",
+      "passed": true,
+      "details": {
+        "renderedPath": "/",
+        "y": 0,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": "none",
+        "heading": "matrix(1, 0, 0, 1, 0, 9.68088)",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "excluded route /about",
+      "passed": true,
+      "details": {
+        "renderedPath": "/about",
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": null,
+        "heading": null,
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "optional Lenis load failure keeps Home",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": "none",
+        "heading": "matrix(1, 0, 0, 1, 0, 9.68088)",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "native scroll without Lenis",
+      "passed": true,
+      "details": {
+        "y": 250,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": "none",
+        "heading": "none",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "authenticated admin remains native",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": null,
+        "heading": null,
+        "overflow": true,
+        "overlay": false
+      }
+    },
+    {
+      "name": "Home empty state",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": null,
+        "heading": "none",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "Home loading state",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": false,
+        "wheelListeners": 0,
+        "depth": null,
+        "heading": null,
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "Home error state",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "lenis": true,
+        "wheelListeners": 1,
+        "depth": null,
+        "heading": "matrix(1, 0, 0, 1, 0, 3.61453)",
+        "overflow": false,
+        "overlay": false
+      }
+    },
+    {
+      "name": "failed catalogue retry recovers",
+      "passed": true
+    },
+    {
+      "name": "no unexpected browser errors",
+      "passed": true,
+      "details": []
+    },
+    {
+      "name": "zero mutations",
+      "passed": true,
+      "details": []
+    }
+  ],
+  "errors": [],
+  "expectedErrors": [
+    "Failed to load resource: net::ERR_FAILED",
+    "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+    "Failed to fetch movies: AxiosError: Server error (503). Please try again later.\n    at settle (http://127.0.0.1:5174/node_modules/.vite/deps/axios.js?v=0b8ee748:1267:12)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5174/node_modules/.vite/deps/axios.js?v=0b8ee748:1616:7)\n    at Axios.request (http://127.0.0.1:5174/node_modules/.vite/deps/axios.js?v=0b8ee748:2233:41)\n    at async Object.getAll (http://127.0.0.1:5174/src/entities/movie/api/movies.service.ts:38:24)\n    at async Promise.all (index 0)\n    at async queryFn (http://127.0.0.1:5174/src/widgets/home/model/useHomeMovies.ts:20:52)",
+    "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+    "Error fetching all sessions: AxiosError: Server error (503). Please try again later.\n    at settle (http://127.0.0.1:5174/node_modules/.vite/deps/axios.js?v=0b8ee748:1267:12)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5174/node_modules/.vite/deps/axios.js?v=0b8ee748:1616:7)\n    at Axios.request (http://127.0.0.1:5174/node_modules/.vite/deps/axios.js?v=0b8ee748:2233:41)\n    at async Object.getAll (http://127.0.0.1:5174/src/entities/session/api/sessions.service.ts:19:24)\n    at async Promise.all (index 1)",
+    "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+    "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+    "Failed to fetch movies: AxiosError: Server error (503). Please try again later.\n    at settle (http://127.0.0.1:5174/node_modules/.vite/deps/axios.js?v=0b8ee748:1267:12)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5174/node_modules/.vite/deps/axios.js?v=0b8ee748:1616:7)\n    at Axios.request (http://127.0.0.1:5174/node_modules/.vite/deps/axios.js?v=0b8ee748:2233:41)\n    at async Object.getAll (http://127.0.0.1:5174/src/entities/movie/api/movies.service.ts:38:24)\n    at async Promise.all (index 0)\n    at async queryFn (http://127.0.0.1:5174/src/widgets/home/model/useHomeMovies.ts:20:52)",
+    "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+    "Error fetching all sessions: AxiosError: Server error (503). Please try again later.\n    at settle (http://127.0.0.1:5174/node_modules/.vite/deps/axios.js?v=0b8ee748:1267:12)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5174/node_modules/.vite/deps/axios.js?v=0b8ee748:1616:7)\n    at Axios.request (http://127.0.0.1:5174/node_modules/.vite/deps/axios.js?v=0b8ee748:2233:41)\n    at async Object.getAll (http://127.0.0.1:5174/src/entities/session/api/sessions.service.ts:19:24)\n    at async Promise.all (index 1)",
+    "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+    "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+    "Failed to fetch movies: AxiosError: Server error (503). Please try again later.\n    at settle (http://127.0.0.1:5174/node_modules/.vite/deps/axios.js?v=0b8ee748:1267:12)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5174/node_modules/.vite/deps/axios.js?v=0b8ee748:1616:7)\n    at Axios.request (http://127.0.0.1:5174/node_modules/.vite/deps/axios.js?v=0b8ee748:2233:41)\n    at async Object.getAll (http://127.0.0.1:5174/src/entities/movie/api/movies.service.ts:38:24)\n    at async queryFn (http://127.0.0.1:5174/src/features/movies/model/useHeroSlider.ts:22:25)"
+  ],
+  "mutations": []
+}

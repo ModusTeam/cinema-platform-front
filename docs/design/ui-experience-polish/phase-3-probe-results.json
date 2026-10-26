@@ -1,0 +1,22 @@
+{
+  "results": [
+    {
+      "name": "ticket hover lift",
+      "passed": true,
+      "details": "matrix(1, 0, 0, 1, 0, -2)"
+    },
+    {
+      "name": "ticket press",
+      "passed": true,
+      "details": "matrix(0.98, 0, 0, 0.98, 0, 0)"
+    },
+    {
+      "name": "ticket reduced motion",
+      "passed": true,
+      "details": "none"
+    }
+  ],
+  "layoutShiftSum": 0.00020327604844443277,
+  "errors": [],
+  "mutations": []
+}

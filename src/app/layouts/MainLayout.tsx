@@ -29,7 +29,12 @@ const MainLayout = () => {
       >
         <Suspense
           fallback={
-            <div className='flex h-[60vh] w-full items-center justify-center'>
+            <div
+              className={clsx(
+                'flex w-full items-center justify-center',
+                isHomePage ? 'min-h-svh' : 'h-[60vh]',
+              )}
+            >
               <GridLoader className='animate-spin text-[var(--color-primary)] h-12 w-12' />
             </div>
           }

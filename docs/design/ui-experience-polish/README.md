@@ -1,5 +1,9 @@
 # UI experience polish: Phase 1
 
+Phase 3 Home interaction changes are ready for [visual review](phase-3.md), with
+[before/after and motion evidence](screenshots/phase-3/README.md). The approved
+Phase 2 foundation remains in place; Phase 3 has not been marked approved.
+
 Phase 1 below is a historical checkpoint. Production adoption is now documented
 in the [Phase 2 review](phase-2.md), including the
 [before/after screenshot index](screenshots/phase-2/README.md).
