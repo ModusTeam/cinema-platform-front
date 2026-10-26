@@ -1,0 +1,21 @@
+.presentation-switch {
+  display: inline-flex;
+  border: 1px solid currentColor;
+  color: inherit;
+  font: 600 12px / 1.2 sans-serif;
+  flex-shrink: 0;
+}
+.presentation-switch button {
+  min-height: 36px;
+  padding: 8px 10px;
+  cursor: pointer;
+  color: inherit;
+}
+.presentation-switch button[aria-pressed="true"] {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 2px;
+}
+.presentation-switch button:hover {
+  text-decoration: underline;
+}

@@ -1,8 +1,8 @@
 # Cinema experience: The Film Programme
 
-Status: Film Programme UX structure and Festival Signal identity selected by the
-user on 2026-10-26 for further refinement. Refined palette, final mockups, and
-implementation remain unapproved. PRODUCT.md is
+Status: Approved 2026-10-26: vespre., Festival Signal identity, Midnight Signal
+palette, and incremental Classic / New rollout, initially defaulting to Classic.
+Initial implementation covers New Home only. PRODUCT.md is
 the authoritative product context. This brief preserves the prior Shape work;
 details below remain proposed unless explicitly identified as confirmed.
 
@@ -17,7 +17,8 @@ details below remain proposed unless explicitly identified as confirmed.
 - Include a future frontend proposal to carry the chosen session through
   authentication into the existing seat-selection path.
 - Preserve accessibility, backend contracts, seat locking and reconciliation,
-  payment boundaries, and admin workflows. No implementation is authorized.
+  payment boundaries, and admin workflows. Only the presentation foundation and
+  New Home are authorized for this iteration.
 
 ## Proposed experience
 
@@ -56,10 +57,11 @@ between same-time screenings, and recovery of the selected session after login.
 Check mobile, keyboard, reduced-motion, empty, and failure paths. These are
 proposed evaluation tasks, not results or numerical success commitments.
 
-Lead-film selection, display timezone, complete schedule retrieval, and formal
+Complete schedule retrieval and formal
 accessibility target remain open. Festival Signal is the selected identity;
-its refined palette, typography, motion, and composition specification remain
-proposed in `festival-signal/visual-direction.md` until reviewed.
+the approved Midnight Signal palette and composition specification are recorded
+in `festival-signal/visual-direction.md`. Display timezone ambiguity is
+resolved for New Home by displaying screening dates and times in Europe/Kyiv.
 
 ## Confirmed future experience boundary
 
@@ -68,8 +70,30 @@ be a separate, selectable frontend experience. The initial default remains
 Classic; an explicit user choice persists across visits. Both experiences share
 business logic, APIs, authentication, seat booking, and payment behavior. A
 visual switch must not create parallel domain logic or reset an active booking.
-Admin workflows remain unchanged. This records a requirement only; no switch,
-storage key, route, source component, or behavior has been implemented.
+Admin workflows remain unchanged. The implementation uses a presentation context
+above the router and a guarded localStorage preference. Only Home branches its
+presentation. Shared routes keep their component identity, auth and query providers.
+
+## Direction contract
+
+THESIS: Let visitors discover films and compare real dated screenings in an
+editorial programme rather than a repeated poster-card grid. Surface mode: Operate.
+
+OWN-WORLD: Midnight masthead and screening bands, chalk film spreads, condensed
+Cyrillic titles, blue rules, square actions, yellow selected dates.
+
+STORY: Read the film, choose an available date, compare times and halls, then
+enter the existing movie-based booking route. Session selection happens again there.
+
+FIRST VIEWPORT: A visible vespre. masthead, film/schedule/ticket navigation,
+one prominent title beside cinematic artwork, date controls and nearby screenings.
+Mobile stacks full titles, imagery and actions; subsequent films are compact.
+
+FORM: User-selected Festival Signal composition, palette C. No new concept seed:
+the supplied approved composition supersedes concept selection. Original desktop
+and mobile boards define composition only and retain their historical palette.
+
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
 
 ## Exploration artifacts
 

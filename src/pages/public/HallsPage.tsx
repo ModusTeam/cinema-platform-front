@@ -17,8 +17,8 @@ const HallsPage = () => {
               </div>
               <h3 className='mb-4 text-4xl md:text-5xl font-black uppercase tracking-tighter text-white'>
                 LUX{' '}
-                <span className='text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-600'>
-                  Cinema
+                <span className='normal-case text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-600'>
+                  vespre.
                 </span>
               </h3>
               <p className='mb-8 text-lg text-zinc-400 leading-relaxed'>

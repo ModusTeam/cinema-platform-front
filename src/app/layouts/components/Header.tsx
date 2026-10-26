@@ -3,6 +3,7 @@ import { LogOut, User } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@/features/auth/model/AuthContext'
+import { PresentationSwitch } from '@/features/presentation/ui/PresentationSwitch'
 import { useMotionPreference } from '@/shared/lib/useMotionPreference'
 import { useModalFocus } from '@/shared/ui/modals/useModalFocus'
 
@@ -84,19 +85,16 @@ const Header = () => {
         <div className='container mx-auto flex items-center justify-between px-4 md:px-6'>
           <Link
             to='/'
-            className='relative z-[70] flex items-center gap-1 text-2xl md:text-3xl font-black tracking-tighter text-white uppercase select-none group'
+            className='relative z-[70] flex items-center gap-1 text-2xl md:text-3xl font-black tracking-tighter text-white select-none group'
             onClick={() => setIsMenuOpen(false)}
           >
-            <span>
-              Cine
-              <span className='text-[var(--color-primary)] transition-colors duration-200 motion-reduce:transition-none group-hover:text-white'>
-                ma
-              </span>
-              .
-            </span>
+            <span>vespre.</span>
           </Link>
 
           <div className='relative z-[70] flex items-center gap-4 md:gap-6'>
+            {!location.pathname.startsWith('/booking/') && (
+              <PresentationSwitch />
+            )}
             {!isMenuOpen && (
               <div className='hidden md:flex items-center gap-6 transition-opacity duration-200 motion-reduce:transition-none'>
                 {user ? (

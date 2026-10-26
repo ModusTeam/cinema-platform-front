@@ -5,22 +5,35 @@ import { useLocation, useOutlet } from 'react-router-dom'
 import Footer from '@/app/layouts/components/Footer'
 import Header from '@/app/layouts/components/Header'
 import ScrollToTop from '@/app/ui/ScrollToTop'
+import { usePresentation } from '@/features/presentation/model/PresentationContext'
 import { useMotionPreference } from '@/shared/lib/useMotionPreference'
 import { GridLoader } from '@/shared/ui/GridLoader'
+import { ProgrammeFooter } from './components/ProgrammeFooter'
+import { ProgrammeHeader } from './components/ProgrammeHeader'
+import './programme.css'
 
 const MainLayout = () => {
   const location = useLocation()
   const reducedMotion = useMotionPreference()
   const isHomePage = location.pathname === '/'
+  const { presentation } = usePresentation()
+  const isNewHome = isHomePage && presentation === 'new'
 
   const element = useOutlet()
 
   return (
-    <div className='flex min-h-screen flex-col bg-[var(--bg-main)] text-[var(--text-main)] antialiased selection:bg-[var(--color-primary)]/30'>
-      <Header />
+    <div
+      className={
+        isNewHome
+          ? 'programme-shell'
+          : 'flex min-h-screen flex-col bg-[var(--bg-main)] text-[var(--text-main)] antialiased selection:bg-[var(--color-primary)]/30'
+      }
+    >
+      {isNewHome ? <ProgrammeHeader /> : <Header />}
 
       <ScrollToTop />
       <motion.main
+        id='programme'
         key={location.pathname}
         initial={reducedMotion ? false : { opacity: 0.6 }}
         animate={{ opacity: 1 }}
@@ -37,7 +50,7 @@ const MainLayout = () => {
           {element}
         </Suspense>
 
-        <Footer />
+        {isNewHome ? <ProgrammeFooter /> : <Footer />}
       </motion.main>
     </div>
   )

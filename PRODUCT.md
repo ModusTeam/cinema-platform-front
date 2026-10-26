@@ -1,4 +1,4 @@
-# Cinema Platform
+# vespre.
 
 <!-- impeccable:product-schema 1 -->
 
@@ -107,15 +107,24 @@ seat-lock semantics.
 
 ## Brand Commitments and Exploration Boundaries
 
-The product name is Cinema Platform. The user requires a distinctive,
+The customer-facing brand is **vespre.**, always lowercase with the period.
+Technical identifiers, repositories, APIs, and domains retain their names.
+The user approved **Festival Signal / Midnight Signal** on 2026-10-26:
+near-black `#14181F`, chalk `#F5F4EF`, blue `#3260F5`, yellow `#E9DC70`.
+Customer-facing presentation names are **Classic / New**. Classic is initially
+the default; explicit selection persists locally. Rollout is incremental,
+beginning with New Home. Shared unfinished pages retain Classic presentation;
+booking and administration behavior remain unchanged.
+
+The user requires a distinctive,
 thoughtful cinema experience and rejects generic AI-generated website styling:
 default SaaS patterns, repetitive cards, excessive gradients, decorative icon
 tiles, and copied templates.
 
 Cinema-related imagery, meaningful typography, editorial composition, clear
 showtimes, and intentional animation matter to future exploration. These are
-evaluation criteria, not a chosen visual system. No palette, typeface, layout,
-animation treatment, or page concept is selected here.
+criteria for implementing the approved direction. Detailed composition and
+typography are recorded in `docs/design/festival-signal/visual-direction.md`.
 
 Existing layouts and UI patterns may be replaced when a better experience is
 justified. Their present appearance is evidence of the implementation, not a
@@ -183,5 +192,5 @@ promotional copy or sample content.
   their interrupted booking is a future journey question, not an init change.
 - Responsive and accessibility conformance across the whole product has not been
   verified in a browser during initialization.
-- Visual direction remains open. No existing layout or visual system is adopted
-  as the target for future exploration.
+- New Home is the initial implementation boundary. Other public surfaces and
+  session handoff through authentication remain future work.

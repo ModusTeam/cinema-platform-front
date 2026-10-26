@@ -3,7 +3,7 @@
 2026-10-26. Historical three-direction exploration. The user subsequently selected
 Festival Signal for refinement; the earlier Programme Paper recommendation below
 is superseded. No original mockup is an approved implementation specification.
-See `../../festival-signal/visual-direction.md` for the proposed refinement.
+See `../../festival-signal/visual-direction.md` for the approved Midnight Signal direction and implementation scope.
 These are generated
 raster concept boards, not running screens, responsive implementations, or a
 production design system. PRODUCT.md remains authoritative; the selected UX

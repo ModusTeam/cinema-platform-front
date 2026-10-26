@@ -12,9 +12,9 @@ const PromoSection = () => {
         <div className='relative rounded-3xl bg-[var(--surface-muted)] border border-[var(--border-default)] px-6 py-12 md:px-16 md:py-20 overflow-hidden group'>
           <div className='relative z-10 flex flex-col md:flex-row items-center justify-between gap-12'>
             <div className='md:w-1/2 space-y-6 text-center md:text-left'>
-              <div className='inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 text-[var(--color-primary)] text-xs font-bold uppercase tracking-wider'>
+              <div className='inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 text-[var(--color-primary)] text-xs font-bold normal-case tracking-wider'>
                 <Crown size={14} />
-                Cinema Club
+                vespre. Club
               </div>
 
               <h2 className='type-display text-3xl sm:text-3xl md:text-5xl text-white leading-tight'>
@@ -54,7 +54,7 @@ const PromoSection = () => {
                 <div className='flex justify-between items-start relative z-10'>
                   <div>
                     <span className='block text-xl font-black text-white tracking-widest italic'>
-                      CINEMA.
+                      vespre.
                     </span>
                     <span className='block text-[10px] font-bold text-[var(--text-muted)] tracking-[0.3em] uppercase mt-1'>
                       Official Member

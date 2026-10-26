@@ -1,16 +1,19 @@
 import { ArrowRight, Film } from 'lucide-react'
-import { useMemo } from 'react'
+import { lazy, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { MovieStatus } from '@/entities/movie/model/movie.types'
 import HeroSection from '@/features/movies/ui/HeroSection'
 import MovieCard from '@/features/movies/ui/MovieCard'
+import { usePresentation } from '@/features/presentation/model/PresentationContext'
 import EmptyState from '@/shared/ui/EmptyState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import UnavailableState from '@/shared/ui/UnavailableState'
 import { useHomeMovies } from '@/widgets/home/model/useHomeMovies'
 import PromoSection from '@/widgets/home/ui/PromoSection'
 
-const HomePage = () => {
+const ProgrammeHome = lazy(() => import('@/widgets/home/ui/ProgrammeHome'))
+
+const ClassicHomePage = () => {
   const {
     filteredMovies,
     isLoading,
@@ -111,4 +114,7 @@ const HomePage = () => {
   )
 }
 
-export default HomePage
+export default function HomePage() {
+  const { presentation } = usePresentation()
+  return presentation === 'new' ? <ProgrammeHome /> : <ClassicHomePage />
+}
