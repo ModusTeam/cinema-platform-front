@@ -1,0 +1,1587 @@
+{
+  "verifiedOn": "2026-10-28",
+  "timezone": "Europe/Kyiv",
+  "browserPath": "Playwright MCP; Browser plugin unavailable",
+  "matrix": [
+    {
+      "scenario": "normal",
+      "reducedMotion": "reduce",
+      "browser": "156.0.4314.50",
+      "results": [
+        {
+          "name": "normal-reduced-1440 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 63.359375,
+              "y": 460,
+              "width": 871.59375,
+              "height": 192,
+              "top": 460,
+              "right": 934.953125,
+              "bottom": 652,
+              "left": 63.359375
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 1434,
+              "height": 768,
+              "top": 80,
+              "right": 1434,
+              "bottom": 848,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": true,
+            "links": [
+              "/movies/dune",
+              "/movies/arrival"
+            ]
+          }
+        },
+        {
+          "name": "normal-reduced-1440 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-reduced-1440 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-reduced-1440 future scheduled only",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-reduced-768 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 33.78125,
+              "y": 541.40625,
+              "width": 501.96875,
+              "height": 110.59375,
+              "top": 541.40625,
+              "right": 535.75,
+              "bottom": 652,
+              "left": 33.78125
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 762,
+              "height": 768,
+              "top": 80,
+              "right": 762,
+              "bottom": 848,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": true,
+            "links": [
+              "/movies/dune",
+              "/movies/arrival"
+            ]
+          }
+        },
+        {
+          "name": "normal-reduced-768 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-reduced-768 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-reduced-768 future scheduled only",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-reduced-390 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 17.15625,
+              "y": 469.390625,
+              "width": 349.6875,
+              "height": 88,
+              "top": 469.390625,
+              "right": 366.84375,
+              "bottom": 557.390625,
+              "left": 17.15625
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 384,
+              "height": 717.390625,
+              "top": 80,
+              "right": 384,
+              "bottom": 797.390625,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": true,
+            "links": [
+              "/movies/dune",
+              "/movies/arrival"
+            ]
+          }
+        },
+        {
+          "name": "normal-reduced-390 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-reduced-390 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-reduced-390 future scheduled only",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-reduced-320 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 16,
+              "y": 425.390625,
+              "width": 282,
+              "height": 132,
+              "top": 425.390625,
+              "right": 298,
+              "bottom": 557.390625,
+              "left": 16
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 314,
+              "height": 717.390625,
+              "top": 80,
+              "right": 314,
+              "bottom": 797.390625,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": true,
+            "links": [
+              "/movies/dune",
+              "/movies/arrival"
+            ]
+          }
+        },
+        {
+          "name": "normal-reduced-320 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-reduced-320 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-reduced-320 future scheduled only",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "console health",
+          "passed": true,
+          "details": []
+        },
+        {
+          "name": "no backend mutations",
+          "passed": true,
+          "details": []
+        }
+      ],
+      "errors": [],
+      "mutations": []
+    },
+    {
+      "scenario": "normal",
+      "reducedMotion": "no-preference",
+      "browser": "156.0.4314.50",
+      "results": [
+        {
+          "name": "normal-motion-1440 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 63.359375,
+              "y": 460,
+              "width": 871.59375,
+              "height": 192,
+              "top": 460,
+              "right": 934.953125,
+              "bottom": 652,
+              "left": 63.359375
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 1434,
+              "height": 768,
+              "top": 80,
+              "right": 1434,
+              "bottom": 848,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": true,
+            "links": [
+              "/movies/dune",
+              "/movies/arrival"
+            ]
+          }
+        },
+        {
+          "name": "normal-motion-1440 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-motion-1440 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-motion-1440 future scheduled only",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-motion-768 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 33.78125,
+              "y": 301.40625,
+              "width": 501.96875,
+              "height": 110.59375,
+              "top": 301.40625,
+              "right": 535.75,
+              "bottom": 412,
+              "left": 33.78125
+            },
+            "hero": {
+              "x": 0,
+              "y": -160,
+              "width": 762,
+              "height": 768,
+              "top": -160,
+              "right": 762,
+              "bottom": 608,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": true,
+            "links": [
+              "/movies/dune",
+              "/movies/arrival"
+            ]
+          }
+        },
+        {
+          "name": "normal-motion-768 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-motion-768 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-motion-768 future scheduled only",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-motion-390 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 17.15625,
+              "y": -130.609375,
+              "width": 349.6875,
+              "height": 88,
+              "top": -130.609375,
+              "right": 366.84375,
+              "bottom": -42.609375,
+              "left": 17.15625
+            },
+            "hero": {
+              "x": 0,
+              "y": -520,
+              "width": 384,
+              "height": 717.390625,
+              "top": -520,
+              "right": 384,
+              "bottom": 197.390625,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": true,
+            "links": [
+              "/movies/dune",
+              "/movies/arrival"
+            ]
+          }
+        },
+        {
+          "name": "normal-motion-390 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-motion-390 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-motion-390 future scheduled only",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-motion-320 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 16,
+              "y": 425.390625,
+              "width": 282,
+              "height": 132,
+              "top": 425.390625,
+              "right": 298,
+              "bottom": 557.390625,
+              "left": 16
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 314,
+              "height": 717.390625,
+              "top": 80,
+              "right": 314,
+              "bottom": 797.390625,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": true,
+            "links": [
+              "/movies/dune",
+              "/movies/arrival"
+            ]
+          }
+        },
+        {
+          "name": "normal-motion-320 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-motion-320 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "normal-motion-320 future scheduled only",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "console health",
+          "passed": true,
+          "details": []
+        },
+        {
+          "name": "no backend mutations",
+          "passed": true,
+          "details": []
+        }
+      ],
+      "errors": [],
+      "mutations": []
+    },
+    {
+      "scenario": "long",
+      "reducedMotion": "no-preference",
+      "browser": "156.0.4314.50",
+      "results": [
+        {
+          "name": "long-motion-1440 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 63.359375,
+              "y": 364,
+              "width": 1016.859375,
+              "height": 288,
+              "top": 364,
+              "right": 1080.21875,
+              "bottom": 652,
+              "left": 63.359375
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 1434,
+              "height": 768,
+              "top": 80,
+              "right": 1434,
+              "bottom": 848,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": true,
+            "links": [
+              "/movies/dune",
+              "/movies/arrival"
+            ]
+          }
+        },
+        {
+          "name": "long-motion-1440 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-motion-1440 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-motion-1440 future scheduled only",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-motion-768 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 33.78125,
+              "y": 498.375,
+              "width": 542.3125,
+              "height": 153.625,
+              "top": 498.375,
+              "right": 576.09375,
+              "bottom": 652,
+              "left": 33.78125
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 762,
+              "height": 768,
+              "top": 80,
+              "right": 762,
+              "bottom": 848,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": true,
+            "links": [
+              "/movies/dune",
+              "/movies/arrival"
+            ]
+          }
+        },
+        {
+          "name": "long-motion-768 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-motion-768 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-motion-768 future scheduled only",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-motion-390 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 17.15625,
+              "y": 377.390625,
+              "width": 349.6875,
+              "height": 180,
+              "top": 377.390625,
+              "right": 366.84375,
+              "bottom": 557.390625,
+              "left": 17.15625
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 384,
+              "height": 717.390625,
+              "top": 80,
+              "right": 384,
+              "bottom": 797.390625,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": true,
+            "links": [
+              "/movies/dune",
+              "/movies/arrival"
+            ]
+          }
+        },
+        {
+          "name": "long-motion-390 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-motion-390 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-motion-390 future scheduled only",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-motion-320 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 16,
+              "y": 244,
+              "width": 282,
+              "height": 324,
+              "top": 244,
+              "right": 298,
+              "bottom": 568,
+              "left": 16
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 314,
+              "height": 728,
+              "top": 80,
+              "right": 314,
+              "bottom": 808,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": true,
+            "links": [
+              "/movies/dune",
+              "/movies/arrival"
+            ]
+          }
+        },
+        {
+          "name": "long-motion-320 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-motion-320 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-motion-320 future scheduled only",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "console health",
+          "passed": true,
+          "details": []
+        },
+        {
+          "name": "no backend mutations",
+          "passed": true,
+          "details": []
+        }
+      ],
+      "errors": [],
+      "mutations": []
+    },
+    {
+      "scenario": "sparse",
+      "reducedMotion": "no-preference",
+      "browser": "156.0.4314.50",
+      "results": [
+        {
+          "name": "sparse-motion-1440 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 63.359375,
+              "y": 244,
+              "width": 871.59375,
+              "height": 192,
+              "top": 244,
+              "right": 934.953125,
+              "bottom": 436,
+              "left": 63.359375
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 1434,
+              "height": 552,
+              "top": 80,
+              "right": 1434,
+              "bottom": 632,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": false,
+            "links": []
+          }
+        },
+        {
+          "name": "sparse-motion-1440 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-motion-1440 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-motion-1440 honest empty states",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-motion-768 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 33.78125,
+              "y": 244,
+              "width": 501.96875,
+              "height": 110.59375,
+              "top": 244,
+              "right": 535.75,
+              "bottom": 354.59375,
+              "left": 33.78125
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 762,
+              "height": 470.59375,
+              "top": 80,
+              "right": 762,
+              "bottom": 550.59375,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": false,
+            "links": []
+          }
+        },
+        {
+          "name": "sparse-motion-768 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-motion-768 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-motion-768 honest empty states",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-motion-390 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 17.15625,
+              "y": 260,
+              "width": 349.6875,
+              "height": 88,
+              "top": 260,
+              "right": 366.84375,
+              "bottom": 348,
+              "left": 17.15625
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 384,
+              "height": 448,
+              "top": 80,
+              "right": 384,
+              "bottom": 528,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": false,
+            "links": []
+          }
+        },
+        {
+          "name": "sparse-motion-390 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-motion-390 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-motion-390 honest empty states",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-motion-320 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 16,
+              "y": 244,
+              "width": 282,
+              "height": 132,
+              "top": 244,
+              "right": 298,
+              "bottom": 376,
+              "left": 16
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 314,
+              "height": 476,
+              "top": 80,
+              "right": 314,
+              "bottom": 556,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": false,
+            "links": []
+          }
+        },
+        {
+          "name": "sparse-motion-320 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-motion-320 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-motion-320 honest empty states",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "console health",
+          "passed": true,
+          "details": []
+        },
+        {
+          "name": "no backend mutations",
+          "passed": true,
+          "details": []
+        }
+      ],
+      "errors": [],
+      "mutations": []
+    },
+    {
+      "scenario": "sparse",
+      "reducedMotion": "reduce",
+      "browser": "156.0.4314.50",
+      "results": [
+        {
+          "name": "sparse-reduced-1440 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 63.359375,
+              "y": 244,
+              "width": 871.59375,
+              "height": 192,
+              "top": 244,
+              "right": 934.953125,
+              "bottom": 436,
+              "left": 63.359375
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 1434,
+              "height": 552,
+              "top": 80,
+              "right": 1434,
+              "bottom": 632,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": false,
+            "links": []
+          }
+        },
+        {
+          "name": "sparse-reduced-1440 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-reduced-1440 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-reduced-1440 honest empty states",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-reduced-768 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 33.78125,
+              "y": 244,
+              "width": 501.96875,
+              "height": 110.59375,
+              "top": 244,
+              "right": 535.75,
+              "bottom": 354.59375,
+              "left": 33.78125
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 762,
+              "height": 470.59375,
+              "top": 80,
+              "right": 762,
+              "bottom": 550.59375,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": false,
+            "links": []
+          }
+        },
+        {
+          "name": "sparse-reduced-768 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-reduced-768 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-reduced-768 honest empty states",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-reduced-390 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 17.15625,
+              "y": 260,
+              "width": 349.6875,
+              "height": 88,
+              "top": 260,
+              "right": 366.84375,
+              "bottom": 348,
+              "left": 17.15625
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 384,
+              "height": 448,
+              "top": 80,
+              "right": 384,
+              "bottom": 528,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": false,
+            "links": []
+          }
+        },
+        {
+          "name": "sparse-reduced-390 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-reduced-390 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-reduced-390 honest empty states",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-reduced-320 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 16,
+              "y": 244,
+              "width": 282,
+              "height": 132,
+              "top": 244,
+              "right": 298,
+              "bottom": 376,
+              "left": 16
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 314,
+              "height": 476,
+              "top": 80,
+              "right": 314,
+              "bottom": 556,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": false,
+            "links": []
+          }
+        },
+        {
+          "name": "sparse-reduced-320 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-reduced-320 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "sparse-reduced-320 honest empty states",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "console health",
+          "passed": true,
+          "details": []
+        },
+        {
+          "name": "no backend mutations",
+          "passed": true,
+          "details": []
+        }
+      ],
+      "errors": [],
+      "mutations": []
+    },
+    {
+      "scenario": "long",
+      "reducedMotion": "reduce",
+      "browser": "156.0.4314.50",
+      "results": [
+        {
+          "name": "long-reduced-1440 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 63.359375,
+              "y": 364,
+              "width": 1016.859375,
+              "height": 288,
+              "top": 364,
+              "right": 1080.21875,
+              "bottom": 652,
+              "left": 63.359375
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 1434,
+              "height": 768,
+              "top": 80,
+              "right": 1434,
+              "bottom": 848,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": true,
+            "links": [
+              "/movies/dune",
+              "/movies/arrival"
+            ]
+          }
+        },
+        {
+          "name": "long-reduced-1440 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-reduced-1440 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-reduced-1440 future scheduled only",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-reduced-768 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 33.78125,
+              "y": 498.375,
+              "width": 542.3125,
+              "height": 153.625,
+              "top": 498.375,
+              "right": 576.09375,
+              "bottom": 652,
+              "left": 33.78125
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 762,
+              "height": 768,
+              "top": 80,
+              "right": 762,
+              "bottom": 848,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": true,
+            "links": [
+              "/movies/dune",
+              "/movies/arrival"
+            ]
+          }
+        },
+        {
+          "name": "long-reduced-768 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-reduced-768 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-reduced-768 future scheduled only",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-reduced-390 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 17.15625,
+              "y": 377.390625,
+              "width": 349.6875,
+              "height": 180,
+              "top": 377.390625,
+              "right": 366.84375,
+              "bottom": 557.390625,
+              "left": 17.15625
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 384,
+              "height": 717.390625,
+              "top": 80,
+              "right": 384,
+              "bottom": 797.390625,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": true,
+            "links": [
+              "/movies/dune",
+              "/movies/arrival"
+            ]
+          }
+        },
+        {
+          "name": "long-reduced-390 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-reduced-390 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-reduced-390 future scheduled only",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-reduced-320 identity and clean layout",
+          "passed": true,
+          "details": {
+            "overflow": false,
+            "lenis": false,
+            "header": "rgb(12, 12, 14)",
+            "heading": {
+              "x": 16,
+              "y": 244,
+              "width": 282,
+              "height": 324,
+              "top": 244,
+              "right": 298,
+              "bottom": 568,
+              "left": 16
+            },
+            "hero": {
+              "x": 0,
+              "y": 80,
+              "width": 314,
+              "height": 728,
+              "top": 80,
+              "right": 314,
+              "bottom": 808,
+              "left": 0
+            },
+            "titleFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+            "bodyFont": "\"Golos Text Variable\", \"Montserrat Variable\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+            "paper": "rgb(245, 241, 232)",
+            "poster": true,
+            "links": [
+              "/movies/dune",
+              "/movies/arrival"
+            ]
+          }
+        },
+        {
+          "name": "long-reduced-320 deferred trailer",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-reduced-320 real supported data",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "long-reduced-320 future scheduled only",
+          "passed": true,
+          "details": null
+        },
+        {
+          "name": "console health",
+          "passed": true,
+          "details": []
+        },
+        {
+          "name": "no backend mutations",
+          "passed": true,
+          "details": []
+        }
+      ],
+      "errors": [],
+      "mutations": []
+    }
+  ],
+  "interactions": {
+    "scenario": "normal",
+    "reducedMotion": "no-preference",
+    "browser": "156.0.4314.50",
+    "results": [
+      {
+        "name": "ticket keyboard focus",
+        "passed": true,
+        "details": null
+      },
+      {
+        "name": "guest booking return path",
+        "passed": true,
+        "details": {
+          "usr": {
+            "from": "/booking/film"
+          },
+          "key": "g5y2pn1q",
+          "idx": 1
+        }
+      },
+      {
+        "name": "trailer anchor clears fixed header",
+        "passed": true,
+        "details": null
+      },
+      {
+        "name": "trailer loads on activation and receives focus",
+        "passed": true,
+        "details": null
+      },
+      {
+        "name": "discover navigates and resets trailer",
+        "passed": true,
+        "details": null
+      },
+      {
+        "name": "Phase 4 menu over paper remains functional",
+        "passed": true,
+        "details": null
+      },
+      {
+        "name": "menu close restores page",
+        "passed": true,
+        "details": null
+      },
+      {
+        "name": "authenticated booking keeps movie route without session preselection",
+        "passed": true,
+        "details": null
+      },
+      {
+        "name": "console health",
+        "passed": true,
+        "details": []
+      },
+      {
+        "name": "no backend mutations",
+        "passed": true,
+        "details": []
+      }
+    ],
+    "errors": [],
+    "mutations": []
+  },
+  "edge": {
+    "results": [
+      {
+        "name": "independent loading states",
+        "passed": true,
+        "details": null
+      },
+      {
+        "name": "request failures never masquerade as empty data",
+        "passed": true,
+        "details": null
+      },
+      {
+        "name": "both failed sections recover with retry",
+        "passed": true,
+        "details": null
+      },
+      {
+        "name": "zero-film catalogue",
+        "passed": true,
+        "details": null
+      },
+      {
+        "name": "one-other-film catalogue",
+        "passed": true,
+        "details": null
+      },
+      {
+        "name": "200 percent text within movie column 1440",
+        "passed": true,
+        "details": {
+          "scroll": 1434,
+          "client": 1434
+        }
+      },
+      {
+        "name": "200 percent text within movie column 768",
+        "passed": true,
+        "details": {
+          "scroll": 762,
+          "client": 762
+        }
+      },
+      {
+        "name": "200 percent text within movie column 390",
+        "passed": true,
+        "details": {
+          "scroll": 384,
+          "client": 384
+        }
+      },
+      {
+        "name": "200 percent text within movie column 320",
+        "passed": true,
+        "details": {
+          "scroll": 314,
+          "client": 314
+        }
+      },
+      {
+        "name": "solid dark header over paper",
+        "passed": true,
+        "details": null
+      },
+      {
+        "name": "reduced motion disables discovery image movement",
+        "passed": true,
+        "details": {
+          "hover": "matrix(1.025, 0, 0, 1.025, 0, 0)",
+          "reduced": "none"
+        }
+      },
+      {
+        "name": "paper and action text contrast",
+        "passed": true,
+        "details": {
+          "paperBody": 14.609913547318964,
+          "paperMuted": 5.353501514449488,
+          "action": 5.466234560233416
+        }
+      }
+    ],
+    "errors": [
+      "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "Error fetching all sessions: AxiosError: Server error (503). Please try again later.\n    at settle (http://127.0.0.1:5176/node_modules/.vite/deps/axios.js?v=0b8ee748:1267:12)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5176/node_modules/.vite/deps/axios.js?v=0b8ee748:1616:7)\n    at Axios.request (http://127.0.0.1:5176/node_modules/.vite/deps/axios.js?v=0b8ee748:2233:41)\n    at async Object.getAll (http://127.0.0.1:5176/src/entities/session/api/sessions.service.ts:19:24)\n    at async Object.getByMovieId (http://127.0.0.1:5176/src/entities/session/api/sessions.service.ts:14:25)\n    at async queryFn (http://127.0.0.1:5176/src/widgets/movie-details/ui/MovieScreenings.tsx?t=1793141174466:31:46)",
+      "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "Failed to fetch movies: AxiosError: Server error (503). Please try again later.\n    at settle (http://127.0.0.1:5176/node_modules/.vite/deps/axios.js?v=0b8ee748:1267:12)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5176/node_modules/.vite/deps/axios.js?v=0b8ee748:1616:7)\n    at Axios.request (http://127.0.0.1:5176/node_modules/.vite/deps/axios.js?v=0b8ee748:2233:41)\n    at async getAll (http://127.0.0.1:5176/src/entities/movie/api/movies.service.ts:38:24)",
+      "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "Error fetching all sessions: AxiosError: Server error (503). Please try again later.\n    at settle (http://127.0.0.1:5176/node_modules/.vite/deps/axios.js?v=0b8ee748:1267:12)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5176/node_modules/.vite/deps/axios.js?v=0b8ee748:1616:7)\n    at Axios.request (http://127.0.0.1:5176/node_modules/.vite/deps/axios.js?v=0b8ee748:2233:41)\n    at async Object.getAll (http://127.0.0.1:5176/src/entities/session/api/sessions.service.ts:19:24)\n    at async Object.getByMovieId (http://127.0.0.1:5176/src/entities/session/api/sessions.service.ts:14:25)\n    at async queryFn (http://127.0.0.1:5176/src/widgets/movie-details/ui/MovieScreenings.tsx?t=1793141174466:31:46)",
+      "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "Failed to fetch movies: AxiosError: Server error (503). Please try again later.\n    at settle (http://127.0.0.1:5176/node_modules/.vite/deps/axios.js?v=0b8ee748:1267:12)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5176/node_modules/.vite/deps/axios.js?v=0b8ee748:1616:7)\n    at Axios.request (http://127.0.0.1:5176/node_modules/.vite/deps/axios.js?v=0b8ee748:2233:41)\n    at async getAll (http://127.0.0.1:5176/src/entities/movie/api/movies.service.ts:38:24)"
+    ],
+    "mutations": [],
+    "enlarged": {
+      "pageWidth": 442,
+      "viewport": 320,
+      "affected": [
+        {
+          "tag": "DIV",
+          "text": "УвійтиМеню"
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Меню"
+        },
+        {
+          "tag": "SPAN",
+          "text": ""
+        },
+        {
+          "tag": "SPAN",
+          "text": ""
+        },
+        {
+          "tag": "SPAN",
+          "text": ""
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Завантажити зGoogle Play"
+        },
+        {
+          "tag": "DIV",
+          "text": "Завантажити зGoogle Play"
+        },
+        {
+          "tag": "SPAN",
+          "text": "Завантажити з"
+        },
+        {
+          "tag": "SPAN",
+          "text": "Google Play"
+        }
+      ]
+    },
+    "contrasts": {
+      "paperBody": 14.609913547318964,
+      "paperMuted": 5.353501514449488,
+      "action": 5.466234560233416
+    },
+    "note": "Console errors here are expected fixture 503 responses and existing service logging. No real API mutations."
+  },
+  "live": {
+    "url": "http://localhost:5176/movies/c0b51881-c4d0-4bac-8501-86557175e360",
+    "catalogueCount": 1,
+    "sessionCount": 4,
+    "futureSessions": 0,
+    "errors": [],
+    "apiRequests": [
+      {
+        "url": "http://localhost:5211/api/movies/c0b51881-c4d0-4bac-8501-86557175e360",
+        "status": 200
+      },
+      {
+        "url": "http://localhost:5211/api/movies?pageNumber=1&pageSize=100",
+        "status": 200
+      },
+      {
+        "url": "http://localhost:5211/api/sessions?pageNumber=1&pageSize=1000",
+        "status": 200
+      },
+      {
+        "url": "http://localhost:5211/api/movies/c0b51881-c4d0-4bac-8501-86557175e360",
+        "status": 200
+      },
+      {
+        "url": "http://localhost:5211/api/movies?pageNumber=1&pageSize=100",
+        "status": 200
+      },
+      {
+        "url": "http://localhost:5211/api/sessions?pageNumber=1&pageSize=1000",
+        "status": 200
+      }
+    ],
+    "title": "Cinema Platform",
+    "body": "До афіші\nДЮНА: ЧАСТИНА ДРУГА\n\n2024\n166 хв\n\nКупити квиток\nПро фільм\n\nФантастичний епік від Дені Вільнева\n\nТРИВАЛІСТЬ\n166 хв\nРІК\n2024\nНа великому екрані\nНових сеансів поки немає\n\nПеревірте розклад пізніше або оберіть інший фільм в афіші.\n\nУвесь розклад\nДивіться також\nУсі фільми\nЩе більше кіно попереду\n\nІнші фільми з’являться тут, коли афіша поповниться."
+  }
+}

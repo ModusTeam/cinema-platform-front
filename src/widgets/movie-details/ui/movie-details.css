@@ -1,0 +1,90 @@
+/* Paper roles match the approved ticket menu without changing the global theme. */
+.movie-details {
+  --movie-paper: #f5f1e8;
+  --movie-ink: #201f1d;
+  --movie-muted: #686259;
+  --movie-rule: #c4bdb2;
+  background: var(--bg-main);
+  overflow-wrap: anywhere;
+  /* Join the fixed header; MainLayout keeps its established route padding. */
+  margin-top: -1rem;
+}
+.movie-gutter { padding-inline: clamp(1rem, 4.4vw, 5rem); }
+.movie-section { padding-block: clamp(3rem, 6.5vw, 6rem); }
+.movie-hero { min-height: min(48rem, 85svh); }
+.movie-hero[data-without-backdrop] { min-height: 28rem; }
+.movie-hero-shade {
+  background: linear-gradient(to top, rgb(0 0 0 / 94%), rgb(0 0 0 / 25%) 80%),
+    linear-gradient(to right, rgb(0 0 0 / 55%), transparent 85%);
+}
+.movie-title {
+  font-family: var(--font-public-display);
+  font-size: clamp(2.75rem, 7.2vw, 6rem);
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.movie-section-title {
+  font-family: var(--font-public-display);
+  font-size: clamp(2.25rem, 4vw, 4rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.movie-title[data-long-title] {
+  max-width: 28ch;
+  font-size: clamp(2.25rem, 5vw, 4.5rem);
+}
+.movie-paper {
+  --bg-card: var(--movie-paper);
+  --text-main: var(--movie-ink);
+  --text-muted: var(--movie-muted);
+  --text-faint: var(--movie-muted);
+  --focus-ring: var(--movie-ink);
+  background: var(--movie-paper);
+  color: var(--movie-ink);
+  color-scheme: light;
+}
+.movie-paper ::selection { background: #dcd2c2; color: var(--movie-ink); }
+.movie-description {
+  max-width: 65ch;
+  font-size: clamp(1.125rem, 1.75vw, 1.625rem);
+  line-height: 1.5;
+  letter-spacing: -0.015em;
+}
+.movie-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.5;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.movie-poster { aspect-ratio: 2 / 3; }
+.movie-text-link { text-underline-offset: 5px; }
+.movie-text-link:hover { text-decoration: underline; }
+.movie-state { border: 0; border-radius: 0; background: transparent; padding-inline: 0; }
+.movie-state > div:first-child { background: transparent; }
+.movie-discover-title {
+  font-family: var(--font-public-display);
+  font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+  font-weight: 550;
+  line-height: 1.15;
+}
+.movie-discover-link:hover .movie-discover-title {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+}
+.movie-trailer-trigger:focus-visible { outline-offset: -5px; }
+@media (min-width: 768px) { .movie-details { margin-top: -2rem; } }
+@media (prefers-reduced-motion: no-preference) {
+  .movie-discover-image { transition: transform 450ms cubic-bezier(.2,.7,.2,1); }
+  .movie-trailer-trigger > span { transition: background-color 180ms; }
+  @media (hover: hover) {
+    .movie-discover-link:hover .movie-discover-image { transform: scale(1.025); }
+    .movie-trailer-trigger:hover > span { background: rgb(0 0 0 / 85%); }
+  }
+}

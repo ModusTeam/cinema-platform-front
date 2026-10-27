@@ -1,5 +1,10 @@
 # UI experience polish: Phase 1
 
+Phase 5 Movie Details and Discover More are ready for [review](phase-5.md), with
+[before/after screenshots](screenshots/phase-5/README.md), browser evidence and
+verified local service URLs. The approved Phase 4 Header / Ticket Menu and the
+temporary Design Lab are preserved. Final cleanup has not started.
+
 Phase 4 Header and Ticket Menu implementation is ready for
 [review](phase-4.md), including responsive screenshots, fixture accessibility
 results and the running [local environment handoff](phase-4-local.md).
