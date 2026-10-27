@@ -1,0 +1,1739 @@
+{
+  "results": [
+    {
+      "name": "motion-1440 page identity",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": true,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-1440 clean layout",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": true,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-1440 isolated modal",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": true,
+        "lenis": true,
+        "stopped": true,
+        "overflow": false,
+        "inert": true
+      }
+    },
+    {
+      "name": "motion-1440 close initially focused",
+      "passed": true
+    },
+    {
+      "name": "motion-1440 five destinations + active route",
+      "passed": true
+    },
+    {
+      "name": "motion-1440 touch targets",
+      "passed": true,
+      "details": [
+        {
+          "label": "Закрити меню",
+          "height": 80,
+          "width": 80
+        },
+        {
+          "label": "01Афіша",
+          "height": 67.1875,
+          "width": 456
+        },
+        {
+          "label": "02Сеанси",
+          "height": 67.1875,
+          "width": 456
+        },
+        {
+          "label": "03Кінобар",
+          "height": 67.1875,
+          "width": 456
+        },
+        {
+          "label": "04Пропозиції",
+          "height": 67.1875,
+          "width": 456
+        },
+        {
+          "label": "05Про нас",
+          "height": 67.1875,
+          "width": 456
+        },
+        {
+          "label": "Увійти",
+          "height": 44,
+          "width": 51.203125
+        },
+        {
+          "label": "Зареєструватися",
+          "height": 44,
+          "width": 118.59375
+        },
+        {
+          "label": "Допомога",
+          "height": 44,
+          "width": 67.84375
+        },
+        {
+          "label": "0 800 500 500",
+          "height": 44,
+          "width": 82.328125
+        },
+        {
+          "label": "support@cinema.ua",
+          "height": 44,
+          "width": 116.4375
+        }
+      ]
+    },
+    {
+      "name": "motion-1440 reverse focus wrap",
+      "passed": true
+    },
+    {
+      "name": "motion-1440 forward focus wrap",
+      "passed": true
+    },
+    {
+      "name": "motion-1440 focus remains inside",
+      "passed": true
+    },
+    {
+      "name": "motion-1440 background wheel blocked",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": true,
+        "lenis": true,
+        "stopped": true,
+        "overflow": false,
+        "inert": true
+      }
+    },
+    {
+      "name": "motion-1440 lock + focus restored",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": true,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-1440 hidden links absent",
+      "passed": true
+    },
+    {
+      "name": "motion-1440 scroll resumes",
+      "passed": true,
+      "details": {
+        "y": 549,
+        "locked": false,
+        "lenis": true,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-1440 scrolled header",
+      "passed": true
+    },
+    {
+      "name": "motion-1440 backdrop + position",
+      "passed": true
+    },
+    {
+      "name": "motion-1440 Home exit restores native scrolling",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-1440 standard route active",
+      "passed": true
+    },
+    {
+      "name": "motion-768 page identity",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": true,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-768 clean layout",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": true,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-768 isolated modal",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": true,
+        "lenis": true,
+        "stopped": true,
+        "overflow": false,
+        "inert": true
+      }
+    },
+    {
+      "name": "motion-768 close initially focused",
+      "passed": true
+    },
+    {
+      "name": "motion-768 five destinations + active route",
+      "passed": true
+    },
+    {
+      "name": "motion-768 touch targets",
+      "passed": true,
+      "details": [
+        {
+          "label": "Закрити меню",
+          "height": 80,
+          "width": 80
+        },
+        {
+          "label": "01Афіша",
+          "height": 64.984375,
+          "width": 456
+        },
+        {
+          "label": "02Сеанси",
+          "height": 64.984375,
+          "width": 456
+        },
+        {
+          "label": "03Кінобар",
+          "height": 64.984375,
+          "width": 456
+        },
+        {
+          "label": "04Пропозиції",
+          "height": 64.984375,
+          "width": 456
+        },
+        {
+          "label": "05Про нас",
+          "height": 64.984375,
+          "width": 456
+        },
+        {
+          "label": "Увійти",
+          "height": 44,
+          "width": 51.203125
+        },
+        {
+          "label": "Зареєструватися",
+          "height": 44,
+          "width": 118.59375
+        },
+        {
+          "label": "Допомога",
+          "height": 44,
+          "width": 67.84375
+        },
+        {
+          "label": "0 800 500 500",
+          "height": 44,
+          "width": 82.328125
+        },
+        {
+          "label": "support@cinema.ua",
+          "height": 44,
+          "width": 116.4375
+        }
+      ]
+    },
+    {
+      "name": "motion-768 reverse focus wrap",
+      "passed": true
+    },
+    {
+      "name": "motion-768 forward focus wrap",
+      "passed": true
+    },
+    {
+      "name": "motion-768 focus remains inside",
+      "passed": true
+    },
+    {
+      "name": "motion-768 background wheel blocked",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": true,
+        "lenis": true,
+        "stopped": true,
+        "overflow": false,
+        "inert": true
+      }
+    },
+    {
+      "name": "motion-768 lock + focus restored",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": true,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-768 hidden links absent",
+      "passed": true
+    },
+    {
+      "name": "motion-768 scroll resumes",
+      "passed": true,
+      "details": {
+        "y": 549,
+        "locked": false,
+        "lenis": true,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-768 scrolled header",
+      "passed": true
+    },
+    {
+      "name": "motion-768 backdrop + position",
+      "passed": true
+    },
+    {
+      "name": "motion-768 Home exit restores native scrolling",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-768 standard route active",
+      "passed": true
+    },
+    {
+      "name": "motion-390 page identity",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": true,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-390 clean layout",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": true,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-390 isolated modal",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": true,
+        "lenis": true,
+        "stopped": true,
+        "overflow": false,
+        "inert": true
+      }
+    },
+    {
+      "name": "motion-390 close initially focused",
+      "passed": true
+    },
+    {
+      "name": "motion-390 five destinations + active route",
+      "passed": true
+    },
+    {
+      "name": "motion-390 touch targets",
+      "passed": true,
+      "details": [
+        {
+          "label": "Закрити меню",
+          "height": 80,
+          "width": 80
+        },
+        {
+          "label": "01Афіша",
+          "height": 56,
+          "width": 318
+        },
+        {
+          "label": "02Сеанси",
+          "height": 56,
+          "width": 318
+        },
+        {
+          "label": "03Кінобар",
+          "height": 56,
+          "width": 318
+        },
+        {
+          "label": "04Пропозиції",
+          "height": 56,
+          "width": 318
+        },
+        {
+          "label": "05Про нас",
+          "height": 56,
+          "width": 318
+        },
+        {
+          "label": "Увійти",
+          "height": 44,
+          "width": 51.203125
+        },
+        {
+          "label": "Зареєструватися",
+          "height": 44,
+          "width": 118.59375
+        },
+        {
+          "label": "Допомога",
+          "height": 44,
+          "width": 67.84375
+        },
+        {
+          "label": "0 800 500 500",
+          "height": 44,
+          "width": 82.328125
+        },
+        {
+          "label": "support@cinema.ua",
+          "height": 44,
+          "width": 116.4375
+        }
+      ]
+    },
+    {
+      "name": "motion-390 reverse focus wrap",
+      "passed": true
+    },
+    {
+      "name": "motion-390 forward focus wrap",
+      "passed": true
+    },
+    {
+      "name": "motion-390 focus remains inside",
+      "passed": true
+    },
+    {
+      "name": "motion-390 background wheel blocked",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": true,
+        "lenis": true,
+        "stopped": true,
+        "overflow": false,
+        "inert": true
+      }
+    },
+    {
+      "name": "motion-390 lock + focus restored",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": true,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-390 hidden links absent",
+      "passed": true
+    },
+    {
+      "name": "motion-390 scroll resumes",
+      "passed": true,
+      "details": {
+        "y": 549,
+        "locked": false,
+        "lenis": true,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-390 scrolled header",
+      "passed": true
+    },
+    {
+      "name": "motion-390 backdrop + position",
+      "passed": true
+    },
+    {
+      "name": "motion-390 Home exit restores native scrolling",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-390 standard route active",
+      "passed": true
+    },
+    {
+      "name": "motion-320 page identity",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": true,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-320 clean layout",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": true,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-320 isolated modal",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": true,
+        "lenis": true,
+        "stopped": true,
+        "overflow": false,
+        "inert": true
+      }
+    },
+    {
+      "name": "motion-320 close initially focused",
+      "passed": true
+    },
+    {
+      "name": "motion-320 five destinations + active route",
+      "passed": true
+    },
+    {
+      "name": "motion-320 touch targets",
+      "passed": true,
+      "details": [
+        {
+          "label": "Закрити меню",
+          "height": 80,
+          "width": 80
+        },
+        {
+          "label": "01Афіша",
+          "height": 56,
+          "width": 248
+        },
+        {
+          "label": "02Сеанси",
+          "height": 56,
+          "width": 248
+        },
+        {
+          "label": "03Кінобар",
+          "height": 56,
+          "width": 248
+        },
+        {
+          "label": "04Пропозиції",
+          "height": 56,
+          "width": 248
+        },
+        {
+          "label": "05Про нас",
+          "height": 56,
+          "width": 248
+        },
+        {
+          "label": "Увійти",
+          "height": 44,
+          "width": 51.203125
+        },
+        {
+          "label": "Зареєструватися",
+          "height": 44,
+          "width": 118.59375
+        },
+        {
+          "label": "Допомога",
+          "height": 44,
+          "width": 67.84375
+        },
+        {
+          "label": "0 800 500 500",
+          "height": 44,
+          "width": 82.328125
+        },
+        {
+          "label": "support@cinema.ua",
+          "height": 44,
+          "width": 116.4375
+        }
+      ]
+    },
+    {
+      "name": "motion-320 reverse focus wrap",
+      "passed": true
+    },
+    {
+      "name": "motion-320 forward focus wrap",
+      "passed": true
+    },
+    {
+      "name": "motion-320 focus remains inside",
+      "passed": true
+    },
+    {
+      "name": "motion-320 background wheel blocked",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": true,
+        "lenis": true,
+        "stopped": true,
+        "overflow": false,
+        "inert": true
+      }
+    },
+    {
+      "name": "motion-320 lock + focus restored",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": true,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-320 hidden links absent",
+      "passed": true
+    },
+    {
+      "name": "motion-320 scroll resumes",
+      "passed": true,
+      "details": {
+        "y": 549,
+        "locked": false,
+        "lenis": true,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-320 scrolled header",
+      "passed": true
+    },
+    {
+      "name": "motion-320 backdrop + position",
+      "passed": true
+    },
+    {
+      "name": "motion-320 Home exit restores native scrolling",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "motion-320 standard route active",
+      "passed": true
+    },
+    {
+      "name": "reduced-1440 page identity",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-1440 clean layout",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-1440 isolated modal",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": true,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": true
+      }
+    },
+    {
+      "name": "reduced-1440 close initially focused",
+      "passed": true
+    },
+    {
+      "name": "reduced-1440 five destinations + active route",
+      "passed": true
+    },
+    {
+      "name": "reduced-1440 touch targets",
+      "passed": true,
+      "details": [
+        {
+          "label": "Закрити меню",
+          "height": 80,
+          "width": 80
+        },
+        {
+          "label": "01Афіша",
+          "height": 67.1875,
+          "width": 456
+        },
+        {
+          "label": "02Сеанси",
+          "height": 67.1875,
+          "width": 456
+        },
+        {
+          "label": "03Кінобар",
+          "height": 67.1875,
+          "width": 456
+        },
+        {
+          "label": "04Пропозиції",
+          "height": 67.1875,
+          "width": 456
+        },
+        {
+          "label": "05Про нас",
+          "height": 67.1875,
+          "width": 456
+        },
+        {
+          "label": "Увійти",
+          "height": 44,
+          "width": 51.203125
+        },
+        {
+          "label": "Зареєструватися",
+          "height": 44,
+          "width": 118.59375
+        },
+        {
+          "label": "Допомога",
+          "height": 44,
+          "width": 67.84375
+        },
+        {
+          "label": "0 800 500 500",
+          "height": 44,
+          "width": 82.328125
+        },
+        {
+          "label": "support@cinema.ua",
+          "height": 44,
+          "width": 116.4375
+        }
+      ]
+    },
+    {
+      "name": "reduced-1440 reverse focus wrap",
+      "passed": true
+    },
+    {
+      "name": "reduced-1440 forward focus wrap",
+      "passed": true
+    },
+    {
+      "name": "reduced-1440 focus remains inside",
+      "passed": true
+    },
+    {
+      "name": "reduced-1440 background wheel blocked",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": true,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": true
+      }
+    },
+    {
+      "name": "reduced-1440 lock + focus restored",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-1440 hidden links absent",
+      "passed": true
+    },
+    {
+      "name": "reduced-1440 scroll resumes",
+      "passed": true,
+      "details": {
+        "y": 550,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-1440 scrolled header",
+      "passed": true
+    },
+    {
+      "name": "reduced-1440 backdrop + position",
+      "passed": true
+    },
+    {
+      "name": "reduced-1440 Home exit restores native scrolling",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-1440 standard route active",
+      "passed": true
+    },
+    {
+      "name": "reduced-768 page identity",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-768 clean layout",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-768 isolated modal",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": true,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": true
+      }
+    },
+    {
+      "name": "reduced-768 close initially focused",
+      "passed": true
+    },
+    {
+      "name": "reduced-768 five destinations + active route",
+      "passed": true
+    },
+    {
+      "name": "reduced-768 touch targets",
+      "passed": true,
+      "details": [
+        {
+          "label": "Закрити меню",
+          "height": 80,
+          "width": 80
+        },
+        {
+          "label": "01Афіша",
+          "height": 64.984375,
+          "width": 456
+        },
+        {
+          "label": "02Сеанси",
+          "height": 64.984375,
+          "width": 456
+        },
+        {
+          "label": "03Кінобар",
+          "height": 64.984375,
+          "width": 456
+        },
+        {
+          "label": "04Пропозиції",
+          "height": 64.984375,
+          "width": 456
+        },
+        {
+          "label": "05Про нас",
+          "height": 64.984375,
+          "width": 456
+        },
+        {
+          "label": "Увійти",
+          "height": 44,
+          "width": 51.203125
+        },
+        {
+          "label": "Зареєструватися",
+          "height": 44,
+          "width": 118.59375
+        },
+        {
+          "label": "Допомога",
+          "height": 44,
+          "width": 67.84375
+        },
+        {
+          "label": "0 800 500 500",
+          "height": 44,
+          "width": 82.328125
+        },
+        {
+          "label": "support@cinema.ua",
+          "height": 44,
+          "width": 116.4375
+        }
+      ]
+    },
+    {
+      "name": "reduced-768 reverse focus wrap",
+      "passed": true
+    },
+    {
+      "name": "reduced-768 forward focus wrap",
+      "passed": true
+    },
+    {
+      "name": "reduced-768 focus remains inside",
+      "passed": true
+    },
+    {
+      "name": "reduced-768 background wheel blocked",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": true,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": true
+      }
+    },
+    {
+      "name": "reduced-768 lock + focus restored",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-768 hidden links absent",
+      "passed": true
+    },
+    {
+      "name": "reduced-768 scroll resumes",
+      "passed": true,
+      "details": {
+        "y": 550,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-768 scrolled header",
+      "passed": true
+    },
+    {
+      "name": "reduced-768 backdrop + position",
+      "passed": true
+    },
+    {
+      "name": "reduced-768 Home exit restores native scrolling",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-768 standard route active",
+      "passed": true
+    },
+    {
+      "name": "reduced-390 page identity",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-390 clean layout",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-390 isolated modal",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": true,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": true
+      }
+    },
+    {
+      "name": "reduced-390 close initially focused",
+      "passed": true
+    },
+    {
+      "name": "reduced-390 five destinations + active route",
+      "passed": true
+    },
+    {
+      "name": "reduced-390 touch targets",
+      "passed": true,
+      "details": [
+        {
+          "label": "Закрити меню",
+          "height": 80,
+          "width": 80
+        },
+        {
+          "label": "01Афіша",
+          "height": 56,
+          "width": 318
+        },
+        {
+          "label": "02Сеанси",
+          "height": 56,
+          "width": 318
+        },
+        {
+          "label": "03Кінобар",
+          "height": 56,
+          "width": 318
+        },
+        {
+          "label": "04Пропозиції",
+          "height": 56,
+          "width": 318
+        },
+        {
+          "label": "05Про нас",
+          "height": 56,
+          "width": 318
+        },
+        {
+          "label": "Увійти",
+          "height": 44,
+          "width": 51.203125
+        },
+        {
+          "label": "Зареєструватися",
+          "height": 44,
+          "width": 118.59375
+        },
+        {
+          "label": "Допомога",
+          "height": 44,
+          "width": 67.84375
+        },
+        {
+          "label": "0 800 500 500",
+          "height": 44,
+          "width": 82.328125
+        },
+        {
+          "label": "support@cinema.ua",
+          "height": 44,
+          "width": 116.4375
+        }
+      ]
+    },
+    {
+      "name": "reduced-390 reverse focus wrap",
+      "passed": true
+    },
+    {
+      "name": "reduced-390 forward focus wrap",
+      "passed": true
+    },
+    {
+      "name": "reduced-390 focus remains inside",
+      "passed": true
+    },
+    {
+      "name": "reduced-390 background wheel blocked",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": true,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": true
+      }
+    },
+    {
+      "name": "reduced-390 lock + focus restored",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-390 hidden links absent",
+      "passed": true
+    },
+    {
+      "name": "reduced-390 scroll resumes",
+      "passed": true,
+      "details": {
+        "y": 550,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-390 scrolled header",
+      "passed": true
+    },
+    {
+      "name": "reduced-390 backdrop + position",
+      "passed": true
+    },
+    {
+      "name": "reduced-390 Home exit restores native scrolling",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-390 standard route active",
+      "passed": true
+    },
+    {
+      "name": "reduced-320 page identity",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-320 clean layout",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-320 isolated modal",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": true,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": true
+      }
+    },
+    {
+      "name": "reduced-320 close initially focused",
+      "passed": true
+    },
+    {
+      "name": "reduced-320 five destinations + active route",
+      "passed": true
+    },
+    {
+      "name": "reduced-320 touch targets",
+      "passed": true,
+      "details": [
+        {
+          "label": "Закрити меню",
+          "height": 80,
+          "width": 80
+        },
+        {
+          "label": "01Афіша",
+          "height": 56,
+          "width": 248
+        },
+        {
+          "label": "02Сеанси",
+          "height": 56,
+          "width": 248
+        },
+        {
+          "label": "03Кінобар",
+          "height": 56,
+          "width": 248
+        },
+        {
+          "label": "04Пропозиції",
+          "height": 56,
+          "width": 248
+        },
+        {
+          "label": "05Про нас",
+          "height": 56,
+          "width": 248
+        },
+        {
+          "label": "Увійти",
+          "height": 44,
+          "width": 51.203125
+        },
+        {
+          "label": "Зареєструватися",
+          "height": 44,
+          "width": 118.59375
+        },
+        {
+          "label": "Допомога",
+          "height": 44,
+          "width": 67.84375
+        },
+        {
+          "label": "0 800 500 500",
+          "height": 44,
+          "width": 82.328125
+        },
+        {
+          "label": "support@cinema.ua",
+          "height": 44,
+          "width": 116.4375
+        }
+      ]
+    },
+    {
+      "name": "reduced-320 reverse focus wrap",
+      "passed": true
+    },
+    {
+      "name": "reduced-320 forward focus wrap",
+      "passed": true
+    },
+    {
+      "name": "reduced-320 focus remains inside",
+      "passed": true
+    },
+    {
+      "name": "reduced-320 background wheel blocked",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": true,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": true
+      }
+    },
+    {
+      "name": "reduced-320 lock + focus restored",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-320 hidden links absent",
+      "passed": true
+    },
+    {
+      "name": "reduced-320 scroll resumes",
+      "passed": true,
+      "details": {
+        "y": 550,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-320 scrolled header",
+      "passed": true
+    },
+    {
+      "name": "reduced-320 backdrop + position",
+      "passed": true
+    },
+    {
+      "name": "reduced-320 Home exit restores native scrolling",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "reduced-320 standard route active",
+      "passed": true
+    },
+    {
+      "name": "short viewport internal scroll + fixed close",
+      "passed": true,
+      "details": {
+        "x": 12,
+        "y": 12,
+        "width": 296,
+        "height": 336
+      }
+    },
+    {
+      "name": "authenticated account + tickets reuse Profile",
+      "passed": true
+    },
+    {
+      "name": "long Ukrainian name fits",
+      "passed": true
+    },
+    {
+      "name": "logout clears tokens and restores lock",
+      "passed": true
+    },
+    {
+      "name": "route modal lifecycle /",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /sessions",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /about",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /offers",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /bar",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /faq",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /auth/login",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /auth/register",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /halls",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /technologies",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /careers",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /rules",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /privacy",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": true,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /offer",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /age-limits",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /movies/film",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /booking/session",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /profile",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /account/loyalty",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /account/loyalty/history",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "route modal lifecycle /profile/achievements",
+      "passed": true,
+      "details": {
+        "y": 0,
+        "locked": false,
+        "lenis": false,
+        "stopped": false,
+        "overflow": false,
+        "inert": false
+      }
+    },
+    {
+      "name": "console and runtime health",
+      "passed": true,
+      "details": []
+    },
+    {
+      "name": "no API mutations",
+      "passed": true,
+      "details": []
+    }
+  ],
+  "errors": [],
+  "mutations": [],
+  "note": "Chromium, fixture GET reads and simulated auth only. No real API credentials or data."
+}

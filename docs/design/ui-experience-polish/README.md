@@ -1,5 +1,10 @@
 # UI experience polish: Phase 1
 
+Phase 4 Header and Ticket Menu implementation is ready for
+[review](phase-4.md), including responsive screenshots, fixture accessibility
+results and the running [local environment handoff](phase-4-local.md).
+Phase 3 is complete per the Phase 4 brief. The Design Lab remains available.
+
 Phase 3 Home interaction changes are ready for [visual review](phase-3.md), with
 [before/after and motion evidence](screenshots/phase-3/README.md). The approved
 Phase 2 foundation remains in place; Phase 3 has not been marked approved.

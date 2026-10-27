@@ -1,19 +1,31 @@
-import { type LenisRef, ReactLenis } from 'lenis/react'
+import { ReactLenis, useLenis } from 'lenis/react'
 import { cancelFrame, frame } from 'motion/react'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import 'lenis/dist/lenis.css'
 
 const SmoothDocumentScroll = () => {
-  const lenisRef = useRef<LenisRef>(null)
+  const lenis = useLenis()
 
   useEffect(() => {
+    if (!lenis) return
+    // The shared modal hook owns the document lock; stop Lenis inertia too.
+    // Subscribe after the instance is published, including a mount under a modal.
+    const syncModalLock = () => {
+      if (document.body.style.overflow === 'hidden') lenis.stop()
+      else lenis.start()
+    }
+    const observer = new MutationObserver(syncModalLock)
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['style'],
+    })
+    syncModalLock()
     const update = ({ timestamp }: { timestamp: number }) => {
-      lenisRef.current?.lenis?.raf(timestamp)
+      lenis.raf(timestamp)
     }
     // Keyboard, hash links and history retain native scrolling, even mid-inertia.
     const resetInertia = () => {
-      const lenis = lenisRef.current?.lenis
-      if (lenis) lenis.scrollTo(lenis.actualScroll, { immediate: true })
+      lenis.scrollTo(lenis.actualScroll, { immediate: true })
     }
     const onKeyDown = (event: KeyboardEvent) => {
       if (
@@ -35,17 +47,17 @@ const SmoothDocumentScroll = () => {
     window.addEventListener('hashchange', resetInertia)
     window.addEventListener('popstate', resetInertia)
     return () => {
+      observer.disconnect()
       cancelFrame(update)
       window.removeEventListener('keydown', onKeyDown)
       window.removeEventListener('hashchange', resetInertia)
       window.removeEventListener('popstate', resetInertia)
     }
-  }, [])
+  }, [lenis])
 
   return (
     <ReactLenis
       root
-      ref={lenisRef}
       options={{
         autoRaf: false,
         lerp: 0.16,
