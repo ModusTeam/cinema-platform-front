@@ -101,7 +101,7 @@ const HomePage = () => {
 
         <div className='mt-12 flex justify-center'>
           <Link
-            to='/sessions'
+            to='/sessions?mode=schedule'
             className={`${buttonStyles('secondary')} group px-6 py-4`}
           >
             Дивитись повний розклад

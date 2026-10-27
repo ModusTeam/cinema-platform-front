@@ -1,0 +1,226 @@
+{
+  "results": [
+    {
+      "name": "first catalogue request is bounded to twelve films",
+      "passed": true,
+      "details": [
+        "/api/movies?pageNumber=1&pageSize=12"
+      ]
+    },
+    {
+      "name": "next-page failure retains the first page and exposes retry",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "load-more pending control prevents duplicate requests",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "partial category does not pretend later pages are empty",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "coming-soon film beyond first hundred can be discovered",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "all eleven API pages were loaded on explicit request",
+      "passed": true,
+      "details": [
+        "/api/movies?pageNumber=1&pageSize=12",
+        "/api/movies?pageNumber=2&pageSize=12",
+        "/api/movies?pageNumber=2&pageSize=12",
+        "/api/movies?pageNumber=2&pageSize=12",
+        "/api/movies?pageNumber=3&pageSize=12",
+        "/api/movies?pageNumber=4&pageSize=12",
+        "/api/movies?pageNumber=5&pageSize=12",
+        "/api/movies?pageNumber=6&pageSize=12",
+        "/api/movies?pageNumber=7&pageSize=12",
+        "/api/movies?pageNumber=8&pageSize=12",
+        "/api/movies?pageNumber=9&pageSize=12",
+        "/api/movies?pageNumber=10&pageSize=12",
+        "/api/movies?pageNumber=11&pageSize=12"
+      ]
+    },
+    {
+      "name": "catalogue loader is distinct from empty state",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "catalogue failure does not use empty copy",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "catalogue retry recovers without navigation",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "poster hover has restrained motion",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "dynamic reduced motion removes hover movement",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "schedule failure has no empty-data message or booking links",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "UTC requests preserve early and late local screenings without next-day leakage",
+      "passed": true,
+      "details": [
+        "00:15",
+        "23:45"
+      ]
+    },
+    {
+      "name": "Kyiv DST and year-end UTC coverage",
+      "passed": true,
+      "details": [
+        {
+          "key": "2026-03-29",
+          "days": [
+            "2026-03-28",
+            "2026-03-29"
+          ]
+        },
+        {
+          "key": "2026-10-25",
+          "days": [
+            "2026-10-24",
+            "2026-10-25"
+          ]
+        },
+        {
+          "key": "2026-12-31",
+          "days": [
+            "2026-12-30",
+            "2026-12-31"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "invalid date URL falls back to a real local day",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "no runtime errors and no mutations",
+      "passed": true,
+      "details": {
+        "errors": [
+          {
+            "kind": "console",
+            "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+          },
+          {
+            "kind": "console",
+            "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+          },
+          {
+            "kind": "console",
+            "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+          },
+          {
+            "kind": "console",
+            "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+          },
+          {
+            "kind": "console",
+            "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+          },
+          {
+            "kind": "console",
+            "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+          },
+          {
+            "kind": "console",
+            "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+          },
+          {
+            "kind": "console",
+            "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+          }
+        ],
+        "mutations": []
+      }
+    }
+  ],
+  "errors": [
+    {
+      "kind": "console",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "kind": "console",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "kind": "console",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "kind": "console",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "kind": "console",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "kind": "console",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "kind": "console",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "kind": "console",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    }
+  ],
+  "requests": [
+    "/api/movies?pageNumber=1&pageSize=12",
+    "/api/movies?pageNumber=2&pageSize=12",
+    "/api/movies?pageNumber=2&pageSize=12",
+    "/api/movies?pageNumber=2&pageSize=12",
+    "/api/movies?pageNumber=3&pageSize=12",
+    "/api/movies?pageNumber=4&pageSize=12",
+    "/api/movies?pageNumber=5&pageSize=12",
+    "/api/movies?pageNumber=6&pageSize=12",
+    "/api/movies?pageNumber=7&pageSize=12",
+    "/api/movies?pageNumber=8&pageSize=12",
+    "/api/movies?pageNumber=9&pageSize=12",
+    "/api/movies?pageNumber=10&pageSize=12",
+    "/api/movies?pageNumber=11&pageSize=12",
+    "/api/movies?pageNumber=1&pageSize=12",
+    "/api/movies?pageNumber=1&pageSize=12",
+    "/api/movies?pageNumber=1&pageSize=12",
+    "/api/movies?pageNumber=1&pageSize=12",
+    "/api/movies?pageNumber=1&pageSize=12",
+    "/api/sessions/by-date?date=2026-10-28",
+    "/api/sessions/by-date?date=2026-10-29",
+    "/api/sessions/by-date?date=2026-10-28",
+    "/api/sessions/by-date?date=2026-10-29",
+    "/api/sessions/by-date?date=2026-10-28",
+    "/api/sessions/by-date?date=2026-10-29",
+    "/api/sessions/by-date?date=2026-10-30",
+    "/api/sessions/by-date?date=2026-10-31",
+    "/api/sessions/by-date?date=2026-10-27",
+    "/api/sessions/by-date?date=2026-10-28"
+  ],
+  "mutations": []
+}

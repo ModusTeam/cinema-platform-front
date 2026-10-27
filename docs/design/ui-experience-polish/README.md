@@ -1,5 +1,11 @@
 # UI experience polish: Phase 1
 
+Phase 6 film catalogue and daily schedule are ready for [visual review](phase-6.md),
+with [both presentation modes and responsive evidence](screenshots/phase-6/README.md).
+The real review app remains at http://localhost:5176/sessions. Existing schedule
+links now open `/sessions?mode=schedule` directly. Work stops at this checkpoint;
+the Design Lab remains excluded from production and has not been removed.
+
 Phase 5 Movie Details and Discover More are ready for [review](phase-5.md), with
 [before/after screenshots](screenshots/phase-5/README.md), browser evidence and
 verified local service URLs. The approved Phase 4 Header / Ticket Menu and the

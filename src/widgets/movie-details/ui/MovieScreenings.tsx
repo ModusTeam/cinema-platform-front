@@ -84,7 +84,7 @@ export default function MovieScreenings({
         </div>
       )}
       <Link
-        to='/sessions'
+        to='/sessions?mode=schedule'
         className='movie-text-link mt-6 inline-flex min-h-11 items-center gap-3 text-sm'
       >
         {copy.schedule}

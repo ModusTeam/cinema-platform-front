@@ -1,4 +1,5 @@
 import { api } from '@/shared/api/axios'
+import { localDateKey, utcDaysForLocalDate } from '../lib/sessionDates'
 import {
   type Session,
   type SessionAvailability,
@@ -22,7 +23,40 @@ interface SessionDto {
   pricingId?: string
 }
 
+const mapSession = (session: SessionDto): Session => ({
+  id: session.id,
+  movieId: session.movieId,
+  hallId: session.hallId,
+  startTime: session.startTime,
+  endTime: session.endTime || session.startTime,
+  status: session.status || SessionStatus.Scheduled,
+  priceBase: session.price,
+  hallName: session.hallName || 'Зал',
+  movieTitle: session.movieTitle || 'Фільм',
+  pricingId: session.pricingId,
+})
+
 export const sessionsService = {
+  getForLocalDate: async (
+    date: Date,
+    signal?: AbortSignal,
+  ): Promise<Session[]> => {
+    const days = await Promise.all(
+      utcDaysForLocalDate(date).map(async day => {
+        const { data } = await api.get<SessionDto[]>('/sessions/by-date', {
+          params: { date: day },
+          signal,
+        })
+        return data.map(mapSession)
+      }),
+    )
+    return days
+      .flat()
+      .filter(
+        session =>
+          localDateKey(new Date(session.startTime)) === localDateKey(date),
+      )
+  },
   getSeatAvailability: async (
     sessionId: string,
     signal?: AbortSignal,
@@ -47,19 +81,7 @@ export const sessionsService = {
       )
       const sessions = Array.isArray(data) ? data : data.items || []
 
-      return sessions.map(session => ({
-        id: session.id,
-        movieId: session.movieId,
-        hallId: session.hallId,
-        startTime: session.startTime,
-        endTime: session.endTime || session.startTime,
-        status: session.status || SessionStatus.Scheduled,
-        priceBase: session.price,
-        hallName: session.hallName || 'Зал',
-        movieTitle: session.movieTitle || 'Фільм',
-        seats: [],
-        pricingId: session.pricingId,
-      }))
+      return sessions.map(mapSession)
     } catch (error) {
       console.error('Error fetching all sessions:', error)
       throw error

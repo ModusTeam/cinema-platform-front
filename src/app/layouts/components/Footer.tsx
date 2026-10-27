@@ -50,7 +50,7 @@ const Footer = () => {
                 <FooterLink to='/bar'>Меню кінобару</FooterLink>
               </li>
               <li>
-                <FooterLink to='/sessions'>Розклад сеансів</FooterLink>
+                <FooterLink to='/sessions?mode=schedule'>Розклад сеансів</FooterLink>
               </li>
               <li>
                 <FooterLink to='/careers'>Вакансії</FooterLink>

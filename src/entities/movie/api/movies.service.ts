@@ -1,10 +1,10 @@
-import { api } from '@/shared/api/axios'
 import {
   type Movie,
   type MovieDto,
   MovieStatus,
   type TmdbSearchResult,
 } from '@/entities/movie/model/movie.types'
+import { api } from '@/shared/api/axios'
 import type { PaginatedResult } from '@/shared/types/common.types'
 
 export interface MovieRecommendation {
@@ -31,11 +31,12 @@ const mapDtoToMovie = (dto: MovieDto & { TrailerUrl?: string }): Movie => ({
   year: dto.releaseYear,
   duration: dto.durationMinutes,
   videoUrl: dto.trailerUrl || dto.TrailerUrl,
-  cast: dto.cast?.map(actor => ({
-    name: actor.name,
-    role: actor.role ?? undefined,
-    photoUrl: actor.photoUrl ?? undefined,
-  })) ?? [],
+  cast:
+    dto.cast?.map(actor => ({
+      name: actor.name,
+      role: actor.role ?? undefined,
+      photoUrl: actor.photoUrl ?? undefined,
+    })) ?? [],
   status: Object.values(MovieStatus).includes(
     dto.status as unknown as MovieStatus,
   )
@@ -71,9 +72,11 @@ export const moviesService = {
     pageNumber: number,
     pageSize: number,
     searchTerm?: string,
+    signal?: AbortSignal,
   ): Promise<PaginatedResult<Movie>> => {
     const { data } = await api.get<PaginatedResult<MovieDto>>('/movies', {
       params: { pageNumber, pageSize, searchTerm },
+      signal,
     })
 
     return {

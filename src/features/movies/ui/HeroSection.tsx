@@ -159,7 +159,7 @@ const FeaturedHero = ({
                 {heroCopy.programme}
               </a>
               <Link
-                to='/sessions'
+                to='/sessions?mode=schedule'
                 className='inline-flex min-h-11 items-center text-[var(--text-muted)] hover:text-[var(--text-main)]'
               >
                 {heroCopy.schedule}
