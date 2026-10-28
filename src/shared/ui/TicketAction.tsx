@@ -4,7 +4,6 @@ import { cn } from '@/shared/lib/utils'
 import { buttonStyles } from './Button'
 import './ticket-action.css'
 
-// A cinematic action, intentionally retaining the native button contract.
 const TicketAction = ({
   className,
   children,

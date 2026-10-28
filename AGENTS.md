@@ -242,6 +242,11 @@ relative imports within the same slice or local module.
 
 Use `import type` for type-only imports.
 
+Prefer self-documenting code. Avoid comments that merely restate what the code
+does. Add comments only when they clarify non-obvious intent, architectural
+decisions, constraints, workarounds or important invariants. Preserve required
+tooling, legal and API documentation annotations.
+
 ## Existing Patterns
 
 ### API Calls

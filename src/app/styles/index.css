@@ -26,7 +26,6 @@
   --color-success: #78dbaa;
   --color-warning: #edc36c;
 
-  /* Action fills are separate from the existing brand and status colors. */
   --action-primary: #c52f3a;
   --action-primary-hover: #b32732;
   --action-primary-active: #9e202b;

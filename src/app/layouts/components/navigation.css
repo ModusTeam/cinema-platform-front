@@ -1,4 +1,3 @@
-/* Local roles let a future editorial shell opt in without retheming pages. */
 .cinema-header {
   --header-ink: var(--text-main);
   --header-surface: var(--bg-main);
