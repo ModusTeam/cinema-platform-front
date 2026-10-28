@@ -1,0 +1,68 @@
+/* Account-only paper roles, shared in tone with Ticket Menu and the catalogue. */
+.account {
+  --account-paper: #f5f1e8;
+  --account-ticket: #fffcf5;
+  --account-ink: #201f1d;
+  --account-muted: #686259;
+  --account-rule: #c4bdb2;
+  --bg-card: var(--account-paper);
+  --text-main: var(--account-ink);
+  --text-muted: var(--account-muted);
+  --text-faint: var(--account-muted);
+  --focus-ring: var(--account-ink);
+  --color-error: var(--action-destructive);
+  --border-field: #82796e;
+  --surface-elevated: #e9e3d8;
+  --surface-muted: #eee8dd;
+  --bg-hover: #e9e3d8;
+  color-scheme: light;
+  background: var(--account-paper);
+  color: var(--account-ink);
+  overflow-wrap: anywhere;
+  margin-top: -1rem;
+  min-height: 75vh;
+}
+.account ::selection { background: var(--account-ink); color: var(--account-paper); }
+.account-layout { grid-template-areas: 'navigation' 'content' 'summary'; }
+.account-navigation-area { grid-area: navigation; }
+.account-content-area { grid-area: content; }
+.account-summary-area { grid-area: summary; }
+.account-heading { font-family: var(--font-public-display); font-size: clamp(3rem, 6vw, 5.5rem); font-weight: 600; line-height: 1; letter-spacing: -0.035em; }
+.account-navigation-list { grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr)); }
+.account-navigation { font-family: var(--font-public-display); font-size: 1.375rem; font-weight: 500; line-height: 1.2; padding-block: 0.625rem; min-height: 2.75rem; color: var(--account-muted); cursor: pointer; }
+.account-navigation[aria-current='page'] { color: var(--account-ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 7px; }
+.account-subheading { font-family: var(--font-public-display); font-size: 1.75rem; font-weight: 550; line-height: 1.15; }
+.account-ticket-title { font-family: var(--font-public-display); font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 600; line-height: 1.05; letter-spacing: -0.02em; }
+.account-label { font-size: 0.75rem; color: var(--account-muted); line-height: 1.5; }
+.account-link { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; cursor: pointer; }
+.account-link:hover, .account-ticket-summary:hover { color: var(--action-primary); }
+.account-progress { display: block; height: 3px; border: 0; border-radius: 0; background: var(--account-rule); accent-color: var(--account-ink); }
+.account-progress::-webkit-progress-bar { background: var(--account-rule); }
+.account-progress::-webkit-progress-value { background: var(--account-ink); }
+.account-progress::-moz-progress-bar { background: var(--account-ink); }
+.account-state { border: 0; border-radius: 0; background: transparent; padding-inline: 0; }
+.account-state > div:first-child { background: transparent; }
+.account-settings .field { border-radius: 0; background: var(--account-ticket); color: var(--account-ink); color-scheme: light; }
+.account-settings .field:disabled { background: var(--surface-muted); color: var(--account-muted); }
+.account-settings .field-label { font-size: 0.875rem; font-weight: 400; }
+.account-settings .field-hint { color: var(--account-muted); }
+.account-settings .action { border-radius: 0; }
+.digital-ticket { position: relative; min-width: 0; background: var(--account-ticket); border: 1px solid var(--account-rule); }
+.digital-ticket-stub { position: relative; border-top: 1px dashed var(--account-rule); }
+.digital-ticket-stub::before, .digital-ticket-stub::after { content: ''; position: absolute; top: -9px; width: 18px; height: 18px; border: 1px solid var(--account-rule); border-radius: 50%; background: var(--account-paper); }
+.digital-ticket-stub::before { left: -10px; clip-path: inset(0 0 0 50%); }
+.digital-ticket-stub::after { right: -10px; clip-path: inset(0 50% 0 0); }
+.account-ticket-summary { min-height: 3rem; color: var(--action-primary); }
+.account-ticket-summary::marker { font-size: 0.75em; }
+@media (min-width: 768px) { .account { margin-top: -2rem; } }
+@media (min-width: 1024px) {
+  .account-layout { grid-template-areas: 'navigation content' 'summary content'; grid-template-rows: auto 1fr; align-items: start; }
+  .account-navigation-list { grid-template-columns: minmax(0, 1fr); }
+  .account-navigation { font-size: clamp(2rem, 3.5vw, 3.25rem); padding-block: 0.5rem; }
+  .digital-ticket-stub { border-top: 0; border-left: 1px dashed var(--account-rule); }
+  .digital-ticket-stub::before { top: -10px; left: -9px; clip-path: inset(50% 0 0 0); }
+  .digital-ticket-stub::after { top: auto; bottom: -10px; left: -9px; right: auto; clip-path: inset(0 0 50% 0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .account-navigation, .account-link, .account-ticket-summary { transition: color 150ms ease-out; }
+}

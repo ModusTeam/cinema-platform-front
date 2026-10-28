@@ -1,0 +1,1393 @@
+{
+  "stage": "after",
+  "results": [
+    {
+      "name": "tickets-reduce-1440: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 1434,
+        "viewport": 1440
+      }
+    },
+    {
+      "name": "tickets-reduce-1440: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "reduce-1440: six active orders, closed QR absent",
+      "passed": true
+    },
+    {
+      "name": "reduce-1440: all payment states labelled",
+      "passed": true
+    },
+    {
+      "name": "reduce-1440: two valid QR codes retain seats and IDs",
+      "passed": true
+    },
+    {
+      "name": "reduce-1440: refunded ticket has no QR",
+      "passed": true
+    },
+    {
+      "name": "expanded-reduce-1440: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 1434,
+        "viewport": 1440
+      }
+    },
+    {
+      "name": "expanded-reduce-1440: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "reduce-1440: collapse restores summary focus and unmounts QR controls",
+      "passed": true
+    },
+    {
+      "name": "reduce-1440: no QR for Pending",
+      "passed": true
+    },
+    {
+      "name": "reduce-1440: no QR for PaymentProcessing",
+      "passed": true
+    },
+    {
+      "name": "reduce-1440: no QR for PaymentOutcomeUnknown",
+      "passed": true
+    },
+    {
+      "name": "reduce-1440: four history orders retain terminal states",
+      "passed": true
+    },
+    {
+      "name": "reduce-1440: used, cancelled, failed, expired expose no QR",
+      "passed": true
+    },
+    {
+      "name": "reduce-1440: achievement preview links to dedicated page",
+      "passed": true
+    },
+    {
+      "name": "achievements-reduce-1440: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 1434,
+        "viewport": 1440
+      }
+    },
+    {
+      "name": "achievements-reduce-1440: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "reduce-1440: established date and email are immutable",
+      "passed": true
+    },
+    {
+      "name": "reduce-1440: navigation retains unsaved settings",
+      "passed": true
+    },
+    {
+      "name": "reduce-1440: invalid field announced and focused",
+      "passed": true
+    },
+    {
+      "name": "settings-reduce-1440: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 1434,
+        "viewport": 1440
+      }
+    },
+    {
+      "name": "settings-reduce-1440: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "tickets-reduce-768: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 762,
+        "viewport": 768
+      }
+    },
+    {
+      "name": "tickets-reduce-768: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "reduce-768: six active orders, closed QR absent",
+      "passed": true
+    },
+    {
+      "name": "reduce-768: all payment states labelled",
+      "passed": true
+    },
+    {
+      "name": "reduce-768: two valid QR codes retain seats and IDs",
+      "passed": true
+    },
+    {
+      "name": "reduce-768: refunded ticket has no QR",
+      "passed": true
+    },
+    {
+      "name": "expanded-reduce-768: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 762,
+        "viewport": 768
+      }
+    },
+    {
+      "name": "expanded-reduce-768: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "reduce-768: collapse restores summary focus and unmounts QR controls",
+      "passed": true
+    },
+    {
+      "name": "reduce-768: no QR for Pending",
+      "passed": true
+    },
+    {
+      "name": "reduce-768: no QR for PaymentProcessing",
+      "passed": true
+    },
+    {
+      "name": "reduce-768: no QR for PaymentOutcomeUnknown",
+      "passed": true
+    },
+    {
+      "name": "reduce-768: four history orders retain terminal states",
+      "passed": true
+    },
+    {
+      "name": "reduce-768: used, cancelled, failed, expired expose no QR",
+      "passed": true
+    },
+    {
+      "name": "reduce-768: achievement preview links to dedicated page",
+      "passed": true
+    },
+    {
+      "name": "achievements-reduce-768: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 762,
+        "viewport": 768
+      }
+    },
+    {
+      "name": "achievements-reduce-768: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "reduce-768: established date and email are immutable",
+      "passed": true
+    },
+    {
+      "name": "reduce-768: navigation retains unsaved settings",
+      "passed": true
+    },
+    {
+      "name": "reduce-768: invalid field announced and focused",
+      "passed": true
+    },
+    {
+      "name": "settings-reduce-768: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 762,
+        "viewport": 768
+      }
+    },
+    {
+      "name": "settings-reduce-768: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "tickets-reduce-390: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 384,
+        "viewport": 390
+      }
+    },
+    {
+      "name": "tickets-reduce-390: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "reduce-390: six active orders, closed QR absent",
+      "passed": true
+    },
+    {
+      "name": "reduce-390: all payment states labelled",
+      "passed": true
+    },
+    {
+      "name": "reduce-390: two valid QR codes retain seats and IDs",
+      "passed": true
+    },
+    {
+      "name": "reduce-390: refunded ticket has no QR",
+      "passed": true
+    },
+    {
+      "name": "expanded-reduce-390: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 384,
+        "viewport": 390
+      }
+    },
+    {
+      "name": "expanded-reduce-390: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "reduce-390: collapse restores summary focus and unmounts QR controls",
+      "passed": true
+    },
+    {
+      "name": "reduce-390: no QR for Pending",
+      "passed": true
+    },
+    {
+      "name": "reduce-390: no QR for PaymentProcessing",
+      "passed": true
+    },
+    {
+      "name": "reduce-390: no QR for PaymentOutcomeUnknown",
+      "passed": true
+    },
+    {
+      "name": "reduce-390: four history orders retain terminal states",
+      "passed": true
+    },
+    {
+      "name": "reduce-390: used, cancelled, failed, expired expose no QR",
+      "passed": true
+    },
+    {
+      "name": "reduce-390: achievement preview links to dedicated page",
+      "passed": true
+    },
+    {
+      "name": "achievements-reduce-390: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 384,
+        "viewport": 390
+      }
+    },
+    {
+      "name": "achievements-reduce-390: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "reduce-390: established date and email are immutable",
+      "passed": true
+    },
+    {
+      "name": "reduce-390: navigation retains unsaved settings",
+      "passed": true
+    },
+    {
+      "name": "reduce-390: invalid field announced and focused",
+      "passed": true
+    },
+    {
+      "name": "settings-reduce-390: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 384,
+        "viewport": 390
+      }
+    },
+    {
+      "name": "settings-reduce-390: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "tickets-reduce-320: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 314,
+        "viewport": 320
+      }
+    },
+    {
+      "name": "tickets-reduce-320: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "reduce-320: six active orders, closed QR absent",
+      "passed": true
+    },
+    {
+      "name": "reduce-320: all payment states labelled",
+      "passed": true
+    },
+    {
+      "name": "reduce-320: two valid QR codes retain seats and IDs",
+      "passed": true
+    },
+    {
+      "name": "reduce-320: refunded ticket has no QR",
+      "passed": true
+    },
+    {
+      "name": "expanded-reduce-320: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 314,
+        "viewport": 320
+      }
+    },
+    {
+      "name": "expanded-reduce-320: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "reduce-320: collapse restores summary focus and unmounts QR controls",
+      "passed": true
+    },
+    {
+      "name": "reduce-320: no QR for Pending",
+      "passed": true
+    },
+    {
+      "name": "reduce-320: no QR for PaymentProcessing",
+      "passed": true
+    },
+    {
+      "name": "reduce-320: no QR for PaymentOutcomeUnknown",
+      "passed": true
+    },
+    {
+      "name": "reduce-320: four history orders retain terminal states",
+      "passed": true
+    },
+    {
+      "name": "reduce-320: used, cancelled, failed, expired expose no QR",
+      "passed": true
+    },
+    {
+      "name": "reduce-320: achievement preview links to dedicated page",
+      "passed": true
+    },
+    {
+      "name": "achievements-reduce-320: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 314,
+        "viewport": 320
+      }
+    },
+    {
+      "name": "achievements-reduce-320: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "reduce-320: established date and email are immutable",
+      "passed": true
+    },
+    {
+      "name": "reduce-320: navigation retains unsaved settings",
+      "passed": true
+    },
+    {
+      "name": "reduce-320: invalid field announced and focused",
+      "passed": true
+    },
+    {
+      "name": "settings-reduce-320: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 314,
+        "viewport": 320
+      }
+    },
+    {
+      "name": "settings-reduce-320: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "tickets-no-preference-1440: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 1434,
+        "viewport": 1440
+      }
+    },
+    {
+      "name": "tickets-no-preference-1440: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "no-preference-1440: six active orders, closed QR absent",
+      "passed": true
+    },
+    {
+      "name": "no-preference-1440: all payment states labelled",
+      "passed": true
+    },
+    {
+      "name": "no-preference-1440: two valid QR codes retain seats and IDs",
+      "passed": true
+    },
+    {
+      "name": "no-preference-1440: refunded ticket has no QR",
+      "passed": true
+    },
+    {
+      "name": "expanded-no-preference-1440: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 1434,
+        "viewport": 1440
+      }
+    },
+    {
+      "name": "expanded-no-preference-1440: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "no-preference-1440: collapse restores summary focus and unmounts QR controls",
+      "passed": true
+    },
+    {
+      "name": "no-preference-1440: no QR for Pending",
+      "passed": true
+    },
+    {
+      "name": "no-preference-1440: no QR for PaymentProcessing",
+      "passed": true
+    },
+    {
+      "name": "no-preference-1440: no QR for PaymentOutcomeUnknown",
+      "passed": true
+    },
+    {
+      "name": "no-preference-1440: four history orders retain terminal states",
+      "passed": true
+    },
+    {
+      "name": "no-preference-1440: used, cancelled, failed, expired expose no QR",
+      "passed": true
+    },
+    {
+      "name": "no-preference-1440: achievement preview links to dedicated page",
+      "passed": true
+    },
+    {
+      "name": "achievements-no-preference-1440: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 1434,
+        "viewport": 1440
+      }
+    },
+    {
+      "name": "achievements-no-preference-1440: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "no-preference-1440: established date and email are immutable",
+      "passed": true
+    },
+    {
+      "name": "no-preference-1440: navigation retains unsaved settings",
+      "passed": true
+    },
+    {
+      "name": "no-preference-1440: invalid field announced and focused",
+      "passed": true
+    },
+    {
+      "name": "settings-no-preference-1440: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 1434,
+        "viewport": 1440
+      }
+    },
+    {
+      "name": "settings-no-preference-1440: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "tickets-no-preference-768: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 762,
+        "viewport": 768
+      }
+    },
+    {
+      "name": "tickets-no-preference-768: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "no-preference-768: six active orders, closed QR absent",
+      "passed": true
+    },
+    {
+      "name": "no-preference-768: all payment states labelled",
+      "passed": true
+    },
+    {
+      "name": "no-preference-768: two valid QR codes retain seats and IDs",
+      "passed": true
+    },
+    {
+      "name": "no-preference-768: refunded ticket has no QR",
+      "passed": true
+    },
+    {
+      "name": "expanded-no-preference-768: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 762,
+        "viewport": 768
+      }
+    },
+    {
+      "name": "expanded-no-preference-768: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "no-preference-768: collapse restores summary focus and unmounts QR controls",
+      "passed": true
+    },
+    {
+      "name": "no-preference-768: no QR for Pending",
+      "passed": true
+    },
+    {
+      "name": "no-preference-768: no QR for PaymentProcessing",
+      "passed": true
+    },
+    {
+      "name": "no-preference-768: no QR for PaymentOutcomeUnknown",
+      "passed": true
+    },
+    {
+      "name": "no-preference-768: four history orders retain terminal states",
+      "passed": true
+    },
+    {
+      "name": "no-preference-768: used, cancelled, failed, expired expose no QR",
+      "passed": true
+    },
+    {
+      "name": "no-preference-768: achievement preview links to dedicated page",
+      "passed": true
+    },
+    {
+      "name": "achievements-no-preference-768: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 762,
+        "viewport": 768
+      }
+    },
+    {
+      "name": "achievements-no-preference-768: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "no-preference-768: established date and email are immutable",
+      "passed": true
+    },
+    {
+      "name": "no-preference-768: navigation retains unsaved settings",
+      "passed": true
+    },
+    {
+      "name": "no-preference-768: invalid field announced and focused",
+      "passed": true
+    },
+    {
+      "name": "settings-no-preference-768: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 762,
+        "viewport": 768
+      }
+    },
+    {
+      "name": "settings-no-preference-768: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "tickets-no-preference-390: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 384,
+        "viewport": 390
+      }
+    },
+    {
+      "name": "tickets-no-preference-390: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "no-preference-390: six active orders, closed QR absent",
+      "passed": true
+    },
+    {
+      "name": "no-preference-390: all payment states labelled",
+      "passed": true
+    },
+    {
+      "name": "no-preference-390: two valid QR codes retain seats and IDs",
+      "passed": true
+    },
+    {
+      "name": "no-preference-390: refunded ticket has no QR",
+      "passed": true
+    },
+    {
+      "name": "expanded-no-preference-390: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 384,
+        "viewport": 390
+      }
+    },
+    {
+      "name": "expanded-no-preference-390: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "no-preference-390: collapse restores summary focus and unmounts QR controls",
+      "passed": true
+    },
+    {
+      "name": "no-preference-390: no QR for Pending",
+      "passed": true
+    },
+    {
+      "name": "no-preference-390: no QR for PaymentProcessing",
+      "passed": true
+    },
+    {
+      "name": "no-preference-390: no QR for PaymentOutcomeUnknown",
+      "passed": true
+    },
+    {
+      "name": "no-preference-390: four history orders retain terminal states",
+      "passed": true
+    },
+    {
+      "name": "no-preference-390: used, cancelled, failed, expired expose no QR",
+      "passed": true
+    },
+    {
+      "name": "no-preference-390: achievement preview links to dedicated page",
+      "passed": true
+    },
+    {
+      "name": "achievements-no-preference-390: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 384,
+        "viewport": 390
+      }
+    },
+    {
+      "name": "achievements-no-preference-390: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "no-preference-390: established date and email are immutable",
+      "passed": true
+    },
+    {
+      "name": "no-preference-390: navigation retains unsaved settings",
+      "passed": true
+    },
+    {
+      "name": "no-preference-390: invalid field announced and focused",
+      "passed": true
+    },
+    {
+      "name": "settings-no-preference-390: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 384,
+        "viewport": 390
+      }
+    },
+    {
+      "name": "settings-no-preference-390: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "tickets-no-preference-320: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 314,
+        "viewport": 320
+      }
+    },
+    {
+      "name": "tickets-no-preference-320: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "no-preference-320: six active orders, closed QR absent",
+      "passed": true
+    },
+    {
+      "name": "no-preference-320: all payment states labelled",
+      "passed": true
+    },
+    {
+      "name": "no-preference-320: two valid QR codes retain seats and IDs",
+      "passed": true
+    },
+    {
+      "name": "no-preference-320: refunded ticket has no QR",
+      "passed": true
+    },
+    {
+      "name": "expanded-no-preference-320: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 314,
+        "viewport": 320
+      }
+    },
+    {
+      "name": "expanded-no-preference-320: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "no-preference-320: collapse restores summary focus and unmounts QR controls",
+      "passed": true
+    },
+    {
+      "name": "no-preference-320: no QR for Pending",
+      "passed": true
+    },
+    {
+      "name": "no-preference-320: no QR for PaymentProcessing",
+      "passed": true
+    },
+    {
+      "name": "no-preference-320: no QR for PaymentOutcomeUnknown",
+      "passed": true
+    },
+    {
+      "name": "no-preference-320: four history orders retain terminal states",
+      "passed": true
+    },
+    {
+      "name": "no-preference-320: used, cancelled, failed, expired expose no QR",
+      "passed": true
+    },
+    {
+      "name": "no-preference-320: achievement preview links to dedicated page",
+      "passed": true
+    },
+    {
+      "name": "achievements-no-preference-320: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 314,
+        "viewport": 320
+      }
+    },
+    {
+      "name": "achievements-no-preference-320: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "no-preference-320: established date and email are immutable",
+      "passed": true
+    },
+    {
+      "name": "no-preference-320: navigation retains unsaved settings",
+      "passed": true
+    },
+    {
+      "name": "no-preference-320: invalid field announced and focused",
+      "passed": true
+    },
+    {
+      "name": "settings-no-preference-320: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 314,
+        "viewport": 320
+      }
+    },
+    {
+      "name": "settings-no-preference-320: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "profile update uses existing PUT contract",
+      "passed": true
+    },
+    {
+      "name": "profile update synchronizes visible name",
+      "passed": true
+    },
+    {
+      "name": "password confirmation requires current password",
+      "passed": true
+    },
+    {
+      "name": "password change retains endpoint and clears secrets",
+      "passed": true
+    },
+    {
+      "name": "failed mutation retains entered data and reports error",
+      "passed": true
+    },
+    {
+      "name": "future birth date blocks one-time save",
+      "passed": true
+    },
+    {
+      "name": "one-time birth date syncs and locks after save",
+      "passed": true
+    },
+    {
+      "name": "single paid ticket scenario",
+      "passed": true
+    },
+    {
+      "name": "clipboard preserves existing QR ticket ID payload",
+      "passed": true
+    },
+    {
+      "name": "clipboard denial reports failure rather than success",
+      "passed": true
+    },
+    {
+      "name": "keyboard reaches compact/desktop account navigation",
+      "passed": true
+    },
+    {
+      "name": "keyboard changes account section with clear active state",
+      "passed": true
+    },
+    {
+      "name": "keyboard reaches settings fields without hidden disclosure controls",
+      "passed": true
+    },
+    {
+      "name": "text-200-tickets-1440: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 1434,
+        "viewport": 1440
+      }
+    },
+    {
+      "name": "text-200-tickets-1440: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "text-200-qr-1440: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 1434,
+        "viewport": 1440
+      }
+    },
+    {
+      "name": "text-200-qr-1440: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "text-200-settings-1440: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 1434,
+        "viewport": 1440
+      }
+    },
+    {
+      "name": "text-200-settings-1440: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "text-200-tickets-768: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 762,
+        "viewport": 768
+      }
+    },
+    {
+      "name": "text-200-tickets-768: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "text-200-qr-768: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 762,
+        "viewport": 768
+      }
+    },
+    {
+      "name": "text-200-qr-768: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "text-200-settings-768: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 762,
+        "viewport": 768
+      }
+    },
+    {
+      "name": "text-200-settings-768: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "text-200-tickets-390: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": true,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 384,
+        "viewport": 390
+      }
+    },
+    {
+      "name": "text-200-tickets-390: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "text-200-qr-390: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": true,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 384,
+        "viewport": 390
+      }
+    },
+    {
+      "name": "text-200-qr-390: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "text-200-settings-390: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": true,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 384,
+        "viewport": 390
+      }
+    },
+    {
+      "name": "text-200-settings-390: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "text-200-tickets-320: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": true,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 314,
+        "viewport": 320
+      }
+    },
+    {
+      "name": "text-200-tickets-320: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "text-200-qr-320: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": true,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 314,
+        "viewport": 320
+      }
+    },
+    {
+      "name": "text-200-qr-320: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "text-200-settings-320: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": true,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 314,
+        "viewport": 320
+      }
+    },
+    {
+      "name": "text-200-settings-320: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "empty tickets and zero loyalty balance",
+      "passed": true
+    },
+    {
+      "name": "loyalty failure leaves tickets available",
+      "passed": true
+    },
+    {
+      "name": "request failure is not empty and exposes no QR",
+      "passed": true
+    },
+    {
+      "name": "profile fetch failure prevents unsafe one-time birth-date form",
+      "passed": true
+    },
+    {
+      "name": "ticket and loyalty loading states are explicit",
+      "passed": true
+    },
+    {
+      "name": "runtime error free",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "normal scenarios have no console errors",
+      "passed": true,
+      "detail": [
+        {
+          "scenario": "mutation-error",
+          "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+        },
+        {
+          "scenario": "loyalty-error",
+          "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+        },
+        {
+          "scenario": "loyalty-error",
+          "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+        },
+        {
+          "scenario": "error",
+          "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+        },
+        {
+          "scenario": "error",
+          "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+        },
+        {
+          "scenario": "error",
+          "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+        },
+        {
+          "scenario": "error",
+          "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+        },
+        {
+          "scenario": "error",
+          "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+        },
+        {
+          "scenario": "error",
+          "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+        },
+        {
+          "scenario": "error",
+          "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+        },
+        {
+          "scenario": "error",
+          "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "consoleErrors": [
+    {
+      "scenario": "mutation-error",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "scenario": "loyalty-error",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "scenario": "loyalty-error",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "scenario": "error",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "scenario": "error",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "scenario": "error",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "scenario": "error",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "scenario": "error",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "scenario": "error",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "scenario": "error",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "scenario": "error",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    }
+  ],
+  "mutations": [
+    {
+      "method": "PUT",
+      "path": "/api/account/profile"
+    },
+    {
+      "method": "POST",
+      "path": "/api/account/change-password"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/account/profile"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/users/me/date-of-birth"
+    }
+  ]
+}

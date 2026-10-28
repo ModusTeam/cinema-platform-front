@@ -1,13 +1,14 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useToast } from '@/shared/ui/toast/ToastContext'
-import { useAuth } from '@/features/auth/model/AuthContext'
 import { accountService } from '@/entities/account/api/account.service'
 import { ordersService } from '@/entities/order/api/orders.service'
-import { OrderStatus } from '@/entities/order/model/order.types'
+import { isHistoryOrder } from '@/entities/order/lib/orderPresentation'
+import { useAuth } from '@/features/auth/model/AuthContext'
 import type { User } from '@/features/auth/model/auth.types'
+import { useToast } from '@/shared/ui/toast/ToastContext'
+import type { AccountSection } from '../config/accountNavigation'
 
-export type TabType = 'active-tickets' | 'history' | 'settings' | 'achievements'
+export type TabType = AccountSection
 
 export interface ProfileUpdateData {
   firstName: string
@@ -41,7 +42,12 @@ export const useProfile = () => {
 
   const [activeTab, setActiveTab] = useState<TabType>('active-tickets')
 
-  const { data: profileData } = useQuery({
+  const {
+    data: profileData,
+    isLoading: isLoadingProfile,
+    isError: isProfileError,
+    refetch: refetchProfile,
+  } = useQuery({
     queryKey: ['account-profile', user?.id],
     queryFn: accountService.getProfile,
     enabled: !!user,
@@ -71,20 +77,8 @@ export const useProfile = () => {
     staleTime: 5 * 60 * 1000,
     select: data => {
       return {
-        active: data.filter(
-          order =>
-            !order.isPastSession &&
-            order.status !== OrderStatus.Cancelled &&
-            order.status !== OrderStatus.Failed &&
-            order.status !== OrderStatus.Expired,
-        ),
-        history: data.filter(
-          order =>
-            order.isPastSession ||
-            order.status === OrderStatus.Cancelled ||
-            order.status === OrderStatus.Failed ||
-            order.status === OrderStatus.Expired,
-        ),
+        active: data.filter(order => !isHistoryOrder(order)),
+        history: data.filter(isHistoryOrder),
       }
     },
   })
@@ -124,7 +118,6 @@ export const useProfile = () => {
       toast.success('Дані успішно оновлено')
     },
     onError: (error: unknown) => {
-      console.error(error)
       toast.error(getErrorMessage(error, 'Помилка збереження даних'))
     },
   })
@@ -182,6 +175,9 @@ export const useProfile = () => {
     updateUser,
     activeTab,
     setActiveTab,
+    isLoadingProfile,
+    isProfileError,
+    refetchProfile,
 
     activeTickets: ticketsData?.active || [],
     historyOrders: ticketsData?.history || [],

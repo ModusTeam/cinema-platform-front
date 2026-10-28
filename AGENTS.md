@@ -376,6 +376,11 @@ navigation or footer components in `src/app/layouts/components`.
 test dependency is required, so the dependency lockfile is unchanged.
 There is no configured component or browser test runner.
 
+`tests/accountPresentation.test.ts` covers admission QR eligibility, seat-to-ticket
+associations, unchanged order grouping, account navigation markup and extracted
+profile validation. Phase 7's disposable browser fixtures and screenshots live in
+`docs/design/ui-experience-polish/`; they are not production imports.
+
 `tests/inputAccessibility.test.ts` checks shared input markup with React's
 server renderer; it does not verify DOM focus. The optional
 `tests/accessibility.browser.mjs` function runs real Chromium keyboard and
@@ -434,13 +439,16 @@ that should be verified.
 - Legacy `POST /orders` returns a GUID string and currently receives a mock
   payment token. The frontend has not adopted the backend's reservation,
   checkout, and status endpoints. Do not change the payment flow in a refactor.
-- The backend has `PaymentProcessing`, `PaymentOutcomeUnknown`, and `Expired`
-  order states and `Reserved` and `Released` ticket states. The current order
-  list UI still maps only older order states and needs payment-aware treatment.
+- Account tickets display `PaymentProcessing`, `PaymentOutcomeUnknown`, and
+  `Expired` order states and `Reserved` and `Released` ticket states. QR disclosure
+  retains the existing paid-order/valid-ticket rule and ticket-ID payload. History
+  grouping does not introduce another admission rule; backend validation remains
+  authoritative. Profile composition lives in `features/profile/ui`, and forms
+  retain their React Hook Form/Zod schemas and existing mutation hooks.
 - Loyalty profile and transaction DTOs match the .NET account endpoints.
   Benefits and the older loyalty checkout preview adapter remain placeholders;
   booking amounts come from `/orders/checkout-preview`.
 
 ---
 
-Last updated: 2026-10-23
+Last updated: 2026-10-28

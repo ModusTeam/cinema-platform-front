@@ -1,0 +1,174 @@
+{
+  "results": [
+    {
+      "name": "text-200-settings-reduce-1440: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 1434,
+        "viewport": 1440
+      }
+    },
+    {
+      "name": "text-200-settings-reduce-1440: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "full saved birth date remains readable reduce-1440",
+      "passed": true
+    },
+    {
+      "name": "text-200-settings-reduce-768: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 762,
+        "viewport": 768
+      }
+    },
+    {
+      "name": "text-200-settings-reduce-768: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "full saved birth date remains readable reduce-768",
+      "passed": true
+    },
+    {
+      "name": "text-200-settings-reduce-390: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 384,
+        "viewport": 390
+      }
+    },
+    {
+      "name": "text-200-settings-reduce-390: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "full saved birth date remains readable reduce-390",
+      "passed": true
+    },
+    {
+      "name": "text-200-settings-reduce-320: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": true,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 314,
+        "viewport": 320
+      }
+    },
+    {
+      "name": "text-200-settings-reduce-320: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "full saved birth date remains readable reduce-320",
+      "passed": true
+    },
+    {
+      "name": "text-200-settings-no-preference-1440: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 1434,
+        "viewport": 1440
+      }
+    },
+    {
+      "name": "text-200-settings-no-preference-1440: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "full saved birth date remains readable no-preference-1440",
+      "passed": true
+    },
+    {
+      "name": "text-200-settings-no-preference-768: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 762,
+        "viewport": 768
+      }
+    },
+    {
+      "name": "text-200-settings-no-preference-768: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "full saved birth date remains readable no-preference-768",
+      "passed": true
+    },
+    {
+      "name": "text-200-settings-no-preference-390: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": false,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 384,
+        "viewport": 390
+      }
+    },
+    {
+      "name": "text-200-settings-no-preference-390: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "full saved birth date remains readable no-preference-390",
+      "passed": true
+    },
+    {
+      "name": "text-200-settings-no-preference-320: contained paper layout and no Lenis",
+      "passed": true,
+      "detail": {
+        "pageOverflow": true,
+        "surfaceOverflow": false,
+        "lenis": false,
+        "paper": "rgb(245, 241, 232)",
+        "headingFont": "\"Roboto Condensed Variable\", \"Golos Text Variable\", sans-serif",
+        "accountRight": 314,
+        "viewport": 320
+      }
+    },
+    {
+      "name": "text-200-settings-no-preference-320: correct page and no framework overlay",
+      "passed": true
+    },
+    {
+      "name": "full saved birth date remains readable no-preference-320",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "mutations": []
+}

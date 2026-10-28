@@ -1,5 +1,11 @@
 # UI experience polish: Phase 1
 
+Phase 7 Account and Digital Tickets are ready for [visual review](phase-7.md),
+with [before/after, responsive and state screenshots](screenshots/phase-7/README.md).
+The real account review URL is http://localhost:5176/profile. Account API,
+authentication, payment and loyalty boundaries are preserved. Work stops after
+Phase 7; the existing PR #53 branch and temporary Design Lab remain in place.
+
 Phase 6 film catalogue and daily schedule are ready for [visual review](phase-6.md),
 with [both presentation modes and responsive evidence](screenshots/phase-6/README.md).
 The real review app remains at http://localhost:5176/sessions. Existing schedule
