@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { adminUsersService } from '@/features/admin/api/admin-users.service'
 
 export const useUsers = () => {
@@ -29,8 +29,8 @@ export const useUsers = () => {
     try {
       await changeRoleMutation.mutateAsync({ userId, newRole })
       return { success: true }
-    } catch (error: any) {
-      const msg = error.response?.data || 'Помилка зміни ролі'
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : 'Помилка зміни ролі'
       return { success: false, error: msg }
     }
   }

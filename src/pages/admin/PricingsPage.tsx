@@ -1,16 +1,19 @@
+import { CalendarRange, Edit, Layers, Plus, Tag } from 'lucide-react'
 import { useState } from 'react'
-import { usePricings } from '@/features/admin/model/usePricings'
-import { Plus, Tag, Edit, Layers, CalendarRange } from 'lucide-react'
-import EmptyState from '@/shared/ui/EmptyState'
-import UnavailableState from '@/shared/ui/UnavailableState'
-import { GridLoader } from '@/shared/ui/GridLoader'
-import PricingModal from '@/features/admin/ui/PricingModal'
-import PricingRulesEditor from '@/features/admin/ui/PricingRulesEditor'
 import type { PricingDetailsDto } from '@/features/admin/api/admin-pricings.service'
 import { getPriceRange } from '@/features/admin/lib/pricingDisplay'
+import { usePricings } from '@/features/admin/model/usePricings'
+import { AdminPageHeader } from '@/features/admin/ui/AdminPageHeader'
+import PricingModal from '@/features/admin/ui/PricingModal'
+import PricingRulesEditor from '@/features/admin/ui/PricingRulesEditor'
+import Button from '@/shared/ui/Button'
+import EmptyState from '@/shared/ui/EmptyState'
+import { GridLoader } from '@/shared/ui/GridLoader'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 const PricingsPage = () => {
-  const { pricings, isLoading, isError, refetch, createPricing, updateRules } = usePricings()
+  const { pricings, isLoading, isError, refetch, createPricing, updateRules } =
+    usePricings()
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [editingPricing, setEditingPricing] =
@@ -18,21 +21,14 @@ const PricingsPage = () => {
 
   return (
     <div className='space-y-6'>
-      <div className='flex items-center justify-between'>
-        <div>
-          <h1 className='text-3xl font-bold text-white'>Тарифи</h1>
-          <p className='text-[var(--text-muted)] mt-1'>
-            Управління ціновими політиками для сеансів
-          </p>
-        </div>
-        <button
-          type='button'
-          onClick={() => setIsCreateModalOpen(true)}
-          className='flex items-center gap-2 bg-[var(--color-primary)] text-white px-5 py-2.5 rounded-xl font-bold hover:bg-[var(--color-primary-hover)] transition-all shadow-lg shadow-[var(--color-primary)]/20'
-        >
+      <AdminPageHeader
+        title='Тарифи'
+        description='Управління ціновими політиками для сеансів'
+      >
+        <Button onClick={() => setIsCreateModalOpen(true)}>
           <Plus size={18} /> Новий тариф
-        </button>
-      </div>
+        </Button>
+      </AdminPageHeader>
 
       {isLoading ? (
         <div className='flex justify-center py-20'>
@@ -41,7 +37,7 @@ const PricingsPage = () => {
       ) : isError && pricings.length === 0 ? (
         <UnavailableState onRetry={() => void refetch()} />
       ) : (
-        <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
+        <div className='grid gap-6 md:grid-cols-2 xl:grid-cols-3'>
           {pricings.length === 0 && (
             <EmptyState
               icon={<Tag className='h-12 w-12' />}
@@ -56,7 +52,7 @@ const PricingsPage = () => {
           {pricings.map(price => (
             <div
               key={price.id}
-              className='group relative flex flex-col overflow-hidden rounded-xl border border-white/5 bg-[var(--bg-card)] transition-all hover:border-[var(--color-primary)]/30 hover:shadow-xl hover:-translate-y-1'
+              className='relative flex min-w-0 flex-col overflow-hidden rounded-lg border border-[var(--border-default)] bg-[var(--surface-muted)]'
             >
               <div className='p-6 flex-1'>
                 <div className='flex justify-between items-start mb-4'>

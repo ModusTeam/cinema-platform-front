@@ -1,15 +1,25 @@
-import { useState, useMemo } from 'react'
+import { Edit, Plus, Search, Tag, Trash2 } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import type { Genre } from '@/features/admin/api/genres.service'
 import { useGenres } from '@/features/admin/model/useGenres'
-import { Plus, Tag, Edit, Trash2, Search } from 'lucide-react'
-import EmptyState from '@/shared/ui/EmptyState'
-import UnavailableState from '@/shared/ui/UnavailableState'
-import { GridLoader } from '@/shared/ui/GridLoader'
+import { AdminPageHeader } from '@/features/admin/ui/AdminPageHeader'
+import { AdminTable } from '@/features/admin/ui/AdminTable'
 import GenreModal from '@/features/admin/ui/GenreModal'
-import { type Genre } from '@/features/admin/api/genres.service'
+import Button from '@/shared/ui/Button'
+import EmptyState from '@/shared/ui/EmptyState'
+import { GridLoader } from '@/shared/ui/GridLoader'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 const GenresPage = () => {
-  const { genres, isLoading, isError, refetch, createGenre, updateGenre, deleteGenre } =
-    useGenres()
+  const {
+    genres,
+    isLoading,
+    isError,
+    refetch,
+    createGenre,
+    updateGenre,
+    deleteGenre,
+  } = useGenres()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingGenre, setEditingGenre] = useState<Genre | null>(null)
@@ -58,21 +68,14 @@ const GenresPage = () => {
 
   return (
     <div className='space-y-6'>
-      <div className='flex items-center justify-between'>
-        <div>
-          <h1 className='text-3xl font-bold text-white'>Жанри</h1>
-          <p className='text-[var(--text-muted)] mt-1'>
-            Категорії фільмів (Action, Drama тощо)
-          </p>
-        </div>
-        <button
-          type='button'
-          onClick={handleCreateClick}
-          className='flex items-center gap-2 bg-[var(--color-primary)] text-white px-5 py-2.5 rounded-xl font-bold hover:bg-[var(--color-primary-hover)] transition-all shadow-lg shadow-[var(--color-primary)]/20'
-        >
+      <AdminPageHeader
+        title='Жанри'
+        description='Категорії фільмів (Action, Drama тощо)'
+      >
+        <Button onClick={handleCreateClick}>
           <Plus size={18} /> Додати жанр
-        </button>
-      </div>
+        </Button>
+      </AdminPageHeader>
 
       <div className='relative max-w-md'>
         <Search
@@ -95,8 +98,8 @@ const GenresPage = () => {
       ) : isError && genres.length === 0 ? (
         <UnavailableState onRetry={() => void refetch()} />
       ) : (
-        <div className='rounded-xl border border-white/5 bg-[var(--bg-card)] overflow-hidden backdrop-blur-sm shadow-xl'>
-          <table className='w-full text-left text-sm'>
+        <AdminTable label='Жанри'>
+          <table className='min-w-[560px]'>
             <thead className='bg-white/5 text-[var(--text-muted)] font-medium uppercase text-xs tracking-wider'>
               <tr>
                 <th className='px-6 py-4'>ID (TMDB)</th>
@@ -180,7 +183,7 @@ const GenresPage = () => {
               )}
             </tbody>
           </table>
-        </div>
+        </AdminTable>
       )}
 
       <GenreModal

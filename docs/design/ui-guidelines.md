@@ -100,6 +100,19 @@ labels, long Ukrainian text, enlarged text, reduced motion and native scrolling.
 Reflow ticket stubs, navigation and metadata without hiding essential content.
 The risk-based verification and temporary-artifact policy live in AGENTS.md.
 
+Admin uses a dark Golos Text workspace with compact navigation, open KPI groups,
+thin separators and dense tables. Shared Admin headers, scroll regions and
+pagination live in `features/admin/ui`; retain the existing shared form and dialog
+controls. Keep row actions visible and reserve red for brand and destructive
+meaning. Session groups use schedule rows rather than animated cards.
+
+Admin supports CSS viewport widths from 768px: a persistent 224px sidebar from
+1024px and a modal navigation drawer at 768–1023px. Below 768px, `AdminLayout`
+shows the dedicated unsupported-viewport state without mounting its Outlet.
+Resizing restores the current route; this is a usability rule, independent of
+`AdminRoute` authorization. Complex tables scroll internally. Admin retains
+native scrolling and does not load Lenis.
+
 ## Inspiration
 
 - [A24](https://a24films.com/) and [film index](https://a24films.com/films):
@@ -126,7 +139,8 @@ filter; keep partial-results copy and explicit pagination. Schedule links pass
 session navigation state; booking validates the screening against the requested
 movie, time and status, then consumes the handoff once. Login accepts only internal
 booking return paths. Home/Movie Details retain their bounded
-aggregate previews. Admin's fixed narrow sidebar remains a separate layout
-constraint and needs dedicated authenticated review.
+aggregate previews. Admin's secondary management forms and legacy status palettes
+still need a dedicated consistency pass; native date/input rendering remains
+browser-dependent.
 Payment integration and loyalty placeholders remain governed by the existing
 backend-compatibility notes in AGENTS.md; this guide introduces no business rules.

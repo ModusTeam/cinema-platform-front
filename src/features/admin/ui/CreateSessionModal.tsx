@@ -48,14 +48,14 @@ const CreateSessionModal = ({
       onClose={onClose}
       titleId={titleId}
       isBusy={isSubmitting}
-      className='max-w-lg p-6 scale-100 animate-in zoom-in-95 duration-200'
+      className='font-public max-w-lg rounded-lg p-6'
     >
       <div className='flex shrink-0 items-center justify-between mb-6 border-b border-white/5 pb-4'>
         <h2
           id={titleId}
           tabIndex={-1}
           data-modal-initial-focus
-          className='type-section text-white'
+          className='type-section font-medium text-white'
         >
           Додати сеанс
         </h2>
@@ -65,7 +65,7 @@ const CreateSessionModal = ({
           disabled={isSubmitting}
           aria-label='Закрити діалог'
           variant='ghost'
-          className='min-h-0 p-0'
+          className='w-11 px-0'
         >
           <X size={24} />
         </Button>

@@ -1,15 +1,14 @@
 import { clsx } from 'clsx'
 import { Award, ChevronRight, History, User } from 'lucide-react'
 import { useState } from 'react'
-
-import EmptyState from '@/shared/ui/EmptyState'
-import UnavailableState from '@/shared/ui/UnavailableState'
-import { GridLoader } from '@/shared/ui/GridLoader'
-import { useToast } from '@/shared/ui/toast/ToastContext'
-import ModifyLoyaltyModal from '@/features/admin/ui/ModifyLoyaltyModal'
+import type { UserDto } from '@/features/admin/api/admin-users.service'
 import { useAdminLoyalty } from '@/features/admin/model/useAdminLoyalty'
 import { useUsers } from '@/features/admin/model/useUsers'
-import type { UserDto } from '@/features/admin/api/admin-users.service'
+import ModifyLoyaltyModal from '@/features/admin/ui/ModifyLoyaltyModal'
+import EmptyState from '@/shared/ui/EmptyState'
+import { GridLoader } from '@/shared/ui/GridLoader'
+import { useToast } from '@/shared/ui/toast/ToastContext'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 const AdminLoyaltyPage = () => {
   const toast = useToast()
@@ -47,8 +46,8 @@ const AdminLoyaltyPage = () => {
   const userList: UserDto[] = usersData || []
 
   return (
-    <div className='flex h-[calc(100vh-4rem)] flex-col gap-6 lg:flex-row animate-in fade-in slide-in-from-bottom-4 duration-500'>
-      <div className='flex h-full w-full flex-col rounded-2xl border border-white/5 bg-[var(--bg-card)] lg:w-1/3'>
+    <div className='grid min-h-[34rem] h-[calc(100dvh-10rem)] grid-cols-[minmax(12rem,0.35fr)_minmax(0,1fr)] gap-5'>
+      <div className='flex min-h-0 min-w-0 flex-col rounded-lg border border-[var(--border-default)] bg-[var(--surface-muted)]'>
         <div className='border-b border-white/5 p-6'>
           <h2 className='text-xl font-medium text-white'>Користувачі</h2>
           <p className='text-sm text-neutral-500 mt-1'>
@@ -86,7 +85,7 @@ const AdminLoyaltyPage = () => {
                       : 'hover:bg-white/5',
                   )}
                 >
-                  <div className='flex flex-col gap-0.5'>
+                  <div className='min-w-0 break-words flex flex-col gap-0.5'>
                     <span className='text-sm font-medium text-white'>
                       {user.firstName} {user.lastName}
                     </span>
@@ -111,7 +110,7 @@ const AdminLoyaltyPage = () => {
       </div>
 
       {/* Права панель: Деталі лояльності */}
-      <div className='flex h-full flex-1 flex-col rounded-2xl border border-white/5 bg-[var(--bg-card)]'>
+      <div className='flex min-h-0 min-w-0 flex-col rounded-lg border border-[var(--border-default)] bg-[var(--surface-muted)]'>
         {!selectedUser ? (
           <EmptyState
             icon={<Award className='h-12 w-12' />}
@@ -127,7 +126,7 @@ const AdminLoyaltyPage = () => {
           />
         ) : (
           <>
-            <div className='flex items-center justify-between border-b border-white/5 p-6'>
+            <div className='flex flex-wrap items-center justify-between gap-4 border-b border-[var(--border-default)] p-5'>
               <div className='flex flex-col gap-1'>
                 <h2 className='text-xl font-medium text-white'>
                   {selectedUser.firstName} {selectedUser.lastName}

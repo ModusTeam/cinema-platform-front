@@ -1,128 +1,131 @@
-import { useState, useMemo } from 'react'
-import { useUsers } from '@/features/admin/model/useUsers'
-import {
-  Search,
-  User as UserIcon,
-  MoreHorizontal,
-  ShieldCheck,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react'
-import EmptyState from '@/shared/ui/EmptyState'
-import UnavailableState from '@/shared/ui/UnavailableState'
-import { GridLoader } from '@/shared/ui/GridLoader'
-import { useAuth } from '@/features/auth/model/AuthContext'
-import ChangeRoleModal from '@/features/admin/ui/ChangeRoleModal'
+import { Search, ShieldCheck, User as UserIcon } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import type { UserDto } from '@/features/admin/api/admin-users.service'
+import { useUsers } from '@/features/admin/model/useUsers'
+import { AdminPageHeader } from '@/features/admin/ui/AdminPageHeader'
+import { AdminPagination } from '@/features/admin/ui/AdminPagination'
+import { AdminTable } from '@/features/admin/ui/AdminTable'
+import ChangeRoleModal from '@/features/admin/ui/ChangeRoleModal'
+import { useAuth } from '@/features/auth/model/AuthContext'
+import Button from '@/shared/ui/Button'
+import EmptyState from '@/shared/ui/EmptyState'
+import { GridLoader } from '@/shared/ui/GridLoader'
+import Input from '@/shared/ui/Input'
+import { useToast } from '@/shared/ui/toast/ToastContext'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 const USERS_PER_PAGE = 10
 
 const UsersPage = () => {
   const { user: currentUser } = useAuth()
-
   const { users, isLoading, isError, refetch, changeUserRole } = useUsers()
-
+  const toast = useToast()
   const [searchQuery, setSearchQuery] = useState('')
   const [page, setPage] = useState(1)
-  const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingUser, setEditingUser] = useState<UserDto | null>(null)
-
   const filteredUsers = useMemo(() => {
-    if (!users) return []
-    const lowerQuery = searchQuery.toLowerCase()
-
-    return users.filter(
-      u =>
-        (u.email?.toLowerCase() || '').includes(lowerQuery) ||
-        (u.firstName?.toLowerCase() || '').includes(lowerQuery) ||
-        (u.lastName?.toLowerCase() || '').includes(lowerQuery),
+    const query = searchQuery.toLowerCase()
+    return users.filter(user =>
+      [user.email, user.firstName, user.lastName].some(value =>
+        (value?.toLowerCase() || '').includes(query),
+      ),
     )
   }, [searchQuery, users])
-  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / USERS_PER_PAGE))
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredUsers.length / USERS_PER_PAGE),
+  )
   const currentPage = Math.min(page, totalPages)
   const pageUsers = filteredUsers.slice(
     (currentPage - 1) * USERS_PER_PAGE,
     currentPage * USERS_PER_PAGE,
   )
-
   const handleSearchChange = (query: string) => {
     setSearchQuery(query)
     setPage(1)
   }
-
-  const handleEditClick = (user: UserDto) => {
-    setEditingUser(user)
-    setIsModalOpen(true)
-  }
-
   const onConfirmRoleChange = async (
     userId: string,
     newRole: 'Admin' | 'User',
   ) => {
+    if (currentUser?.id === userId) return false
     const result = await changeUserRole(userId, newRole)
-    if (result.success) {
-      console.log(`Роль змінено на ${newRole}`)
-    } else {
-      alert(result.error)
+    if (!result.success) {
+      toast.error(result.error || 'Помилка зміни ролі')
+      return false
     }
-  }
-
-  const getInitials = (firstName: string, lastName: string) => {
-    const first = firstName?.charAt(0) || ''
-    const last = lastName?.charAt(0) || ''
-    return (first + last).toUpperCase() || 'U'
+    toast.success('Роль користувача оновлено')
+    return true
   }
 
   return (
-    <div className='space-y-6 pb-20'>
-      <div className='flex items-center justify-between'>
-        <div>
-          <h1 className='text-3xl font-bold text-white'>Користувачі</h1>
-          <p className='text-[var(--text-muted)] mt-1'>
-            Управління доступом та ролями
-          </p>
+    <div className='space-y-6 pb-10'>
+      <AdminPageHeader
+        title='Користувачі'
+        description='Управління доступом та ролями'
+      >
+        {!isLoading && !isError && (
+          <span className='text-sm tabular-nums text-[var(--text-muted)]'>
+            Всього:{' '}
+            <span className='text-[var(--text-main)]'>{users.length}</span>
+          </span>
+        )}
+      </AdminPageHeader>
+      <div className='flex flex-wrap items-center justify-between gap-4'>
+        <div className='relative w-full max-w-sm'>
+          <Search
+            size={17}
+            aria-hidden='true'
+            className='pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-faint)]'
+          />
+          <Input
+            type='search'
+            aria-label="Пошук за ім'ям або email"
+            placeholder="Пошук за ім'ям або email…"
+            value={searchQuery}
+            onChange={e => handleSearchChange(e.target.value)}
+            className='pl-10'
+          />
         </div>
-        <div className='text-sm text-[var(--text-muted)]'>
-          Всього:{' '}
-          <span className='text-white font-bold'>{users.length}</span>
-        </div>
+        <p className='text-xs text-[var(--text-muted)]'>
+          Власну роль змінити неможливо
+        </p>
       </div>
-
-      <div className='relative'>
-        <Search
-          className='absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]'
-          size={20}
-        />
-        <input
-          type='text'
-          placeholder="Пошук за ім'ям або email..."
-          value={searchQuery}
-          onChange={e => handleSearchChange(e.target.value)}
-          className='w-full rounded-xl bg-[var(--bg-card)] border border-white/5 py-3 pl-10 pr-4 text-white placeholder-[var(--text-muted)] focus:border-[var(--color-primary)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]/50'
-        />
-      </div>
-
       {isLoading ? (
-        <div className='flex justify-center py-20'>
-          <GridLoader className='animate-spin text-[var(--color-primary)] h-8 w-8' />
-        </div>
+        <output className='flex justify-center py-20'>
+          <GridLoader
+            aria-hidden='true'
+            className='h-8 w-8 animate-spin motion-reduce:animate-none text-[var(--text-muted)]'
+          />
+          <span className='sr-only'>Завантаження користувачів</span>
+        </output>
       ) : isError && users.length === 0 ? (
         <UnavailableState onRetry={() => void refetch()} />
       ) : (
         <>
-          <div className='rounded-xl border border-white/5 bg-[var(--bg-card)] overflow-hidden backdrop-blur-sm shadow-xl'>
-            <table className='w-full text-left text-sm'>
-              <thead className='bg-white/5 text-[var(--text-muted)] font-medium uppercase text-xs tracking-wider'>
+          {isError && (
+            <UnavailableState
+              title='Не вдалося оновити користувачів'
+              description='Показано раніше завантажені дані.'
+              onRetry={() => void refetch()}
+            />
+          )}
+          <AdminTable label='Користувачі та ролі'>
+            <table className='min-w-[620px]'>
+              <caption className='sr-only'>
+                Користувачі та керування доступом
+              </caption>
+              <thead>
                 <tr>
-                  <th className='px-6 py-4'>Користувач</th>
-                  <th className='px-6 py-4'>Роль</th>
-                  <th className='px-6 py-4 text-right'>Дії</th>
+                  <th scope='col'>Користувач</th>
+                  <th scope='col'>Роль</th>
+                  <th scope='col'>Доступ</th>
                 </tr>
               </thead>
-              <tbody className='divide-y divide-white/5'>
-                {filteredUsers.length === 0 ? (
+              <tbody>
+                {pageUsers.length === 0 ? (
                   <tr>
-                    <td colSpan={3} className='px-6 py-8'>
+                    <td colSpan={3}>
                       <EmptyState
                         icon={<UserIcon className='h-12 w-12' />}
                         title={
@@ -141,7 +144,7 @@ const UsersPage = () => {
                         onAction={
                           searchQuery ? () => handleSearchChange('') : undefined
                         }
-                        className='border-0 bg-transparent py-10'
+                        className='border-0 bg-transparent py-12'
                       />
                     </td>
                   </tr>
@@ -149,55 +152,56 @@ const UsersPage = () => {
                   pageUsers.map(user => {
                     const isMe = currentUser?.id === user.id
                     const isAdmin = user.role === 'Admin'
-                    const initials = getInitials(user.firstName, user.lastName)
-
                     return (
-                      <tr
-                        key={user.id}
-                        className='group hover:bg-[var(--bg-hover)] transition-colors'
-                      >
-                        <td className='px-6 py-4'>
-                          <div className='flex items-center gap-4'>
+                      <tr key={user.id}>
+                        <th
+                          scope='row'
+                          className='!bg-transparent !whitespace-normal !font-normal'
+                        >
+                          <div className='flex items-center gap-3'>
                             <div
-                              className={`h-10 w-10 rounded-full flex items-center justify-center font-bold text-white shadow-inner shrink-0 ${isAdmin ? 'bg-gradient-to-br from-[var(--color-primary)] to-red-900' : 'bg-white/10'}`}
+                              aria-hidden='true'
+                              className='flex h-9 w-9 shrink-0 items-center justify-center rounded-sm bg-[var(--bg-card)] text-xs text-[var(--text-muted)]'
                             >
-                              {initials}
+                              {(
+                                (user.firstName?.charAt(0) || '') +
+                                (user.lastName?.charAt(0) || '')
+                              ).toUpperCase() || 'U'}
                             </div>
-                            <div className='overflow-hidden'>
-                              <div className='font-bold text-white flex items-center gap-2 truncate'>
+                            <div className='min-w-0 max-w-sm break-words'>
+                              <p className='text-sm font-medium text-[var(--text-main)]'>
                                 {user.firstName} {user.lastName}
                                 {isMe && (
-                                  <span className='text-[10px] bg-white/10 px-1.5 rounded text-[var(--text-muted)]'>
+                                  <span className='ml-2 text-xs font-normal text-[var(--text-faint)]'>
                                     Ви
                                   </span>
                                 )}
-                              </div>
-                              <div className='text-[var(--text-muted)] text-xs truncate'>
+                              </p>
+                              <p className='mt-1 text-xs text-[var(--text-muted)]'>
                                 {user.email}
-                              </div>
+                              </p>
                             </div>
                           </div>
+                        </th>
+                        <td>
+                          <span className='inline-flex items-center gap-2 text-xs text-[var(--text-muted)]'>
+                            {isAdmin && (
+                              <ShieldCheck size={15} aria-hidden='true' />
+                            )}
+                            {user.role}
+                          </span>
                         </td>
-                        <td className='px-6 py-4'>
-                          {isAdmin ? (
-                            <span className='inline-flex items-center gap-1.5 rounded-full bg-[var(--color-primary)]/10 px-3 py-1 text-xs font-bold text-[var(--color-primary)] border border-[var(--color-primary)]/20'>
-                              <ShieldCheck size={12} /> Admin
-                            </span>
-                          ) : (
-                            <span className='inline-flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1 text-xs font-bold text-[var(--text-muted)] border border-white/10'>
-                              <UserIcon size={12} /> User
-                            </span>
-                          )}
-                        </td>
-                        <td className='px-6 py-4 text-right'>
-                          <button
-                            type='button'
-                            onClick={() => handleEditClick(user)}
+                        <td>
+                          <Button
+                            variant='ghost'
+                            onClick={() => setEditingUser(user)}
                             disabled={isMe}
-                            className='p-2 rounded-lg text-[var(--text-muted)] hover:text-white hover:bg-white/10 disabled:opacity-20 disabled:cursor-not-allowed transition-all'
+                            aria-label={`Змінити роль: ${user.email}`}
+                            className='whitespace-nowrap px-3'
                           >
-                            <MoreHorizontal size={20} />
-                          </button>
+                            <ShieldCheck size={15} aria-hidden='true' />
+                            Змінити роль
+                          </Button>
                         </td>
                       </tr>
                     )
@@ -205,45 +209,26 @@ const UsersPage = () => {
                 )}
               </tbody>
             </table>
-          </div>
-
-          <div className='flex items-center justify-between mt-4 px-2'>
-            <div className='text-sm text-[var(--text-muted)]'>
-              Сторінка{' '}
-              <span className='text-white font-bold'>
-                {currentPage}
-              </span>{' '}
-              з {totalPages}
-            </div>
-
-            <div className='flex gap-2'>
-              <button
-                type='button'
-                onClick={() => setPage(currentPage - 1)}
-                disabled={currentPage === 1}
-                className='p-2 rounded-lg bg-[var(--bg-card)] border border-white/10 text-white hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors'
-              >
-                <ChevronLeft size={20} />
-              </button>
-              <button
-                type='button'
-                onClick={() => setPage(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className='p-2 rounded-lg bg-[var(--bg-card)] border border-white/10 text-white hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors'
-              >
-                <ChevronRight size={20} />
-              </button>
-            </div>
-          </div>
+          </AdminTable>
+          <AdminPagination
+            pageNumber={currentPage}
+            pageSize={USERS_PER_PAGE}
+            totalCount={filteredUsers.length}
+            hasPreviousPage={currentPage > 1}
+            hasNextPage={currentPage < totalPages}
+            onPageChange={setPage}
+          />
         </>
       )}
-
-      <ChangeRoleModal
-        isOpen={isModalOpen}
-        user={editingUser}
-        onClose={() => setIsModalOpen(false)}
-        onConfirm={onConfirmRoleChange}
-      />
+      {editingUser && (
+        <ChangeRoleModal
+          key={editingUser.id}
+          isOpen
+          user={editingUser}
+          onClose={() => setEditingUser(null)}
+          onConfirm={onConfirmRoleChange}
+        />
+      )}
     </div>
   )
 }

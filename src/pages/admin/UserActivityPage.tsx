@@ -1,20 +1,21 @@
-import { useState, useMemo } from 'react'
-import { useUserActivity } from '@/features/admin/model/useUserActivity'
+import { clsx } from 'clsx'
 import {
-  Search,
-  User,
-  Ticket,
-  LayoutList,
+  Ban,
   Calendar,
   CheckCircle2,
   ChevronRight,
+  LayoutList,
   Mail,
-  Ban,
+  Search,
+  Ticket,
+  User,
 } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { useUserActivity } from '@/features/admin/model/useUserActivity'
+import { AdminTable } from '@/features/admin/ui/AdminTable'
 import EmptyState from '@/shared/ui/EmptyState'
-import UnavailableState from '@/shared/ui/UnavailableState'
 import { GridLoader } from '@/shared/ui/GridLoader'
-import { clsx } from 'clsx'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 const UserActivityPage = () => {
   const {
@@ -91,7 +92,7 @@ const UserActivityPage = () => {
   }
 
   return (
-    <div className='grid gap-6 lg:grid-cols-[350px_1fr] h-[calc(100vh-100px)]'>
+    <div className='grid min-h-[34rem] h-[calc(100dvh-10rem)] gap-5 grid-cols-[minmax(12rem,0.35fr)_minmax(0,1fr)]'>
       <div className='flex flex-col gap-4 bg-[var(--bg-card)] border border-white/5 rounded-2xl p-4 h-full overflow-hidden shadow-xl'>
         <div>
           <h2 className='text-lg font-bold text-white mb-1'>Користувачі</h2>
@@ -120,7 +121,10 @@ const UserActivityPage = () => {
               <GridLoader className='animate-spin text-[var(--color-primary)]' />
             </div>
           ) : isUsersError && users.length === 0 ? (
-            <UnavailableState onRetry={() => void refetchUsers()} className='border-0 bg-transparent px-3 py-10' />
+            <UnavailableState
+              onRetry={() => void refetchUsers()}
+              className='border-0 bg-transparent px-3 py-10'
+            />
           ) : filteredUsers.length === 0 ? (
             <EmptyState
               icon={<User className='h-10 w-10' />}
@@ -177,7 +181,7 @@ const UserActivityPage = () => {
         </div>
       </div>
 
-      <div className='flex flex-col gap-6 h-full overflow-y-auto pr-2 custom-scrollbar'>
+      <div className='flex min-w-0 flex-col gap-6 h-full overflow-y-auto pr-2 custom-scrollbar'>
         {!selectedUserId ? (
           <EmptyState
             icon={<User className='h-12 w-12' />}
@@ -275,9 +279,9 @@ const UserActivityPage = () => {
                   </button>
                 </div>
 
-                <div className='bg-[var(--bg-card)] border border-white/5 rounded-xl overflow-hidden shadow-xl min-h-[300px]'>
+                <AdminTable label='Замовлення та квитки'>
                   {activeTab === 'orders' ? (
-                    <table className='w-full text-left text-sm'>
+                    <table className='w-full min-w-[600px] text-left text-sm'>
                       <thead className='bg-white/5 text-[var(--text-muted)] font-medium uppercase text-xs'>
                         <tr>
                           <th className='px-6 py-4'>ID / Дата</th>
@@ -351,7 +355,7 @@ const UserActivityPage = () => {
                       </tbody>
                     </table>
                   ) : (
-                    <table className='w-full text-left text-sm'>
+                    <table className='w-full min-w-[680px] text-left text-sm'>
                       <thead className='bg-white/5 text-[var(--text-muted)] font-medium uppercase text-xs'>
                         <tr>
                           <th className='px-6 py-4'>Код</th>
@@ -417,7 +421,7 @@ const UserActivityPage = () => {
                       </tbody>
                     </table>
                   )}
-                </div>
+                </AdminTable>
               </div>
             )}
           </>

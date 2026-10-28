@@ -1,24 +1,24 @@
 import { clsx } from 'clsx'
 import { Edit, Plus, Search, Trash2, Trophy } from 'lucide-react'
 import { useMemo, useState } from 'react'
-
-import EmptyState from '@/shared/ui/EmptyState'
-import UnavailableState from '@/shared/ui/UnavailableState'
-import { GridLoader } from '@/shared/ui/GridLoader'
-import ConfirmModal from '@/shared/ui/modals/ConfirmModal'
-import { useToast } from '@/shared/ui/toast/ToastContext'
-import AchievementFormModal from '@/features/admin/ui/AchievementFormModal'
+import type {
+  AdminAchievementDto,
+  AdminAchievementPayload,
+} from '@/features/admin/api/admin-achievements.service'
 import { useAdminAchievements } from '@/features/admin/model/useAdminAchievements'
+import AchievementFormModal from '@/features/admin/ui/AchievementFormModal'
+import { AdminTable } from '@/features/admin/ui/AdminTable'
 import {
   getAchievementCategoryLabel,
   getAchievementRarityLabel,
   getAchievementStrategyLabel,
   resolveAchievementIcon,
 } from '@/features/loyalty/achievements/achievementContract'
-import type {
-  AdminAchievementDto,
-  AdminAchievementPayload,
-} from '@/features/admin/api/admin-achievements.service'
+import EmptyState from '@/shared/ui/EmptyState'
+import { GridLoader } from '@/shared/ui/GridLoader'
+import ConfirmModal from '@/shared/ui/modals/ConfirmModal'
+import { useToast } from '@/shared/ui/toast/ToastContext'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 type SecretFilter = 'all' | 'secret' | 'regular'
 
@@ -193,7 +193,10 @@ const AdminAchievementsPage = () => {
             <GridLoader className='h-8 w-8 animate-spin text-[var(--color-primary)]' />
           </div>
         ) : error ? (
-          <UnavailableState title='Досягнення тимчасово недоступні' onRetry={() => void refetch()} />
+          <UnavailableState
+            title='Досягнення тимчасово недоступні'
+            onRetry={() => void refetch()}
+          />
         ) : filteredAchievements.length === 0 ? (
           <EmptyState
             icon={<Trophy className='h-12 w-12' />}
@@ -222,7 +225,7 @@ const AdminAchievementsPage = () => {
             className='border-0 bg-transparent py-16'
           />
         ) : (
-          <div className='overflow-x-auto'>
+          <AdminTable label='Досягнення'>
             <table className='w-full min-w-[980px] text-left text-sm'>
               <thead className='border-b border-white/5 text-xs uppercase tracking-wider text-neutral-500'>
                 <tr>
@@ -322,7 +325,7 @@ const AdminAchievementsPage = () => {
                 })}
               </tbody>
             </table>
-          </div>
+          </AdminTable>
         )}
       </div>
 

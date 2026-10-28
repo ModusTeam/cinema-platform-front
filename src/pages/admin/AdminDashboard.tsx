@@ -1,116 +1,95 @@
+import { Film, TrendingUp } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import {
-  DollarSign,
-  Ticket,
-  Film,
-  TrendingUp,
-  TrendingDown,
-  Users,
-} from 'lucide-react'
-import EmptyState from '@/shared/ui/EmptyState'
-import UnavailableState from '@/shared/ui/UnavailableState'
-import { GridLoader } from '@/shared/ui/GridLoader'
-import {
-  AreaChart,
   Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
 } from 'recharts'
 import {
   adminStatsService,
   type DashboardStatsDto,
 } from '@/features/admin/api/admin-stats.service'
+import { AdminPageHeader } from '@/features/admin/ui/AdminPageHeader'
+import EmptyState from '@/shared/ui/EmptyState'
+import { GridLoader } from '@/shared/ui/GridLoader'
+import UnavailableState from '@/shared/ui/UnavailableState'
+
+const formatCurrency = (amount: number) =>
+  new Intl.NumberFormat('uk-UA', {
+    style: 'currency',
+    currency: 'UAH',
+    maximumFractionDigits: 0,
+  }).format(amount)
+const ranges = [
+  { value: '7d', label: 'Тиждень' },
+  { value: '30d', label: 'Місяць' },
+  { value: '90d', label: 'Квартал' },
+]
 
 interface StatCardProps {
   title: string
   value: string | number
-  icon: any
   trendPercent?: number
   isLoading: boolean
-  subText?: string
+  subText: string
 }
 
 const StatCard = ({
   title,
   value,
-  icon: Icon,
   trendPercent,
   isLoading,
   subText,
-}: StatCardProps) => {
-  const isPositive = (trendPercent || 0) >= 0
+}: StatCardProps) => (
+  <div className='min-w-0 border-b border-[var(--border-default)] py-6'>
+    <dt className='text-sm text-[var(--text-muted)]'>{title}</dt>
+    <dd className='mt-3'>
+      {isLoading ? (
+        <span className='block h-10 w-28 rounded-sm bg-[var(--bg-card)]' />
+      ) : (
+        <span className='block break-words text-3xl font-medium tracking-tight tabular-nums'>
+          {value}
+        </span>
+      )}
+      <span className='mt-3 block text-xs leading-relaxed text-[var(--text-muted)]'>
+        {!isLoading && trendPercent !== undefined && (
+          <span className='mr-2 font-medium tabular-nums text-[var(--text-main)]'>
+            {trendPercent > 0 ? '+' : trendPercent < 0 ? '−' : ''}
+            {Math.abs(trendPercent)}%
+          </span>
+        )}{' '}
+        {subText}
+      </span>
+    </dd>
+  </div>
+)
 
-  return (
-    <div className='rounded-xl border border-white/5 bg-[var(--bg-card)] p-6 backdrop-blur-sm shadow-lg hover:border-[var(--color-primary)]/20 transition-all duration-300'>
-      <div className='flex items-center justify-between mb-4'>
-        <h3 className='text-sm font-medium text-[var(--text-muted)]'>
-          {title}
-        </h3>
-        <div
-          className={`p-2 rounded-lg bg-white/5 ${isLoading ? 'animate-pulse' : ''}`}
-        >
-          <Icon className='h-5 w-5 text-[var(--color-primary)]' />
-        </div>
-      </div>
-
-      <div className='space-y-1'>
-        {isLoading ? (
-          <div className='h-8 w-32 animate-pulse rounded bg-white/5' />
-        ) : (
-          <div className='text-3xl font-bold text-white tracking-tight'>
-            {value}
-          </div>
-        )}
-
-        <div className='flex items-center gap-2 h-5'>
-          {!isLoading && trendPercent !== undefined && (
-            <div
-              className={`flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full ${isPositive ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}
-            >
-              {isPositive ? (
-                <TrendingUp size={12} />
-              ) : (
-                <TrendingDown size={12} />
-              )}
-              {Math.abs(trendPercent)}%
-            </div>
-          )}
-          {!isLoading && subText && (
-            <span className='text-xs text-[var(--text-muted)]'>{subText}</span>
-          )}
-        </div>
-      </div>
-    </div>
-  )
+interface ChartTooltipProps {
+  active?: boolean
+  payload?: ReadonlyArray<{ value?: number | string }>
+  label?: string | number
 }
 
-const CustomChartTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    const dateStr = new Date(label).toLocaleDateString('uk-UA', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    })
-
-    return (
-      <div className='rounded-lg border border-white/10 bg-[#1a1a1a]/95 p-3 shadow-xl backdrop-blur-md'>
-        <p className='text-xs font-medium text-[var(--text-muted)] mb-1'>
-          {dateStr}
-        </p>
-        <p className='text-sm font-bold text-white'>
-          {new Intl.NumberFormat('uk-UA', {
-            style: 'currency',
-            currency: 'UAH',
-            maximumFractionDigits: 0,
-          }).format(payload[0].value)}
-        </p>
-      </div>
-    )
-  }
-  return null
+const CustomChartTooltip = ({ active, payload, label }: ChartTooltipProps) => {
+  if (!active || !payload?.length || label === undefined) return null
+  return (
+    <div className='font-public rounded-md border border-[var(--border-default)] bg-[var(--surface-elevated)] p-3'>
+      <p className='mb-1 text-xs text-[var(--text-muted)]'>
+        {new Date(label).toLocaleDateString('uk-UA', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        })}
+      </p>
+      <p className='text-sm font-medium tabular-nums'>
+        {formatCurrency(Number(payload[0].value))}
+      </p>
+    </div>
+  )
 }
 
 const AdminDashboard = () => {
@@ -120,7 +99,10 @@ const AdminDashboard = () => {
   const [retryCount, setRetryCount] = useState(0)
   const [dateRange, setDateRange] = useState('30d')
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Retry explicitly reloads the same date range.
   useEffect(() => {
+    // Ignore an old period's response after a range change or viewport unmount.
+    let active = true
     const fetchStats = async () => {
       setIsLoading(true)
       try {
@@ -129,246 +111,246 @@ const AdminDashboard = () => {
         if (dateRange === '7d') from.setDate(to.getDate() - 7)
         if (dateRange === '30d') from.setDate(to.getDate() - 30)
         if (dateRange === '90d') from.setDate(to.getDate() - 90)
-
         const data = await adminStatsService.getDashboardStats(from, to)
-        setStats(data)
-        setLoadError(false)
-      } catch (error) {
-        console.error('Error fetching admin stats:', error)
-        setStats(null)
-        setLoadError(true)
+        if (active) {
+          setStats(data)
+          setLoadError(false)
+        }
+      } catch {
+        if (active) {
+          setStats(null)
+          setLoadError(true)
+        }
       } finally {
-        setIsLoading(false)
+        if (active) setIsLoading(false)
       }
     }
-
-    fetchStats()
+    void fetchStats()
+    return () => {
+      active = false
+    }
   }, [dateRange, retryCount])
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('uk-UA', {
-      style: 'currency',
-      currency: 'UAH',
-      maximumFractionDigits: 0,
-    }).format(amount)
-  }
-
   const chartData = stats?.salesChart || []
-
-  if (!isLoading && loadError) {
-    return <UnavailableState onRetry={() => setRetryCount(count => count + 1)} />
-  }
-
-  const dateFormatter = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('uk-UA', {
+  const dateFormatter = (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString('uk-UA', {
       day: '2-digit',
       month: '2-digit',
     })
-  }
 
   return (
-    <div className='space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20'>
-      <div className='flex flex-col md:flex-row md:items-center justify-between gap-4'>
-        <div>
-          <h1 className='text-3xl font-bold text-white'>Панель управління</h1>
-          <p className='text-[var(--text-muted)] mt-1'>
-            Огляд ключових показників ефективності кінотеатру
-          </p>
-        </div>
-
-        <div className='bg-[var(--bg-card)] p-1 rounded-xl border border-white/10 flex w-fit'>
-          {['7d', '30d', '90d'].map(range => (
+    <div className='space-y-8 pb-10'>
+      <AdminPageHeader
+        title='Панель управління'
+        description='Огляд ключових показників ефективності кінотеатру'
+      >
+        <fieldset aria-label='Період статистики' className='flex gap-1'>
+          {ranges.map(range => (
             <button
               type='button'
-              key={range}
-              onClick={() => setDateRange(range)}
-              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                dateRange === range
-                  ? 'bg-[var(--color-primary)] text-white shadow-lg'
-                  : 'text-[var(--text-muted)] hover:text-white hover:bg-white/5'
-              }`}
+              key={range.value}
+              onClick={() => setDateRange(range.value)}
+              aria-pressed={dateRange === range.value}
+              className='admin-filter'
             >
-              {range === '7d'
-                ? 'Тиждень'
-                : range === '30d'
-                  ? 'Місяць'
-                  : 'Квартал'}
+              {range.label}
             </button>
           ))}
-        </div>
-      </div>
+        </fieldset>
+      </AdminPageHeader>
 
-      <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-4'>
-        <StatCard
-          title='Загальний дохід'
-          value={stats ? formatCurrency(stats.totalRevenue) : '0 ₴'}
-          icon={DollarSign}
-          trendPercent={stats?.revenueChangePercent}
-          subText='від попереднього періоду'
-          isLoading={isLoading}
+      {!isLoading && loadError ? (
+        <UnavailableState
+          title='Статистика тимчасово недоступна'
+          onRetry={() => setRetryCount(count => count + 1)}
         />
-        <StatCard
-          title='Продано квитків'
-          value={stats?.ticketsSold || 0}
-          icon={Ticket}
-          trendPercent={stats?.ticketsChangePercent}
-          subText='від попереднього періоду'
-          isLoading={isLoading}
-        />
-        <StatCard
-          title='Заповнюваність залів'
-          value={`${stats?.occupancyRate || 0}%`}
-          icon={Users}
-          trendPercent={stats?.occupancyChangePercent}
-          subText='середній показник'
-          isLoading={isLoading}
-        />
-        <StatCard
-          title='Активні фільми'
-          value={stats?.activeMoviesCount || 0}
-          icon={Film}
-          subText='у прокаті зараз'
-          isLoading={isLoading}
-        />
-      </div>
+      ) : (
+        <>
+          <dl
+            aria-label='Ключові показники'
+            aria-busy={isLoading}
+            className='grid grid-cols-2 gap-x-8 xl:grid-cols-4'
+          >
+            <StatCard
+              title='Загальний дохід'
+              value={stats ? formatCurrency(stats.totalRevenue) : '—'}
+              trendPercent={stats?.revenueChangePercent}
+              subText='від попереднього періоду'
+              isLoading={isLoading}
+            />
+            <StatCard
+              title='Продано квитків'
+              value={stats?.ticketsSold ?? '—'}
+              trendPercent={stats?.ticketsChangePercent}
+              subText='від попереднього періоду'
+              isLoading={isLoading}
+            />
+            <StatCard
+              title='Заповнюваність залів'
+              value={stats ? `${stats.occupancyRate}%` : '—'}
+              trendPercent={stats?.occupancyChangePercent}
+              subText='середній показник'
+              isLoading={isLoading}
+            />
+            <StatCard
+              title='Активні фільми'
+              value={stats?.activeMoviesCount ?? '—'}
+              subText='у прокаті зараз'
+              isLoading={isLoading}
+            />
+          </dl>
 
-      <div className='grid lg:grid-cols-[2fr_1fr] gap-8'>
-        <div className='rounded-xl border border-white/5 bg-[var(--bg-card)] p-6 backdrop-blur-sm shadow-lg flex flex-col min-h-[400px]'>
-          <div className='flex items-center justify-between mb-6'>
-            <h3 className='font-bold text-white flex items-center gap-2'>
-              <TrendingUp size={18} className='text-[var(--color-primary)]' />
-              Динаміка продажів
-            </h3>
-          </div>
-
-          <div className='flex-1 w-full min-h-0'>
-            {isLoading ? (
-              <div className='w-full h-full flex items-center justify-center'>
-                <GridLoader className='animate-spin text-[var(--color-primary)] h-8 w-8' />
+          <div className='grid min-w-0 gap-8 xl:grid-cols-[minmax(0,1.7fr)_minmax(16rem,1fr)]'>
+            <section aria-labelledby='admin-sales-title' className='min-w-0'>
+              <div className='mb-6 flex items-baseline justify-between gap-4'>
+                <h2 id='admin-sales-title' className='text-lg font-medium'>
+                  Динаміка продажів
+                </h2>
+                <span className='text-xs text-[var(--text-muted)]'>
+                  Дохід, ₴
+                </span>
               </div>
-            ) : chartData.length > 0 ? (
-              <ResponsiveContainer width='99%' height='100%'>
-                <AreaChart
-                  data={chartData}
-                  margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
-                >
-                  <defs>
-                    <linearGradient
-                      id='colorRevenue'
-                      x1='0'
-                      y1='0'
-                      x2='0'
-                      y2='1'
+              <div className='h-[300px] min-w-0'>
+                {isLoading ? (
+                  <output className='flex h-full items-center justify-center'>
+                    <GridLoader
+                      aria-hidden='true'
+                      className='h-7 w-7 animate-spin motion-reduce:animate-none text-[var(--text-muted)]'
+                    />
+                    <span className='sr-only'>Завантаження статистики</span>
+                  </output>
+                ) : chartData.length ? (
+                  <ResponsiveContainer width='100%' height={300} minWidth={0}>
+                    <AreaChart
+                      data={chartData}
+                      accessibilityLayer
+                      margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
                     >
-                      <stop
-                        offset='5%'
-                        stopColor='var(--color-primary)'
-                        stopOpacity={0.3}
+                      <CartesianGrid
+                        stroke='var(--border-default)'
+                        vertical={false}
                       />
-                      <stop
-                        offset='95%'
-                        stopColor='var(--color-primary)'
-                        stopOpacity={0}
+                      <XAxis
+                        dataKey='date'
+                        stroke='var(--text-faint)'
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                        tickMargin={10}
+                        tickFormatter={dateFormatter}
+                        minTickGap={24}
                       />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid
-                    strokeDasharray='3 3'
-                    stroke='#ffffff10'
-                    vertical={false}
+                      <YAxis
+                        stroke='var(--text-faint)'
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                        tickFormatter={value => `${value / 1000}k`}
+                        width={48}
+                      />
+                      <Tooltip content={<CustomChartTooltip />} />
+                      <Area
+                        type='monotone'
+                        name='Дохід'
+                        dataKey='revenue'
+                        stroke='var(--color-primary)'
+                        strokeWidth={2}
+                        fill='var(--color-primary)'
+                        fillOpacity={0.06}
+                        isAnimationActive={false}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <EmptyState
+                    icon={<TrendingUp className='h-12 w-12' />}
+                    title='Продажів за період немає'
+                    description='Коли зʼявляться оплачені замовлення в обраному діапазоні, графік покаже динаміку доходу.'
+                    className='h-full border-0 bg-transparent py-10'
                   />
-                  <XAxis
-                    dataKey='date'
-                    stroke='#71717a'
-                    fontSize={11}
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={10}
-                    tickFormatter={dateFormatter}
-                  />
-                  <YAxis
-                    stroke='#71717a'
-                    fontSize={11}
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={value => `${value / 1000}k`}
-                  />
-                  <Tooltip content={<CustomChartTooltip />} />
-                  <Area
-                    type='monotone'
-                    dataKey='revenue'
-                    stroke='var(--color-primary)'
-                    strokeWidth={2}
-                    fillOpacity={1}
-                    fill='url(#colorRevenue)'
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            ) : (
-              <EmptyState
-                icon={<TrendingUp className='h-12 w-12' />}
-                title='Продажів за період немає'
-                description='Коли зʼявляться оплачені замовлення в обраному діапазоні, графік покаже динаміку доходу.'
-                className='h-full border-0 bg-transparent py-10'
-              />
-            )}
-          </div>
-        </div>
-
-        <div className='rounded-xl border border-white/5 bg-[var(--bg-card)] p-6 backdrop-blur-sm shadow-lg h-fit'>
-          <h3 className='font-bold text-white mb-6 flex items-center gap-2'>
-            <Film size={18} className='text-yellow-500' />
-            Топ фільмів
-          </h3>
-
-          <div className='space-y-4'>
-            {isLoading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <div
-                  key={i}
-                  className='h-12 w-full animate-pulse rounded bg-white/5'
+                )}
+              </div>
+              {!isLoading && chartData.length > 0 && (
+                <details className='mt-5 text-xs text-[var(--text-muted)]'>
+                  <summary className='w-fit cursor-pointer py-2'>
+                    Дані графіка у таблиці
+                  </summary>
+                  <table className='mt-2 w-full text-left tabular-nums'>
+                    <caption className='sr-only'>Дохід за датами</caption>
+                    <thead>
+                      <tr>
+                        <th scope='col' className='py-2 font-medium'>
+                          Дата
+                        </th>
+                        <th scope='col' className='text-right font-medium'>
+                          Дохід
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {chartData.map(day => (
+                        <tr
+                          key={day.date}
+                          className='border-t border-[var(--border-default)]'
+                        >
+                          <th scope='row' className='py-2 font-normal'>
+                            {dateFormatter(day.date)}
+                          </th>
+                          <td className='text-right'>
+                            {formatCurrency(day.revenue)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </details>
+              )}
+            </section>
+            <section
+              aria-labelledby='admin-top-title'
+              className='min-w-0 xl:border-l xl:border-[var(--border-default)] xl:pl-8'
+            >
+              <h2 id='admin-top-title' className='mb-6 text-lg font-medium'>
+                Топ фільмів
+              </h2>
+              {isLoading ? (
+                <div className='h-60 bg-[var(--surface-muted)]' />
+              ) : stats?.topMovies.length ? (
+                <ol className='divide-y divide-[var(--border-default)]'>
+                  {stats.topMovies.map((movie, idx) => (
+                    <li
+                      key={`${idx}-${movie.movieTitle}`}
+                      className='flex items-baseline gap-3 py-4 first:pt-0'
+                    >
+                      <span className='w-4 shrink-0 text-xs tabular-nums text-[var(--text-faint)]'>
+                        {idx + 1}
+                      </span>
+                      <div className='min-w-0 flex-1'>
+                        <h3 className='text-sm font-medium leading-snug'>
+                          {movie.movieTitle}
+                        </h3>
+                        <p className='mt-1 text-xs tabular-nums text-[var(--text-muted)]'>
+                          {movie.ticketsSold} квитків
+                        </p>
+                      </div>
+                      <span className='shrink-0 text-sm tabular-nums'>
+                        {formatCurrency(movie.revenue)}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <EmptyState
+                  icon={<Film className='h-12 w-12' />}
+                  title='Топ фільмів ще порожній'
+                  description='Рейтинг сформується після перших продажів квитків за обраний період.'
+                  className='border-0 bg-transparent px-3 py-10'
                 />
-              ))
-            ) : stats?.topMovies && stats.topMovies.length > 0 ? (
-              stats.topMovies.map((movie, idx) => (
-                <div
-                  key={idx}
-                  className='group flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors border border-transparent hover:border-white/5'
-                >
-                  <div className='flex items-center gap-3 overflow-hidden'>
-                    <div
-                      className={`flex items-center justify-center h-8 w-8 rounded font-black text-sm shrink-0 ${idx === 0 ? 'bg-yellow-500/20 text-yellow-500' : 'bg-white/5 text-[var(--text-muted)]'}`}
-                    >
-                      {idx + 1}
-                    </div>
-                    <div className='truncate'>
-                      <div
-                        className='text-sm font-bold text-white truncate'
-                        title={movie.movieTitle}
-                      >
-                        {movie.movieTitle}
-                      </div>
-                      <div className='text-[10px] text-[var(--text-muted)]'>
-                        {movie.ticketsSold} квитків
-                      </div>
-                    </div>
-                  </div>
-                  <div className='text-xs font-bold text-[var(--color-primary)] whitespace-nowrap'>
-                    {formatCurrency(movie.revenue)}
-                  </div>
-                </div>
-              ))
-            ) : (
-              <EmptyState
-                icon={<Film className='h-12 w-12' />}
-                title='Топ фільмів ще порожній'
-                description='Рейтинг сформується після перших продажів квитків за обраний період.'
-                className='border-0 bg-transparent px-3 py-10'
-              />
-            )}
+              )}
+            </section>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   )
 }

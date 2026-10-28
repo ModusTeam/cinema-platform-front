@@ -4,6 +4,7 @@ import { moviesService } from '@/entities/movie/api/movies.service'
 import { type Movie, MovieStatus } from '@/entities/movie/model/movie.types'
 import Button from '@/shared/ui/Button'
 import Input from '@/shared/ui/Input'
+import ConfirmModal from '@/shared/ui/modals/ConfirmModal'
 import { Dialog } from '@/shared/ui/modals/Dialog'
 import { useToast } from '@/shared/ui/toast/ToastContext'
 
@@ -37,6 +38,7 @@ const EditMovieModal = ({
     status: MovieStatus.Active,
   })
   const [isSaving, setIsSaving] = useState(false)
+  const [confirmArchive, setConfirmArchive] = useState(false)
   const fieldId = useId()
   const titleId = `${fieldId}-title`
 
@@ -56,7 +58,18 @@ const EditMovieModal = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!movie || isSaving) return
+    if (
+      formData.status === MovieStatus.Archived &&
+      movie.status !== MovieStatus.Archived
+    ) {
+      setConfirmArchive(true)
+      return
+    }
+    await saveMovie()
+  }
 
+  const saveMovie = async () => {
+    if (!movie || isSaving) return
     setIsSaving(true)
     try {
       await moviesService.update(movie.id, {
@@ -67,6 +80,7 @@ const EditMovieModal = ({
       })
       toast.success('Фільм успішно оновлено')
       onSuccess()
+      setConfirmArchive(false)
       onClose()
     } catch (error) {
       console.error(error)
@@ -84,14 +98,14 @@ const EditMovieModal = ({
       onClose={onClose}
       titleId={titleId}
       isBusy={isSaving}
-      className='max-w-2xl'
+      className='font-public max-w-2xl rounded-lg'
     >
       <div className='flex shrink-0 items-center justify-between border-b border-white/10 p-6'>
         <h2
           id={titleId}
           tabIndex={-1}
           data-modal-initial-focus
-          className='type-section text-white'
+          className='type-section font-medium text-white'
         >
           Редагувати фільм
         </h2>
@@ -101,7 +115,7 @@ const EditMovieModal = ({
           disabled={isSaving}
           aria-label='Закрити діалог'
           variant='ghost'
-          className='min-h-0 p-0'
+          className='w-11 px-0'
         >
           <X size={24} />
         </Button>
@@ -193,6 +207,15 @@ const EditMovieModal = ({
           </Button>
         </div>
       </form>
+      <ConfirmModal
+        isOpen={confirmArchive}
+        onClose={() => setConfirmArchive(false)}
+        onConfirm={saveMovie}
+        title='Архівувати фільм?'
+        message={`Зберегти зміни й перевести фільм «${movie.title}» до архіву?`}
+        confirmText='Зберегти й архівувати'
+        isLoading={isSaving}
+      />
     </Dialog>
   )
 }
