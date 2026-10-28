@@ -51,6 +51,7 @@ const SeatSelector = ({
     occupancy?.seats.map(seat => [normalizeId(seat.id), seat]),
   )
   const selectedIds = new Set(selectedSeats.map(seat => normalizeId(seat.id)))
+  const rowLabels = new Map(hall.seats.map(seat => [seat.gridY, seat.row]))
 
   const availableTypes = useMemo(() => {
     const types = new Set<string>()
@@ -61,8 +62,155 @@ const SeatSelector = ({
   }, [hall.seats])
 
   return (
-    <div className='space-y-8'>
-      <div className='flex flex-wrap justify-center gap-6 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]'>
+    <div className='min-w-0 space-y-5'>
+      <p
+        id='seat-map-hint'
+        className='text-sm leading-relaxed text-[var(--text-muted)]'
+      >
+        {bookingCopy.wideHall}
+      </p>
+      <section
+        aria-label={bookingCopy.seatMap}
+        aria-describedby='seat-map-hint'
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: Keyboard users must be able to scroll a wide hall.
+        tabIndex={0}
+        className='w-full overflow-x-auto overscroll-x-contain rounded-lg bg-[var(--surface-muted)] px-4 py-8 sm:px-8 sm:py-10'
+      >
+        <div
+          className='mx-auto w-fit'
+          style={{ minWidth: cols ? cols * 48 + 40 : undefined }}
+        >
+          <div className='mx-auto mb-10 w-3/4 max-w-lg'>
+            <div className='h-2 rounded-t-[50%] border-t-2 border-[var(--text-muted)]' />
+            <p className='mt-3 text-center text-xs tracking-[0.2em] text-[var(--text-muted)] uppercase'>
+              {bookingCopy.seats.screen}
+            </p>
+          </div>
+          <div className='flex gap-3'>
+            <div
+              aria-hidden='true'
+              className='grid w-8 shrink-0 gap-y-2 text-xs text-[var(--text-muted)]'
+              style={{
+                gridTemplateRows: rows ? `repeat(${rows}, 44px)` : undefined,
+              }}
+            >
+              {Array.from(rowLabels, ([position, label]) => (
+                <span
+                  key={position}
+                  style={{ gridRow: position }}
+                  className='flex items-center justify-center'
+                >
+                  {label}
+                </span>
+              ))}
+            </div>
+            <div
+              className='grid w-fit gap-x-1 gap-y-2'
+              style={{
+                gridTemplateColumns: cols ? `repeat(${cols}, 44px)` : undefined,
+                gridTemplateRows: rows ? `repeat(${rows}, 44px)` : undefined,
+              }}
+            >
+              {hall.seats.map(seat => {
+                const id = normalizeId(seat.id)
+                const state = classifySeat(
+                  seat,
+                  occupancyById.get(id),
+                  selectedIds.has(id),
+                  pendingSeatIds.has(id),
+                )
+                const isSelected = state === 'selected'
+                const isLocking = state === 'pending'
+                const isOccupied =
+                  state !== 'available' && !isSelected && !isLocking
+                const disabled =
+                  isOccupied ||
+                  isLocking ||
+                  (!availabilityVerified && !isSelected)
+                const description =
+                  state === 'available'
+                    ? availabilityVerified
+                      ? bookingCopy.seats.available
+                      : bookingCopy.seats.unknown
+                    : seatDescriptions[state]
+                const visualState =
+                  !availabilityVerified && state === 'available'
+                    ? 'unknown'
+                    : state
+                const SeatIcon =
+                  visualState === 'locked'
+                    ? LockKeyhole
+                    : visualState === 'sold'
+                      ? X
+                      : visualState === 'maintenance'
+                        ? Wrench
+                        : visualState === 'unknown'
+                          ? CircleHelp
+                          : Armchair
+                const seatClasses =
+                  isOccupied || visualState === 'unknown'
+                    ? state === 'locked'
+                      ? 'text-sky-400 border-sky-400/60 border-dashed cursor-not-allowed'
+                      : 'text-[var(--text-faint)] border-transparent cursor-not-allowed'
+                    : isLocking
+                      ? 'text-[var(--text-main)] border-transparent cursor-wait'
+                      : isSelected
+                        ? 'text-white border-[var(--color-primary)] bg-[var(--action-primary)]'
+                        : `${getSeatTypeStyle(seat.seatTypeName)} border-[var(--border-field)] hover:bg-[var(--bg-hover)]`
+                return (
+                  <button
+                    type='button'
+                    key={seat.id}
+                    style={{ gridColumn: seat.gridX, gridRow: seat.gridY }}
+                    aria-disabled={disabled}
+                    aria-busy={isLocking}
+                    aria-pressed={isSelected}
+                    aria-label={`${formatBookingSeat(seat)}, ${seat.seatTypeName}. ${description}`}
+                    onClick={() => {
+                      if (!disabled) onToggleSeat(seat)
+                    }}
+                    className={`relative flex h-11 w-11 flex-col items-center justify-center gap-0.5 rounded border transition-colors motion-reduce:transition-none ${seatClasses}`}
+                    title={`${formatBookingSeat(seat)}. ${description}`}
+                  >
+                    {isLocking ? (
+                      <GridLoader size={18} />
+                    ) : (
+                      <SeatIcon
+                        aria-hidden='true'
+                        size={18}
+                        strokeWidth={2}
+                        fill={isSelected ? 'currentColor' : 'none'}
+                      />
+                    )}
+                    <span
+                      aria-hidden='true'
+                      className='text-[11px] font-semibold leading-none tabular-nums'
+                    >
+                      {seat.number}
+                    </span>
+                    {getSeatTypeStyle(seat.seatTypeName) !==
+                      'text-zinc-400' && (
+                      <span
+                        aria-hidden='true'
+                        className={`absolute bottom-0 left-2 right-2 h-0.5 rounded-full bg-current ${getSeatTypeStyle(seat.seatTypeName)}`}
+                      />
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+        {!hall.seats.length && (
+          <p className='text-sm text-[var(--text-muted)]'>
+            {bookingCopy.noGeometry}
+          </p>
+        )}
+      </section>
+      <section
+        aria-label={bookingCopy.seatStates}
+        className='flex flex-wrap gap-x-5 gap-y-3 text-xs text-[var(--text-muted)]'
+      >
         <div className='flex items-center gap-2'>
           <Armchair size={18} className='text-zinc-400' />
           <span>{bookingCopy.seats.available}</span>
@@ -73,7 +221,7 @@ const SeatSelector = ({
             className='text-[var(--color-primary)]'
             fill='currentColor'
           />
-          <span className='text-white'>{bookingCopy.seats.selected}</span>
+          <span>{bookingCopy.seats.selected}</span>
         </div>
         <div className='flex items-center gap-2'>
           <X size={18} className='text-zinc-400' />
@@ -100,7 +248,11 @@ const SeatSelector = ({
           <CircleHelp size={18} className='text-zinc-400' />
           <span>{bookingCopy.seats.unknown}</span>
         </div>
-
+      </section>
+      <section
+        aria-label={bookingCopy.seatTypes}
+        className='flex flex-wrap gap-x-5 gap-y-3 text-xs text-[var(--text-muted)]'
+      >
         {availableTypes.map(type => {
           if (type.toLowerCase() === 'standard') return null
           return (
@@ -115,119 +267,7 @@ const SeatSelector = ({
             </div>
           )
         })}
-      </div>
-
-      <div className='relative w-full overflow-x-auto rounded-3xl border border-white/5 bg-[var(--bg-card)] p-8 sm:p-12 shadow-2xl'>
-        <div className='relative mx-auto mb-16 w-3/4 max-w-lg perspective-[500px]'>
-          <div className='h-12 w-full bg-gradient-to-b from-[var(--color-primary)]/20 to-transparent transform rotateX(-45deg) origin-bottom rounded-t-3xl blur-md opacity-50 absolute -top-8 left-0'></div>
-          <div className='h-2 w-full rounded-full bg-gradient-to-r from-transparent via-[var(--color-primary)] to-transparent shadow-[0_0_30px_rgba(239,68,68,0.6)] relative z-10' />
-          <p className='mt-6 text-center text-[10px] font-black tracking-[0.5em] text-[var(--text-muted)] uppercase opacity-60'>
-            {bookingCopy.seats.screen}
-          </p>
-        </div>
-
-        <div
-          className='grid gap-y-3 gap-x-2 mx-auto w-fit'
-          style={{
-            gridTemplateColumns: cols ? `repeat(${cols}, 32px)` : undefined,
-            gridTemplateRows: rows ? `repeat(${rows}, 32px)` : undefined,
-          }}
-        >
-          {hall.seats.map(seat => {
-            const id = normalizeId(seat.id)
-            const state = classifySeat(
-              seat,
-              occupancyById.get(id),
-              selectedIds.has(id),
-              pendingSeatIds.has(id),
-            )
-            const isSelected = state === 'selected'
-            const isLocking = state === 'pending'
-            const isOccupied =
-              state !== 'available' && !isSelected && !isLocking
-            const disabled =
-              isOccupied || isLocking || (!availabilityVerified && !isSelected)
-            const description =
-              state === 'available'
-                ? availabilityVerified
-                  ? bookingCopy.seats.availableTitle(
-                      formatBookingSeat(seat),
-                      seat.seatTypeName,
-                    )
-                  : bookingCopy.seats.unknown
-                : seatDescriptions[state]
-
-            const visualState =
-              !availabilityVerified && state === 'available' ? 'unknown' : state
-            const SeatIcon =
-              visualState === 'locked'
-                ? LockKeyhole
-                : visualState === 'sold'
-                  ? X
-                  : visualState === 'maintenance'
-                    ? Wrench
-                    : visualState === 'unknown'
-                      ? CircleHelp
-                      : Armchair
-            const seatClasses =
-              isOccupied || visualState === 'unknown'
-                ? state === 'locked'
-                  ? 'text-sky-400 border-sky-400/60 border-dashed bg-sky-400/5 cursor-not-allowed'
-                  : 'text-zinc-400 border-transparent cursor-not-allowed'
-                : isLocking
-                  ? 'text-[var(--color-primary)] border-transparent cursor-wait'
-                  : isSelected
-                    ? 'text-[var(--color-primary)] border-[var(--color-primary)] bg-[var(--selection-bg)]'
-                    : `${getSeatTypeStyle(seat.seatTypeName)} border-transparent hover:bg-white/10 hover:border-white/30`
-            const typeStyle = getSeatTypeStyle(seat.seatTypeName)
-            const isSpecialType = typeStyle !== 'text-zinc-400'
-
-            return (
-              <button
-                type='button'
-                key={seat.id}
-                style={{ gridColumn: seat.gridX, gridRow: seat.gridY }}
-                aria-disabled={disabled}
-                aria-busy={isLocking}
-                aria-pressed={isSelected}
-                aria-label={`${formatBookingSeat(seat)}, ${seat.seatTypeName}. ${description}`}
-                onClick={() => {
-                  if (!disabled) onToggleSeat(seat)
-                }}
-                className={`group relative flex h-8 w-8 items-center justify-center rounded border transition-colors duration-150 ${seatClasses}`}
-                title={description}
-              >
-                {isLocking ? (
-                  <GridLoader
-                    size={16}
-                    className='animate-spin motion-reduce:animate-none'
-                  />
-                ) : (
-                  <SeatIcon
-                    aria-hidden='true'
-                    size={22}
-                    strokeWidth={2}
-                    fill={isSelected ? 'currentColor' : 'none'}
-                  />
-                )}
-
-                {isSpecialType && (
-                  <span
-                    aria-hidden='true'
-                    className={`absolute bottom-0 left-2 right-2 h-0.5 rounded-full bg-current ${typeStyle}`}
-                  />
-                )}
-
-                {!disabled && (
-                  <div className='absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap z-20'>
-                    {bookingCopy.seats.hoverLabel(seat.row, seat.number)}
-                  </div>
-                )}
-              </button>
-            )
-          })}
-        </div>
-      </div>
+      </section>
     </div>
   )
 }

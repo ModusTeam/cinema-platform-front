@@ -1,9 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { useAuth } from '@/features/auth/model/AuthContext'
 import {
-  checkoutPreviewApi,
   type CheckoutPreviewRequest,
+  checkoutPreviewApi,
 } from '@/features/booking/api/booking.service'
+import {
+  matchesCheckoutPreview,
+  sameCheckoutRequest,
+} from '../lib/checkoutPreview'
 
 interface UseCheckoutPreviewParams extends CheckoutPreviewRequest {
   enabled?: boolean
@@ -39,7 +44,11 @@ const useDebouncedPreviewParams = (
 }
 
 export const useCheckoutPreview = (params: UseCheckoutPreviewParams) => {
+  const { user } = useAuth()
   const debouncedParams = useDebouncedPreviewParams(params)
+  const isCurrent =
+    sameCheckoutRequest(params, debouncedParams) &&
+    (params.enabled !== false) === (debouncedParams.enabled !== false)
   const {
     sessionId,
     seatIds,
@@ -51,6 +60,7 @@ export const useCheckoutPreview = (params: UseCheckoutPreviewParams) => {
   const query = useQuery({
     queryKey: [
       'booking-checkout-preview',
+      user?.id,
       sessionId,
       seatIds,
       useLoyaltyPoints,
@@ -63,13 +73,25 @@ export const useCheckoutPreview = (params: UseCheckoutPreviewParams) => {
         useLoyaltyPoints,
         applyGoldUpgrade,
       }),
-    enabled: enabled && Boolean(sessionId) && seatIds.length > 0,
+    enabled:
+      !!user &&
+      params.enabled !== false &&
+      enabled &&
+      isCurrent &&
+      Boolean(sessionId) &&
+      seatIds.length > 0,
+    staleTime: 0,
   })
 
+  const active = params.enabled !== false
+  const available = active && isCurrent && !query.isFetching && !query.isError
+  const valid = matchesCheckoutPreview(query.data, params)
   return {
-    preview: query.data,
-    isLoading: query.isLoading || query.isFetching,
-    isError: query.isError,
+    preview: available && valid ? query.data : undefined,
+    isLoading: active && (!isCurrent || query.isLoading || query.isFetching),
+    isError:
+      active && isCurrent && (query.isError || (query.isSuccess && !valid)),
     error: query.error,
+    refetch: query.refetch,
   }
 }

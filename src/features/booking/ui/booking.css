@@ -1,0 +1,23 @@
+.booking-paper {
+  --text-main: #201f1d;
+  --text-muted: #686259;
+  --text-faint: #686259;
+  --border-default: #c4bdb2;
+  --focus-ring: #201f1d;
+  --bg-hover: #e6dfd2;
+  --action-secondary: #e9e3d8;
+  --action-secondary-hover: #e6dfd2;
+  --action-secondary-active: #ddd4c5;
+  --border-field: #82796e;
+  background: #f5f1e8;
+  color: var(--text-main);
+  color-scheme: light;
+}
+
+.booking-paper .action-secondary {
+  color: var(--text-main);
+}
+
+.booking-ticket-stub {
+  border-top: 1px dashed var(--border-default);
+}

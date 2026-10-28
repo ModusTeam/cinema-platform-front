@@ -2,8 +2,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowRight, Clapperboard } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import * as z from 'zod'
+import { getBookingReturn } from '@/features/auth/lib/bookingReturn'
 import { useAuth } from '@/features/auth/model/AuthContext'
 import Button from '@/shared/ui/Button'
 import Input from '@/shared/ui/Input'
@@ -21,6 +22,7 @@ type LoginFormData = z.infer<typeof loginSchema>
 const LoginPage = () => {
   const { login } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
 
@@ -37,7 +39,11 @@ const LoginPage = () => {
     setServerError(null)
     try {
       await login({ email: data.email, password: data.password })
-      navigate('/profile')
+      const destination = getBookingReturn(location.state)
+      navigate(destination?.pathname ?? '/profile', {
+        replace: true,
+        state: destination?.state,
+      })
     } catch (error: unknown) {
       console.error(error)
       setServerError(

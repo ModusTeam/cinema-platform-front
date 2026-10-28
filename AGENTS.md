@@ -478,8 +478,9 @@ that should be verified.
   labels, numbers, and persistent statuses come from the backend; only `Active`
   seats absent from session occupancy may be selected.
 - Legacy `POST /orders` returns a GUID string and currently receives a mock
-  payment token. The frontend has not adopted the backend's reservation,
-  checkout, and status endpoints. Do not change the payment flow in a refactor.
+  payment token. The frontend has not adopted the backend's reservation or
+  checkout endpoints. Booking results read `GET /orders/{id}/status`; successful
+  creation alone does not confirm payment. Do not change the payment flow in a refactor.
 - Account tickets display `PaymentProcessing`, `PaymentOutcomeUnknown`, and
   `Expired` order states and `Reserved` and `Released` ticket states. QR disclosure
   retains the existing paid-order/valid-ticket rule and ticket-ID payload. History

@@ -1,9 +1,10 @@
-import { api } from '@/shared/api/axios'
 import type {
-  OrderItem,
   MyOrdersVm,
   OrderDto,
+  OrderItem,
+  OrderStatusDto,
 } from '@/entities/order/model/order.types'
+import { api } from '@/shared/api/axios'
 
 const mapOrderDtoToItem = (dto: OrderDto): OrderItem | null => {
   if (!dto.tickets || dto.tickets.length === 0) return null
@@ -30,6 +31,10 @@ const mapOrderDtoToItem = (dto: OrderDto): OrderItem | null => {
 }
 
 export const ordersService = {
+  getStatus: async (orderId: string): Promise<OrderStatusDto> => {
+    const { data } = await api.get<OrderStatusDto>(`/orders/${orderId}/status`)
+    return data
+  },
   getMyOrders: async (): Promise<OrderItem[]> => {
     const { data } = await api.get<MyOrdersVm>('/orders')
 

@@ -4,7 +4,7 @@ export const formatBookingSessionDateTime = (startTime: string): string =>
   `${new Date(startTime).toLocaleDateString('uk-UA', {
     day: 'numeric',
     month: 'long',
-  })}, ${new Date(startTime).toLocaleTimeString([], {
+  })}, ${new Date(startTime).toLocaleTimeString('uk-UA', {
     hour: '2-digit',
     minute: '2-digit',
   })}`
@@ -15,4 +15,7 @@ export const formatBookingSeat = (seat: Seat): string =>
 export const formatCheckoutAmount = (
   amount: number | undefined,
   currency: string,
-): string => (amount === undefined ? '—' : `${amount} ${currency}`)
+): string =>
+  amount === undefined || !Number.isFinite(amount)
+    ? '—'
+    : `${new Intl.NumberFormat('uk-UA', { maximumFractionDigits: 2 }).format(amount)} ${currency}`

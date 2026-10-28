@@ -5,7 +5,8 @@
 Keep Cinema's dark cinematic shell and red branding. Public discovery combines
 A24-inspired editorial spacing and image hierarchy with Siena-inspired physical
 ticket details. Movie Details, catalogue/schedule and Account use scoped warm
-paper surfaces. Booking, checkout and admin remain task-oriented. Use actual film
+paper surfaces. Booking pairs a dark seat map with a scoped paper order summary;
+booking, checkout and admin remain task-oriented. Use actual film
 artwork, readable metadata and restrained rules rather than decorative panels.
 
 ## Color and surfaces
@@ -27,7 +28,7 @@ Brand red is an accent; small white action labels use the darker action fill.
 The legacy `--color-primary-hover` aliases `--action-primary-hover`.
 Keep selection, destructive, error, VIP and maintenance meanings distinct.
 
-Paper roles remain local in navigation, movie-details, catalogue and account CSS:
+Paper roles remain local in navigation, movie-details, catalogue, account and booking CSS:
 paper #f5f1e8, ink #201f1d and muted ink #686259. Editorial rules use #c4bdb2;
 Ticket Menu uses #9e9689 and hover #e6dfd2. Account ticket stock is #fffcf5,
 with field borders #82796e, muted surface #eee8dd and elevated surface #e9e3d8.
@@ -112,15 +113,19 @@ These are technique references; retain Cinema branding, fonts and functionality.
 
 ## Unfinished decisions and constraints
 
-Phase 8 has not started. Shared Header/Footer have known narrow-width overflow
+Booking uses named steps, the backend's sparse seat geometry and server checkout
+previews. Hide totals while a preview changes or fails; order creation alone never
+confirms payment. Order results read the server status without issuing admission QR codes.
+Shared Header/Footer have known narrow-width overflow
 with 200% root text; account content was checked separately. Root-font
 enlargement is not browser-zoom or assistive-technology certification. Cross-browser
 native date/input rendering still needs dedicated review. Do not infer available
 screenings or recommendations from placeholder artwork or fabricated data.
 Catalogue categories filter loaded pages only because the API has no status
 filter; keep partial-results copy and explicit pagination. Schedule links pass
-session navigation state, but booking still opens its existing session picker;
-session preselection remains unfinished. Home/Movie Details retain their bounded
+session navigation state; booking validates the screening against the requested
+movie, time and status, then consumes the handoff once. Login accepts only internal
+booking return paths. Home/Movie Details retain their bounded
 aggregate previews. Admin's fixed narrow sidebar remains a separate layout
 constraint and needs dedicated authenticated review.
 Payment integration and loyalty placeholders remain governed by the existing
