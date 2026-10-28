@@ -35,6 +35,14 @@ with field borders #82796e, muted surface #eee8dd and elevated surface #e9e3d8.
 Paper regions override focus to dark ink and keep a light native control scheme.
 Do not turn these scoped roles into a global light theme.
 
+Public information pages share `EditorialPageLayout`: open sections on dark
+surfaces for About, Halls, Technologies and Careers; scoped paper for the Bar,
+FAQ, recommendations and legal reading. `StaticPageLayout` keeps legal copy in
+a 72ch reading column without a surrounding card. Use semantic specification
+lists and aligned menu prices. FAQ buttons name their answer panels and closed
+answers use native `hidden`; category filters expose `aria-pressed`. Presentation
+changes must preserve static menu data and substantive legal/policy text.
+
 Authentication uses the Account paper/ink roles and existing editorial fonts.
 On desktop, a quiet dark introduction sits beside the paper form; narrow layouts
 prioritize the form. Use square shared fields/actions, visible labels, associated

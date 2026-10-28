@@ -6,8 +6,8 @@ const OfferPage = () => {
       title='Публічна оферта'
       subtitle='Офіційні умови надання послуг та продажу квитків онлайн.'
     >
-      <div className='space-y-10 text-sm md:text-base leading-relaxed text-zinc-400'>
-        <div className='bg-white/5 p-6 rounded-xl border border-white/5'>
+      <div className='space-y-12'>
+        <div className='border-b border-[var(--editorial-rule)] pb-8'>
           <p>
             Цей документ є офіційною пропозицією (публічною офертою) ТОВ
             &quot;Сінема Платформ&quot; (далі —{' '}
@@ -18,10 +18,10 @@ const OfferPage = () => {
         </div>
 
         <div>
-          <h3 className='text-xl font-bold text-white mb-4'>
+          <h2 className='text-xl font-bold text-[var(--text-main)] mb-4'>
             1. Загальні положення
-          </h3>
-          <ol className='list-decimal pl-5 space-y-3 marker:text-[var(--color-primary)]'>
+          </h2>
+          <ol className='list-decimal pl-5 space-y-3 marker:text-[var(--text-muted)]'>
             <li>
               Цей Договір є публічним відповідно до ст. 633 Цивільного кодексу
               України. Його умови є однаковими для всіх Відвідувачів.
@@ -39,9 +39,9 @@ const OfferPage = () => {
         </div>
 
         <div>
-          <h3 className='text-xl font-bold text-white mb-4'>
+          <h2 className='text-xl font-bold text-[var(--text-main)] mb-4'>
             2. Предмет договору
-          </h3>
+          </h2>
           <p className='mb-3'>
             Виконавець зобов&apos;язується надати Відвідувачеві послуги з
             демонстрації кінофільму (продати Квиток), а Відвідувач
@@ -55,10 +55,10 @@ const OfferPage = () => {
         </div>
 
         <div>
-          <h3 className='text-xl font-bold text-white mb-4'>
+          <h2 className='text-xl font-bold text-[var(--text-main)] mb-4'>
             3. Порядок розрахунків
-          </h3>
-          <ul className='list-disc pl-5 space-y-2 marker:text-zinc-600'>
+          </h2>
+          <ul className='list-disc pl-5 space-y-2 marker:text-[var(--text-muted)]'>
             <li>Ціни на квитки вказуються в гривнях і включають ПДВ.</li>
             <li>
               Оплата здійснюється виключно в безготівковій формі через платіжний
@@ -72,9 +72,9 @@ const OfferPage = () => {
         </div>
 
         <div>
-          <h3 className='text-xl font-bold text-white mb-4'>
+          <h2 className='text-xl font-bold text-[var(--text-main)] mb-4'>
             4. Повернення квитків
-          </h3>
+          </h2>
           <p>
             Повернення коштів можливе не пізніше, ніж за 30 хвилин до початку
             сеансу. Процедура повернення ініціюється Відвідувачем через
@@ -84,9 +84,9 @@ const OfferPage = () => {
         </div>
 
         <div>
-          <h3 className='text-xl font-bold text-white mb-4'>
+          <h2 className='text-xl font-bold text-[var(--text-main)] mb-4'>
             5. Відповідальність сторін
-          </h3>
+          </h2>
           <p className='mb-3'>
             Виконавець не несе відповідальності за невідповідність художньої
             цінності фільму очікуванням Відвідувача (суб&apos;єктивна оцінка).
@@ -99,8 +99,10 @@ const OfferPage = () => {
           </p>
         </div>
 
-        <div className='mt-12 pt-8 border-t border-white/10 text-xs text-zinc-500 font-mono'>
-          <p className='font-bold text-white mb-2'>РЕКВІЗИТИ ВИКОНАВЦЯ:</p>
+        <div className='mt-12 pt-8 border-t border-[var(--editorial-rule)] text-base'>
+          <p className='font-bold text-[var(--text-main)] mb-2'>
+            РЕКВІЗИТИ ВИКОНАВЦЯ:
+          </p>
           <p>ТОВ &quot;СІНЕМА ПЛАТФОРМ&quot;</p>
           <p>ЄДРПОУ: 12345678</p>
           <p>Юридична адреса: 01001, м. Київ, вул. Хрещатик, 1</p>
