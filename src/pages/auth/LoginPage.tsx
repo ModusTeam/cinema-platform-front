@@ -1,11 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowRight, Clapperboard } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import * as z from 'zod'
 import { getBookingReturn } from '@/features/auth/lib/bookingReturn'
 import { useAuth } from '@/features/auth/model/AuthContext'
+import AuthLayout from '@/features/auth/ui/AuthLayout'
 import Button from '@/shared/ui/Button'
 import Input from '@/shared/ui/Input'
 
@@ -45,7 +46,6 @@ const LoginPage = () => {
         state: destination?.state,
       })
     } catch (error: unknown) {
-      console.error(error)
       setServerError(
         error instanceof Error
           ? error.message
@@ -57,98 +57,62 @@ const LoginPage = () => {
   }
 
   return (
-    <div className='flex min-h-[calc(100vh-4rem)]'>
-      <div className='hidden lg:flex w-1/2 relative overflow-hidden bg-black items-center justify-center'>
-        <div className='absolute inset-0 bg-[url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=2070&auto=format&fit=crop")] bg-cover bg-center opacity-40'></div>
-        <div className='absolute inset-0 bg-gradient-to-r from-[var(--bg-main)] via-transparent to-[var(--bg-main)]'></div>
-        <div className='relative z-10 p-12 text-center max-w-lg animate-in slide-in-from-left-10 duration-1000'>
-          <div className='w-16 h-16 bg-[var(--action-primary)] rounded-2xl flex items-center justify-center mx-auto mb-8 transform rotate-6'>
-            <Clapperboard size={32} className='text-white' />
-          </div>
-          <h2 className='type-display text-white mb-4 sm:text-4xl'>
-            Магія кіно починається тут
-          </h2>
-          <p className='text-lg text-[var(--text-muted)]'>
-            Отримуй доступ до ексклюзивних прем'єр, знижок та зручного
-            бронювання квитків.
-          </p>
-        </div>
-      </div>
-
-      <div className='w-full lg:w-1/2 flex items-center justify-center p-6 bg-[var(--bg-main)] relative'>
-        <div className='w-full max-w-md space-y-8 bg-[var(--bg-card)] border border-[var(--border-default)] p-6 sm:p-10 rounded-3xl relative z-10 animate-in fade-in zoom-in-95 duration-500'>
-          <div className='text-center'>
-            <h2 className='type-page text-white mb-2'>З поверненням</h2>
-            <p className='type-caption text-sm text-[var(--text-muted)]'>
-              Введіть свої дані для входу в акаунт
-            </p>
-          </div>
-
+    <AuthLayout
+      title='З поверненням'
+      description='Увійдіть, щоб переглянути свої квитки та історію замовлень.'
+      introTitle='Ваш наступний сеанс.'
+      introDescription='Усе для вашого походу в кіно — квитки, замовлення та особисті дані в одному кабінеті.'
+    >
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        noValidate
+        aria-label='Вхід в акаунт'
+      >
+        <fieldset disabled={isSubmitting} className='min-w-0 space-y-5'>
+          <Input
+            label='Email'
+            type='email'
+            autoComplete='username'
+            autoCapitalize='none'
+            spellCheck={false}
+            required
+            placeholder='name@example.com'
+            error={errors.email?.message}
+            {...register('email')}
+          />
+          <Input
+            label='Пароль'
+            type='password'
+            autoComplete='current-password'
+            required
+            error={errors.password?.message}
+            {...register('password')}
+          />
           {serverError && (
-            <div className='p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm text-center'>
+            <p
+              role='alert'
+              className='whitespace-pre-line text-sm leading-relaxed text-[var(--color-error)]'
+            >
               {serverError}
-            </div>
+            </p>
           )}
-
-          <form onSubmit={handleSubmit(onSubmit)} className='space-y-5'>
-            <Input
-              label='Email'
-              type='email'
-              placeholder='name@example.com'
-              error={errors.email?.message}
-              {...register('email')}
-            />
-
-            <div className='space-y-2'>
-              <Input
-                label='Пароль'
-                type='password'
-                placeholder='••••••••'
-                error={errors.password?.message}
-                {...register('password')}
-              />
-              <div className='flex justify-end'>
-                <Link
-                  to='#'
-                  className='text-xs font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors'
-                >
-                  Забули пароль?
-                </Link>
-              </div>
-            </div>
-
-            <Button
-              type='submit'
-              isLoading={isSubmitting}
-              className='w-full py-3.5'
-            >
-              Увійти <ArrowRight size={16} aria-hidden='true' />
-            </Button>
-          </form>
-
-          <div className='relative'>
-            <div className='absolute inset-0 flex items-center'>
-              <span className='w-full border-t border-white/10'></span>
-            </div>
-            <div className='relative flex justify-center text-xs uppercase'>
-              <span className='bg-[var(--bg-card)] px-2 text-[var(--text-muted)]'>
-                або
-              </span>
-            </div>
-          </div>
-
-          <p className='text-center type-caption text-sm text-[var(--text-muted)]'>
-            Немає акаунту?{' '}
-            <Link
-              to='/auth/register'
-              className='font-bold text-white hover:text-[var(--color-primary)] transition-colors'
-            >
-              Зареєструватися
-            </Link>
-          </p>
-        </div>
-      </div>
-    </div>
+          <Button
+            type='submit'
+            isLoading={isSubmitting}
+            className='w-full py-3.5'
+          >
+            {isSubmitting ? 'Входимо…' : 'Увійти'}
+            <ArrowRight size={18} className='shrink-0' aria-hidden='true' />
+          </Button>
+        </fieldset>
+      </form>
+      <p className='auth-alternate'>
+        Немає акаунту?
+        <Link to='/auth/register' className='auth-link'>
+          Зареєструватися
+        </Link>
+      </p>
+    </AuthLayout>
   )
 }
 

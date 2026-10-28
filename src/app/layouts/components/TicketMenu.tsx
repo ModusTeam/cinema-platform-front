@@ -55,7 +55,7 @@ const TicketMenu = ({ id, user, onClose, onLogout }: TicketMenuProps) => {
         className='ticket-paper relative flex w-full max-w-[520px] origin-top-right flex-col self-start text-[var(--ticket-ink)]'
       >
         <div className='ticket-perforation relative flex shrink-0 items-stretch'>
-          <div className='flex min-w-0 flex-1 items-center justify-between gap-4 px-6 py-5 sm:px-8'>
+          <div className='ticket-menu-brand flex min-w-0 flex-1 items-center justify-between gap-4 py-5'>
             <span className='font-sans text-xl font-black uppercase tracking-tighter'>
               Cinema.
             </span>
@@ -68,12 +68,12 @@ const TicketMenu = ({ id, user, onClose, onLogout }: TicketMenuProps) => {
             aria-label='Закрити меню'
             data-modal-initial-focus
             onClick={onClose}
-            className='ticket-close flex min-h-20 w-20 shrink-0 items-center justify-center border-l border-dashed border-[var(--ticket-rule)] transition-colors duration-150 hover:bg-[var(--ticket-hover)] motion-reduce:transition-none'
+            className='ticket-close flex min-h-20 shrink-0 items-center justify-center border-l border-dashed border-[var(--ticket-rule)] transition-colors duration-150 hover:bg-[var(--ticket-hover)] motion-reduce:transition-none'
           >
             <X size={28} strokeWidth={1.25} aria-hidden='true' />
           </button>
         </div>
-        <div className='min-h-0 overflow-y-auto overscroll-contain px-6 pb-6 pt-5 sm:px-8 sm:pb-8'>
+        <div className='ticket-menu-content min-h-0 overflow-y-auto overscroll-contain pb-6 pt-5 sm:pb-8'>
           <nav aria-label='Головна навігація'>
             <ol>
               {PRIMARY_NAV_ITEMS.map((item, index) => (

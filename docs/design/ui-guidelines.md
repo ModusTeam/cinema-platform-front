@@ -28,12 +28,19 @@ Brand red is an accent; small white action labels use the darker action fill.
 The legacy `--color-primary-hover` aliases `--action-primary-hover`.
 Keep selection, destructive, error, VIP and maintenance meanings distinct.
 
-Paper roles remain local in navigation, movie-details, catalogue, account and booking CSS:
+Paper roles remain local in navigation, movie-details, catalogue, account, auth and booking CSS:
 paper #f5f1e8, ink #201f1d and muted ink #686259. Editorial rules use #c4bdb2;
 Ticket Menu uses #9e9689 and hover #e6dfd2. Account ticket stock is #fffcf5,
 with field borders #82796e, muted surface #eee8dd and elevated surface #e9e3d8.
 Paper regions override focus to dark ink and keep a light native control scheme.
 Do not turn these scoped roles into a global light theme.
+
+Authentication uses the Account paper/ink roles and existing editorial fonts.
+On desktop, a quiet dark introduction sits beside the paper form; narrow layouts
+prioritize the form. Use square shared fields/actions, visible labels, associated
+inline validation and accurate account copy. Keep native password autocomplete
+and the existing safe booking return; registration confirms through the shared
+toast before returning to Login, without authenticating automatically.
 
 ## Typography and Fontsource
 
@@ -57,6 +64,13 @@ thin rules for editorial groups. Reserve borders for controls, separators and
 meaningful selection. Keep gradients where film-image legibility needs them.
 Use real links/buttons, explicit active/disabled states and useful loading,
 empty, error and retry presentation. Missing artwork must have a stable fallback.
+
+The public Footer closes the page with large editorial navigation on near-black,
+smaller cinema/help links and a separate legal row divided by thin rules. Preserve
+working destinations; omit social, store and recovery promotions without real
+functionality. Header controls may wrap with enlarged text; its measured height
+sets the content offset on non-Home routes. Ticket Menu keeps its paper geometry
+with wrapping labels and a scrollable body at narrow widths.
 
 ## Ticket patterns
 
@@ -129,7 +143,7 @@ These are technique references; retain Cinema branding, fonts and functionality.
 Booking uses named steps, the backend's sparse seat geometry and server checkout
 previews. Hide totals while a preview changes or fails; order creation alone never
 confirms payment. Order results read the server status without issuing admission QR codes.
-Shared Header/Footer have known narrow-width overflow
+Shared Header/Footer and authentication layouts were checked at 320px and 390px
 with 200% root text; account content was checked separately. Root-font
 enlargement is not browser-zoom or assistive-technology certification. Cross-browser
 native date/input rendering still needs dedicated review. Do not infer available

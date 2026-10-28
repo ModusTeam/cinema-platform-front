@@ -1,5 +1,5 @@
 import { AnimatePresence } from 'motion/react'
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '@/features/auth/model/AuthContext'
 import { cn } from '@/shared/lib/utils'
@@ -12,6 +12,7 @@ const Header = () => {
   const { user, logout } = useAuth()
   const location = useLocation()
   const menuId = useId()
+  const headerRef = useRef<HTMLElement>(null)
   const isHome = location.pathname === '/'
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: Every navigation, including history and hash changes, dismisses the menu.
@@ -26,9 +27,30 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  useEffect(() => {
+    const header = headerRef.current
+    if (!header) return
+
+    // Enlarged text can wrap the fixed header onto another row.
+    const updateHeight = () => {
+      document.documentElement.style.setProperty(
+        '--public-header-height',
+        `${header.getBoundingClientRect().height}px`,
+      )
+    }
+    updateHeight()
+    const observer = new ResizeObserver(updateHeight)
+    observer.observe(header)
+    return () => {
+      observer.disconnect()
+      document.documentElement.style.removeProperty('--public-header-height')
+    }
+  }, [])
+
   return (
     <>
       <header
+        ref={headerRef}
         data-header-surface={isHome && !isScrolled ? 'hero' : 'solid'}
         className={cn(
           'cinema-header fixed inset-x-0 top-0 z-60 font-public text-[var(--header-ink)] transition-colors duration-200 motion-reduce:transition-none',
@@ -37,7 +59,7 @@ const Header = () => {
             : 'bg-[var(--header-surface)]',
         )}
       >
-        <div className='mx-auto grid h-20 max-w-[1600px] grid-cols-[1fr_auto] items-center gap-4 px-4 md:grid-cols-[1fr_auto_1fr] md:px-8'>
+        <div className='cinema-header-inner mx-auto flex min-h-20 max-w-[1600px] flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2 md:grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:px-8'>
           <nav
             aria-label='Швидка навігація'
             className='hidden items-center gap-6 md:flex'

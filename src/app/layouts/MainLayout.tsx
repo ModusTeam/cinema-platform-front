@@ -25,7 +25,11 @@ const MainLayout = () => {
         initial={reducedMotion ? false : { opacity: 0.6 }}
         animate={{ opacity: 1 }}
         transition={{ duration: reducedMotion ? 0 : 0.3, ease: 'easeOut' }}
-        className={clsx('flex-1 relative z-0', !isHomePage && 'pt-24 md:pt-28')}
+        className={clsx(
+          'flex-1 relative z-0',
+          !isHomePage &&
+            'pt-[calc(var(--public-header-height,5rem)+1rem)] md:pt-[calc(var(--public-header-height,5rem)+2rem)]',
+        )}
       >
         <Suspense
           fallback={
