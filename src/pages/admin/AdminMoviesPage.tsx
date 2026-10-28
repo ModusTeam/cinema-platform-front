@@ -64,8 +64,7 @@ const AdminMoviesPage = () => {
     if (!deleteTarget) return
     const result = await deleteMovie(deleteTarget.id)
     if (!result.success) {
-      toast.error(result.error || 'Не вдалося видалити фільм')
-      return
+      throw new Error(result.error || 'Не вдалося видалити фільм')
     }
     setDeleteTarget(null)
     toast.success('Фільм видалено')
@@ -79,7 +78,7 @@ const AdminMoviesPage = () => {
       toast.success('Фільм відновлено')
       return
     }
-    toast.error(result.error || 'Не вдалося відновити фільм')
+    throw new Error(result.error || 'Не вдалося відновити фільм')
   }
 
   return (

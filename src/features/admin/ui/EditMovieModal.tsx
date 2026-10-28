@@ -1,11 +1,9 @@
-import { X } from 'lucide-react'
 import { useEffect, useId, useState } from 'react'
 import { moviesService } from '@/entities/movie/api/movies.service'
 import { type Movie, MovieStatus } from '@/entities/movie/model/movie.types'
-import Button from '@/shared/ui/Button'
 import Input from '@/shared/ui/Input'
 import ConfirmModal from '@/shared/ui/modals/ConfirmModal'
-import { Dialog } from '@/shared/ui/modals/Dialog'
+import { FormDialog } from '@/shared/ui/modals/FormDialog'
 import { useToast } from '@/shared/ui/toast/ToastContext'
 
 interface EditMovieModalProps {
@@ -40,10 +38,9 @@ const EditMovieModal = ({
   const [isSaving, setIsSaving] = useState(false)
   const [confirmArchive, setConfirmArchive] = useState(false)
   const fieldId = useId()
-  const titleId = `${fieldId}-title`
 
   useEffect(() => {
-    if (movie) {
+    if (isOpen && movie) {
       setFormData({
         title: movie.title,
         description: movie.description,
@@ -53,7 +50,7 @@ const EditMovieModal = ({
         status: movie.status || MovieStatus.Active,
       })
     }
-  }, [movie])
+  }, [movie, isOpen])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -82,9 +79,6 @@ const EditMovieModal = ({
       onSuccess()
       setConfirmArchive(false)
       onClose()
-    } catch (error) {
-      console.error(error)
-      toast.error('Помилка при оновленні фільму')
     } finally {
       setIsSaving(false)
     }
@@ -93,120 +87,90 @@ const EditMovieModal = ({
   if (!isOpen || !movie) return null
 
   return (
-    <Dialog
-      isOpen={isOpen}
-      onClose={onClose}
-      titleId={titleId}
-      isBusy={isSaving}
-      className='font-public max-w-2xl rounded-lg'
-    >
-      <div className='flex shrink-0 items-center justify-between border-b border-white/10 p-6'>
-        <h2
-          id={titleId}
-          tabIndex={-1}
-          data-modal-initial-focus
-          className='type-section font-medium text-white'
-        >
-          Редагувати фільм
-        </h2>
-        <Button
-          type='button'
-          onClick={onClose}
-          disabled={isSaving}
-          aria-label='Закрити діалог'
-          variant='ghost'
-          className='w-11 px-0'
-        >
-          <X size={24} />
-        </Button>
-      </div>
-
-      <form onSubmit={handleSubmit} className='flex min-h-0 flex-col'>
-        <div className='min-h-0 overflow-y-auto overscroll-contain p-6 space-y-4'>
-          <div className='grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4'>
-            <Input
-              label='Назва'
-              value={formData.title}
-              onChange={e =>
-                setFormData({ ...formData, title: e.target.value })
-              }
-            />
-
-            <div className='space-y-2'>
-              <label htmlFor={`${fieldId}-status`} className='field-label'>
-                Статус
-              </label>
-              <select
-                id={`${fieldId}-status`}
-                value={formData.status}
-                onChange={e =>
-                  setFormData({
-                    ...formData,
-                    status: Number(e.target.value) as MovieStatus,
-                  })
-                }
-                className='field'
-              >
-                <option value={MovieStatus.ComingSoon}>Скоро у кіно</option>
-                <option value={MovieStatus.Active}>У прокаті (Active)</option>
-                <option value={MovieStatus.Archived}>Архів</option>
-              </select>
-            </div>
-          </div>
+    <>
+      <FormDialog
+        isOpen={isOpen}
+        onClose={onClose}
+        title='Редагувати фільм'
+        description={movie.title}
+        isBusy={isSaving}
+        className='max-w-2xl'
+        onSubmit={handleSubmit}
+        isDirty={
+          formData.title !== movie.title ||
+          formData.description !== movie.description ||
+          formData.posterUrl !== (movie.posterUrl || '') ||
+          formData.backdropUrl !== movie.backdropUrl ||
+          formData.videoUrl !== (movie.videoUrl || '') ||
+          formData.status !== (movie.status || MovieStatus.Active)
+        }
+      >
+        <div className='grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4'>
+          <Input
+            label='Назва'
+            value={formData.title}
+            onChange={e => setFormData({ ...formData, title: e.target.value })}
+          />
 
           <div className='space-y-2'>
-            <label htmlFor={`${fieldId}-description`} className='field-label'>
-              Опис
+            <label htmlFor={`${fieldId}-status`} className='field-label'>
+              Статус
             </label>
-            <textarea
-              id={`${fieldId}-description`}
-              value={formData.description}
+            <select
+              id={`${fieldId}-status`}
+              value={formData.status}
               onChange={e =>
-                setFormData({ ...formData, description: e.target.value })
+                setFormData({
+                  ...formData,
+                  status: Number(e.target.value) as MovieStatus,
+                })
               }
               className='field'
-            />
+            >
+              <option value={MovieStatus.ComingSoon}>Скоро у кіно</option>
+              <option value={MovieStatus.Active}>У прокаті (Active)</option>
+              <option value={MovieStatus.Archived}>Архів</option>
+            </select>
           </div>
+        </div>
 
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-            <Input
-              label='Poster URL'
-              value={formData.posterUrl}
-              onChange={e =>
-                setFormData({ ...formData, posterUrl: e.target.value })
-              }
-            />
-            <Input
-              label='Backdrop URL'
-              value={formData.backdropUrl}
-              onChange={e =>
-                setFormData({ ...formData, backdropUrl: e.target.value })
-              }
-            />
-          </div>
-
-          <Input
-            label='Trailer URL (YouTube)'
-            value={formData.videoUrl}
+        <div className='space-y-2'>
+          <label htmlFor={`${fieldId}-description`} className='field-label'>
+            Опис
+          </label>
+          <textarea
+            id={`${fieldId}-description`}
+            value={formData.description}
             onChange={e =>
-              setFormData({ ...formData, videoUrl: e.target.value })
+              setFormData({ ...formData, description: e.target.value })
+            }
+            className='field'
+          />
+        </div>
+
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+          <Input
+            label='Poster URL'
+            value={formData.posterUrl}
+            onChange={e =>
+              setFormData({ ...formData, posterUrl: e.target.value })
+            }
+          />
+          <Input
+            label='Backdrop URL'
+            value={formData.backdropUrl}
+            onChange={e =>
+              setFormData({ ...formData, backdropUrl: e.target.value })
             }
           />
         </div>
-        <div className='flex shrink-0 justify-end gap-3 p-6 pt-4 border-t border-white/10'>
-          <Button
-            type='button'
-            onClick={onClose}
-            disabled={isSaving}
-            variant='secondary'
-          >
-            Скасувати
-          </Button>
-          <Button type='submit' disabled={isSaving} isLoading={isSaving}>
-            Зберегти
-          </Button>
-        </div>
-      </form>
+
+        <Input
+          label='Trailer URL (YouTube)'
+          value={formData.videoUrl}
+          onChange={e => setFormData({ ...formData, videoUrl: e.target.value })}
+        />
+      </FormDialog>
       <ConfirmModal
         isOpen={confirmArchive}
         onClose={() => setConfirmArchive(false)}
@@ -216,7 +180,7 @@ const EditMovieModal = ({
         confirmText='Зберегти й архівувати'
         isLoading={isSaving}
       />
-    </Dialog>
+    </>
   )
 }
 

@@ -4,6 +4,7 @@
   --account-ink: #201f1d;
   --account-muted: #686259;
   --account-rule: #c4bdb2;
+  --border-default: var(--account-rule);
   --bg-card: var(--account-paper);
   --text-main: var(--account-ink);
   --text-muted: var(--account-muted);
@@ -65,3 +66,12 @@
 @media (prefers-reduced-motion: no-preference) {
   .account-navigation, .account-link, .account-ticket-summary { transition: color 150ms ease-out; }
 }
+
+.account-section-link { display: inline-flex; align-items: center; min-height: 2.75rem; color: var(--account-muted); }
+.account-section-link:hover, .account-section-link[aria-current='page'] { color: var(--account-ink); text-decoration: underline; text-underline-offset: 6px; }
+.membership-card { --text-main: #f4f4f5; --text-muted: #b5b5be; --border-default: #3c3c44; --border-field: #777782; --focus-ring: #ffafb3; color: var(--text-main); border-bottom: 1px dashed var(--border-field); }
+.membership-card ::selection { color: #201f1d; background: #f5f1e8; }
+.achievement-progress { display: block; height: 3px; border: 0; border-radius: 0; background: var(--border-default); accent-color: var(--text-main); }
+.achievement-progress::-webkit-progress-bar { background: var(--border-default); }
+.achievement-progress::-webkit-progress-value { background: var(--text-main); }
+.achievement-progress::-moz-progress-bar { background: var(--text-main); }

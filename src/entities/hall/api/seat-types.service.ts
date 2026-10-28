@@ -1,5 +1,5 @@
+import type { SeatType } from '@/entities/hall/model/hall.types'
 import { api } from '@/shared/api/axios'
-import { type SeatType } from '@/entities/hall/model/hall.types'
 
 let seatTypesCache: SeatType[] | null = null
 

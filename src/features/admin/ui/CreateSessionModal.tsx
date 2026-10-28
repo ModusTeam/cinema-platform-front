@@ -37,6 +37,7 @@ const CreateSessionModal = ({
     isDataError,
     retryData,
     isSubmitting,
+    submitError,
     submit,
   } = useCreateSession(isOpen, onSuccess, onClose)
 
@@ -91,7 +92,11 @@ const CreateSessionModal = ({
           }}
           className='flex min-h-0 flex-col'
         >
-          <div className='min-h-0 overflow-y-auto overscroll-contain space-y-5'>
+          <fieldset
+            disabled={isSubmitting}
+            className='min-h-0 overflow-y-auto overscroll-contain space-y-5'
+          >
+            <legend className='sr-only'>Параметри сеансу</legend>
             <div>
               <label
                 htmlFor={`${fieldId}-movie`}
@@ -193,7 +198,15 @@ const CreateSessionModal = ({
                 />
               </div>
             </div>
-          </div>
+          </fieldset>
+          {submitError && (
+            <p
+              role='alert'
+              className='mt-4 whitespace-pre-line text-sm text-[var(--color-error)]'
+            >
+              {submitError}
+            </p>
+          )}
           <div className='shrink-0 pt-4 flex justify-end gap-3 border-t border-white/5 mt-6'>
             <Button
               type='button'

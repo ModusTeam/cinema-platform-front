@@ -32,7 +32,13 @@ export const useSeatOccupancy = (
   const browserReady = useSyncExternalStore(subscribeActivity, browserActive)
   const sessionKey = normalizeId(sessionId || '')
   const userKey = normalizeId(userId || '')
-  const revision = useMemo(() => new OccupancyRevision(), [sessionKey, userKey])
+  const { revision, queryKey } = useMemo(
+    () => ({
+      revision: new OccupancyRevision(),
+      queryKey: ['session-seat-availability', sessionKey, userKey],
+    }),
+    [sessionKey, userKey],
+  )
   useEffect(() => {
     revision.active = true
     return () => {
@@ -43,7 +49,7 @@ export const useSeatOccupancy = (
   const queryOptions = useMemo(
     () => ({
       // Ownership is user-specific even though the endpoint is public.
-      queryKey: ['session-seat-availability', sessionKey, userKey],
+      queryKey,
       queryFn: ({ signal }: { signal: AbortSignal }) =>
         revision.read(
           () => sessionsService.getSeatAvailability(sessionKey, signal),
@@ -53,7 +59,7 @@ export const useSeatOccupancy = (
       gcTime: 0,
       retry: false as const,
     }),
-    [revision, sessionKey, userKey],
+    [revision, sessionKey, queryKey],
   )
   const query = useQuery({
     ...queryOptions,

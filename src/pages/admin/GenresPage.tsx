@@ -8,9 +8,13 @@ import GenreModal from '@/features/admin/ui/GenreModal'
 import Button from '@/shared/ui/Button'
 import EmptyState from '@/shared/ui/EmptyState'
 import { GridLoader } from '@/shared/ui/GridLoader'
+import ConfirmModal from '@/shared/ui/modals/ConfirmModal'
+import { useToast } from '@/shared/ui/toast/ToastContext'
 import UnavailableState from '@/shared/ui/UnavailableState'
 
 const GenresPage = () => {
+  const toast = useToast()
+  const [deleteTarget, setDeleteTarget] = useState<Genre | null>(null)
   const {
     genres,
     isLoading,
@@ -33,18 +37,6 @@ const GenresPage = () => {
   const handleEditClick = (genre: Genre) => {
     setEditingGenre(genre)
     setIsModalOpen(true)
-  }
-
-  const handleDeleteClick = async (genre: Genre) => {
-    const idDisplay = genre.externalId ? `ID: ${genre.externalId}` : 'Custom'
-    if (
-      !confirm(
-        `Видалити жанр "${genre.name}" (${idDisplay})? Це може вплинути на існуючі фільми.`,
-      )
-    )
-      return
-
-    await deleteGenre(genre.id)
   }
 
   const handleSave = async (externalId: number | null, name: string) => {
@@ -83,11 +75,12 @@ const GenresPage = () => {
           size={20}
         />
         <input
-          type='text'
+          type='search'
+          aria-label='Пошук жанру за назвою або TMDB ID'
           placeholder='Пошук жанру...'
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
-          className='w-full rounded-xl bg-[var(--bg-card)] border border-white/5 py-3 pl-10 pr-4 text-white placeholder-[var(--text-muted)] focus:border-[var(--color-primary)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]/50'
+          className='field pl-10'
         />
       </div>
 
@@ -143,7 +136,7 @@ const GenresPage = () => {
                       {genre.externalId !== null ? (
                         genre.externalId
                       ) : (
-                        <span className='inline-flex items-center px-2 py-1 rounded bg-white/5 text-xs text-zinc-500'>
+                        <span className='inline-flex items-center px-2 py-1 rounded bg-white/5 text-xs text-[var(--text-faint)]'>
                           Custom
                         </span>
                       )}
@@ -170,7 +163,7 @@ const GenresPage = () => {
                         </button>
                         <button
                           type='button'
-                          onClick={() => handleDeleteClick(genre)}
+                          onClick={() => setDeleteTarget(genre)}
                           className='p-2 rounded-lg text-[var(--text-muted)] hover:text-red-500 hover:bg-red-500/10 transition-colors'
                           title='Видалити'
                         >
@@ -186,6 +179,22 @@ const GenresPage = () => {
         </AdminTable>
       )}
 
+      <ConfirmModal
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        title='Видалити жанр?'
+        message={`Жанр «${deleteTarget?.name ?? ''}» буде видалено. Це може вплинути на існуючі фільми.`}
+        confirmText='Видалити'
+        isDestructive
+        onConfirm={async () => {
+          if (!deleteTarget) return
+          const result = await deleteGenre(deleteTarget.id)
+          if (!result.success)
+            throw new Error(result.error || 'Не вдалося видалити жанр')
+          toast.success('Жанр видалено')
+          setDeleteTarget(null)
+        }}
+      />
       <GenreModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

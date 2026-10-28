@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { genresService } from '@/features/admin/api/genres.service'
 
 export const useGenres = () => {
@@ -42,8 +42,9 @@ export const useGenres = () => {
     try {
       await createMutation.mutateAsync({ externalId, name })
       return { success: true }
-    } catch (error: any) {
-      const msg = error.response?.data?.detail || 'Помилка створення жанру'
+    } catch (error) {
+      const msg =
+        error instanceof Error ? error.message : 'Помилка створення жанру'
       return { success: false, error: msg }
     }
   }
@@ -52,8 +53,8 @@ export const useGenres = () => {
     try {
       await updateMutation.mutateAsync({ id, name })
       return { success: true }
-    } catch (error: any) {
-      const msg = error.response?.data?.detail || 'Помилка оновлення'
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : 'Помилка оновлення'
       return { success: false, error: msg }
     }
   }
@@ -62,8 +63,11 @@ export const useGenres = () => {
     try {
       await deleteMutation.mutateAsync(id)
       return { success: true }
-    } catch (error: any) {
-      return { success: false, error: 'Помилка видалення' }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Помилка видалення',
+      }
     }
   }
 

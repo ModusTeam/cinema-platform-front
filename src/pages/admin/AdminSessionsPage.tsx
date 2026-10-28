@@ -43,7 +43,7 @@ const AdminSessionsPage = () => {
     if (success) {
       toast.success(adminSessionsCopy.deleteSuccess)
     } else {
-      toast.error(adminSessionsCopy.deleteError)
+      throw new Error(adminSessionsCopy.deleteError)
     }
     setDeleteId(null)
   }
@@ -53,8 +53,7 @@ const AdminSessionsPage = () => {
 
     const newDate = new Date(newTimeStr)
     if (Number.isNaN(newDate.getTime())) {
-      toast.error(adminSessionsCopy.invalidDate)
-      return
+      throw new Error(adminSessionsCopy.invalidDate)
     }
 
     const result = await rescheduleSession(
@@ -64,7 +63,7 @@ const AdminSessionsPage = () => {
     if (result.success) {
       toast.success(adminSessionsCopy.rescheduleSuccess)
     } else {
-      toast.error(adminSessionsCopy.rescheduleError + result.error)
+      throw new Error(adminSessionsCopy.rescheduleError + result.error)
     }
   }
 
@@ -172,9 +171,7 @@ const AdminSessionsPage = () => {
       <CreateSessionModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
-        onSuccess={() => {
-          toast.success(adminSessionsCopy.createSuccess)
-        }}
+        onSuccess={() => {}}
       />
 
       <ConfirmModal

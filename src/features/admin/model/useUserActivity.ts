@@ -1,14 +1,15 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { adminUsersService } from '@/features/admin/api/admin-users.service'
 import { adminOrdersService } from '@/features/admin/api/admin-orders.service'
 import { adminTicketsService } from '@/features/admin/api/admin-tickets.service'
+import { adminUsersService } from '@/features/admin/api/admin-users.service'
 import { useToast } from '@/shared/ui/toast/ToastContext'
 
 export const useUserActivity = () => {
   const queryClient = useQueryClient()
   const toast = useToast()
   const [selectedUserId, setSelectedUserId] = useState('')
+  const [cancelTarget, setCancelTarget] = useState<string | null>(null)
 
   const usersQuery = useQuery({
     queryKey: ['admin-users'],
@@ -52,8 +53,8 @@ export const useUserActivity = () => {
         queryKey: ['admin-user-orders', selectedUserId],
       })
     },
-    onError: (error: any) => {
-      alert(error.response?.data?.detail || 'Помилка валідації')
+    onError: error => {
+      toast.error(error instanceof Error ? error.message : 'Помилка валідації')
     },
   })
 
@@ -65,25 +66,19 @@ export const useUserActivity = () => {
         queryKey: ['admin-user-orders', selectedUserId],
       })
     },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.detail || 'Помилка скасування замовлення',
-      )
-    },
   })
 
   const validateTicket = (ticketId: string) => {
-    validateMutation.mutate(ticketId)
+    if (!validateMutation.isPending) validateMutation.mutate(ticketId)
   }
 
   const cancelOrder = (orderId: string) => {
-    if (
-      !confirm(
-        'Ви впевнені, що хочете скасувати це замовлення? Це також скасує всі квитки.',
-      )
-    )
-      return
-    cancelMutation.mutate(orderId)
+    if (!cancelMutation.isPending) setCancelTarget(orderId)
+  }
+  const confirmCancel = async () => {
+    if (!cancelTarget || cancelMutation.isPending) return
+    await cancelMutation.mutateAsync(cancelTarget)
+    setCancelTarget(null)
   }
 
   const selectUser = (id: string) => {
@@ -106,6 +101,11 @@ export const useUserActivity = () => {
     isDataError: userDataQuery.isError,
     refetchData: userDataQuery.refetch,
 
+    cancelTarget,
+    setCancelTarget,
+    confirmCancel,
+    isCancelling: cancelMutation.isPending,
+    isValidating: validateMutation.isPending,
     validateTicket,
     cancelOrder,
   }

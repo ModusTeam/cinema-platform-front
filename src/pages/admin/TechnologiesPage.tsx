@@ -14,21 +14,6 @@ const TechnologiesPage = () => {
     useTechnologies()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const getTypeColor = (type: string) => {
-    switch (type.toLowerCase()) {
-      case 'visual':
-        return 'text-blue-400 bg-blue-400/10 border-blue-400/20'
-      case 'audio':
-        return 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20'
-      case 'seating':
-        return 'text-green-400 bg-green-400/10 border-green-400/20'
-      case 'experience':
-        return 'text-purple-400 bg-purple-400/10 border-purple-400/20'
-      default:
-        return 'text-gray-400 bg-gray-400/10 border-gray-400/20'
-    }
-  }
-
   return (
     <div className='space-y-6'>
       <AdminPageHeader title='Технології' description='Типи проекції та звуку'>
@@ -84,9 +69,7 @@ const TechnologiesPage = () => {
                       </div>
                     </td>
                     <td className='px-6 py-4'>
-                      <span
-                        className={`px-2 py-1 rounded-md text-xs font-bold border ${getTypeColor(tech.type)}`}
-                      >
+                      <span className='text-sm text-[var(--text-muted)]'>
                         {tech.type}
                       </span>
                     </td>

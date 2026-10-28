@@ -1,11 +1,11 @@
-import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import { isAxiosError } from 'axios'
+import { useParams } from 'react-router-dom'
 import { moviesService } from '@/entities/movie/api/movies.service'
-import MovieDetails from '@/widgets/movie-details/ui/MovieDetails'
 import NotFoundPage from '@/pages/public/NotFoundPage'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import UnavailableState from '@/shared/ui/UnavailableState'
-import { isAxiosError } from 'axios'
+import MovieDetails from '@/widgets/movie-details/ui/MovieDetails'
 
 const MoviePage = () => {
   const { id } = useParams<{ id: string }>()
@@ -18,7 +18,10 @@ const MoviePage = () => {
     refetch,
   } = useQuery({
     queryKey: ['movie', id],
-    queryFn: () => moviesService.getById(id!),
+    queryFn: () => {
+      if (!id) throw new Error('Фільм не знайдено')
+      return moviesService.getById(id)
+    },
     enabled: !!id,
     staleTime: 5 * 60 * 1000,
   })

@@ -1,10 +1,15 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { hallsService } from '@/entities/hall/api/halls.service'
 
 export const useHalls = () => {
   const queryClient = useQueryClient()
 
-  const { data: halls = [], isLoading, isError, refetch } = useQuery({
+  const {
+    data: halls = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ['admin-halls'],
     queryFn: hallsService.getAll,
     staleTime: 60 * 1000,
@@ -22,7 +27,7 @@ export const useHalls = () => {
     try {
       await deleteMutation.mutateAsync(id)
       return true
-    } catch (error) {
+    } catch {
       return false
     }
   }

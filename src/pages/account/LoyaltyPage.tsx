@@ -1,26 +1,12 @@
 import LoyaltyDashboard from '@/features/loyalty/ui/LoyaltyDashboard'
+import { AccountPageLayout } from '@/features/profile/ui/AccountPageLayout'
 
-const LoyaltyPage = () => {
-  return (
-    <div className='relative min-h-screen overflow-hidden bg-[var(--bg-main)] text-[var(--text-main)]'>
-      <div className='relative mx-auto max-w-6xl space-y-8 px-4 pb-16 pt-28'>
-        <header className='flex flex-col gap-6 md:flex-row md:items-end md:justify-between'>
-          <div className='flex flex-col gap-2'>
-            <h1 className='text-3xl font-medium tracking-tight text-white md:text-4xl'>
-              Лояльність та досягнення
-            </h1>
-            <p className='max-w-2xl text-sm leading-relaxed text-[var(--text-muted)] md:text-base'>
-              Твій поточний статус, баланс балів та шлях до нових рівнів.
-            </p>
-          </div>
-        </header>
-
-        <div className='h-px w-full bg-gradient-to-r from-white/10 via-white/5 to-transparent' />
-
-        <LoyaltyDashboard />
-      </div>
-    </div>
-  )
-}
-
+const LoyaltyPage = () => (
+  <AccountPageLayout
+    title='Ваша лояльність'
+    description='Поточний статус, баланс балів та шлях до наступного рівня. Усе про вашу участь у програмі — в одному місці.'
+  >
+    <LoyaltyDashboard />
+  </AccountPageLayout>
+)
 export default LoyaltyPage

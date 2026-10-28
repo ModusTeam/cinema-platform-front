@@ -38,7 +38,6 @@ const HallsPage = () => {
     initialHall,
     layoutLocked,
     isLoadingData: isLoadingEditData,
-    isProcessing: isProcessingSeats,
     loadHallSeats,
     saveHall,
     resetEditor,
@@ -93,8 +92,7 @@ const HallsPage = () => {
       )
       if (saveScope === 'all') handleBackToList()
     } else {
-      toast.error(`Помилка: ${result.error}`)
-      return
+      throw new Error(result.error || 'Не вдалося зберегти зал')
     }
     setSaveModalOpen(false)
     setTempSaveData(null)
@@ -110,7 +108,7 @@ const HallsPage = () => {
     if (success) {
       toast.success('Зал видалено')
     } else {
-      toast.error('Не вдалося видалити зал.')
+      throw new Error('Не вдалося видалити зал. Спробуйте ще раз.')
     }
     setDeleteId(null)
   }
@@ -143,17 +141,6 @@ const HallsPage = () => {
           )}
         </Button>
       </AdminPageHeader>
-
-      {isProcessingSeats && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm'>
-          <div className='text-center'>
-            <GridLoader className='h-12 w-12 animate-spin text-[var(--color-primary)] mx-auto mb-4' />
-            <p className='text-white font-medium'>
-              Застосування конфігурації місць...
-            </p>
-          </div>
-        </div>
-      )}
 
       {mode !== 'list' ? (
         isLoadingEditData ? (
@@ -251,7 +238,7 @@ const HallsPage = () => {
         onClose={() => setDeleteId(null)}
         onConfirm={onConfirmDelete}
         title='Видалити зал?'
-        message='Ви впевнені, що хочете видалити цей зал? Це призведе до видалення всіх місць та конфігурації. Дія незворотна.'
+        message={`Зал «${halls.find(hall => hall.id === deleteId)?.name ?? ''}» та його конфігурацію буде видалено. Дія незворотна.`}
         isDestructive
         confirmText='Видалити'
       />

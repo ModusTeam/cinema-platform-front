@@ -1,5 +1,5 @@
 import { AlertTriangle } from 'lucide-react'
-import { useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import Button from '@/shared/ui/Button'
 import { Dialog } from './Dialog'
 
@@ -31,12 +31,23 @@ const ConfirmModal = ({
   const [isConfirming, setIsConfirming] = useState(false)
   const confirmingRef = useRef(false)
   const isBusy = isLoading || isConfirming
+  const [error, setError] = useState('')
+  useEffect(() => {
+    if (isOpen) setError('')
+  }, [isOpen])
   const handleConfirm = async () => {
     if (isLoading || confirmingRef.current) return
     confirmingRef.current = true
     setIsConfirming(true)
+    setError('')
     try {
       await onConfirm()
+    } catch (failure) {
+      setError(
+        failure instanceof Error
+          ? failure.message
+          : 'Не вдалося виконати дію. Спробуйте ще раз.',
+      )
     } finally {
       confirmingRef.current = false
       setIsConfirming(false)
@@ -50,24 +61,32 @@ const ConfirmModal = ({
       titleId={titleId}
       descriptionId={messageId}
       isBusy={isBusy}
-      className='max-w-sm rounded-2xl p-6 scale-100 motion-reduce:animate-none animate-in zoom-in-95 duration-200'
+      className='max-w-md p-6'
     >
       <div className='flex min-h-0 items-start gap-4 mb-4 overflow-y-auto overscroll-contain'>
         <div
-          className={`p-3 rounded-full shrink-0 ${isDestructive ? 'bg-red-500/10 text-red-500' : 'bg-[var(--color-primary)]/10 text-[var(--color-primary)]'}`}
+          className={`shrink-0 pt-1 ${isDestructive ? 'text-[var(--color-error)]' : 'text-[var(--text-muted)]'}`}
         >
           <AlertTriangle size={24} />
         </div>
         <div>
-          <h3 id={titleId} className='type-section text-lg text-white mb-2'>
+          <h2 id={titleId} className='type-public-section text-2xl mb-2'>
             {title}
-          </h3>
+          </h2>
           <p
             id={messageId}
             className='type-body text-[var(--text-muted)] text-sm'
           >
             {message}
           </p>
+          {error && (
+            <p
+              role='alert'
+              className='mt-4 whitespace-pre-line text-sm text-[var(--color-error)]'
+            >
+              {error}
+            </p>
+          )}
         </div>
       </div>
 

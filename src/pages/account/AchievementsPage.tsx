@@ -1,171 +1,113 @@
-import { useMemo } from 'react'
-import { ArrowLeft, Sparkles } from 'lucide-react'
-import { Link } from 'react-router-dom'
-
-import EmptyState from '@/shared/ui/EmptyState'
-import UnavailableState from '@/shared/ui/UnavailableState'
+import { Trophy } from 'lucide-react'
+import { useState } from 'react'
 import AchievementCard from '@/features/loyalty/achievements/AchievementCard'
 import { useAchievementsTabData } from '@/features/loyalty/achievements/model/useAchievementsTabData'
-import type { Achievement } from '@/features/loyalty/achievements/achievements.types'
-
-const LOADING_CARDS = [
-  'achievement-loading-1',
-  'achievement-loading-2',
-  'achievement-loading-3',
-  'achievement-loading-4',
-  'achievement-loading-5',
-  'achievement-loading-6',
-]
-
-const getNearestAchievement = (achievements: Achievement[]) => {
-  return achievements
-    .filter(item => item.status !== 'unlocked' && item.target > 0)
-    .sort((a, b) => b.progressPercent - a.progressPercent)[0]
-}
-
-const getRecentUnlocked = (achievements: Achievement[]) => {
-  return achievements
-    .filter(item => item.status === 'unlocked' && item.unlockedAt)
-    .sort(
-      (a, b) =>
-        new Date(b.unlockedAt ?? '').getTime() -
-        new Date(a.unlockedAt ?? '').getTime(),
-    )[0]
-}
+import { AccountPageLayout } from '@/features/profile/ui/AccountPageLayout'
+import EmptyState from '@/shared/ui/EmptyState'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 const AchievementsPage = () => {
   const { data, error, isLoading, refetch } = useAchievementsTabData()
-  const summary = useMemo(() => {
-    if (!data) return null
-
-    const nearest = getNearestAchievement(data.achievements)
-    const recent = getRecentUnlocked(data.achievements)
-    const featured = nearest ?? recent
-    const rewardPoints = data.achievements.reduce(
-      (total, item) => total + item.pointsReward,
-      0,
+  const [category, setCategory] = useState('all')
+  const categories = [
+    ...new Map(
+      data?.achievements.map(item => [item.category, item.categoryLabel]),
+    ).entries(),
+  ]
+  const visible =
+    data?.achievements.filter(
+      item => category === 'all' || item.category === category,
+    ) ?? []
+  const nearest = data?.achievements
+    .filter(
+      item => item.status !== 'unlocked' && !item.isSecret && item.target > 0,
     )
-
-    return {
-      nearest,
-      featured,
-      featuredLabel: nearest ? 'Найближча ціль' : 'Останнє відкриття',
-      rewardPoints,
-      remainingAchievements: featured
-        ? data.achievements.filter(item => item.id !== featured.id)
-        : data.achievements,
-    }
-  }, [data])
-
+    .sort((a, b) => b.progressPercent - a.progressPercent)[0]
   return (
-    <div className='relative min-h-screen overflow-hidden bg-[var(--bg-main)] text-[var(--text-main)]'>
-      <div className='pointer-events-none absolute left-1/2 top-0 -z-10 h-[400px] w-[600px] -translate-x-1/2 rounded-full bg-white/[0.015] blur-[120px]' />
-
-      <div className='relative mx-auto max-w-5xl px-4 pb-16 pt-28 md:px-8'>
-        <Link
-          to='/profile'
-          className='group mb-8 flex w-fit items-center gap-2 text-sm text-[var(--text-muted)] transition-colors hover:text-white'
-        >
-          <ArrowLeft
-            size={16}
-            className='transition-transform group-hover:-translate-x-1'
-          />
-          Назад до профілю
-        </Link>
-
-        <header className='mb-12 flex flex-col gap-2'>
-          <h1 className='text-3xl font-medium tracking-tight text-white md:text-4xl'>
-            Досягнення
-          </h1>
-          <p className='text-sm text-neutral-500'>
-            {data
-              ? `Відкрито ${data.summary.unlocked} з ${data.summary.total}`
-              : 'Завантаження даних...'}
-          </p>
-        </header>
-
-        {isLoading ? (
-          <div className='mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3'>
-            <div className='h-20 rounded-lg bg-white/5 motion-safe:animate-pulse' />
-            <div className='h-20 rounded-lg bg-white/5 motion-safe:animate-pulse' />
-            <div className='h-20 rounded-lg bg-white/5 motion-safe:animate-pulse' />
+    <AccountPageLayout
+      title='Ваші досягнення'
+      description='Колекція ваших кіновражень. Відкриті досягнення та наступні цілі — кожне зі своєю історією.'
+    >
+      {isLoading ? (
+        <output className='block border-y border-[var(--account-rule)] py-16 text-[var(--account-muted)]'>
+          Завантажуємо вашу колекцію…
+        </output>
+      ) : error ? (
+        <UnavailableState
+          className='account-state'
+          title='Досягнення тимчасово недоступні'
+          onRetry={() => {
+            void refetch()
+          }}
+        />
+      ) : !data || data.achievements.length === 0 ? (
+        <EmptyState
+          className='account-state'
+          icon={<Trophy className='h-12 w-12' />}
+          title='Досягнення ще попереду'
+          description='Ваші досягнення зʼявлятимуться тут після відвідувань кіно.'
+        />
+      ) : (
+        <>
+          <div className='mb-9 flex flex-wrap items-baseline justify-between gap-4 border-y border-[var(--account-rule)] py-5'>
+            <p className='text-lg tabular-nums'>
+              Відкрито {data.summary.unlocked} з {data.summary.total}
+            </p>
+            <p className='text-sm text-[var(--account-muted)]'>
+              У прогресі: {data.summary.inProgress} · Ще не відкрито:{' '}
+              {data.summary.locked}
+            </p>
           </div>
-        ) : data && summary ? (
-          <div className='mb-8 grid grid-cols-1 gap-3 border-y border-white/5 py-4 sm:grid-cols-3'>
-            <div>
-              <span className='text-xs tracking-widest text-neutral-500 uppercase'>
-                Відкрито
-              </span>
-              <strong className='mt-1 block text-lg font-medium text-white'>
-                {data.summary.unlocked} / {data.summary.total}
-              </strong>
+          {nearest && category === 'all' && (
+            <div className='mb-10'>
+              <AchievementCard achievement={nearest} featured />
             </div>
-            <div>
-              <span className='text-xs tracking-widest text-neutral-500 uppercase'>
-                Найближче
-              </span>
-              <strong className='mt-1 block truncate text-lg font-medium text-white'>
-                {summary.nearest?.title ?? 'Немає активної цілі'}
-              </strong>
+          )}
+          <section aria-label='Колекція досягнень'>
+            <div className='mb-5 flex flex-wrap items-center justify-between gap-5'>
+              <h2 className='account-subheading'>Колекція</h2>
+              <div className='flex min-w-0 flex-wrap items-center gap-3 text-sm'>
+                <label htmlFor='achievement-category-filter'>Категорія</label>
+                <select
+                  id='achievement-category-filter'
+                  value={category}
+                  onChange={event => setCategory(event.target.value)}
+                  className='field w-auto max-w-full'
+                >
+                  <option value='all'>Усі категорії</option>
+                  {categories.map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <div>
-              <span className='text-xs tracking-widest text-neutral-500 uppercase'>
-                Бонуси
-              </span>
-              <strong className='mt-1 block text-lg font-medium text-white'>
-                {summary.rewardPoints} балів
-              </strong>
-            </div>
-          </div>
-        ) : (
-          <div className='mb-8 h-px w-full bg-white/5' />
-        )}
-
-        {isLoading ? (
-          <div className='grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2 lg:grid-cols-3'>
-            {LOADING_CARDS.map(key => (
-              <div
-                key={key}
-                className='h-24 w-full rounded border border-white/5 bg-white/5 motion-safe:animate-pulse'
+            <output className='mb-4 block text-xs text-[var(--account-muted)]'>
+              Показано: {visible.length}
+            </output>
+            {visible.length === 0 ? (
+              <EmptyState
+                className='account-state'
+                icon={<Trophy className='h-12 w-12' />}
+                title='Досягнень у категорії немає'
+                description='Оберіть іншу категорію або поверніться до всієї колекції.'
+                actionLabel='Усі категорії'
+                onAction={() => setCategory('all')}
               />
-            ))}
-          </div>
-        ) : error ? (
-          <UnavailableState title='Досягнення тимчасово недоступні' onRetry={() => void refetch()} />
-        ) : !data || data.achievements.length === 0 ? (
-          <EmptyState
-            icon={<Sparkles className='h-12 w-12' />}
-            title='Досягнення ще попереду'
-            description='Перші нагороди зʼявляться після бронювань, відвідувань або нових активностей у програмі лояльності.'
-            className='py-20'
-          />
-        ) : (
-          <div className='space-y-8'>
-            {summary?.featured && (
-              <div className='max-w-2xl'>
-                <AchievementCard
-                  achievement={summary.featured}
-                  featured
-                  featuredLabel={summary.featuredLabel}
-                />
+            ) : (
+              <div className='grid gap-x-10 md:grid-cols-2 xl:grid-cols-3'>
+                {visible
+                  .filter(item => category !== 'all' || item.id !== nearest?.id)
+                  .map(item => (
+                    <AchievementCard key={item.id} achievement={item} />
+                  ))}
               </div>
             )}
-
-            <div className='grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2 lg:grid-cols-3'>
-              {(summary?.remainingAchievements ?? data.achievements).map(
-                achievement => (
-                  <AchievementCard
-                    key={achievement.id}
-                    achievement={achievement}
-                  />
-                ),
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+          </section>
+        </>
+      )}
+    </AccountPageLayout>
   )
 }
-
 export default AchievementsPage

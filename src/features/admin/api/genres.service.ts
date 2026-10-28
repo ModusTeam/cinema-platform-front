@@ -8,7 +8,7 @@ export interface Genre {
 
 export const genresService = {
   getAll: async (): Promise<Genre[]> => {
-    const { data } = await api.get<Genre[]>(`/genres?t=${new Date().getTime()}`)
+    const { data } = await api.get<Genre[]>(`/genres?t=${Date.now()}`)
     return data
   },
 

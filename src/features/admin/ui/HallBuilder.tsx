@@ -160,6 +160,10 @@ const HallBuilder = ({
                 </label>
                 <input
                   id='hall-rows'
+                  aria-invalid={!validDimensions}
+                  aria-describedby={
+                    !validDimensions ? 'hall-dimensions-error' : undefined
+                  }
                   type='number'
                   min={1}
                   max={maxRows}
@@ -174,6 +178,10 @@ const HallBuilder = ({
                 </label>
                 <input
                   id='hall-cols'
+                  aria-invalid={!validDimensions}
+                  aria-describedby={
+                    !validDimensions ? 'hall-dimensions-error' : undefined
+                  }
                   type='number'
                   min={1}
                   max={maxCols}
@@ -197,7 +205,11 @@ const HallBuilder = ({
               </Button>
             </div>
             {!validDimensions && (
-              <p className='field-hint'>
+              <p
+                id='hall-dimensions-error'
+                role='alert'
+                className='field-error'
+              >
                 Рядів: 1–{maxRows}, стовпців: 1–{maxCols}. Вкажіть цілі числа.
               </p>
             )}
@@ -218,9 +230,9 @@ const HallBuilder = ({
                     onClick={() => selectPaintType(type.id)}
                     aria-pressed={isSelected}
                     className={clsx(
-                      'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all border',
+                      'flex min-h-11 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all border',
                       isSelected
-                        ? 'border-[var(--selection-border)] bg-[var(--selection-bg)] text-[var(--text-main)] shadow-lg'
+                        ? 'border-[var(--selection-border)] bg-[var(--selection-bg)] text-[var(--text-main)]'
                         : 'border-transparent hover:bg-white/5 text-[var(--text-muted)]',
                     )}
                   >
@@ -236,7 +248,7 @@ const HallBuilder = ({
                 aria-pressed={tool === 'erase'}
                 onClick={() => setTool('erase')}
                 className={clsx(
-                  'flex items-center gap-2 rounded-lg border px-3 py-2 text-sm',
+                  'flex min-h-11 items-center gap-2 rounded-lg border px-3 py-2 text-sm',
                   tool === 'erase'
                     ? 'border-[var(--selection-border)] bg-[var(--selection-bg)] text-[var(--text-main)]'
                     : 'border-transparent text-[var(--text-muted)] hover:bg-white/5',
@@ -263,7 +275,7 @@ const HallBuilder = ({
                   onClick={() => toggleTech(tech.id)}
                   aria-pressed={selectedTechIds.includes(tech.id)}
                   className={clsx(
-                    'px-3 py-1 text-xs rounded-full border transition-all',
+                    'min-h-11 px-3 py-2 text-sm rounded-md border transition-all',
                     selectedTechIds.includes(tech.id)
                       ? 'bg-[var(--selection-bg)] border-[var(--selection-border)] text-[var(--text-main)]'
                       : 'bg-[var(--bg-main)] border-white/10 text-[var(--text-muted)] hover:border-white/30',
@@ -354,7 +366,7 @@ const HallBuilder = ({
                 disabled={gridConfig === null}
                 aria-label={label}
                 className={clsx(
-                  'h-8 w-8 rounded flex items-center justify-center text-[10px] select-none shadow-lg cursor-pointer hover:opacity-80 transition-transform active:scale-95',
+                  'h-8 w-8 rounded flex items-center justify-center text-[10px] select-none cursor-pointer hover:opacity-80 motion-safe:transition-transform motion-safe:active:scale-95',
                   seat
                     ? getSeatColor(typeName)
                     : 'border border-dashed border-white/15 bg-transparent',

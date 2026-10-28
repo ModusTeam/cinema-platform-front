@@ -1,7 +1,7 @@
 import {
-  useQuery,
-  useQueries,
   useMutation,
+  useQueries,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
 import {
@@ -58,8 +58,9 @@ export const usePricings = () => {
     try {
       await createMutation.mutateAsync(name)
       return { success: true }
-    } catch (error: any) {
-      const msg = error.response?.data?.title || 'Failed to create pricing'
+    } catch (error) {
+      const msg =
+        error instanceof Error ? error.message : 'Не вдалося створити тариф'
       return { success: false, error: msg }
     }
   }
@@ -68,8 +69,9 @@ export const usePricings = () => {
     try {
       await updateMutation.mutateAsync({ id, rules })
       return { success: true }
-    } catch (error: any) {
-      const msg = error.response?.data?.title || 'Failed to update rules'
+    } catch (error) {
+      const msg =
+        error instanceof Error ? error.message : 'Не вдалося оновити ціни'
       return { success: false, error: msg }
     }
   }

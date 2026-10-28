@@ -1,15 +1,20 @@
 import {
-  useQuery,
-  useMutation,
-  useQueryClient,
   keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
 } from '@tanstack/react-query'
 import { adminSessionsService } from '@/features/admin/api/admin-sessions.service'
 
 export const useSessions = () => {
   const queryClient = useQueryClient()
 
-  const { data: sessions = [], isLoading, isError, refetch } = useQuery({
+  const {
+    data: sessions = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ['admin-sessions'],
     queryFn: () => adminSessionsService.getAll(1, 100),
     placeholderData: keepPreviousData,
@@ -42,7 +47,7 @@ export const useSessions = () => {
     try {
       await deleteMutation.mutateAsync(id)
       return true
-    } catch (e) {
+    } catch {
       return false
     }
   }
@@ -51,8 +56,9 @@ export const useSessions = () => {
     try {
       await rescheduleMutation.mutateAsync({ id, newDateIso })
       return { success: true }
-    } catch (e: any) {
-      const msg = e.response?.data?.errors?.Description || e.message
+    } catch (error) {
+      const msg =
+        error instanceof Error ? error.message : 'Не вдалося перенести сеанс'
       return { success: false, error: msg }
     }
   }

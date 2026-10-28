@@ -80,6 +80,27 @@ functionality. Header controls may wrap with enlarged text; its measured height
 sets the content offset on non-Home routes. Ticket Menu keeps its paper geometry
 with wrapping labels and a scrollable body at narrow widths.
 
+Account, Loyalty, point history and Achievements share the scoped Account
+paper/ink roles and editorial headings. Keep the membership card dark, tier
+progress native and labelled, and transactions in a ledger with signed amounts,
+operation labels, dates and server balances. Reuse achievement presentation in
+Account previews; identify locked secrets only through public hints, and reserve
+awarded-reward wording for unlocked achievements. Category and rarity labels are
+Ukrainian; their API values remain unchanged.
+
+Form dialogs compose `FormDialog` over `Dialog` and the existing modal focus
+infrastructure. Keep headers and actions outside the scrolling form body, protect
+dirty work on dismissal, disable submissions while pending, and retain input with
+inline errors on failure. Use `ConfirmModal` for destructive actions. Dialogs use
+dark semantic surfaces even when launched from scoped paper content.
+
+Toasts use compact neutral surfaces with semantic icon accents and individual
+live regions: urgent errors, polite routine feedback. Errors remain until closed;
+other messages use severity-based timers paused on hover or close-button focus.
+Deduplicate matching messages, cap the stack at four, preserve errors ahead of
+routine feedback, and clear timers when items unmount. Important form errors also
+remain inline; asynchronous import acknowledgement is informational.
+
 ## Ticket patterns
 
 The shared `TicketAction`, Ticket Menu and digital tickets use CSS concave cuts,
@@ -161,8 +182,6 @@ filter; keep partial-results copy and explicit pagination. Schedule links pass
 session navigation state; booking validates the screening against the requested
 movie, time and status, then consumes the handoff once. Login accepts only internal
 booking return paths. Home/Movie Details retain their bounded
-aggregate previews. Admin's secondary management forms and legacy status palettes
-still need a dedicated consistency pass; native date/input rendering remains
-browser-dependent.
+aggregate previews. Native date/input rendering remains browser-dependent.
 Payment integration and loyalty placeholders remain governed by the existing
 backend-compatibility notes in AGENTS.md; this guide introduces no business rules.

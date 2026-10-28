@@ -68,7 +68,9 @@ export class SeatSelection {
 
   private publish(seats = this.snapshot.seats) {
     this.snapshot = { seats, pending: new Set(this.operations.keys()) }
-    this.listeners.forEach(listener => listener())
+    this.listeners.forEach(listener => {
+      listener()
+    })
   }
 
   reconcile(data: SessionAvailability) {

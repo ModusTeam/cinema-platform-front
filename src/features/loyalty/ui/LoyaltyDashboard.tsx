@@ -1,199 +1,161 @@
-import { useLoyaltyAchievementsPreview } from '@/features/loyalty/model/useLoyaltyAchievementsPreview'
-import { useLoyaltyProfile } from '@/features/loyalty/model/useLoyaltyProfile'
-import {
-	ArrowRight,
-	BarChart3,
-	Gift,
-	Sparkles,
-	Trophy,
-	Wallet,
-} from 'lucide-react'
+import { ArrowRight, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import EmptyState from '@/shared/ui/EmptyState'
 import UnavailableState from '@/shared/ui/UnavailableState'
+import AchievementCard from '../achievements/AchievementCard'
+import { createTier } from '../lib/loyalty.mappers'
+import { useLoyaltyAchievementsPreview } from '../model/useLoyaltyAchievementsPreview'
+import { useLoyaltyProfile } from '../model/useLoyaltyProfile'
+import TierCard from './TierCard'
 
 const LoyaltyDashboard = () => {
-	const profileQuery = useLoyaltyProfile()
-	const achievementsQuery = useLoyaltyAchievementsPreview()
-
-	if (profileQuery.isLoading) {
-		return (
-			<div className='space-y-4'>
-				<div className='grid gap-4 md:grid-cols-3'>
-					<div className='h-40 rounded-lg bg-white/5 motion-safe:animate-pulse' />
-					<div className='h-40 rounded-lg bg-white/5 motion-safe:animate-pulse' />
-					<div className='h-40 rounded-lg bg-white/5 motion-safe:animate-pulse' />
-				</div>
-				<div className='grid gap-4 lg:grid-cols-[1.35fr_1fr]'>
-					<div className='h-56 rounded-lg bg-white/5 motion-safe:animate-pulse' />
-					<div className='h-56 rounded-lg bg-white/5 motion-safe:animate-pulse' />
-				</div>
-			</div>
-		)
-	}
-
-	if (profileQuery.error) {
-		return <UnavailableState title='Лояльність тимчасово недоступна' onRetry={() => void profileQuery.refetch()} />
-	}
-
-	if (!profileQuery.data) {
-		return (
-			<EmptyState
-				icon={<Sparkles className='h-12 w-12' />}
-				title='Немає даних'
-				description='Профіль лояльності зʼявиться після першого бронювання.'
-			/>
-		)
-	}
-
-	const profile = profileQuery.data
-	const nearestAchievement = achievementsQuery.data?.items.find(
-		achievement => achievement.status === 'in-progress',
-	)
-	const achievementProgress = nearestAchievement
-		? Math.min(
-				100,
-				Math.max(
-					0,
-					nearestAchievement.progressPercent ||
-						(nearestAchievement.target > 0
-							? (nearestAchievement.current / nearestAchievement.target) * 100
-							: 0),
-				),
-			)
-		: 0
-
-	return (
-		<div className='relative space-y-5'>
-			<div
-				className='pointer-events-none absolute left-1/2 top-0 -z-10 h-[400px] w-[600px] -translate-x-1/2 rounded-full opacity-10 blur-[120px] transition-colors duration-1000'
-				style={{ backgroundColor: profile.tier.badgeColor }}
-			/>
-
-			<div className='grid gap-4 md:grid-cols-3'>
-				<section className='rounded-lg border border-white/10 bg-white/[0.03] p-5 shadow-[0_18px_40px_rgba(0,0,0,0.18)]'>
-					<div className='flex items-center gap-2 text-xs font-medium tracking-widest text-neutral-500 uppercase'>
-						<Wallet className='h-4 w-4 text-[var(--color-primary)]' />
-						Поточний баланс
-					</div>
-					<div className='mt-6 flex items-end gap-2'>
-						<strong className='text-4xl font-semibold leading-none text-white md:text-5xl'>
-							{profile.pointsBalance}
-						</strong>
-						<span className='pb-1 text-base text-neutral-400'>балів</span>
-					</div>
-				</section>
-
-				<section className='rounded-lg border border-white/10 bg-white/[0.03] p-5 shadow-[0_18px_40px_rgba(0,0,0,0.18)]'>
-					<div className='flex items-center gap-2 text-xs font-medium tracking-widest text-neutral-500 uppercase'>
-						<Sparkles className='h-4 w-4 text-[var(--color-primary)]' />
-						Поточний статус
-					</div>
-					<div className='mt-6 flex items-center gap-3'>
-						<span
-							className='h-2.5 w-2.5 rounded-full'
-							style={{
-								backgroundColor: profile.tier.badgeColor,
-								boxShadow: `0 0 14px ${profile.tier.badgeColor}`,
-							}}
-						/>
-						<strong className='text-4xl font-semibold leading-none text-white md:text-5xl'>
-							{profile.tier.label}
-						</strong>
-					</div>
-					<p className='mt-4 text-sm leading-relaxed text-neutral-400'>
-						Максимальний рівень програми лояльності
-					</p>
-				</section>
-
-				<section className='rounded-lg border border-white/10 bg-white/[0.03] p-5 shadow-[0_18px_40px_rgba(0,0,0,0.18)]'>
-					<div className='flex items-center gap-2 text-xs font-medium tracking-widest text-neutral-500 uppercase'>
-						<BarChart3 className='h-4 w-4 text-[var(--color-primary)]' />
-						Річна активність
-					</div>
-					<dl className='mt-6 space-y-3 text-sm'>
-						<div className='flex items-center justify-between gap-4 rounded-md bg-white/[0.03] px-3 py-2'>
-							<dt className='text-neutral-500'>Балів цього року</dt>
-							<dd className='font-medium text-white'>{profile.yearPoints}</dd>
-						</div>
-						<div className='flex items-center justify-between gap-4 rounded-md bg-white/[0.03] px-3 py-2'>
-							<dt className='text-neutral-500'>Візитів цього року</dt>
-							<dd className='font-medium text-white'>{profile.yearVisits}</dd>
-						</div>
-					</dl>
-				</section>
-			</div>
-
-			<div>
-				<section className='flex min-h-64 flex-col rounded-lg border border-white/10 bg-white/[0.03] p-5 shadow-[0_18px_40px_rgba(0,0,0,0.18)]'>
-					<div className='flex items-center justify-between gap-4'>
-						<div className='flex items-center gap-2 text-xs font-medium tracking-widest text-neutral-500 uppercase'>
-							<Trophy className='h-4 w-4 text-[var(--color-primary)]' />
-							Досягнення
-						</div>
-						{achievementsQuery.isLoading ? (
-							<div className='h-5 w-24 rounded-full bg-white/5 motion-safe:animate-pulse' />
-						) : achievementsQuery.data ? (
-							<span className='text-sm text-neutral-400'>
-								Відкрито:{' '}
-								<strong className='text-white'>
-									{achievementsQuery.data.totalUnlocked}
-								</strong>{' '}
-								/ {achievementsQuery.data.totalAvailable}
-							</span>
-						) : null}
-					</div>
-
-					{achievementsQuery.isLoading ? (
-						<div className='mt-8 space-y-4'>
-							<div className='h-5 w-3/4 rounded bg-white/5 motion-safe:animate-pulse' />
-							<div className='h-2 rounded-full bg-white/5 motion-safe:animate-pulse' />
-						</div>
-					) : achievementsQuery.error ? (
-						<UnavailableState title='Досягнення тимчасово недоступні' onRetry={() => void achievementsQuery.refetch()} className='mt-8 border-0 bg-transparent px-0 py-4' />
-					) : nearestAchievement ? (
-						<div className='mt-8'>
-							<p className='text-base font-medium leading-relaxed text-white'>
-								Найближче досягнення: {nearestAchievement.title}
-							</p>
-							<div className='mt-5 h-2.5 overflow-hidden rounded-full bg-white/10'>
-								<div
-									className='h-full rounded-full bg-[var(--color-primary)] transition-all duration-700'
-									style={{ width: `${achievementProgress}%` }}
-								/>
-							</div>
-							<div className='mt-2 text-right text-xs font-medium text-neutral-400'>
-								Прогрес: {nearestAchievement.current}/
-								{nearestAchievement.target}
-							</div>
-						</div>
-					) : (
-						<p className='mt-8 text-sm text-neutral-500'>
-							Усі доступні досягнення вже відкрито або вони зʼявляться згодом.
-						</p>
-					)}
-
-					<Link
-						to='/profile/achievements'
-						className='mt-auto flex w-fit items-center gap-2 rounded-md bg-[var(--color-primary)] px-4 py-2.5 text-sm font-medium text-[var(--color-on-primary)] transition-opacity hover:opacity-90'
-					>
-						Переглянути всі досягнення
-						<ArrowRight className='h-4 w-4' />
-					</Link>
-				</section>
-			</div>
-
-			<div className='flex justify-end border-t border-white/5 pt-5'>
-				<Link
-					to='/account/loyalty/history'
-					className='flex w-fit items-center gap-2 rounded-md border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm font-medium text-neutral-300 transition-colors hover:border-white/20 hover:text-white'
-				>
-					<Gift className='h-4 w-4' />
-					Історія балів
-				</Link>
-			</div>
-		</div>
-	)
+  const profileQuery = useLoyaltyProfile()
+  const achievements = useLoyaltyAchievementsPreview()
+  if (profileQuery.isLoading)
+    return (
+      <output className='block border-y border-[var(--account-rule)] py-16 text-[var(--account-muted)]'>
+        Завантажуємо вашу програму лояльності…
+      </output>
+    )
+  if (profileQuery.error)
+    return (
+      <UnavailableState
+        className='account-state'
+        title='Лояльність тимчасово недоступна'
+        onRetry={() => {
+          void profileQuery.refetch()
+        }}
+      />
+    )
+  if (!profileQuery.data)
+    return (
+      <EmptyState
+        className='account-state'
+        icon={<Sparkles className='h-12 w-12' />}
+        title='Немає даних лояльності'
+        description='Профіль лояльності зʼявиться після першого бронювання.'
+      />
+    )
+  const profile = profileQuery.data
+  const nearest = achievements.data?.items.find(
+    item => item.status === 'in-progress' && !item.isSecret,
+  )
+  return (
+    <div className='space-y-12 lg:space-y-16'>
+      <div className='grid gap-9 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16'>
+        <section
+          aria-label='Картка учасника'
+          className='membership-card min-w-0 self-start bg-[var(--bg-main)] p-6 text-[var(--text-main)] sm:p-8'
+        >
+          <div className='flex flex-wrap items-center justify-between gap-4 border-b border-[var(--border-default)] pb-5'>
+            <span className='text-xl font-semibold tracking-tight'>
+              Cinema<span className='text-[var(--color-primary)]'>.</span>
+            </span>
+            <span className='text-sm text-[var(--text-muted)]'>
+              Картка учасника
+            </span>
+          </div>
+          <h2 className='mt-9 font-[family-name:var(--font-public-display)] text-5xl leading-none sm:text-6xl'>
+            {profile.tier.label}
+          </h2>
+          <dl className='mt-9 border-t border-[var(--border-default)] pt-5'>
+            <dt className='text-sm text-[var(--text-muted)]'>Доступні бали</dt>
+            <dd className='mt-2 flex flex-wrap items-baseline gap-3'>
+              <strong className='text-4xl font-medium tabular-nums sm:text-5xl'>
+                {profile.pointsBalance.toLocaleString('uk-UA')}
+              </strong>
+              <span className='text-sm text-[var(--text-muted)]'>балів</span>
+            </dd>
+          </dl>
+          {profile.balanceExpiresAt && (
+            <p className='mt-5 text-xs text-[var(--text-muted)]'>
+              Термін дії балів:{' '}
+              <time dateTime={profile.balanceExpiresAt}>
+                {new Date(profile.balanceExpiresAt).toLocaleDateString('uk-UA')}
+              </time>
+            </p>
+          )}
+          <Link
+            to='/account/loyalty/history'
+            className='mt-7 inline-flex min-h-11 items-center gap-3 text-sm underline underline-offset-4'
+          >
+            Історія балів <ArrowRight size={16} aria-hidden='true' />
+          </Link>
+        </section>
+        <TierCard tier={profile.tier} profile={profile} />
+      </div>
+      <section aria-labelledby='loyalty-levels'>
+        <h2 id='loyalty-levels' className='account-subheading mb-6'>
+          Рівні програми
+        </h2>
+        <div className='grid border-t border-[var(--account-rule)] md:grid-cols-3'>
+          {(['bronze', 'silver', 'gold'] as const).map(key => {
+            const tier = createTier(key)
+            return (
+              <div
+                key={key}
+                className='border-b border-[var(--account-rule)] py-6 md:pr-8'
+              >
+                <div className='flex flex-wrap items-baseline gap-3'>
+                  <h3 className='type-public-section'>{tier.label}</h3>
+                  {tier.id === profile.tier.id && (
+                    <span className='account-label'>Ваш рівень</span>
+                  )}
+                </div>
+                <p className='mt-3 text-sm tabular-nums'>
+                  {tier.minPoints.toLocaleString('uk-UA')} балів — поріг рівня
+                </p>
+                <ul className='mt-3 space-y-2 text-sm leading-relaxed text-[var(--account-muted)]'>
+                  {tier.benefits.map(benefit => (
+                    <li key={benefit}>{benefit}</li>
+                  ))}
+                </ul>
+              </div>
+            )
+          })}
+        </div>
+      </section>
+      <section aria-labelledby='loyalty-achievements'>
+        <div className='mb-6 flex flex-wrap items-baseline justify-between gap-4'>
+          <h2 id='loyalty-achievements' className='account-subheading'>
+            Ваша колекція досягнень
+          </h2>
+          <Link
+            to='/profile/achievements'
+            className='account-link inline-flex min-h-11 items-center gap-2 text-sm'
+          >
+            Усі досягнення <ArrowRight size={16} aria-hidden='true' />
+          </Link>
+        </div>
+        {achievements.isLoading ? (
+          <output>Завантажуємо досягнення…</output>
+        ) : achievements.error ? (
+          <UnavailableState
+            className='account-state'
+            title='Досягнення тимчасово недоступні'
+            onRetry={() => {
+              void achievements.refetch()
+            }}
+          />
+        ) : (
+          <>
+            {achievements.data && (
+              <p className='mb-6 text-sm text-[var(--account-muted)]'>
+                Відкрито {achievements.data.totalUnlocked} з{' '}
+                {achievements.data.totalAvailable}
+              </p>
+            )}
+            {nearest ? (
+              <AchievementCard achievement={nearest} featured />
+            ) : (
+              <p className='border-t border-[var(--account-rule)] py-6 text-sm text-[var(--account-muted)]'>
+                Усі доступні досягнення вже відкрито або вони зʼявляться згодом.
+              </p>
+            )}
+          </>
+        )}
+      </section>
+    </div>
+  )
 }
-
 export default LoyaltyDashboard

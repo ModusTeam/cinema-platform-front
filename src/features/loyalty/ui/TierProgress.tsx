@@ -11,42 +11,32 @@ const TierProgress = ({
   nextTierPoints,
   nextTierLabel,
 }: TierProgressProps) => {
-  const safePercent = Math.min(100, Math.max(0, progressPercent))
-  const remainingPoints =
-    nextTierPoints !== undefined
-      ? Math.max(0, nextTierPoints - currentPoints)
-      : undefined
-  const progressLabel =
-    nextTierLabel && remainingPoints !== undefined
-      ? `${remainingPoints} балів до ${nextTierLabel}`
-      : `Прогрес до ${nextTierLabel || 'наступного рівня'}`
-
-  if (!nextTierLabel || nextTierPoints === undefined) {
+  if (!nextTierLabel || nextTierPoints === undefined)
     return (
-      <div className='rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-xs text-[var(--text-muted)]'>
+      <p className='text-sm text-[var(--text-muted)]'>
         Максимальний рівень досягнуто
-      </div>
+      </p>
     )
-  }
-
+  const remaining = Math.max(0, nextTierPoints - currentPoints)
   return (
-    <div className='space-y-2'>
-      <div className='flex items-center justify-between text-xs text-[var(--text-muted)]'>
-        <span>{progressLabel}</span>
-        <span>{safePercent}%</span>
+    <div className='space-y-3'>
+      <div className='flex flex-wrap justify-between gap-2 text-sm'>
+        <span>До {nextTierLabel}</span>
+        <span className='tabular-nums text-[var(--text-muted)]'>
+          Ще {remaining.toLocaleString('uk-UA')} балів
+        </span>
       </div>
-      <div className='h-2 rounded-full bg-white/10'>
-        <div
-          className='h-2 rounded-full bg-[var(--color-primary)]'
-          style={{ width: `${safePercent}%` }}
-        />
-      </div>
-      <div className='flex items-center justify-between text-xs text-[var(--text-muted)]'>
-        <span>{currentPoints} балів</span>
-        <span>{nextTierPoints ? `${nextTierPoints} балів` : '—'}</span>
-      </div>
+      <progress
+        className='account-progress w-full'
+        aria-label={`Прогрес до ${nextTierLabel}`}
+        aria-valuetext={`${currentPoints} з ${nextTierPoints} балів`}
+        max={100}
+        value={Math.min(100, Math.max(0, progressPercent))}
+      />
+      <p className='text-xs text-[var(--text-muted)]'>
+        Поріг рівня — {nextTierPoints.toLocaleString('uk-UA')} балів
+      </p>
     </div>
   )
 }
-
 export default TierProgress

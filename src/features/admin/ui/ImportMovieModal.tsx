@@ -39,8 +39,7 @@ const ImportMovieModal = ({
       const data = await moviesService.searchTmdb(query)
       setResults(data)
       setHasSearched(true)
-    } catch (error) {
-      console.error(error)
+    } catch {
       setResults([])
       setSearchFailed(true)
     } finally {
@@ -57,7 +56,8 @@ const ImportMovieModal = ({
     if (isImporting !== null) return
     setIsImporting(tmdbId)
     try {
-      await moviesService.importMovie(tmdbId)
+      const receipt = await moviesService.importMovie(tmdbId)
+      toast.info(receipt.message || 'Запит на імпорт прийнято')
       onSuccess()
       onClose()
       setResults([])

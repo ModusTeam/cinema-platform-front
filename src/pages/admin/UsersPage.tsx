@@ -51,8 +51,7 @@ const UsersPage = () => {
     if (currentUser?.id === userId) return false
     const result = await changeUserRole(userId, newRole)
     if (!result.success) {
-      toast.error(result.error || 'Помилка зміни ролі')
-      return false
+      throw new Error(result.error || 'Помилка зміни ролі')
     }
     toast.success('Роль користувача оновлено')
     return true
