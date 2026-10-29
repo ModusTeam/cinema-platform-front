@@ -56,8 +56,10 @@ const ImportMovieModal = ({
     if (isImporting !== null) return
     setIsImporting(tmdbId)
     try {
-      const receipt = await moviesService.importMovie(tmdbId)
-      toast.info(receipt.message || 'Запит на імпорт прийнято')
+      await moviesService.importMovie(tmdbId)
+      toast.info(
+        'Запит на імпорт прийнято. Фільм з’явиться в каталозі після завершення обробки.',
+      )
       onSuccess()
       onClose()
       setResults([])

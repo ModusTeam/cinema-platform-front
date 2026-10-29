@@ -48,6 +48,71 @@ export interface MovieDto {
   cast?: ActorDto[]
   status: number
   deletedAt?: string | null
+  posterPublicId?: string | null
+  backdropPublicId?: string | null
+  genreIds?: string[] | null
+  ageRestriction?: string | null
+}
+
+export type MovieImageKind = 'poster' | 'backdrop'
+
+export interface MovieImageReference {
+  secureUrl: string
+  publicId: string
+}
+
+export interface MovieImageUploadResult extends MovieImageReference {
+  assetId: string | null
+  width: number
+  height: number
+  format: string
+  bytes: number
+}
+
+export interface ManualCastMember {
+  name: string
+  role?: string
+}
+
+export interface CreateMovieRequest {
+  title: string
+  description: string
+  durationMinutes: number
+  releaseYear: number
+  status: MovieStatus
+  genreIds?: string[]
+  rating?: number
+  ageRestriction?: string | null
+  poster?: MovieImageReference
+  backdrop?: MovieImageReference
+  trailerUrl?: string
+  cast?: ManualCastMember[]
+}
+
+export interface UpdateMovieImagesRequest {
+  poster?: MovieImageReference | null
+  backdrop?: MovieImageReference | null
+  posterUrl?: string | null
+  backdropUrl?: string | null
+  trailerUrl?: string | null
+}
+
+export interface UpdateMovieRequest {
+  title?: string
+  details?: Partial<
+    Pick<
+      CreateMovieRequest,
+      | 'description'
+      | 'durationMinutes'
+      | 'releaseYear'
+      | 'rating'
+      | 'ageRestriction'
+      | 'genreIds'
+      | 'cast'
+    >
+  >
+  images?: UpdateMovieImagesRequest
+  status?: MovieStatus
 }
 
 export interface TmdbSearchResult {

@@ -1,12 +1,14 @@
-import { Edit, Film, Plus, RotateCcw, Search, Trash2 } from 'lucide-react'
+import { Edit, Film, RotateCcw, Search, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { type Movie, MovieStatus } from '@/entities/movie/model/movie.types'
 import { useAdminMovies } from '@/features/admin/model/useAdminMovies'
 import { AdminPageHeader } from '@/features/admin/ui/AdminPageHeader'
 import { AdminPagination } from '@/features/admin/ui/AdminPagination'
 import { AdminTable } from '@/features/admin/ui/AdminTable'
+import CreateMovieModal from '@/features/admin/ui/CreateMovieModal'
 import EditMovieModal from '@/features/admin/ui/EditMovieModal'
 import ImportMovieModal from '@/features/admin/ui/ImportMovieModal'
+import { MovieCreateButton } from '@/features/admin/ui/MovieCreateButton'
 import Button from '@/shared/ui/Button'
 import EmptyState from '@/shared/ui/EmptyState'
 import { GridLoader } from '@/shared/ui/GridLoader'
@@ -52,6 +54,11 @@ const AdminMoviesPage = () => {
   } = useAdminMovies(activeTab === 'deleted')
   const toast = useToast()
   const [isImportModalOpen, setIsImportModalOpen] = useState(false)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [createdMovie, setCreatedMovie] = useState<{
+    id: string
+    title: string
+  } | null>(null)
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null)
   const [restoreTarget, setRestoreTarget] = useState<Movie | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Movie | null>(null)
@@ -87,11 +94,30 @@ const AdminMoviesPage = () => {
         title='Фільми'
         description='Управління каталогом кінотеатру'
       >
-        <Button onClick={() => setIsImportModalOpen(true)}>
-          <Plus size={17} aria-hidden='true' />
-          Імпорт з TMDB
-        </Button>
+        <MovieCreateButton
+          onCreate={() => setIsCreateModalOpen(true)}
+          onImport={() => setIsImportModalOpen(true)}
+        />
       </AdminPageHeader>
+
+      {createdMovie && (
+        <div className='flex flex-wrap items-center justify-between gap-3 border-y border-[var(--border-default)] py-3 text-sm'>
+          <p>
+            Створено: «{createdMovie.title}». Поточний пошук може приховувати
+            новий запис.
+          </p>
+          <Button
+            variant='secondary'
+            onClick={() => {
+              setActiveTab('active')
+              setSearchTerm(createdMovie.title)
+              changePage(1)
+            }}
+          >
+            Знайти в каталозі
+          </Button>
+        </div>
+      )}
 
       <div className='flex flex-wrap items-center justify-between gap-4'>
         <fieldset aria-label='Каталог фільмів' className='flex gap-3'>
@@ -191,21 +217,21 @@ const AdminMoviesPage = () => {
                             ? 'Тут зʼявляться прибрані з каталогу фільми, які можна відновити.'
                             : searchTerm
                               ? 'Спробуйте іншу назву або очистьте пошук.'
-                              : 'Імпортуйте перший фільм з TMDB, щоб додати його до афіші.'
+                              : 'Додайте власний фільм або імпортуйте його з TMDB.'
                         }
                         actionLabel={
                           isDeleted
                             ? undefined
                             : searchTerm
                               ? 'Очистити пошук'
-                              : 'Імпорт з TMDB'
+                              : 'Додати фільм'
                         }
                         onAction={
                           isDeleted
                             ? undefined
                             : searchTerm
                               ? () => setSearchTerm('')
-                              : () => setIsImportModalOpen(true)
+                              : () => setIsCreateModalOpen(true)
                         }
                         className='border-0 bg-transparent py-12'
                       />
@@ -317,11 +343,21 @@ const AdminMoviesPage = () => {
         onSuccess={refresh}
       />
       <EditMovieModal
+        key={editingMovie?.id}
         isOpen={!!editingMovie}
         movie={editingMovie}
         onClose={() => setEditingMovie(null)}
         onSuccess={refresh}
       />
+      {isCreateModalOpen && (
+        <CreateMovieModal
+          onClose={() => setIsCreateModalOpen(false)}
+          onSuccess={(id, title) => {
+            setCreatedMovie({ id, title })
+            setActiveTab('active')
+          }}
+        />
+      )}
       <ConfirmModal
         isOpen={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
