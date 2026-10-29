@@ -24,6 +24,7 @@ interface FormDialogProps {
   submitDisabled?: boolean
   confirmText?: string
   className?: string
+  noValidate?: boolean
 }
 
 export function FormDialog({
@@ -38,6 +39,7 @@ export function FormDialog({
   submitDisabled = false,
   confirmText = 'Зберегти',
   className,
+  noValidate = false,
 }: FormDialogProps) {
   const id = useId()
   const submitting = useRef(false)
@@ -118,14 +120,20 @@ export function FormDialog({
             <X size={20} />
           </Button>
         </div>
-        <form onSubmit={submit} className='flex min-h-0 flex-col'>
-          <fieldset
-            disabled={busy}
-            className='min-h-0 min-w-0 max-w-full space-y-5 overflow-y-auto overscroll-contain p-6'
-          >
-            <legend className='sr-only'>{title}</legend>
-            {children}
-          </fieldset>
+        <form
+          onSubmit={submit}
+          noValidate={noValidate}
+          className='flex min-h-0 flex-col'
+        >
+          <div className='min-h-0 overflow-y-auto overscroll-contain'>
+            <fieldset
+              disabled={busy}
+              className='min-w-0 max-w-full space-y-5 p-6'
+            >
+              <legend className='sr-only'>{title}</legend>
+              {children}
+            </fieldset>
+          </div>
           <div className='shrink-0 border-t border-[var(--border-default)] p-6 pt-4'>
             {error && (
               <p

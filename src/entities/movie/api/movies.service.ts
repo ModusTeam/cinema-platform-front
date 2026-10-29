@@ -1,8 +1,12 @@
 import {
+  type CreateMovieRequest,
   type Movie,
   type MovieDto,
+  type MovieImageKind,
+  type MovieImageUploadResult,
   MovieStatus,
   type TmdbSearchResult,
+  type UpdateMovieRequest,
 } from '@/entities/movie/model/movie.types'
 import { api } from '@/shared/api/axios'
 import type { PaginatedResult } from '@/shared/types/common.types'
@@ -17,6 +21,20 @@ export interface MovieRecommendation {
 export interface MovieImportReceipt {
   message: string
   jobId: string
+}
+
+export class MovieUpdateError extends Error {
+  readonly completedUpdates: number
+  constructor(completedUpdates: number, cause: unknown) {
+    const detail = cause instanceof Error ? cause.message : 'Спробуйте ще раз.'
+    super(
+      completedUpdates > 0
+        ? `Частину змін уже збережено. Решту зберегти не вдалося: ${detail}`
+        : detail,
+      { cause },
+    )
+    this.completedUpdates = completedUpdates
+  }
 }
 
 const mapDtoToMovie = (dto: MovieDto & { TrailerUrl?: string }): Movie => ({
@@ -46,6 +64,32 @@ const mapDtoToMovie = (dto: MovieDto & { TrailerUrl?: string }): Movie => ({
 })
 
 export const moviesService = {
+  getDetails: async (id: string, signal?: AbortSignal): Promise<MovieDto> => {
+    const { data } = await api.get<MovieDto>(`/movies/${id}`, { signal })
+    return data
+  },
+
+  create: async (request: CreateMovieRequest): Promise<string> => {
+    const { data } = await api.post<string>('/movies', request)
+    return data
+  },
+
+  uploadImage: async (
+    file: File,
+    kind: MovieImageKind,
+    signal?: AbortSignal,
+  ): Promise<MovieImageUploadResult> => {
+    const form = new FormData()
+    form.append('file', file)
+    form.append('kind', kind)
+    const { data } = await api.post<MovieImageUploadResult>(
+      '/movies/images/upload',
+      form,
+      { headers: { 'Content-Type': undefined }, signal },
+    )
+    return data
+  },
+
   getById: async (id: string): Promise<Movie | null> => {
     try {
       const { data } = await api.get<MovieDto>(`/movies/${id}`)
@@ -124,52 +168,29 @@ export const moviesService = {
     await api.post(`/movies/${id}/restore`)
   },
 
-  update: async (id: string, movieData: Partial<Movie>): Promise<void> => {
-    const requests = []
-
-    if (movieData.title !== undefined) {
-      requests.push(
-        api.patch(`/movies/${id}/title`, {
-          title: movieData.title,
-        }),
-      )
-    }
-
-    if (
-      movieData.posterUrl !== undefined ||
-      movieData.backdropUrl !== undefined ||
-      movieData.videoUrl !== undefined
-    ) {
-      requests.push(
-        api.patch(`/movies/${id}/images`, {
-          posterUrl: movieData.posterUrl,
-          backdropUrl: movieData.backdropUrl,
-          trailerUrl: movieData.videoUrl,
-        }),
-      )
-    }
-
-    if (movieData.description !== undefined) {
-      requests.push(
-        api.patch(`/movies/${id}/details`, {
-          description: movieData.description,
-          durationMinutes: movieData.duration,
-          rating: movieData.rating,
-          releaseYear: movieData.year,
-        }),
-      )
-    }
-
-    if (movieData.status !== undefined) {
-      requests.push(
-        api.patch(`/movies/${id}/status`, movieData.status, {
+  update: async (id: string, changes: UpdateMovieRequest): Promise<void> => {
+    let completed = 0
+    try {
+      if (changes.title !== undefined) {
+        await api.patch(`/movies/${id}/title`, { title: changes.title })
+        completed++
+      }
+      if (changes.details && Object.keys(changes.details).length > 0) {
+        await api.patch(`/movies/${id}/details`, changes.details)
+        completed++
+      }
+      if (changes.images && Object.keys(changes.images).length > 0) {
+        await api.patch(`/movies/${id}/images`, changes.images)
+        completed++
+      }
+      if (changes.status !== undefined) {
+        await api.patch(`/movies/${id}/status`, changes.status, {
           headers: { 'Content-Type': 'application/json' },
-        }),
-      )
-    }
-
-    if (requests.length > 0) {
-      await Promise.all(requests)
+        })
+        completed++
+      }
+    } catch (error) {
+      throw new MovieUpdateError(completed, error)
     }
   },
 
