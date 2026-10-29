@@ -37,6 +37,7 @@ const CreateSessionModal = ({
     isDataError,
     retryData,
     isSubmitting,
+    submitError,
     submit,
   } = useCreateSession(isOpen, onSuccess, onClose)
 
@@ -48,14 +49,14 @@ const CreateSessionModal = ({
       onClose={onClose}
       titleId={titleId}
       isBusy={isSubmitting}
-      className='max-w-lg p-6 scale-100 animate-in zoom-in-95 duration-200'
+      className='font-public max-w-lg rounded-lg p-6'
     >
       <div className='flex shrink-0 items-center justify-between mb-6 border-b border-white/5 pb-4'>
         <h2
           id={titleId}
           tabIndex={-1}
           data-modal-initial-focus
-          className='type-section text-white'
+          className='type-section font-medium text-white'
         >
           Додати сеанс
         </h2>
@@ -65,7 +66,7 @@ const CreateSessionModal = ({
           disabled={isSubmitting}
           aria-label='Закрити діалог'
           variant='ghost'
-          className='min-h-0 p-0'
+          className='w-11 px-0'
         >
           <X size={24} />
         </Button>
@@ -91,7 +92,11 @@ const CreateSessionModal = ({
           }}
           className='flex min-h-0 flex-col'
         >
-          <div className='min-h-0 overflow-y-auto overscroll-contain space-y-5'>
+          <fieldset
+            disabled={isSubmitting}
+            className='min-h-0 overflow-y-auto overscroll-contain space-y-5'
+          >
+            <legend className='sr-only'>Параметри сеансу</legend>
             <div>
               <label
                 htmlFor={`${fieldId}-movie`}
@@ -193,7 +198,15 @@ const CreateSessionModal = ({
                 />
               </div>
             </div>
-          </div>
+          </fieldset>
+          {submitError && (
+            <p
+              role='alert'
+              className='mt-4 whitespace-pre-line text-sm text-[var(--color-error)]'
+            >
+              {submitError}
+            </p>
+          )}
           <div className='shrink-0 pt-4 flex justify-end gap-3 border-t border-white/5 mt-6'>
             <Button
               type='button'

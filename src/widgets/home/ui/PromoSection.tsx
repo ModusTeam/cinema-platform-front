@@ -17,7 +17,7 @@ const PromoSection = () => {
                 Cinema Club
               </div>
 
-              <h2 className='type-display text-3xl sm:text-3xl md:text-5xl text-white leading-tight'>
+              <h2 className='type-public-display text-[var(--text-main)]'>
                 Твій персональний{' '}
                 <span className='text-[var(--color-primary)]'>
                   цифровий пропуск
@@ -53,7 +53,7 @@ const PromoSection = () => {
               <div className='relative w-80 max-w-full h-52 bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl shadow-lg motion-safe:rotate-6 motion-safe:group-hover:rotate-3 transition-transform duration-200 ease-out flex flex-col justify-between p-6 select-none overflow-hidden'>
                 <div className='flex justify-between items-start relative z-10'>
                   <div>
-                    <span className='block text-xl font-black text-white tracking-widest italic'>
+                    <span className='font-sans block text-xl font-black text-white tracking-widest italic'>
                       CINEMA.
                     </span>
                     <span className='block text-[10px] font-bold text-[var(--text-muted)] tracking-[0.3em] uppercase mt-1'>

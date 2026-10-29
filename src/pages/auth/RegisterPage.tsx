@@ -1,13 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { ArrowRight, Ticket } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import * as z from 'zod'
 import { authService } from '@/features/auth/api/auth.service'
+import AuthLayout from '@/features/auth/ui/AuthLayout'
 import Button from '@/shared/ui/Button'
 import Input from '@/shared/ui/Input'
+import { useToast } from '@/shared/ui/toast/ToastContext'
 
 const registerSchema = z
   .object({
@@ -26,6 +28,7 @@ type RegisterFormData = z.infer<typeof registerSchema>
 
 const RegisterPage = () => {
   const navigate = useNavigate()
+  const toast = useToast()
   const [serverError, setServerError] = useState<string | null>(null)
 
   const {
@@ -45,11 +48,10 @@ const RegisterPage = () => {
         data.lastName,
       ),
     onSuccess: () => {
-      alert('Реєстрація успішна! Тепер увійдіть у свій акаунт.')
+      toast.success('Акаунт створено. Увійдіть зі своїм email та паролем.')
       navigate('/auth/login')
     },
     onError: (error: unknown) => {
-      console.error(error)
       setServerError(
         error instanceof Error ? error.message : 'Помилка реєстрації',
       )
@@ -64,102 +66,87 @@ const RegisterPage = () => {
   const isSubmitting = registerMutation.isPending
 
   return (
-    <div className='flex min-h-[calc(100vh-4rem)]'>
-      <div className='hidden lg:flex w-1/2 relative overflow-hidden bg-black items-center justify-center'>
-        <div className='absolute inset-0 bg-[url("https://images.unsplash.com/photo-1517604931442-710e8705296c?q=80&w=2070&auto=format&fit=crop")] bg-cover bg-center opacity-40 mix-blend-overlay'></div>
-        <div className='absolute inset-0 bg-gradient-to-l from-[var(--bg-main)] via-transparent to-[var(--bg-main)]'></div>
-        <div className='relative z-10 p-12 text-center max-w-lg animate-in slide-in-from-right-10 duration-1000'>
-          <div className='w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-8 border border-white/20 transform -rotate-3'>
-            <Ticket size={32} className='text-[var(--color-primary)]' />
+    <AuthLayout
+      title='Створити акаунт'
+      description='Зареєструйтеся, щоб мати свої квитки та замовлення під рукою.'
+      introTitle='Побачимось у кіно.'
+      introDescription='Оберіть фільм і свій сеанс. Придбані квитки зберігатимуться у вашому особистому кабінеті.'
+    >
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        noValidate
+        aria-label='Реєстрація акаунту'
+      >
+        <fieldset disabled={isSubmitting} className='min-w-0 space-y-5'>
+          <div className='grid min-w-0 gap-5 sm:grid-cols-2'>
+            <Input
+              label="Ім'я"
+              autoComplete='given-name'
+              required
+              error={errors.firstName?.message}
+              {...register('firstName')}
+            />
+            <Input
+              label='Прізвище'
+              autoComplete='family-name'
+              required
+              error={errors.lastName?.message}
+              {...register('lastName')}
+            />
           </div>
-          <h2 className='type-display text-white mb-4 sm:text-4xl'>
-            Приєднуйся до клубу
-          </h2>
-          <p className='text-lg text-[var(--text-muted)]'>
-            Створи акаунт, щоб зберігати історію переглядів, отримувати бонуси
-            та купувати квитки в один клік.
-          </p>
-        </div>
-      </div>
-
-      <div className='w-full lg:w-1/2 flex items-center justify-center p-6 bg-[var(--bg-main)] relative'>
-        <div className='absolute bottom-20 left-20 w-72 h-72 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none'></div>
-
-        <div className='w-full max-w-md space-y-8 glass-panel p-8 sm:p-10 rounded-3xl shadow-2xl relative z-10 animate-in fade-in zoom-in-95 duration-500'>
-          <div className='text-center'>
-            <h2 className='type-page text-white mb-2'>Створити акаунт</h2>
-            <p className='type-caption text-sm text-[var(--text-muted)]'>
-              Заповніть форму для реєстрації
-            </p>
-          </div>
-
+          <Input
+            label='Email'
+            type='email'
+            autoComplete='username'
+            autoCapitalize='none'
+            spellCheck={false}
+            required
+            placeholder='name@example.com'
+            error={errors.email?.message}
+            {...register('email')}
+          />
+          <Input
+            label='Пароль'
+            type='password'
+            autoComplete='new-password'
+            required
+            hint='Щонайменше 6 символів.'
+            error={errors.password?.message}
+            {...register('password')}
+          />
+          <Input
+            label='Підтвердження пароля'
+            type='password'
+            autoComplete='new-password'
+            required
+            error={errors.confirmPassword?.message}
+            {...register('confirmPassword')}
+          />
           {serverError && (
-            <div className='p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm text-center whitespace-pre-line'>
+            <p
+              role='alert'
+              className='whitespace-pre-line text-sm leading-relaxed text-[var(--color-error)]'
+            >
               {serverError}
-            </div>
+            </p>
           )}
-
-          <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
-            <div className='grid grid-cols-2 gap-4'>
-              <Input
-                label="Ім'я"
-                placeholder='Андрій'
-                error={errors.firstName?.message}
-                {...register('firstName')}
-              />
-              <Input
-                label='Прізвище'
-                placeholder='Шевченко'
-                error={errors.lastName?.message}
-                {...register('lastName')}
-              />
-            </div>
-
-            <Input
-              label='Email'
-              type='email'
-              placeholder='name@example.com'
-              error={errors.email?.message}
-              {...register('email')}
-            />
-
-            <Input
-              label='Пароль'
-              type='password'
-              placeholder='••••••••'
-              error={errors.password?.message}
-              {...register('password')}
-            />
-
-            <Input
-              label='Підтвердження'
-              type='password'
-              placeholder='••••••••'
-              error={errors.confirmPassword?.message}
-              {...register('confirmPassword')}
-            />
-
-            <Button
-              type='submit'
-              isLoading={isSubmitting}
-              className='w-full py-3.5 mt-4'
-            >
-              Створити акаунт <ArrowRight size={16} aria-hidden='true' />
-            </Button>
-          </form>
-
-          <p className='text-center type-caption text-sm text-[var(--text-muted)]'>
-            Вже є акаунт?{' '}
-            <Link
-              to='/auth/login'
-              className='font-bold text-white hover:text-[var(--color-primary)] transition-colors'
-            >
-              Увійти
-            </Link>
-          </p>
-        </div>
-      </div>
-    </div>
+          <Button
+            type='submit'
+            isLoading={isSubmitting}
+            className='w-full py-3.5'
+          >
+            {isSubmitting ? 'Створюємо акаунт…' : 'Створити акаунт'}
+            <ArrowRight size={18} className='shrink-0' aria-hidden='true' />
+          </Button>
+        </fieldset>
+      </form>
+      <p className='auth-alternate'>
+        Вже є акаунт?
+        <Link to='/auth/login' className='auth-link'>
+          Увійти
+        </Link>
+      </p>
+    </AuthLayout>
   )
 }
 

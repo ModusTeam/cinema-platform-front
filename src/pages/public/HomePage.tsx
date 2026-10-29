@@ -4,10 +4,13 @@ import { Link } from 'react-router-dom'
 import { MovieStatus } from '@/entities/movie/model/movie.types'
 import HeroSection from '@/features/movies/ui/HeroSection'
 import MovieCard from '@/features/movies/ui/MovieCard'
+import { buttonStyles } from '@/shared/ui/Button'
 import EmptyState from '@/shared/ui/EmptyState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import UnavailableState from '@/shared/ui/UnavailableState'
 import { useHomeMovies } from '@/widgets/home/model/useHomeMovies'
+import HomeScroll from '@/widgets/home/ui/HomeScroll'
+import ProgrammeHeading from '@/widgets/home/ui/ProgrammeHeading'
 import PromoSection from '@/widgets/home/ui/PromoSection'
 
 const HomePage = () => {
@@ -30,29 +33,33 @@ const HomePage = () => {
   if (isLoading) {
     return (
       <div className='flex h-screen w-full items-center justify-center bg-[var(--bg-main)]'>
-        <GridLoader className='h-12 w-12 animate-spin text-[var(--color-primary)]' />
+        <GridLoader className='h-12 w-12 animate-spin motion-reduce:animate-none text-[var(--color-primary)]' />
       </div>
     )
   }
 
   return (
-    <div className='min-h-screen bg-[var(--bg-main)] font-sans pb-20'>
+    <div className='font-public min-h-screen bg-[var(--bg-main)] pb-20'>
+      <HomeScroll />
       <HeroSection />
 
-      <div className='container relative z-10 mx-auto px-4 pt-10'>
-        <div className='flex flex-col md:flex-row justify-between items-end mb-8 gap-6'>
-          <h2 className='text-3xl font-black text-white pl-4 border-l-4 border-[var(--color-primary)] leading-none uppercase tracking-wide'>
-            Зараз у кіно
-          </h2>
+      <section
+        id='home-programme'
+        aria-label='Програма кінотеатру'
+        tabIndex={-1}
+        className='container relative z-10 mx-auto scroll-mt-28 px-4 pt-10'
+      >
+        <div className='flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-6'>
+          <ProgrammeHeading />
 
-          <div className='flex flex-wrap gap-2 p-1.5 bg-[var(--bg-card)]/80 backdrop-blur-md rounded-xl border border-white/5 shadow-lg'>
+          <div className='flex flex-wrap gap-2'>
             {filters.map(f => (
               <button
                 type='button'
                 key={f.id}
                 onClick={() => setActiveFilter(f.id)}
                 aria-pressed={activeFilter === f.id}
-                className='selection-control px-5 py-2 rounded-lg text-sm font-bold'
+                className='selection-control px-4 py-2 rounded-lg text-sm font-medium'
               >
                 {f.label}
               </button>
@@ -94,8 +101,8 @@ const HomePage = () => {
 
         <div className='mt-12 flex justify-center'>
           <Link
-            to='/sessions'
-            className='group flex items-center gap-2 px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-white font-bold transition-colors duration-150'
+            to='/sessions?mode=schedule'
+            className={`${buttonStyles('secondary')} group px-6 py-4`}
           >
             Дивитись повний розклад
             <ArrowRight
@@ -104,7 +111,7 @@ const HomePage = () => {
             />
           </Link>
         </div>
-      </div>
+      </section>
 
       <PromoSection />
     </div>

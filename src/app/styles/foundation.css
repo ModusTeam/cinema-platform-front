@@ -1,4 +1,3 @@
-/* Opt-in roles: local utilities may retain intentional cinematic proportions. */
 @utility type-display {
   @apply text-4xl font-black leading-tight tracking-tight sm:text-5xl;
 }
@@ -18,6 +17,27 @@
   @apply text-xs font-medium leading-normal;
 }
 
+@utility font-public {
+  font-family: var(--font-public);
+}
+@utility type-public-display {
+  font-family: var(--font-public-display);
+  @apply text-4xl font-semibold leading-[1.12] tracking-tight sm:text-5xl lg:text-6xl;
+  overflow-wrap: anywhere;
+}
+@utility type-public-section {
+  font-family: var(--font-public-display);
+  @apply text-2xl font-semibold leading-snug sm:text-3xl;
+}
+@utility type-public-title {
+  font-family: var(--font-public-display);
+  @apply text-[22px] font-semibold leading-snug;
+}
+@utility rating-badge {
+  @apply inline-flex w-fit items-center gap-1.5 rounded-md bg-black/70 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-md;
+  font-variant-numeric: tabular-nums;
+}
+
 @layer components {
   .action {
     display: inline-flex;
@@ -26,10 +46,10 @@
     justify-content: center;
     gap: 0.5rem;
     border: 1px solid transparent;
-    border-radius: 0.75rem;
+    border-radius: var(--radius-control);
     padding: 0.625rem 1.25rem;
     font-size: 0.875rem;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.5;
     text-align: center;
     color: var(--text-on-action);
@@ -46,7 +66,7 @@
     --action-fill: var(--action-secondary);
     --action-hover: var(--action-secondary-hover);
     --action-active: var(--action-secondary-active);
-    border-color: var(--border-default);
+    border-color: var(--border-field);
   }
   .action-destructive {
     --action-fill: var(--action-destructive);
@@ -83,7 +103,10 @@
   .field:disabled,
   .selection-control:disabled {
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 1;
+    color: var(--text-faint);
+    background-color: var(--surface-muted);
+    border-color: var(--border-default);
   }
 
   .field {
@@ -92,9 +115,9 @@
     min-width: 0;
     height: 3rem;
     border: 1px solid var(--border-field);
-    border-radius: 0.75rem;
+    border-radius: var(--radius-control);
     padding: 0.5rem 1rem;
-    background: var(--bg-main);
+    background: var(--surface-muted);
     color: var(--text-main);
     color-scheme: dark;
     font-size: 1rem;
@@ -144,7 +167,9 @@
      Available controls are neutral; disabled uses native disabled semantics.
      Errors and information retain their contextual status colors and labels. */
   .selection-control {
-    border: 1px solid var(--border-default);
+    min-height: 2.75rem;
+    border: 1px solid var(--border-field);
+    border-radius: var(--radius-control);
     color: var(--text-muted);
     background-color: var(--bg-card);
     transition: background-color 150ms, border-color 150ms;
@@ -153,7 +178,7 @@
     color: var(--text-main);
     background-color: var(--bg-hover);
   }
-  .selection-control[aria-pressed='true'] {
+  .selection-control[aria-pressed='true']:not(:disabled) {
     color: var(--text-main);
     border-color: var(--selection-border);
     background-color: var(--selection-bg);

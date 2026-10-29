@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { movieCopy } from '@/entities/movie/config/movie.copy'
 import { getMovieGenres } from '@/entities/movie/lib/movieGenres'
 import { type Movie, MovieStatus } from '@/entities/movie/model/movie.types'
-import { DEFAULT_SESSION_PRICE } from '@/entities/session/config/session.constants'
 import type { Session } from '@/entities/session/model/session.types'
 
 interface MovieCardProps {
@@ -28,7 +27,7 @@ const MovieCard = ({ movie, sessions, technologies }: MovieCardProps) => {
     : movieCopy.card.missingGenre
 
   return (
-    <div className='group relative bg-[var(--bg-card)] rounded-2xl overflow-hidden border border-white/5 transition-colors duration-200 motion-reduce:transition-none hover:border-[var(--color-primary)]/30 focus-within:border-[var(--color-primary)]/30 h-full flex flex-col'>
+    <div className='font-public group relative bg-[var(--bg-card)] rounded-xl overflow-hidden h-full flex flex-col'>
       <div className='relative aspect-[2/3] overflow-hidden bg-zinc-900'>
         <img
           src={movie.posterUrl || movie.backdropUrl}
@@ -40,22 +39,19 @@ const MovieCard = ({ movie, sessions, technologies }: MovieCardProps) => {
         <div className='hover-actions absolute inset-0 bg-black/60 transition-opacity duration-200 motion-reduce:transition-none flex flex-col items-center justify-center backdrop-blur-[2px] gap-3'>
           <Link
             to={`/movies/${movie.id}`}
-            className='bg-white/10 border border-white/20 text-white font-bold py-2.5 px-6 rounded-full transition-colors duration-200 motion-reduce:transition-none hover:bg-white hover:text-black'
+            className='inline-flex min-h-11 items-center bg-black/60 border border-white/60 text-white font-semibold py-2.5 px-6 rounded-lg transition-colors duration-200 motion-reduce:transition-none hover:bg-white hover:text-black'
           >
             {movieCopy.card.details}
           </Link>
         </div>
 
         <div className='absolute top-3 left-3 flex flex-col gap-1.5'>
-          <div className='bg-black/60 backdrop-blur-md text-white text-xs font-bold px-2.5 py-1 rounded-lg border border-white/10 flex items-center gap-1 shadow-lg w-fit'>
-            <Star
-              size={12}
-              className='text-[var(--color-primary)] fill-[var(--color-primary)]'
-            />
+          <div className='rating-badge'>
+            <Star size={12} className='fill-current' aria-hidden='true' />
             {movie.rating}
           </div>
           {isComingSoon && (
-            <div className='bg-yellow-500 text-black text-[10px] font-black uppercase px-2 py-1 rounded-lg shadow-lg w-fit'>
+            <div className='bg-[var(--color-warning)] text-black text-xs font-semibold px-2 py-1 rounded-md w-fit'>
               {movieCopy.card.comingSoon}
             </div>
           )}
@@ -63,10 +59,13 @@ const MovieCard = ({ movie, sessions, technologies }: MovieCardProps) => {
       </div>
 
       <div className='p-4 flex flex-col flex-grow relative z-10'>
-        <h3 className='text-lg font-bold text-white mb-1 leading-snug group-hover:text-[var(--color-primary)] transition-colors duration-300 line-clamp-2'>
+        <h3
+          className='type-public-title text-[var(--text-main)] mb-1 line-clamp-2'
+          title={movie.title}
+        >
           {movie.title}
         </h3>
-        <p className='text-xs font-medium text-[var(--text-muted)] mb-4 line-clamp-1'>
+        <p className='text-sm text-[var(--text-muted)] mb-4 line-clamp-1'>
           {genresString}
         </p>
 
@@ -79,17 +78,19 @@ const MovieCard = ({ movie, sessions, technologies }: MovieCardProps) => {
                     key={st.id}
                     to={`/booking/${movie.id}`}
                     state={{ sessionId: st.id }}
-                    className='bg-white/5 hover:bg-[var(--color-primary)] hover:text-white border border-white/10 hover:border-[var(--color-primary)] rounded-lg px-2.5 py-1.5 text-center transition-colors duration-200 motion-reduce:transition-none flex-grow sm:flex-grow-0 min-w-[55px] group/btn'
+                    className='selection-control inline-flex min-h-12 flex-col items-center justify-center rounded-lg px-2.5 py-1.5 text-center flex-grow sm:flex-grow-0 min-w-[64px] tabular-nums'
                   >
-                    <span className='block text-sm font-bold leading-none mb-0.5'>
+                    <span className='block text-sm text-[var(--text-main)] font-semibold leading-none mb-1'>
                       {new Date(st.startTime).toLocaleTimeString([], {
                         hour: '2-digit',
                         minute: '2-digit',
                       })}
                     </span>
-                    <span className='block text-[9px] opacity-60 font-medium group-hover/btn:opacity-100'>
-                      {st.priceBase || DEFAULT_SESSION_PRICE} ₴
-                    </span>
+                    {st.priceBase != null && (
+                      <span className='block text-xs text-[var(--text-muted)]'>
+                        {st.priceBase} ₴
+                      </span>
+                    )}
                   </Link>
                 ))
               ) : (
@@ -105,11 +106,11 @@ const MovieCard = ({ movie, sessions, technologies }: MovieCardProps) => {
           )}
 
           {technologies.length > 0 && (
-            <div className='flex gap-1.5 overflow-x-auto pb-1 no-scrollbar pt-2 border-t border-white/5'>
+            <div className='flex flex-wrap gap-x-3 gap-y-1 pt-1'>
               {technologies.map(t => (
                 <span
                   key={t}
-                  className='text-[9px] font-bold uppercase border border-white/10 text-[var(--text-muted)] px-1.5 py-0.5 rounded bg-white/5 whitespace-nowrap'
+                  className='text-xs font-medium text-[var(--text-muted)] break-words min-w-0'
                 >
                   {t}
                 </span>

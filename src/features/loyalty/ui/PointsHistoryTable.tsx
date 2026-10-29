@@ -1,20 +1,13 @@
+import { History } from 'lucide-react'
+import Button from '@/shared/ui/Button'
 import EmptyState from '@/shared/ui/EmptyState'
 import UnavailableState from '@/shared/ui/UnavailableState'
 import {
-  formatTransactionInfo,
   formatSignedPoints,
+  formatTransactionInfo,
   getTransactionPointsTone,
-} from '@/features/loyalty/lib/loyaltyTransactionFormatters'
-import type { LoyaltyTransaction } from '@/features/loyalty/model/loyalty.types'
-import { cn } from '@/shared/lib/utils'
-import { History } from 'lucide-react'
-
-const LOADING_ROWS = [
-  'history-loading-1',
-  'history-loading-2',
-  'history-loading-3',
-  'history-loading-4',
-]
+} from '../lib/loyaltyTransactionFormatters'
+import type { LoyaltyTransaction } from '../model/loyalty.types'
 
 interface PointsHistoryTableProps {
   transactions: LoyaltyTransaction[]
@@ -26,12 +19,6 @@ interface PointsHistoryTableProps {
   onRetry?: () => void
 }
 
-const pointsToneClassName = {
-  positive: 'text-emerald-400/90',
-  negative: 'text-rose-400/85',
-  neutral: 'text-neutral-300',
-}
-
 const PointsHistoryTable = ({
   transactions,
   isLoading,
@@ -41,92 +28,90 @@ const PointsHistoryTable = ({
   onLoadMore,
   onRetry,
 }: PointsHistoryTableProps) => {
-  if (isLoading) {
+  if (isLoading)
     return (
-      <div className='flex flex-col'>
-        {LOADING_ROWS.map(row => (
-          <div
-            key={row}
-            className='flex h-20 items-center border-b border-white/5'
-          >
-            <div className='h-4 w-1/3 rounded bg-white/5 motion-safe:animate-pulse' />
-          </div>
-        ))}
-      </div>
+      <output className='block border-y border-[var(--border-default)] py-16 text-[var(--text-muted)]'>
+        Завантажуємо історію балів…
+      </output>
     )
-  }
-
-  if (error) {
-    return <UnavailableState title='Історія тимчасово недоступна' onRetry={onRetry} className='py-12' />
-  }
-
-  if (transactions.length === 0) {
+  if (error && transactions.length === 0)
+    return (
+      <UnavailableState
+        className='account-state'
+        title='Історія тимчасово недоступна'
+        onRetry={onRetry}
+      />
+    )
+  if (transactions.length === 0)
     return (
       <EmptyState
+        className='account-state'
         icon={<History className='h-12 w-12' />}
         title='Історія балів порожня'
         description='Нарахування, списання та бонуси зʼявляться тут після перших операцій у програмі лояльності.'
-        className='py-12'
       />
     )
-  }
-
   return (
-    <div className='flex flex-col gap-8'>
-      <div className='flex flex-col'>
+    <div>
+      <div className='mb-1 flex justify-between border-b border-[var(--border-default)] pb-4 text-xs text-[var(--text-muted)]'>
+        <span>Операція / дата</span>
+        <span>Зміна / баланс</span>
+      </div>
+      <ol aria-label='Операції з балами'>
         {transactions.map(transaction => {
-          const transactionInfo = formatTransactionInfo(transaction)
-          const pointsTone = getTransactionPointsTone(transaction)
-
+          const info = formatTransactionInfo(transaction)
+          const tone = getTransactionPointsTone(transaction)
           return (
-            <div
+            <li
               key={transaction.id}
-              className='group grid gap-4 border-b border-white/5 py-6 transition-colors hover:border-white/10 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-8'
+              className='grid grid-cols-[minmax(0,1fr)_auto] gap-5 border-b border-[var(--border-default)] py-6 sm:gap-10'
             >
               <div className='min-w-0'>
-                <span className='text-base font-medium text-white'>
-                  {transactionInfo.title}
-                </span>
-                <p className='mt-1.5 text-sm leading-relaxed text-neutral-500'>
-                  {transactionInfo.subtitle}
+                <h2 className='type-public-title'>{info.title}</h2>
+                <p className='mt-2 text-sm leading-relaxed text-[var(--text-muted)]'>
+                  {info.subtitle}
                 </p>
               </div>
-
-              <div className='sm:text-right'>
-                <div className='flex items-baseline gap-1.5 sm:justify-end'>
-                  <span
-                    className={cn(
-                      'text-lg font-medium',
-                      pointsToneClassName[pointsTone],
-                    )}
-                  >
-                    {formatSignedPoints(transaction)}
-                  </span>
-                  <span className='text-sm text-neutral-500'>балів</span>
-                </div>
-                <div className='mt-1 text-xs text-neutral-600'>
-                  Баланс {transaction.balanceAfter}
-                </div>
+              <div className='text-right tabular-nums'>
+                <p className='text-xl font-medium'>
+                  {formatSignedPoints(transaction)}
+                  <span className='sr-only'> балів</span>
+                </p>
+                <p className='mt-1 text-xs text-[var(--text-muted)]'>
+                  {tone === 'positive'
+                    ? 'Нарахування'
+                    : tone === 'negative'
+                      ? 'Списання'
+                      : 'Без змін'}
+                </p>
+                <p className='mt-3 text-xs text-[var(--text-muted)]'>
+                  Баланс: {transaction.balanceAfter.toLocaleString('uk-UA')}
+                </p>
               </div>
-            </div>
+            </li>
           )
         })}
-      </div>
-
-      {hasMore && (
-        <div className='flex justify-center pt-4'>
-          <button
-            type='button'
+      </ol>
+      {error && (
+        <UnavailableState
+          className='account-state'
+          title='Не вдалося оновити історію'
+          description='Завантажені операції залишилися на сторінці. Спробуйте ще раз.'
+          onRetry={onRetry}
+        />
+      )}
+      {hasMore && !error && (
+        <div className='mt-8 flex justify-center'>
+          <Button
+            variant='secondary'
             onClick={onLoadMore}
-            disabled={isLoadingMore}
-            className='group flex min-h-11 items-center gap-2 rounded-lg border border-white/10 px-5 text-sm text-neutral-300 transition-colors hover:border-white/20 hover:text-white disabled:cursor-not-allowed disabled:opacity-50'
+            isLoading={isLoadingMore}
           >
-            {isLoadingMore ? 'Завантаження...' : 'Завантажити ще'}
-          </button>
+            Завантажити ще
+          </Button>
         </div>
       )}
     </div>
   )
 }
-
 export default PointsHistoryTable

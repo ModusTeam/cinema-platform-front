@@ -1,5 +1,6 @@
-import { Clock, Edit, Film, MonitorPlay, Trash2 } from 'lucide-react'
+import { Edit, Trash2 } from 'lucide-react'
 import { SessionStatus } from '@/entities/session/model/session.types'
+import Button from '@/shared/ui/Button'
 import type { SessionDto } from '../api/admin-sessions.service'
 import { adminSessionsCopy } from '../config/adminSessions.copy'
 
@@ -13,82 +14,62 @@ const SessionCard = ({ session, onReschedule, onDelete }: SessionCardProps) => {
   const start = new Date(session.startTime)
   const end = new Date(session.endTime)
   const isCancelled = session.status === SessionStatus.Cancelled
-
+  const formatTime = (date: Date) =>
+    date.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })
   return (
-    <div
-      className={`group relative bg-[var(--bg-card)] border rounded-xl p-5 transition-all hover:-translate-y-1 hover:shadow-xl ${isCancelled ? 'border-[var(--color-error)]/30 opacity-70' : 'border-white/5 hover:border-[var(--color-primary)]/30'}`}
-    >
-      {isCancelled && (
-        <div className='absolute top-0 right-0 bg-[var(--color-error)]/10 text-[var(--color-error)] text-[10px] font-bold px-2 py-1 rounded-bl-xl border-b border-l border-[var(--color-error)]/20 uppercase tracking-wider'>
-          {adminSessionsCopy.cancelled}
-        </div>
-      )}
-      <div className='flex gap-4'>
-        <div className='h-20 w-14 bg-[var(--bg-hover)] rounded-lg flex items-center justify-center shrink-0 border border-white/5 shadow-inner'>
-          <Film size={20} className='text-[var(--text-muted)]' />
-        </div>
-        <div className='flex-1 min-w-0'>
-          <h3
-            className='font-bold text-white text-lg truncate pr-6'
-            title={session.movieTitle}
-          >
-            {session.movieTitle}
-          </h3>
-          <div className='flex items-center gap-2 mt-2'>
-            <div className='bg-white/5 border border-white/5 px-2 py-1 rounded text-white font-mono text-sm font-bold flex items-center gap-1.5'>
-              <Clock size={12} className='text-[var(--color-primary)]' />
-              {start.toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
-            </div>
-            <span className='text-[var(--text-muted)] text-xs font-mono'>
-              →{' '}
-              {end.toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
-            </span>
-          </div>
-          <div className='flex flex-wrap items-center gap-3 mt-3 text-sm text-[var(--text-muted)]'>
-            <div
-              className='flex items-center gap-1.5'
-              title={adminSessionsCopy.hall}
-            >
-              <MonitorPlay size={14} />
-              <span className='truncate max-w-[100px]'>{session.hallName}</span>
-            </div>
-            <div className='h-3 w-px bg-white/10'></div>
-            <div
-              className='text-xs bg-white/5 px-2 py-0.5 rounded-full border border-white/5 truncate max-w-[120px]'
-              title={adminSessionsCopy.pricing}
-            >
-              {session.pricingName}
-            </div>
-          </div>
-        </div>
+    <article className='grid grid-cols-[6.5rem_minmax(0,1fr)_auto] items-center gap-4 border-b border-[var(--border-default)] py-4 last:border-0 xl:grid-cols-[7rem_minmax(0,1fr)_minmax(8rem,0.6fr)_auto]'>
+      <div className='tabular-nums'>
+        <time
+          dateTime={session.startTime}
+          className='text-2xl font-medium tracking-tight'
+        >
+          {formatTime(start)}
+        </time>
+        <p className='mt-1 text-xs text-[var(--text-muted)]'>
+          до <time dateTime={session.endTime}>{formatTime(end)}</time>
+        </p>
       </div>
-      {!isCancelled && (
-        <div className='hover-actions absolute top-4 right-4 flex flex-col gap-2 transition-opacity translate-x-2 group-hover:translate-x-0 group-focus-within:translate-x-0 duration-200'>
-          <button
-            type='button'
+      <div className='min-w-0'>
+        <h3 className='text-base font-medium leading-snug'>
+          {session.movieTitle}
+        </h3>
+        <p className='mt-1 text-sm leading-relaxed text-[var(--text-muted)]'>
+          {session.hallName}
+          <span className='xl:hidden'> · {session.pricingName}</span>
+        </p>
+        {isCancelled && (
+          <p className='mt-1 text-xs text-[var(--color-error)]'>
+            {adminSessionsCopy.cancelled}
+          </p>
+        )}
+      </div>
+      <p className='hidden text-sm text-[var(--text-muted)] xl:block'>
+        {session.pricingName}
+      </p>
+      {!isCancelled ? (
+        <div className='flex items-center gap-1'>
+          <Button
+            variant='ghost'
             onClick={() => onReschedule(session.id, session.startTime)}
             aria-label={`${adminSessionsCopy.rescheduleTitle}: ${session.movieTitle}`}
-            className='p-2 bg-[var(--bg-hover)] rounded-lg text-[var(--text-muted)] hover:text-white hover:bg-blue-600 shadow-lg transition-colors'
+            className='px-3'
           >
-            <Edit size={16} />
-          </button>
-          <button
-            type='button'
+            <Edit size={16} aria-hidden='true' />
+            <span className='hidden min-[1200px]:inline'>Перенести</span>
+          </Button>
+          <Button
+            variant='ghost'
             onClick={() => onDelete(session.id)}
             aria-label={`${adminSessionsCopy.cancelTitle}: ${session.movieTitle}`}
-            className='p-2 bg-[var(--bg-hover)] rounded-lg text-[var(--text-muted)] hover:text-white hover:bg-[var(--color-error)] shadow-lg transition-colors'
+            className='w-11 px-0 text-[var(--color-error)]'
           >
-            <Trash2 size={16} />
-          </button>
+            <Trash2 size={16} aria-hidden='true' />
+          </Button>
         </div>
+      ) : (
+        <span className='text-xs text-[var(--text-faint)]'>Без дій</span>
       )}
-    </div>
+    </article>
   )
 }
 

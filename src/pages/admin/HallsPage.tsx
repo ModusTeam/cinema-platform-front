@@ -13,6 +13,7 @@ import type {
 } from '@/features/admin/model/hallBuilder.types'
 import { useHallEditor } from '@/features/admin/model/useHallEditor'
 import { useHalls } from '@/features/admin/model/useHalls'
+import { AdminPageHeader } from '@/features/admin/ui/AdminPageHeader'
 import HallBuilder from '@/features/admin/ui/HallBuilder'
 import Button from '@/shared/ui/Button'
 import EmptyState from '@/shared/ui/EmptyState'
@@ -37,7 +38,6 @@ const HallsPage = () => {
     initialHall,
     layoutLocked,
     isLoadingData: isLoadingEditData,
-    isProcessing: isProcessingSeats,
     loadHallSeats,
     saveHall,
     resetEditor,
@@ -92,8 +92,7 @@ const HallsPage = () => {
       )
       if (saveScope === 'all') handleBackToList()
     } else {
-      toast.error(`Помилка: ${result.error}`)
-      return
+      throw new Error(result.error || 'Не вдалося зберегти зал')
     }
     setSaveModalOpen(false)
     setTempSaveData(null)
@@ -109,7 +108,7 @@ const HallsPage = () => {
     if (success) {
       toast.success('Зал видалено')
     } else {
-      toast.error('Не вдалося видалити зал.')
+      throw new Error('Не вдалося видалити зал. Спробуйте ще раз.')
     }
     setDeleteId(null)
   }
@@ -123,14 +122,10 @@ const HallsPage = () => {
 
   return (
     <div className='space-y-8'>
-      <div className='flex flex-wrap items-center justify-between gap-4'>
-        <div>
-          <h1 className='type-page text-white'>Управління залами</h1>
-          <p className='text-[var(--text-muted)] mt-1'>
-            Створюйте схеми залів та керуйте місцями
-          </p>
-        </div>
-
+      <AdminPageHeader
+        title='Управління залами'
+        description='Створюйте схеми залів та керуйте місцями'
+      >
         <Button
           type='button'
           onClick={mode === 'list' ? handleCreateClick : handleBackToList}
@@ -145,18 +140,7 @@ const HallsPage = () => {
             </>
           )}
         </Button>
-      </div>
-
-      {isProcessingSeats && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm'>
-          <div className='text-center'>
-            <GridLoader className='h-12 w-12 animate-spin text-[var(--color-primary)] mx-auto mb-4' />
-            <p className='text-white font-medium'>
-              Застосування конфігурації місць...
-            </p>
-          </div>
-        </div>
-      )}
+      </AdminPageHeader>
 
       {mode !== 'list' ? (
         isLoadingEditData ? (
@@ -200,11 +184,11 @@ const HallsPage = () => {
             />
           )}
 
-          <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+          <div className='grid gap-6 md:grid-cols-2 xl:grid-cols-3'>
             {halls.map(hall => (
               <div
                 key={hall.id}
-                className='group relative overflow-hidden rounded-xl border border-white/5 bg-[var(--bg-card)] transition-all hover:border-[var(--color-primary)]/30 hover:shadow-lg'
+                className='group relative min-w-0 overflow-hidden rounded-lg border border-[var(--border-default)] bg-[var(--surface-muted)]'
               >
                 <div className='p-6'>
                   <div className='flex items-start justify-between mb-6'>
@@ -254,7 +238,7 @@ const HallsPage = () => {
         onClose={() => setDeleteId(null)}
         onConfirm={onConfirmDelete}
         title='Видалити зал?'
-        message='Ви впевнені, що хочете видалити цей зал? Це призведе до видалення всіх місць та конфігурації. Дія незворотна.'
+        message={`Зал «${halls.find(hall => hall.id === deleteId)?.name ?? ''}» та його конфігурацію буде видалено. Дія незворотна.`}
         isDestructive
         confirmText='Видалити'
       />

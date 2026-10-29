@@ -1,16 +1,53 @@
-import { Calendar, Clock, Info, Pause, Play, Star } from 'lucide-react'
+import {
+  ArrowDown,
+  Calendar,
+  Clock,
+  Info,
+  Pause,
+  Play,
+  Star,
+} from 'lucide-react'
+import { AnimatePresence, motion, useScroll, useTransform } from 'motion/react'
+import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useHeroSlider } from '@/features/movies/model/useHeroSlider'
 import Button, { buttonStyles } from '@/shared/ui/Button'
 import { GridLoader } from '@/shared/ui/GridLoader'
+import TicketAction from '@/shared/ui/TicketAction'
 import { heroCopy } from '../config/hero.copy'
+import './hero-section.css'
 
 const HeroSection = () => {
+  const slider = useHeroSlider()
+  if (slider.isLoading) {
+    return (
+      <div className='cinema-hero cinema-hero-loading flex w-full items-center justify-center bg-[var(--bg-main)]'>
+        <GridLoader className='h-12 w-12 animate-spin motion-reduce:animate-none text-[var(--color-primary)]' />
+      </div>
+    )
+  }
+  if (slider.movies.length === 0) {
+    return <div className='h-24 md:h-28' aria-hidden='true' />
+  }
+  return <FeaturedHero slider={slider} />
+}
+
+const FeaturedHero = ({
+  slider,
+}: {
+  slider: ReturnType<typeof useHeroSlider>
+}) => {
+  const heroRef = useRef<HTMLElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  })
+  const imageY = useTransform(scrollYProgress, [0, 1], [0, 64])
+  const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.045])
   const {
     movies,
     activeMovie,
     currentIndex,
-    isLoading,
     reducedMotion,
     isPaused,
     isAutoplaying,
@@ -21,22 +58,11 @@ const HeroSection = () => {
     handleManualSelect,
     handleBuyTicket,
     AUTO_PLAY_INTERVAL,
-  } = useHeroSlider()
-
-  if (isLoading) {
-    return (
-      <div className='flex h-[85vh] w-full items-center justify-center bg-[var(--bg-main)]'>
-        <GridLoader className='h-12 w-12 animate-spin text-[var(--color-primary)]' />
-      </div>
-    )
-  }
-
-  if (movies.length === 0) {
-    return <div className='h-24 md:h-28' aria-hidden='true' />
-  }
+  } = slider
 
   return (
     <section
+      ref={heroRef}
       aria-label={heroCopy.label}
       aria-roledescription={heroCopy.carousel}
       onMouseEnter={() => setIsHovered(true)}
@@ -46,69 +72,103 @@ const HeroSection = () => {
         if (!event.currentTarget.contains(event.relatedTarget))
           setHasFocus(false)
       }}
-      className='relative min-h-[85svh] w-full overflow-hidden bg-black'
+      className='cinema-hero relative w-full overflow-hidden bg-[var(--bg-main)]'
     >
       <div className='absolute inset-0'>
-        <img
-          key={activeMovie.id}
-          src={activeMovie.backdropUrl}
-          alt={activeMovie.title}
-          className='hero-image h-full w-full object-cover object-center'
-        />
+        <motion.div
+          className='cinema-hero-depth absolute inset-0'
+          style={reducedMotion ? undefined : { y: imageY, scale: imageScale }}
+        >
+          <AnimatePresence initial={false}>
+            <motion.img
+              key={activeMovie.id}
+              src={activeMovie.backdropUrl}
+              alt=''
+              initial={{ opacity: reducedMotion ? 1 : 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{
+                duration: reducedMotion ? 0 : 0.45,
+                ease: 'easeOut',
+              }}
+              fetchPriority='high'
+              loading='eager'
+              decoding='async'
+              className='cinema-hero-image h-full w-full object-cover object-center'
+            />
+          </AnimatePresence>
+        </motion.div>
 
         <div className='absolute inset-0 bg-gradient-to-t from-[var(--bg-main)] via-[var(--bg-main)]/50 to-transparent' />
         <div className='absolute inset-0 bg-gradient-to-r from-[var(--bg-main)]/90 via-[var(--bg-main)]/20 to-transparent' />
         <div className='hidden lg:block absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-[var(--bg-main)]/90 to-transparent pointer-events-none' />
       </div>
 
-      <div className='relative container mx-auto flex min-h-[85svh] items-end px-4 pb-20 pt-28'>
-        <div className='grid w-full lg:grid-cols-[1fr_350px] gap-12'>
-          <div className='max-w-3xl space-y-6'>
-            <div className='flex flex-wrap items-center gap-3 text-xs font-bold uppercase tracking-wider text-zinc-300'>
-              <span className='bg-[var(--color-primary)] text-white px-2 py-1 rounded shadow-[0_0_15px_rgba(239,68,68,0.4)]'>
+      <div className='cinema-hero-content relative container mx-auto flex items-end px-4'>
+        <div className='grid w-full lg:grid-cols-[minmax(0,1fr)_280px] xl:grid-cols-[minmax(0,1fr)_300px] gap-10 xl:gap-16'>
+          <div className='min-w-0 max-w-4xl space-y-6'>
+            <div className='flex flex-wrap items-center gap-3 text-xs font-medium text-[var(--text-main)]'>
+              <span className='bg-[var(--surface-elevated)] text-[var(--text-main)] px-2.5 py-1 rounded-md'>
                 Прем'єра
               </span>
-              <span className='flex items-center gap-1 bg-white/10 backdrop-blur-md px-2 py-1 rounded border border-white/10'>
-                <Star size={12} className='text-yellow-500 fill-yellow-500' />{' '}
+              <span className='rating-badge'>
+                <Star size={12} className='fill-current' aria-hidden='true' />{' '}
                 {activeMovie.rating}
               </span>
-              <span className='flex items-center gap-1 bg-white/10 backdrop-blur-md px-2 py-1 rounded border border-white/10'>
+              <span className='flex items-center gap-1.5'>
                 <Calendar size={12} /> {activeMovie.year}
               </span>
-              <span className='flex items-center gap-1 bg-white/10 backdrop-blur-md px-2 py-1 rounded border border-white/10'>
+              <span className='flex items-center gap-1.5'>
                 <Clock size={12} /> {activeMovie.duration} хв
               </span>
             </div>
 
-            <h1 className='text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-tight drop-shadow-2xl'>
+            <h1
+              key={`title-${activeMovie.id}`}
+              className='cinema-hero-title cinema-hero-copy text-[var(--text-main)]'
+            >
               {activeMovie.title}
             </h1>
 
-            <p className='line-clamp-3 text-lg text-zinc-300 sm:text-xl max-w-2xl drop-shadow-md'>
+            <p
+              key={`description-${activeMovie.id}`}
+              className='cinema-hero-copy line-clamp-3 text-base leading-relaxed text-[var(--text-muted)] sm:text-lg max-w-xl'
+            >
               {activeMovie.description}
             </p>
 
-            <div className='flex flex-wrap gap-4 pt-4'>
-              <Button
-                onClick={handleBuyTicket}
-                className='rounded-full px-8 py-4 text-base'
-              >
-                <Play className='size-5 fill-current' />
+            <div className='flex flex-wrap items-center gap-3 pt-2'>
+              <TicketAction onClick={handleBuyTicket}>
                 Купити квиток
-              </Button>
+              </TicketAction>
 
               <Link
                 to={`/movies/${activeMovie.id}`}
-                className={`${buttonStyles('secondary')} rounded-full px-8 py-4 text-base`}
+                className={`${buttonStyles('secondary')} min-h-14 px-6 py-3.5 text-base`}
               >
                 <Info className='size-5' />
                 Детальніше
               </Link>
             </div>
+            <div className='flex flex-wrap items-center gap-x-6 gap-y-2 pt-2 text-sm'>
+              <a
+                href='#home-programme'
+                className='inline-flex min-h-11 items-center gap-2 text-[var(--text-muted)] hover:text-[var(--text-main)]'
+              >
+                <ArrowDown size={16} aria-hidden='true' />
+                {heroCopy.programme}
+              </a>
+              <Link
+                to='/sessions?mode=schedule'
+                className='inline-flex min-h-11 items-center text-[var(--text-muted)] hover:text-[var(--text-main)]'
+              >
+                {heroCopy.schedule}
+              </Link>
+            </div>
           </div>
 
           <div className='hidden lg:flex flex-col justify-end gap-3'>
-            <h3 className='text-sm font-bold text-[var(--text-muted)] uppercase tracking-widest mb-2 pl-1'>
+            <h3 className='text-sm font-medium text-[var(--text-muted)] mb-2 pl-1'>
               Далі у прокаті
             </h3>
 
@@ -121,16 +181,16 @@ const HeroSection = () => {
                   onClick={() => handleManualSelect(idx)}
                   aria-label={heroCopy.select(m.title, idx + 1, movies.length)}
                   aria-pressed={isActive}
-                  className={`group relative flex items-center gap-4 p-2 rounded-xl transition-colors duration-150 text-left border ${
-                    isActive
-                      ? 'bg-white/10 border-white/20'
-                      : 'bg-transparent border-transparent hover:bg-white/5 opacity-60 hover:opacity-100'
+                  className={`group relative flex items-center gap-4 p-2 rounded-xl transition-colors duration-150 text-left ${
+                    isActive ? 'bg-white/10' : 'bg-transparent hover:bg-white/5'
                   }`}
                 >
                   <div className='relative h-16 w-12 shrink-0 overflow-hidden rounded-lg bg-zinc-800'>
                     <img
                       src={m.backdropUrl}
-                      alt={m.title}
+                      alt=''
+                      loading='lazy'
+                      decoding='async'
                       className='h-full w-full object-cover'
                     />
                     {isActive && (
@@ -142,11 +202,11 @@ const HeroSection = () => {
 
                   <div className='flex-1 min-w-0'>
                     <div
-                      className={`font-bold text-sm truncate transition-colors ${isActive ? 'text-white' : 'text-zinc-400 group-hover:text-white'}`}
+                      className={`font-medium text-sm truncate transition-colors ${isActive ? 'text-white' : 'text-[var(--text-muted)] group-hover:text-white'}`}
                     >
                       {m.title}
                     </div>
-                    <div className='text-xs text-zinc-500 truncate'>
+                    <div className='text-xs text-[var(--text-muted)] truncate'>
                       {m.genres[0]} • {m.year}
                     </div>
                   </div>
@@ -177,7 +237,7 @@ const HeroSection = () => {
               onClick={() => handleManualSelect(idx)}
               aria-label={heroCopy.select(movie.title, idx + 1, movies.length)}
               aria-pressed={idx === currentIndex}
-              className='flex h-10 w-10 items-center justify-center rounded-full'
+              className='flex h-11 w-11 items-center justify-center rounded-full'
             >
               <span
                 aria-hidden='true'
@@ -229,21 +289,6 @@ const HeroSection = () => {
           </Button>
         </div>
       )}
-
-      <style>{`
-        @keyframes hero-progress {
-          from { transform: scaleX(0); }
-          to { transform: scaleX(1); }
-        }
-        @keyframes hero-image {
-          from { opacity: 0.6; }
-          to { opacity: 1; }
-        }
-        @media (prefers-reduced-motion: no-preference) {
-          .hero-progress { animation: hero-progress linear forwards; }
-          .hero-image { animation: hero-image 250ms ease-out; }
-        }
-      `}</style>
     </section>
   )
 }

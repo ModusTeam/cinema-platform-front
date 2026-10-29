@@ -1,21 +1,19 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { X } from 'lucide-react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
-
-import { GridLoader } from '@/shared/ui/GridLoader'
-import Input from '@/shared/ui/Input'
+import type {
+  AdminAchievementDto,
+  AdminAchievementPayload,
+} from '@/features/admin/api/admin-achievements.service'
 import {
   ACHIEVEMENT_CATEGORY_OPTIONS,
   ACHIEVEMENT_RARITY_OPTIONS,
   ACHIEVEMENT_STRATEGY_OPTIONS,
   resolveAchievementIcon,
 } from '@/features/loyalty/achievements/achievementContract'
-import type {
-  AdminAchievementDto,
-  AdminAchievementPayload,
-} from '@/features/admin/api/admin-achievements.service'
+import Input from '@/shared/ui/Input'
+import { FormDialog } from '@/shared/ui/modals/FormDialog'
 
 const achievementSchema = z
   .object({
@@ -222,7 +220,7 @@ const AchievementFormModal = ({
     handleSubmit,
     reset,
     watch,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<AchievementFormData>({
     resolver: zodResolver(achievementSchema),
     defaultValues: DEFAULT_VALUES,
@@ -276,268 +274,243 @@ const AchievementFormModal = ({
   }
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-in fade-in'>
-      <div className='max-h-[92vh] w-full max-w-3xl overflow-hidden rounded-xl border border-white/10 bg-[var(--bg-card)] shadow-2xl'>
-        <div className='flex items-center justify-between border-b border-white/10 p-6'>
-          <div className='flex items-center gap-3'>
-            <div className='rounded-xl border border-white/10 bg-white/5 p-2 text-[var(--color-primary)]'>
-              <Icon size={20} />
-            </div>
-            <h2 className='text-xl font-bold text-white'>
-              {isEditing ? 'Редагувати досягнення' : 'Нове досягнення'}
-            </h2>
-          </div>
-          <button
-            type='button'
-            onClick={onClose}
-            className='text-[var(--text-muted)] hover:text-white'
+    <FormDialog
+      isOpen={isOpen}
+      onClose={onClose}
+      title={isEditing ? 'Редагувати досягнення' : 'Нове досягнення'}
+      description={
+        initialData
+          ? `${initialData.name} · ${initialData.code}`
+          : 'Налаштуйте умови та нагороду. Критерії перевіряє сервер.'
+      }
+      isBusy={isSaving}
+      isDirty={isDirty}
+      className='max-w-3xl'
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <div className='flex items-center gap-3 text-sm text-[var(--text-muted)]'>
+        <Icon size={20} aria-hidden='true' />
+        Попередній вигляд іконки
+      </div>
+      <div className='grid gap-4 md:grid-cols-2'>
+        <Input
+          label='Код'
+          placeholder='FIRST_VISIT'
+          error={errors.code?.message}
+          {...register('code')}
+        />
+        <Input
+          label='Іконка'
+          placeholder='trophy'
+          error={errors.icon?.message}
+          {...register('icon')}
+        />
+      </div>
+
+      <Input
+        label='Назва'
+        placeholder='Перший похід'
+        error={errors.name?.message}
+        {...register('name')}
+      />
+
+      <div className='space-y-2'>
+        <label htmlFor='achievement-description' className='field-label'>
+          Опис
+        </label>
+        <textarea
+          id='achievement-description'
+          aria-invalid={!!errors.description}
+          aria-describedby={
+            errors.description ? 'achievement-description-error' : undefined
+          }
+          rows={3}
+          className='field'
+          placeholder='Опишіть умову досягнення'
+          {...register('description')}
+        />
+        {errors.description?.message && (
+          <p
+            id='achievement-description-error'
+            role='alert'
+            className='field-error'
           >
-            <X size={24} />
-          </button>
+            {errors.description.message}
+          </p>
+        )}
+      </div>
+
+      <div className='grid gap-4 md:grid-cols-3'>
+        <div className='space-y-2'>
+          <label htmlFor='achievement-category' className='field-label'>
+            Категорія
+          </label>
+          <select
+            id='achievement-category'
+            className='field'
+            {...register('category', { valueAsNumber: true })}
+          >
+            {ACHIEVEMENT_CATEGORY_OPTIONS.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className='space-y-2'>
+          <label htmlFor='achievement-rarity' className='field-label'>
+            Рідкість
+          </label>
+          <select
+            id='achievement-rarity'
+            className='field'
+            {...register('rarity', { valueAsNumber: true })}
+          >
+            {ACHIEVEMENT_RARITY_OPTIONS.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className='space-y-2'>
+          <label htmlFor='achievement-strategy' className='field-label'>
+            Стратегія
+          </label>
+          <select
+            id='achievement-strategy'
+            className='field'
+            {...register('strategy', { valueAsNumber: true })}
+          >
+            {ACHIEVEMENT_STRATEGY_OPTIONS.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className='grid gap-4 md:grid-cols-2'>
+        <Input
+          label='Нагорода балами'
+          type='number'
+          error={errors.rewardPoints?.message}
+          {...register('rewardPoints', { valueAsNumber: true })}
+        />
+        <Input
+          label='Порядок'
+          type='number'
+          error={errors.sortOrder?.message}
+          {...register('sortOrder', { valueAsNumber: true })}
+        />
+      </div>
+
+      <div className='grid gap-4 md:grid-cols-2'>
+        <label className='flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-4 text-sm text-white'>
+          <input
+            type='checkbox'
+            className='h-4 w-4 accent-[var(--color-primary)]'
+            {...register('isSecret')}
+          />
+          Секретне досягнення
+        </label>
+        <label className='flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-4 text-sm text-white'>
+          <input
+            type='checkbox'
+            className='h-4 w-4 accent-[var(--color-primary)]'
+            {...register('isActive')}
+          />
+          Активне
+        </label>
+      </div>
+
+      <Input
+        label='Підказка для секретного'
+        placeholder='Необовʼязково'
+        error={errors.secretHint?.message}
+        {...register('secretHint')}
+      />
+
+      <div className='space-y-3 rounded-xl border border-white/10 bg-white/[0.02] p-4'>
+        <div className='flex flex-col gap-3 md:flex-row md:items-start md:justify-between'>
+          <div>
+            <h3 className='text-sm font-bold text-white'>Критерії</h3>
+            <p className='mt-1 text-xs text-[var(--text-muted)]'>
+              Звичайний режим збере JSON з полів field, operator і target.
+            </p>
+          </div>
+          <label className='flex items-center gap-2 text-sm text-white'>
+            <input
+              type='checkbox'
+              className='h-4 w-4 accent-[var(--color-primary)]'
+              checked={criteriaMode === 'json'}
+              onChange={event =>
+                reset(
+                  {
+                    ...watch(),
+                    criteriaMode: event.target.checked ? 'json' : 'builder',
+                  },
+                  { keepDirty: true, keepTouched: true },
+                )
+              }
+            />
+            Advanced JSON
+          </label>
         </div>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className='max-h-[calc(92vh-81px)] space-y-5 overflow-y-auto p-6'
-        >
-          <div className='grid gap-4 md:grid-cols-2'>
+        {criteriaMode === 'builder' ? (
+          <div className='grid gap-4 md:grid-cols-[1fr_120px_140px]'>
             <Input
-              label='Код'
-              placeholder='FIRST_VISIT'
-              error={errors.code?.message}
-              {...register('code')}
+              label='Поле'
+              placeholder='visits'
+              error={errors.criteriaField?.message}
+              {...register('criteriaField')}
             />
             <Input
-              label='Іконка'
-              placeholder='trophy'
-              error={errors.icon?.message}
-              {...register('icon')}
+              label='Оператор'
+              placeholder='>='
+              error={errors.criteriaOperator?.message}
+              {...register('criteriaOperator')}
+            />
+            <Input
+              label='Ціль'
+              type='number'
+              error={errors.criteriaTarget?.message}
+              {...register('criteriaTarget', { valueAsNumber: true })}
             />
           </div>
-
-          <Input
-            label='Назва'
-            placeholder='Перший похід'
-            error={errors.name?.message}
-            {...register('name')}
-          />
-
+        ) : (
           <div className='space-y-2'>
-            <label
-              htmlFor='achievement-description'
-              className='ml-1 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]'
-            >
-              Опис
+            <label htmlFor='achievement-criteria-json' className='field-label'>
+              Criteria JSON
             </label>
             <textarea
-              id='achievement-description'
-              rows={3}
-              className='w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-zinc-600 focus:border-[var(--color-primary)]'
-              placeholder='Опишіть умову досягнення'
-              {...register('description')}
+              id='achievement-criteria-json'
+              aria-invalid={!!errors.criteriaJson}
+              aria-describedby={
+                errors.criteriaJson ? 'achievement-json-error' : undefined
+              }
+              rows={6}
+              className='field'
+              {...register('criteriaJson')}
             />
-            {errors.description?.message && (
-              <p className='ml-1 text-xs text-red-400'>
-                {errors.description.message}
+            {errors.criteriaJson?.message && (
+              <p
+                id='achievement-json-error'
+                role='alert'
+                className='field-error'
+              >
+                {errors.criteriaJson.message}
               </p>
             )}
+            <p className='ml-1 text-xs text-[var(--text-muted)]'>
+              Використовуйте цей режим лише для складніших критеріїв.
+            </p>
           </div>
-
-          <div className='grid gap-4 md:grid-cols-3'>
-            <div className='space-y-2'>
-              <label
-                htmlFor='achievement-category'
-                className='ml-1 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]'
-              >
-                Категорія
-              </label>
-              <select
-                id='achievement-category'
-                className='w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-[var(--color-primary)]'
-                {...register('category', { valueAsNumber: true })}
-              >
-                {ACHIEVEMENT_CATEGORY_OPTIONS.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className='space-y-2'>
-              <label
-                htmlFor='achievement-rarity'
-                className='ml-1 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]'
-              >
-                Рідкість
-              </label>
-              <select
-                id='achievement-rarity'
-                className='w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-[var(--color-primary)]'
-                {...register('rarity', { valueAsNumber: true })}
-              >
-                {ACHIEVEMENT_RARITY_OPTIONS.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className='space-y-2'>
-              <label
-                htmlFor='achievement-strategy'
-                className='ml-1 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]'
-              >
-                Стратегія
-              </label>
-              <select
-                id='achievement-strategy'
-                className='w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-[var(--color-primary)]'
-                {...register('strategy', { valueAsNumber: true })}
-              >
-                {ACHIEVEMENT_STRATEGY_OPTIONS.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className='grid gap-4 md:grid-cols-2'>
-            <Input
-              label='Нагорода балами'
-              type='number'
-              error={errors.rewardPoints?.message}
-              {...register('rewardPoints', { valueAsNumber: true })}
-            />
-            <Input
-              label='Порядок'
-              type='number'
-              error={errors.sortOrder?.message}
-              {...register('sortOrder', { valueAsNumber: true })}
-            />
-          </div>
-
-          <div className='grid gap-4 md:grid-cols-2'>
-            <label className='flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-4 text-sm text-white'>
-              <input
-                type='checkbox'
-                className='h-4 w-4 accent-[var(--color-primary)]'
-                {...register('isSecret')}
-              />
-              Секретне досягнення
-            </label>
-            <label className='flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-4 text-sm text-white'>
-              <input
-                type='checkbox'
-                className='h-4 w-4 accent-[var(--color-primary)]'
-                {...register('isActive')}
-              />
-              Активне
-            </label>
-          </div>
-
-          <Input
-            label='Підказка для секретного'
-            placeholder='Необовʼязково'
-            error={errors.secretHint?.message}
-            {...register('secretHint')}
-          />
-
-          <div className='space-y-3 rounded-xl border border-white/10 bg-white/[0.02] p-4'>
-            <div className='flex flex-col gap-3 md:flex-row md:items-start md:justify-between'>
-              <div>
-                <h3 className='text-sm font-bold text-white'>Критерії</h3>
-                <p className='mt-1 text-xs text-[var(--text-muted)]'>
-                  Звичайний режим збере JSON з полів field, operator і target.
-                </p>
-              </div>
-              <label className='flex items-center gap-2 text-sm text-white'>
-                <input
-                  type='checkbox'
-                  className='h-4 w-4 accent-[var(--color-primary)]'
-                  checked={criteriaMode === 'json'}
-                  onChange={event =>
-                    reset(
-                      {
-                        ...watch(),
-                        criteriaMode: event.target.checked ? 'json' : 'builder',
-                      },
-                      { keepDirty: true, keepTouched: true },
-                    )
-                  }
-                />
-                Advanced JSON
-              </label>
-            </div>
-
-            {criteriaMode === 'builder' ? (
-              <div className='grid gap-4 md:grid-cols-[1fr_120px_140px]'>
-                <Input
-                  label='Поле'
-                  placeholder='visits'
-                  error={errors.criteriaField?.message}
-                  {...register('criteriaField')}
-                />
-                <Input
-                  label='Оператор'
-                  placeholder='>='
-                  error={errors.criteriaOperator?.message}
-                  {...register('criteriaOperator')}
-                />
-                <Input
-                  label='Ціль'
-                  type='number'
-                  error={errors.criteriaTarget?.message}
-                  {...register('criteriaTarget', { valueAsNumber: true })}
-                />
-              </div>
-            ) : (
-              <div className='space-y-2'>
-                <label
-                  htmlFor='achievement-criteria-json'
-                  className='ml-1 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]'
-                >
-                  Criteria JSON
-                </label>
-                <textarea
-                  id='achievement-criteria-json'
-                  rows={6}
-                  className='w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 font-mono text-sm text-white outline-none transition-colors placeholder:text-zinc-600 focus:border-[var(--color-primary)]'
-                  {...register('criteriaJson')}
-                />
-                {errors.criteriaJson?.message && (
-                  <p className='ml-1 text-xs text-red-400'>
-                    {errors.criteriaJson.message}
-                  </p>
-                )}
-                <p className='ml-1 text-xs text-[var(--text-muted)]'>
-                  Використовуйте цей режим лише для складніших критеріїв.
-                </p>
-              </div>
-            )}
-          </div>
-
-          <div className='flex justify-end gap-3 border-t border-white/10 pt-5'>
-            <button
-              type='button'
-              onClick={onClose}
-              className='rounded-lg px-6 py-2 text-sm font-bold text-[var(--text-muted)] transition-colors hover:text-white'
-            >
-              Скасувати
-            </button>
-            <button
-              type='submit'
-              disabled={isSaving}
-              className='flex items-center gap-2 rounded-lg bg-[var(--color-primary)] px-6 py-2 font-bold text-white shadow-lg transition-all hover:bg-[var(--color-primary-hover)] disabled:opacity-50'
-            >
-              {isSaving && <GridLoader className='animate-spin' size={16} />}
-              Зберегти
-            </button>
-          </div>
-        </form>
+        )}
       </div>
-    </div>
+    </FormDialog>
   )
 }
 

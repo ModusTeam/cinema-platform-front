@@ -5,11 +5,11 @@ import {
   Clock,
   Coins,
   Flame,
+  type LucideIcon,
   Medal,
   Star,
   Ticket,
   Trophy,
-  type LucideIcon,
 } from 'lucide-react'
 
 import type {
@@ -25,15 +25,15 @@ export const ACHIEVEMENT_CATEGORY_OPTIONS = [
   { value: 4, key: 'time', label: 'Час' },
   { value: 5, key: 'special', label: 'Спеціальні' },
   { value: 6, key: 'streak', label: 'Серія' },
-  { value: 7, key: 'secret', label: 'Secret' },
+  { value: 7, key: 'secret', label: 'Секретні' },
 ] as const
 
 export const ACHIEVEMENT_RARITY_OPTIONS = [
-  { value: 1, key: 'common', label: 'Common' },
-  { value: 2, key: 'uncommon', label: 'Uncommon' },
-  { value: 3, key: 'rare', label: 'Rare' },
-  { value: 4, key: 'epic', label: 'Epic' },
-  { value: 5, key: 'legendary', label: 'Legendary' },
+  { value: 1, key: 'common', label: 'Звичайне' },
+  { value: 2, key: 'uncommon', label: 'Незвичайне' },
+  { value: 3, key: 'rare', label: 'Рідкісне' },
+  { value: 4, key: 'epic', label: 'Епічне' },
+  { value: 5, key: 'legendary', label: 'Легендарне' },
 ] as const
 
 export const ACHIEVEMENT_STRATEGY_OPTIONS = [

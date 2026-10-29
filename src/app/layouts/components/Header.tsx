@@ -1,292 +1,130 @@
-import { clsx } from 'clsx'
-import { LogOut, User } from 'lucide-react'
+import { AnimatePresence } from 'motion/react'
 import { useEffect, useId, useRef, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '@/features/auth/model/AuthContext'
-import { useMotionPreference } from '@/shared/lib/useMotionPreference'
-import { useModalFocus } from '@/shared/ui/modals/useModalFocus'
-
-const NAV_ITEMS = [
-  { label: 'Афіша', href: '/sessions' },
-  { label: 'Пропозиції', href: '/offers' },
-  { label: 'Кінобар', href: '/bar' },
-  { label: 'Допомога', href: '/faq' },
-  { label: 'Про нас', href: '/about' },
-]
-
-const RollingText = ({ text }: { text: string }) => {
-  return (
-    <div
-      aria-hidden='true'
-      className='relative overflow-hidden block h-[1.2em] leading-[1.2em]'
-    >
-      {text.split('').map((char, i) => (
-        <span
-          // biome-ignore lint/suspicious/noArrayIndexKey: Fixed decorative text positions control the existing animation.
-          key={i}
-          className='inline-block motion-safe:transition-transform motion-safe:duration-400 motion-safe:ease-[cubic-bezier(0.76,0,0.24,1)] motion-safe:group-hover:-translate-y-full'
-          style={{ transitionDelay: `${i * 8}ms` }}
-        >
-          <span className='block h-[1.2em]'>
-            {char === ' ' ? '\u00A0' : char}
-          </span>
-          <span className='block h-[1.2em] absolute top-full text-[var(--color-primary)]'>
-            {char === ' ' ? '\u00A0' : char}
-          </span>
-        </span>
-      ))}
-    </div>
-  )
-}
+import { cn } from '@/shared/lib/utils'
+import TicketMenu from './TicketMenu'
+import './navigation.css'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(() => window.scrollY > 20)
   const { user, logout } = useAuth()
   const location = useLocation()
-  const reducedMotion = useMotionPreference()
   const menuId = useId()
-  const menuRef = useRef<HTMLDivElement>(null)
-  useModalFocus(menuRef, isMenuOpen, () => setIsMenuOpen(false))
+  const headerRef = useRef<HTMLElement>(null)
+  const isHome = location.pathname === '/'
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Route changes must dismiss the open navigation overlay.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Every navigation, including history and hash changes, dismisses the menu.
   useEffect(() => {
     setIsMenuOpen(false)
   }, [location])
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20)
-    window.addEventListener('scroll', handleScroll)
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const handleLogout = () => {
-    logout()
-    setIsMenuOpen(false)
-  }
+  useEffect(() => {
+    const header = headerRef.current
+    if (!header) return
+
+    // Enlarged text can wrap the fixed header onto another row.
+    const updateHeight = () => {
+      document.documentElement.style.setProperty(
+        '--public-header-height',
+        `${header.getBoundingClientRect().height}px`,
+      )
+    }
+    updateHeight()
+    const observer = new ResizeObserver(updateHeight)
+    observer.observe(header)
+    return () => {
+      observer.disconnect()
+      document.documentElement.style.removeProperty('--public-header-height')
+    }
+  }, [])
 
   return (
-    <div
-      ref={menuRef}
-      {...(isMenuOpen
-        ? { role: 'dialog', 'aria-modal': true, 'aria-label': 'Головне меню' }
-        : {})}
-      tabIndex={-1}
-    >
+    <>
       <header
-        className={clsx(
-          'fixed top-0 left-0 right-0 z-[60] transition-colors duration-200 motion-reduce:transition-none border-b border-transparent',
-          !isMenuOpen && isScrolled
-            ? 'bg-black/60 backdrop-blur-xl border-white/5 py-3'
-            : 'bg-transparent py-4 md:py-6',
+        ref={headerRef}
+        data-header-surface={isHome && !isScrolled ? 'hero' : 'solid'}
+        className={cn(
+          'cinema-header fixed inset-x-0 top-0 z-60 font-public text-[var(--header-ink)] transition-colors duration-200 motion-reduce:transition-none',
+          isHome && !isScrolled
+            ? 'bg-[linear-gradient(to_bottom,rgba(12,12,14,.82),rgba(12,12,14,.64)_75%,transparent)]'
+            : 'bg-[var(--header-surface)]',
         )}
       >
-        <div className='container mx-auto flex items-center justify-between px-4 md:px-6'>
+        <div className='cinema-header-inner mx-auto flex min-h-20 max-w-[1600px] flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2 md:grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:px-8'>
+          <nav
+            aria-label='Швидка навігація'
+            className='hidden items-center gap-6 md:flex'
+          >
+            <NavLink
+              to='/'
+              end
+              className='header-link inline-flex min-h-11 min-w-11 items-center text-sm'
+            >
+              Афіша
+            </NavLink>
+            <NavLink
+              to='/sessions?mode=schedule'
+              className='header-link inline-flex min-h-11 min-w-11 items-center text-sm'
+            >
+              Сеанси
+            </NavLink>
+          </nav>
           <Link
             to='/'
-            className='relative z-[70] flex items-center gap-1 text-2xl md:text-3xl font-black tracking-tighter text-white uppercase select-none group'
-            onClick={() => setIsMenuOpen(false)}
+            aria-label='Cinema — на головну'
+            className='w-fit py-2 font-sans text-2xl font-black uppercase tracking-tighter md:text-3xl'
           >
-            <span>
-              Cine
-              <span className='text-[var(--color-primary)] transition-colors duration-200 motion-reduce:transition-none group-hover:text-white'>
-                ma
-              </span>
-              .
-            </span>
+            Cine<span className='text-[var(--color-primary)]'>ma</span>.
           </Link>
-
-          <div className='relative z-[70] flex items-center gap-4 md:gap-6'>
-            {!isMenuOpen && (
-              <div className='hidden md:flex items-center gap-6 transition-opacity duration-200 motion-reduce:transition-none'>
-                {user ? (
-                  <Link
-                    to='/profile'
-                    className='flex items-center gap-3 text-sm font-bold text-white hover:text-[var(--color-primary)] transition-colors duration-200 motion-reduce:transition-none'
-                  >
-                    <span className='text-right leading-tight'>
-                      <span className='block text-[10px] text-[var(--text-muted)] uppercase'>
-                        Вітаємо
-                      </span>
-                      {user.name}
-                    </span>
-                    <div className='w-9 h-9 rounded-full bg-white/10 flex items-center justify-center border border-white/10'>
-                      <User size={16} />
-                    </div>
-                  </Link>
-                ) : (
-                  <Link
-                    to='/auth/login'
-                    className='text-sm font-bold text-white hover:text-[var(--color-primary)] transition-colors duration-200 motion-reduce:transition-none'
-                  >
-                    Увійти
-                  </Link>
-                )}
-              </div>
-            )}
-
+          <div className='flex items-center justify-end gap-6'>
+            <Link
+              to={user ? '/profile' : '/auth/login'}
+              className='header-link hidden min-h-11 min-w-11 items-center text-sm md:inline-flex'
+            >
+              {user ? 'Кабінет' : 'Увійти'}
+            </Link>
             <button
               type='button'
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className='group relative flex h-10 w-10 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors duration-200 motion-reduce:transition-none'
-              aria-label={isMenuOpen ? 'Закрити меню' : 'Відкрити меню'}
+              onClick={() => setIsMenuOpen(true)}
+              aria-label='Відкрити меню'
+              aria-haspopup='dialog'
               aria-expanded={isMenuOpen}
-              aria-controls={menuId}
-              data-modal-initial-focus
+              aria-controls={isMenuOpen ? menuId : undefined}
+              className='ticket-menu-trigger group flex min-h-11 items-center gap-3 px-4 text-sm font-medium transition-colors duration-150 motion-reduce:transition-none'
             >
-              <div className='relative w-5 h-5'>
-                <span
-                  className={clsx(
-                    'absolute top-1/2 left-0 h-0.5 w-5 bg-white transition-[transform,opacity,width] duration-200 motion-reduce:transition-none -translate-y-1.5',
-                    isMenuOpen && 'translate-y-0 rotate-45',
-                  )}
-                />
-                <span
-                  className={clsx(
-                    'absolute top-1/2 left-0 h-0.5 bg-white transition-[transform,opacity,width] duration-200 motion-reduce:transition-none w-3 group-hover:w-5',
-                    isMenuOpen ? 'opacity-0 w-0' : 'w-3',
-                  )}
-                />
-                <span
-                  className={clsx(
-                    'absolute top-1/2 left-0 h-0.5 w-5 bg-white transition-[transform,opacity,width] duration-200 motion-reduce:transition-none translate-y-1.5',
-                    isMenuOpen && 'translate-y-0 -rotate-45',
-                  )}
-                />
-              </div>
+              Меню
+              <span aria-hidden='true' className='flex w-4 flex-col gap-1.5'>
+                <span className='h-px w-4 bg-current' />
+                <span className='h-px w-3 bg-current motion-safe:transition-[width] motion-safe:duration-150 group-hover:w-4' />
+              </span>
             </button>
           </div>
         </div>
       </header>
-
-      <div
-        id={menuId}
-        style={{
-          transitionProperty: 'opacity, visibility',
-          transitionDuration: reducedMotion ? '0s' : '400ms, 0s',
-          transitionTimingFunction: 'ease-in-out',
-          // Keep the closing overlay visible until its fade completes.
-          transitionDelay: isMenuOpen || reducedMotion ? '0s' : '0s, 400ms',
-        }}
-        inert={!isMenuOpen}
-        aria-hidden={!isMenuOpen}
-        className={clsx(
-          'fixed inset-0 z-50 flex flex-col bg-[#050505]/95 backdrop-blur-2xl',
-          isMenuOpen
-            ? 'opacity-100 visible'
-            : 'opacity-0 invisible pointer-events-none',
+      <AnimatePresence>
+        {isMenuOpen && (
+          <TicketMenu
+            key={menuId}
+            id={menuId}
+            user={user}
+            onClose={() => setIsMenuOpen(false)}
+            onLogout={() => {
+              setIsMenuOpen(false)
+              logout()
+            }}
+          />
         )}
-      >
-        <div className='absolute inset-0 bg-[url("https://www.transparenttextures.com/patterns/cubes.png")] opacity-5 pointer-events-none'></div>
-        <div className='absolute top-0 right-0 w-[50vw] h-[50vh] bg-[var(--color-primary)]/10 blur-[150px] rounded-full pointer-events-none'></div>
-
-        <div className='container mx-auto px-4 md:px-6 grid grid-cols-1 lg:grid-cols-[2fr_1fr] h-full pt-28 pb-10 overflow-y-auto'>
-          <nav
-            aria-label='Головна навігація'
-            className='flex flex-col justify-center space-y-4 lg:space-y-6 relative z-10'
-          >
-            {NAV_ITEMS.map(item => (
-              <Link
-                key={item.label}
-                to={item.href}
-                aria-label={item.label}
-                aria-current={
-                  location.pathname === item.href ? 'page' : undefined
-                }
-                className={clsx(
-                  'group flex items-center justify-between py-2 border-b border-white/5 lg:border-none lg:py-0 transition-opacity duration-200 motion-reduce:transition-none',
-                  isMenuOpen ? 'opacity-100' : 'opacity-0',
-                )}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <span className='text-4xl sm:text-5xl lg:text-7xl font-black text-zinc-500 group-hover:text-white transition-colors duration-200 motion-reduce:transition-none uppercase tracking-tight'>
-                  <RollingText text={item.label} />
-                </span>
-                <span className='lg:hidden text-[var(--color-primary)] opacity-0 group-hover:opacity-100 transition-opacity duration-200 motion-reduce:transition-none'>
-                  →
-                </span>
-              </Link>
-            ))}
-          </nav>
-
-          <div
-            className={clsx(
-              'flex flex-col justify-end lg:justify-center lg:items-start lg:pl-12 lg:border-l lg:border-white/5 space-y-8 transition-opacity duration-200 motion-reduce:transition-none mt-10 lg:mt-0',
-              isMenuOpen ? 'opacity-100' : 'opacity-0',
-            )}
-          >
-            {user ? (
-              <div className='w-full'>
-                <div className='flex items-center gap-4 mb-6'>
-                  <div className='w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-zinc-800 to-black border border-white/10 flex items-center justify-center text-xl md:text-2xl font-bold text-white shadow-xl'>
-                    {user.name[0]}
-                  </div>
-                  <div>
-                    <div className='text-[var(--text-muted)] text-xs md:text-sm uppercase tracking-wider mb-1'>
-                      Залогінений як
-                    </div>
-                    <div className='text-lg md:text-xl font-bold text-white'>
-                      {user.name} {user.surname}
-                    </div>
-                  </div>
-                </div>
-
-                <div className='grid grid-cols-2 gap-3'>
-                  <Link
-                    to='/profile'
-                    className='flex items-center justify-center gap-2 rounded-xl bg-white text-black py-3 md:py-4 font-bold hover:bg-zinc-200 transition-colors duration-200 motion-reduce:transition-none text-sm md:text-base'
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <User size={18} /> Кабінет
-                  </Link>
-                  <button
-                    type='button'
-                    onClick={handleLogout}
-                    className='flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 text-white py-3 md:py-4 font-bold hover:bg-white/10 transition-colors duration-200 motion-reduce:transition-none text-sm md:text-base'
-                  >
-                    <LogOut size={18} /> Вийти
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className='w-full p-6 md:p-8 rounded-3xl bg-white/5 border border-white/5'>
-                <h3 className='text-xl md:text-2xl font-bold text-white mb-2'>
-                  Приєднуйтесь до нас
-                </h3>
-                <p className='text-sm md:text-base text-[var(--text-muted)] mb-6'>
-                  Бронюйте місця, отримуйте знижки та зберігайте історію.
-                </p>
-                <Link
-                  to='/auth/login'
-                  className='flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] py-3 md:py-4 font-bold text-white hover:bg-[var(--color-primary-hover)] transition-colors duration-200 motion-reduce:transition-none text-sm md:text-base'
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Увійти або Зареєструватися
-                </Link>
-              </div>
-            )}
-
-            <div className='space-y-4 pt-4 lg:pt-0'>
-              <div className='text-[var(--text-muted)] uppercase tracking-widest text-xs font-bold'>
-                Контакти
-              </div>
-              <a
-                href='tel:0800500500'
-                className='block text-xl md:text-2xl font-mono text-white hover:text-[var(--color-primary)] transition-colors duration-200 motion-reduce:transition-none'
-              >
-                0 800 500 500
-              </a>
-              <a
-                href='mailto:support@cinema.ua'
-                className='block text-base md:text-lg text-white hover:text-[var(--color-primary)] transition-colors duration-200 motion-reduce:transition-none'
-              >
-                support@cinema.ua
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+      </AnimatePresence>
+    </>
   )
 }
 

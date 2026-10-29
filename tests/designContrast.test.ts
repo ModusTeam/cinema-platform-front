@@ -53,4 +53,20 @@ describe('design foundation contrast', () => {
   it('keeps selected text readable on its tinted surface', () => {
     assert.ok(contrast('--text-main', '--selection-bg') >= 4.5)
   })
+  it('distinguishes selection independently of validation errors', () => {
+    assert.ok(contrast('--selection-border', '--selection-bg') >= 3)
+  })
+  for (const surface of ['--bg-main', '--bg-card', '--surface-elevated']) {
+    it(`keeps supporting text and status labels readable on ${surface}`, () => {
+      for (const foreground of [
+        '--text-muted',
+        '--text-faint',
+        '--color-error',
+        '--color-success',
+        '--color-warning',
+      ]) {
+        assert.ok(contrast(foreground, surface) >= 4.5, foreground)
+      }
+    })
+  }
 })

@@ -7,13 +7,19 @@ export const useAdminLoyalty = (userId?: string | null) => {
 
   const balanceQuery = useQuery({
     queryKey: ['admin-loyalty-balance', userId],
-    queryFn: () => adminLoyaltyService.getUserBalance(userId!),
+    queryFn: () => {
+      if (!userId) throw new Error('Оберіть користувача')
+      return adminLoyaltyService.getUserBalance(userId)
+    },
     enabled: !!userId,
   })
 
   const historyQuery = useQuery({
     queryKey: ['admin-loyalty-history', userId],
-    queryFn: () => adminLoyaltyService.getTransactionHistory(userId!),
+    queryFn: () => {
+      if (!userId) throw new Error('Оберіть користувача')
+      return adminLoyaltyService.getTransactionHistory(userId)
+    },
     enabled: !!userId,
   })
 

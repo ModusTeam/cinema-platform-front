@@ -1,29 +1,12 @@
-import { clsx } from 'clsx'
-import {
-  Coffee,
-  CupSoda,
-  Flame,
-  type LucideIcon,
-  Package,
-  Pizza,
-  Popcorn,
-  Search,
-  ShoppingBag,
-} from 'lucide-react'
+import { Search, ShoppingBag } from 'lucide-react'
 import { useState } from 'react'
-import { BAR_MENU } from '@/pages/public/data/bar'
 import EmptyState from '@/shared/ui/EmptyState'
-
-const iconMap: Record<string, LucideIcon> = {
-  Popcorn: Popcorn,
-  CupSoda: CupSoda,
-  Coffee: Coffee,
-  Pizza: Pizza,
-  Package: Package,
-}
+import Input from '@/shared/ui/Input'
+import EditorialPageLayout from '@/widgets/static-page/ui/EditorialPageLayout'
+import { BAR_MENU } from './data/bar'
 
 const CinemaBarPage = () => {
-  const [activeCategory, setActiveCategory] = useState<string>('all')
+  const [activeCategory, setActiveCategory] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
 
   const filteredMenu = BAR_MENU.map(category => ({
@@ -38,179 +21,129 @@ const CinemaBarPage = () => {
   )
 
   return (
-    <div className='min-h-screen bg-[var(--bg-main)] pb-20'>
-      <div className='relative h-[40vh] w-full overflow-hidden flex items-center justify-center bg-black'>
-        <div className='absolute inset-0 bg-gradient-to-br from-orange-900/40 via-black to-purple-900/40 animate-pulse'></div>
-        <div className='absolute inset-0 bg-[url("https://www.transparenttextures.com/patterns/cubes.png")] opacity-10'></div>
-
-        <div className='relative z-10 text-center px-4'>
-          <div className='inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/10 text-xs font-bold text-orange-400 uppercase tracking-widest mb-4 backdrop-blur-md'>
-            <Flame size={14} /> Найсмачніша частина фільму
-          </div>
-          <h1 className='type-display text-5xl md:text-7xl text-white uppercase tracking-tighter mb-4'>
-            Кіно
-            <span className='text-[var(--color-primary)]'>Бар</span>
-          </h1>
-          <p className='text-[var(--text-muted)] text-lg max-w-lg mx-auto'>
-            Хрусткий попкорн, крижані напої та снеки для ідеального перегляду.
-          </p>
-        </div>
-      </div>
-
-      <div className='container mx-auto px-4 -mt-8 relative z-20'>
-        <div className='bg-[var(--bg-card)]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-4 mb-8 shadow-2xl flex flex-col md:flex-row gap-4 items-center justify-between'>
-          <div
-            className='flex gap-2 overflow-x-auto md:flex-wrap w-full md:w-auto pb-2 md:pb-0 p-1 no-scrollbar'
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+    <EditorialPageLayout
+      title='Кінобар'
+      subtitle='Хрусткий попкорн, крижані напої та снеки для ідеального перегляду.'
+      surface='paper'
+    >
+      <div className='grid items-end gap-8 border-b border-[var(--editorial-rule)] py-6 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-12'>
+        <nav
+          aria-label='Категорії кінобару'
+          className='flex min-w-0 flex-wrap gap-x-6 gap-y-1'
+        >
+          <button
+            type='button'
+            className='editorial-category'
+            aria-pressed={activeCategory === 'all'}
+            onClick={() => setActiveCategory('all')}
           >
+            Всі меню
+          </button>
+          {BAR_MENU.map(category => (
             <button
               type='button'
-              onClick={() => setActiveCategory('all')}
-              className={clsx(
-                'px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border',
-                activeCategory === 'all'
-                  ? 'bg-white text-black border-white scale-105'
-                  : 'bg-transparent text-[var(--text-muted)] border-transparent hover:bg-white/5 hover:text-white',
-              )}
+              key={category.id}
+              className='editorial-category'
+              aria-pressed={activeCategory === category.id}
+              onClick={() => setActiveCategory(category.id)}
             >
-              Всі меню
+              {category.title}
             </button>
-            {BAR_MENU.map(cat => (
-              <button
-                type='button'
-                key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
-                className={clsx(
-                  'px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border flex items-center gap-2',
-                  activeCategory === cat.id
-                    ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)] scale-105'
-                    : 'bg-transparent text-[var(--text-muted)] border-transparent hover:bg-white/5 hover:text-white',
-                )}
-              >
-                {cat.title}
-              </button>
-            ))}
-          </div>
-
-          <div className='relative w-full md:w-64'>
-            <Search
-              className='absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]'
-              size={16}
-            />
-            <input
-              type='text'
-              placeholder='Пошук смаколиків...'
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              className='w-full bg-[var(--bg-main)] border border-white/10 rounded-xl py-2 pl-9 pr-4 text-sm text-white focus:border-[var(--color-primary)] focus:outline-none'
-            />
-          </div>
-        </div>
-
-        {/* Menu Grid */}
-        <div className='space-y-12'>
-          {filteredMenu.map(category => {
-            const IconComponent = iconMap[category.icon] || Package
-
-            return (
-              <div
-                key={category.id}
-                className='animate-in fade-in slide-in-from-bottom-4 duration-500'
-              >
-                <div className='flex items-center gap-4 mb-6'>
-                  <div
-                    className={`p-3 rounded-xl bg-gradient-to-br ${category.gradient} shadow-lg`}
-                  >
-                    <IconComponent size={24} className='text-white' />
-                  </div>
-                  <h2 className='text-2xl font-bold text-white'>
-                    {category.title}
-                  </h2>
-                  <div className='h-px bg-white/5 flex-1'></div>
-                </div>
-
-                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-                  {category.items.map(item => (
-                    <div
-                      key={item.name}
-                      className='group relative bg-[#1a1a1a] border border-white/5 rounded-2xl overflow-hidden hover:border-[var(--color-primary)]/30 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col'
-                    >
-                      {item.tags && (
-                        <div className='absolute top-3 right-3 flex flex-col gap-1 items-end z-10'>
-                          {item.tags.map(tag => (
-                            <span
-                              key={tag}
-                              className='bg-white/10 backdrop-blur-md border border-white/10 text-white text-[10px] font-bold px-2 py-1 rounded-lg uppercase tracking-wide'
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-
-                      <div className='p-6 flex-1'>
-                        <h3 className='text-lg font-bold text-white mb-2 group-hover:text-[var(--color-primary)] transition-colors'>
-                          {item.name}
-                        </h3>
-                        {item.description && (
-                          <p className='text-sm text-[var(--text-muted)] mb-4 leading-relaxed'>
-                            {item.description}
-                          </p>
-                        )}
-
-                        <div className='space-y-2 mt-auto'>
-                          {item.options.map(option => (
-                            <div
-                              key={option.label}
-                              className='flex justify-between items-center text-sm p-2 rounded-lg bg-white/5 border border-white/5 group-hover:bg-white/[0.07] transition-colors'
-                            >
-                              <span className='text-zinc-300 font-medium'>
-                                {option.label}
-                              </span>
-                              <span className='font-bold text-white'>
-                                {option.price} ₴
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )
-          })}
-
-          {filteredMenu.length === 0 && (
-            <EmptyState
-              icon={<ShoppingBag className='h-12 w-12' />}
-              title='Смаколиків за запитом немає'
-              description='Спробуйте іншу назву або перегляньте всі категорії кінобару.'
-              actionLabel='Показати все меню'
-              onAction={() => {
-                setSearchTerm('')
-                setActiveCategory('all')
-              }}
-              className='py-20'
-            />
-          )}
-        </div>
-
-        <div className='mt-20 p-8 rounded-3xl bg-gradient-to-r from-zinc-900 to-black border border-white/10 text-center relative overflow-hidden'>
-          <div className='absolute inset-0 bg-[url("https://www.transparenttextures.com/patterns/diagonal-stripes.png")] opacity-5'></div>
-          <div className='relative z-10'>
-            <h3 className='text-xl font-bold text-white mb-2'>
-              💡 Зверніть увагу
-            </h3>
-            <p className='text-[var(--text-muted)] max-w-2xl mx-auto'>
-              Покупка товарів кінобару доступна{' '}
-              <strong>тільки на касі кінотеатру</strong>. <br />
-              Онлайн-замовлення їжі та напоїв незабаром з'явиться у додатку!
-            </p>
-          </div>
+          ))}
+        </nav>
+        <div className='relative'>
+          <Input
+            type='search'
+            label='Пошук у меню'
+            placeholder='Назва смаколика'
+            value={searchTerm}
+            onChange={event => setSearchTerm(event.target.value)}
+            className='pr-10'
+            aria-controls='bar-menu'
+          />
+          <Search
+            size={18}
+            aria-hidden='true'
+            className='pointer-events-none absolute right-3 bottom-4 text-[var(--text-muted)]'
+          />
         </div>
       </div>
-    </div>
+      <output className='sr-only'>
+        Знайдено позицій:{' '}
+        {filteredMenu.reduce(
+          (count, category) => count + category.items.length,
+          0,
+        )}
+      </output>
+      <div id='bar-menu' className='divide-y divide-[var(--editorial-rule)]'>
+        {filteredMenu.map(category => (
+          <section
+            key={category.id}
+            aria-labelledby={`bar-${category.id}`}
+            className='grid gap-8 py-10 md:py-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] lg:gap-16'
+          >
+            <h2 id={`bar-${category.id}`} className='type-public-section'>
+              {category.title}
+            </h2>
+            <div className='grid gap-x-12 gap-y-10 md:grid-cols-2'>
+              {category.items.map(item => (
+                <div key={item.name} className='min-w-0'>
+                  <h3 className='type-public-section'>{item.name}</h3>
+                  {item.tags && (
+                    <p className='mt-2 text-sm text-[var(--text-muted)]'>
+                      {item.tags.join(' · ')}
+                    </p>
+                  )}
+                  {item.description && (
+                    <p className='mt-3 leading-relaxed text-[var(--text-muted)]'>
+                      {item.description}
+                    </p>
+                  )}
+                  <dl className='mt-5 space-y-3'>
+                    {item.options.map(option => (
+                      <div
+                        key={option.label}
+                        className='grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-6'
+                      >
+                        <dt className='text-sm text-[var(--text-muted)]'>
+                          {option.label}
+                        </dt>
+                        <dd className='whitespace-nowrap text-lg tabular-nums'>
+                          {option.price} ₴
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+        {filteredMenu.length === 0 && (
+          <EmptyState
+            icon={<ShoppingBag className='h-12 w-12' />}
+            title='Смаколиків за запитом немає'
+            description='Спробуйте іншу назву або перегляньте всі категорії кінобару.'
+            actionLabel='Показати все меню'
+            onAction={() => {
+              setSearchTerm('')
+              setActiveCategory('all')
+            }}
+            className='editorial-state py-20'
+          />
+        )}
+      </div>
+      <aside className='grid gap-4 border-t border-[var(--editorial-rule)] pt-8 md:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] md:gap-16'>
+        <h2 className='type-public-section'>Зверніть увагу</h2>
+        <p className='max-w-[60ch] leading-relaxed text-[var(--text-muted)]'>
+          Покупка товарів кінобару доступна{' '}
+          <strong className='font-medium text-[var(--text-main)]'>
+            тільки на касі кінотеатру
+          </strong>
+          .
+        </p>
+      </aside>
+    </EditorialPageLayout>
   )
 }
 

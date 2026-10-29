@@ -99,7 +99,7 @@ describe('seat presentation without changing classification', () => {
       'VIP type marker survives locking',
     )
     assert.ok(locked.includes('aria-disabled="true"'))
-    assert.ok(locked.includes(`title="${bookingCopy.seats.lockedTitle}"`))
+    assert.ok(locked.includes(bookingCopy.seats.lockedTitle))
     assert.ok(!locked.includes('text-amber'))
   })
 
@@ -142,13 +142,13 @@ describe('seat presentation without changing classification', () => {
       const { button } = renderSeat(occupancy, { seat: customSeat })
       assert.ok(button.includes('aria-disabled="true"'))
       assert.ok(button.includes(icon))
-      assert.ok(button.includes(`title="${description}"`))
+      assert.ok(button.includes(description))
       assert.ok(button.includes('VIP.'))
       assert.ok(button.includes('Місце 7'))
     })
   }
 
-  it('preserves pending semantics, type markers and sparse 32px geometry', () => {
+  it('preserves pending semantics, type markers and sparse geometry with 44px targets', () => {
     const { markup, button } = renderSeat(availability, {
       pending: true,
       seat: { ...seat, seatTypeName: 'Love Seat' },
@@ -156,10 +156,10 @@ describe('seat presentation without changing classification', () => {
     assert.ok(button.includes('aria-busy="true"'))
     assert.ok(button.includes('aria-disabled="true"'))
     assert.ok(button.includes('text-pink-500'))
-    assert.ok(button.includes(`title="${bookingCopy.seats.pending}"`))
+    assert.ok(button.includes(bookingCopy.seats.pending))
     assert.ok(button.includes('grid-column:3;grid-row:2'))
-    assert.ok(markup.includes('repeat(3, 32px)'))
-    assert.ok(markup.includes('repeat(2, 32px)'))
+    assert.ok(markup.includes('repeat(3, 44px)'))
+    assert.ok(markup.includes('repeat(2, 44px)'))
     for (const label of [
       'available',
       'selected',
@@ -176,7 +176,7 @@ describe('seat presentation without changing classification', () => {
     const { button } = renderSeat(availability, { verified: false })
     assert.ok(button.includes('aria-disabled="true"'))
     assert.ok(button.includes('lucide-circle-question-mark'))
-    assert.ok(button.includes(`title="${bookingCopy.seats.unknown}"`))
+    assert.ok(button.includes(bookingCopy.seats.unknown))
     assert.ok(!button.includes('hover:bg-white'))
   })
 })
@@ -234,7 +234,6 @@ describe('hero controls', () => {
     assert.equal(markup.split('aria-pressed="true"').length - 1, 2)
     assert.ok(markup.includes(heroCopy.pause))
     assert.ok(!markup.includes('aria-live="assertive"'))
-    assert.ok(markup.includes('prefers-reduced-motion: no-preference'))
   })
 })
 

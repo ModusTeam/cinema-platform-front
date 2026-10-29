@@ -1,19 +1,18 @@
+import { Calendar, Plus } from 'lucide-react'
 import { useState } from 'react'
+import type { SessionDto } from '@/features/admin/api/admin-sessions.service'
+import { adminSessionsCopy } from '@/features/admin/config/adminSessions.copy'
 import { useSessions } from '@/features/admin/model/useSessions'
-import {
-  Plus,
-  Calendar,
-} from 'lucide-react'
-import EmptyState from '@/shared/ui/EmptyState'
-import UnavailableState from '@/shared/ui/UnavailableState'
-import { GridLoader } from '@/shared/ui/GridLoader'
+import { AdminPageHeader } from '@/features/admin/ui/AdminPageHeader'
 import CreateSessionModal from '@/features/admin/ui/CreateSessionModal'
 import SessionCard from '@/features/admin/ui/SessionCard'
-import { adminSessionsCopy } from '@/features/admin/config/adminSessions.copy'
-import type { SessionDto } from '@/features/admin/api/admin-sessions.service'
+import Button from '@/shared/ui/Button'
+import EmptyState from '@/shared/ui/EmptyState'
+import { GridLoader } from '@/shared/ui/GridLoader'
 import ConfirmModal from '@/shared/ui/modals/ConfirmModal'
 import InputModal from '@/shared/ui/modals/InputModal'
 import { useToast } from '@/shared/ui/toast/ToastContext'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 const AdminSessionsPage = () => {
   const {
@@ -44,7 +43,7 @@ const AdminSessionsPage = () => {
     if (success) {
       toast.success(adminSessionsCopy.deleteSuccess)
     } else {
-      toast.error(adminSessionsCopy.deleteError)
+      throw new Error(adminSessionsCopy.deleteError)
     }
     setDeleteId(null)
   }
@@ -54,8 +53,7 @@ const AdminSessionsPage = () => {
 
     const newDate = new Date(newTimeStr)
     if (Number.isNaN(newDate.getTime())) {
-      toast.error(adminSessionsCopy.invalidDate)
-      return
+      throw new Error(adminSessionsCopy.invalidDate)
     }
 
     const result = await rescheduleSession(
@@ -65,7 +63,7 @@ const AdminSessionsPage = () => {
     if (result.success) {
       toast.success(adminSessionsCopy.rescheduleSuccess)
     } else {
-      toast.error(adminSessionsCopy.rescheduleError + result.error)
+      throw new Error(adminSessionsCopy.rescheduleError + result.error)
     }
   }
 
@@ -88,32 +86,34 @@ const AdminSessionsPage = () => {
 
   return (
     <div className='space-y-8 pb-20'>
-      <div className='flex flex-wrap items-center justify-between gap-4'>
-        <div>
-          <h1 className='text-3xl font-bold text-white'>
-            {adminSessionsCopy.title}
-          </h1>
-          <p className='text-[var(--text-muted)] mt-1'>
-            {adminSessionsCopy.description}
-          </p>
-        </div>
-        <button
-          type='button'
-          onClick={() => setIsCreateModalOpen(true)}
-          className='flex items-center gap-2 bg-[var(--color-primary)] text-white px-5 py-2.5 rounded-xl font-bold hover:bg-[var(--color-primary-hover)] transition-all shadow-lg shadow-[var(--color-primary)]/20'
-        >
-          <Plus size={18} /> {adminSessionsCopy.add}
-        </button>
-      </div>
+      <AdminPageHeader
+        title={adminSessionsCopy.title}
+        description={adminSessionsCopy.description}
+      >
+        <Button onClick={() => setIsCreateModalOpen(true)}>
+          <Plus size={18} aria-hidden='true' /> {adminSessionsCopy.add}
+        </Button>
+      </AdminPageHeader>
 
       {isLoading ? (
-        <div className='py-20 flex justify-center'>
-          <GridLoader className='h-8 w-8 animate-spin text-[var(--color-primary)]' />
-        </div>
+        <output className='py-20 flex justify-center'>
+          <GridLoader
+            aria-hidden='true'
+            className='h-8 w-8 animate-spin motion-reduce:animate-none text-[var(--text-muted)]'
+          />
+          <span className='sr-only'>Завантаження сеансів</span>
+        </output>
       ) : isError && sessions.length === 0 ? (
         <UnavailableState onRetry={() => void refetch()} />
       ) : (
-        <div className='space-y-10 animate-in fade-in slide-in-from-bottom-4'>
+        <div className='space-y-8'>
+          {isError && (
+            <UnavailableState
+              title='Не вдалося оновити розклад'
+              description='Показано раніше завантажені сеанси.'
+              onRetry={() => void refetch()}
+            />
+          )}
           {Object.keys(groupedSessions).length === 0 && (
             <EmptyState
               icon={<Calendar className='h-12 w-12' />}
@@ -130,26 +130,29 @@ const AdminSessionsPage = () => {
             const isToday = dateObj.toDateString() === new Date().toDateString()
 
             return (
-              <div key={dateKey} className='relative'>
-                <div className='sticky top-0 z-10 flex items-center gap-4 bg-[var(--bg-main)]/95 py-4 backdrop-blur-md border-b border-white/5 mb-4'>
-                  <div
-                    className={`text-xl font-bold flex items-center gap-2 ${isToday ? 'text-[var(--color-success)]' : 'text-white'}`}
-                  >
+              <section
+                key={dateKey}
+                aria-label={dateObj.toLocaleDateString('uk-UA')}
+              >
+                <div className='flex flex-wrap items-baseline gap-4 border-b border-[var(--border-default)] pb-3'>
+                  <h2 className='text-lg font-medium'>
                     {dateObj.toLocaleDateString('uk-UA', {
                       day: 'numeric',
                       month: 'long',
                       weekday: 'long',
                     })}
-                  </div>
+                  </h2>
                   {isToday && (
-                    <span className='bg-[var(--color-success)]/10 text-[var(--color-success)] text-xs px-2 py-0.5 rounded font-bold uppercase tracking-wider'>
+                    <span className='text-[var(--text-muted)] text-xs'>
                       {adminSessionsCopy.today}
                     </span>
                   )}
-                  <div className='h-px bg-white/5 flex-1'></div>
+                  <span className='ml-auto text-xs tabular-nums text-[var(--text-muted)]'>
+                    Сеансів: {sessionList.length}
+                  </span>
                 </div>
 
-                <div className='grid gap-4 md:grid-cols-2 xl:grid-cols-3'>
+                <div>
                   {sessionList.map(session => (
                     <SessionCard
                       key={session.id}
@@ -159,7 +162,7 @@ const AdminSessionsPage = () => {
                     />
                   ))}
                 </div>
-              </div>
+              </section>
             )
           })}
         </div>
@@ -168,9 +171,7 @@ const AdminSessionsPage = () => {
       <CreateSessionModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
-        onSuccess={() => {
-          toast.success(adminSessionsCopy.createSuccess)
-        }}
+        onSuccess={() => {}}
       />
 
       <ConfirmModal

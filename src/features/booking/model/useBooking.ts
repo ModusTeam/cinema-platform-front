@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { isAxiosError } from 'axios'
 import {
   useEffect,
   useMemo,
@@ -7,11 +8,6 @@ import {
   useSyncExternalStore,
 } from 'react'
 import { hallsService } from '@/entities/hall/api/halls.service'
-import { normalizeId } from '@/shared/lib/normalizeId'
-import { bookingCopy } from '../config/booking.copy'
-import { classifySeat, ownsSeatLock } from '../lib/seatState'
-import { SeatSelection } from './seatSelection'
-import { useSeatOccupancy } from './useSeatOccupancy'
 import type { Hall, Seat } from '@/entities/hall/model/hall.types'
 import { moviesService } from '@/entities/movie/api/movies.service'
 import { sessionsService } from '@/entities/session/api/sessions.service'
@@ -19,7 +15,18 @@ import type { Session } from '@/entities/session/model/session.types'
 import { useAuth } from '@/features/auth/model/AuthContext'
 import { bookingService } from '@/features/booking/api/booking.service'
 import { ticketHub } from '@/features/booking/api/signalr.service'
+import { normalizeId } from '@/shared/lib/normalizeId'
 import { useToast } from '@/shared/ui/toast/ToastContext'
+import type { CheckoutPreviewResponse } from '../api/booking.service'
+import { bookingCopy } from '../config/booking.copy'
+import { matchesCheckoutPreview } from '../lib/checkoutPreview'
+import { classifySeat, ownsSeatLock } from '../lib/seatState'
+import {
+  isBookableSession,
+  validateSessionHandoff,
+} from '../lib/sessionHandoff'
+import { SeatSelection } from './seatSelection'
+import { useSeatOccupancy } from './useSeatOccupancy'
 
 interface CreateOrderPayload {
   sessionId: string
@@ -33,12 +40,18 @@ interface BookingQueryData {
   hall: Hall
 }
 
-export const useBooking = (movieId?: string) => {
+export const useBooking = (movieId: string, handoffId?: string) => {
   const toast = useToast()
   const queryClient = useQueryClient()
   const { user } = useAuth()
 
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1)
+  const [isResolvingHandoff, setIsResolvingHandoff] = useState(!!handoffId)
+  const [handoffRejected, setHandoffRejected] = useState(false)
+  const [orderId, setOrderId] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [orderError, setOrderError] = useState<string | null>(null)
+  const [orderOutcomeUnknown, setOrderOutcomeUnknown] = useState(false)
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
     null,
   )
@@ -56,7 +69,7 @@ export const useBooking = (movieId?: string) => {
         refresh: refreshOccupancy,
         warn: key => toast.warning(bookingCopy.availability[key]),
       }),
-    [selectedSessionId, user?.id, refreshOccupancy, toast.warning],
+    [selectedSessionId, refreshOccupancy, toast.warning],
   )
   const orderAttempt = useRef(false)
   const currentSelection = useRef(selection)
@@ -66,6 +79,31 @@ export const useBooking = (movieId?: string) => {
     selection.getSnapshot,
   )
   const selectedSeats = selectionSnapshot.seats
+
+  useEffect(() => {
+    if (!handoffId) return
+    let active = true
+    void sessionsService
+      .getDetails(handoffId)
+      .then(session => {
+        if (!active) return
+        if (validateSessionHandoff(session, handoffId, movieId)) {
+          setSelectedSessionId(normalizeId(session.id))
+          setStep(2)
+        } else {
+          setHandoffRejected(true)
+        }
+      })
+      .catch(() => {
+        if (active) setHandoffRejected(true)
+      })
+      .finally(() => {
+        if (active) setIsResolvingHandoff(false)
+      })
+    return () => {
+      active = false
+    }
+  }, [handoffId, movieId])
 
   useEffect(() => {
     selection.activate()
@@ -107,7 +145,7 @@ export const useBooking = (movieId?: string) => {
     enabled: !!movieId,
     select: data =>
       data
-        .filter(s => new Date(s.startTime) > new Date())
+        .filter(s => isBookableSession(s, movieId))
         .sort(
           (a, b) =>
             new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
@@ -124,15 +162,18 @@ export const useBooking = (movieId?: string) => {
     queryFn: async () => {
       if (!selectedSessionId) throw new Error('No session selected')
       const session = await sessionsService.getDetails(selectedSessionId)
+      if (!validateSessionHandoff(session, selectedSessionId, movieId))
+        throw new Error(bookingCopy.handoffRejected)
       const hall = await hallsService.getById(session.hallId)
       return { session, hall }
     },
     enabled: !!selectedSessionId,
-    staleTime: Infinity,
+    staleTime: 0,
   })
 
+  const hubActive = step === 2 || step === 3
   useEffect(() => {
-    if (!selectedSessionId || step === 1 || step === 4) return
+    if (!selectedSessionId || !hubActive) return
     let active = true
     const refresh = () => {
       if (active) void refreshOccupancy()
@@ -148,7 +189,7 @@ export const useBooking = (movieId?: string) => {
       ticketHub.onSynchronized = null
       void ticketHub.stopConnection()
     }
-  }, [selectedSessionId, step === 1 || step === 4, refreshOccupancy])
+  }, [selectedSessionId, hubActive, refreshOccupancy])
 
   const createOrderMutation = useMutation({
     mutationFn: (payload: CreateOrderPayload) =>
@@ -162,6 +203,9 @@ export const useBooking = (movieId?: string) => {
     occupancy.data?.seats.map(seat => [normalizeId(seat.id), seat]),
   )
   const canCheckout =
+    !!bookingData &&
+    !isDetailsError &&
+    isBookableSession(bookingData.session, movieId) &&
     occupancy.verified &&
     selectedSeats.length > 0 &&
     selectionSnapshot.pending.size === 0 &&
@@ -184,14 +228,19 @@ export const useBooking = (movieId?: string) => {
   }
 
   const selectSession = (session: Session) => {
-    if (createOrderMutation.isPending) return
+    if (
+      orderAttempt.current ||
+      orderOutcomeUnknown ||
+      !isBookableSession(session, movieId)
+    )
+      return
     selection.abandon(true)
     setSelectedSessionId(normalizeId(session.id))
     setStep(2)
   }
 
   const resetSession = () => {
-    if (createOrderMutation.isPending) return
+    if (orderAttempt.current || orderOutcomeUnknown) return
     selection.abandon(true)
     setStep(1)
     setSelectedSessionId(null)
@@ -203,21 +252,38 @@ export const useBooking = (movieId?: string) => {
   }
 
   const backToSeats = () => {
+    if (orderAttempt.current || orderOutcomeUnknown) return
     setStep(2)
   }
 
   const submitOrder = async (
     useLoyaltyPoints: boolean,
     applyGoldUpgrade: boolean,
+    preview: CheckoutPreviewResponse | undefined,
   ) => {
+    const request = {
+      sessionId: selectedSessionId || '',
+      seatIds: selectedSeats.map(seat => seat.id),
+      useLoyaltyPoints,
+      applyGoldUpgrade,
+    }
     if (
       !selectedSessionId ||
+      !bookingData ||
+      !isBookableSession(bookingData.session, movieId) ||
+      !matchesCheckoutPreview(preview, request) ||
+      !preview.canCheckout ||
+      (useLoyaltyPoints && !preview.loyaltyPoints.applied) ||
+      (applyGoldUpgrade && !preview.goldUpgrade.applied) ||
+      orderOutcomeUnknown ||
       !canCheckout ||
       orderAttempt.current ||
       createOrderMutation.isPending
     )
       return
     orderAttempt.current = true
+    setIsSubmitting(true)
+    setOrderError(null)
     const owner = selection
     const sessionId = selectedSessionId
     owner.setSubmitting(true)
@@ -241,7 +307,7 @@ export const useBooking = (movieId?: string) => {
       )
         return
       owner.setSubmitting(true)
-      await createOrderMutation.mutateAsync({
+      const createdOrderId = await createOrderMutation.mutateAsync({
         sessionId,
         seatIds: seats.seats.map(seat => seat.id),
         useLoyaltyPoints,
@@ -255,11 +321,23 @@ export const useBooking = (movieId?: string) => {
       void queryClient.invalidateQueries({ queryKey: ['loyalty-profile'] })
       void queryClient.invalidateQueries({ queryKey: ['loyalty-transactions'] })
       if (currentSelection.current === owner && owner.isActive()) {
+        setOrderId(createdOrderId)
         setStep(4)
         toast.success('Замовлення успішно створено!')
       }
     } catch (error: unknown) {
       if (currentSelection.current === owner && owner.isActive()) {
+        const unknown =
+          isAxiosError(error) &&
+          (!error.response || error.response.status >= 500)
+        setOrderOutcomeUnknown(unknown)
+        setOrderError(
+          unknown
+            ? bookingCopy.checkout.orderOutcomeUnknown
+            : error instanceof Error
+              ? error.message
+              : bookingCopy.checkout.orderFailed,
+        )
         toast.error(
           error instanceof Error
             ? error.message
@@ -269,12 +347,18 @@ export const useBooking = (movieId?: string) => {
       }
     } finally {
       orderAttempt.current = false
+      setIsSubmitting(false)
       owner.setSubmitting(false)
     }
   }
 
   return {
     step,
+    orderId,
+    orderError,
+    orderOutcomeUnknown,
+    isResolvingHandoff,
+    handoffRejected,
     movie,
     sessions,
     selectedSession: bookingData?.session,
@@ -294,7 +378,7 @@ export const useBooking = (movieId?: string) => {
     refetchSessions,
     refetchDetails,
     isLoadingDetails,
-    isProcessingPayment: createOrderMutation.isPending,
+    isProcessingPayment: isSubmitting,
     selectSession,
     resetSession,
     goToCheckout,

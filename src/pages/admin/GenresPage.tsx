@@ -1,15 +1,29 @@
-import { useState, useMemo } from 'react'
+import { Edit, Plus, Search, Tag, Trash2 } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import type { Genre } from '@/features/admin/api/genres.service'
 import { useGenres } from '@/features/admin/model/useGenres'
-import { Plus, Tag, Edit, Trash2, Search } from 'lucide-react'
-import EmptyState from '@/shared/ui/EmptyState'
-import UnavailableState from '@/shared/ui/UnavailableState'
-import { GridLoader } from '@/shared/ui/GridLoader'
+import { AdminPageHeader } from '@/features/admin/ui/AdminPageHeader'
+import { AdminTable } from '@/features/admin/ui/AdminTable'
 import GenreModal from '@/features/admin/ui/GenreModal'
-import { type Genre } from '@/features/admin/api/genres.service'
+import Button from '@/shared/ui/Button'
+import EmptyState from '@/shared/ui/EmptyState'
+import { GridLoader } from '@/shared/ui/GridLoader'
+import ConfirmModal from '@/shared/ui/modals/ConfirmModal'
+import { useToast } from '@/shared/ui/toast/ToastContext'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 const GenresPage = () => {
-  const { genres, isLoading, isError, refetch, createGenre, updateGenre, deleteGenre } =
-    useGenres()
+  const toast = useToast()
+  const [deleteTarget, setDeleteTarget] = useState<Genre | null>(null)
+  const {
+    genres,
+    isLoading,
+    isError,
+    refetch,
+    createGenre,
+    updateGenre,
+    deleteGenre,
+  } = useGenres()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingGenre, setEditingGenre] = useState<Genre | null>(null)
@@ -23,18 +37,6 @@ const GenresPage = () => {
   const handleEditClick = (genre: Genre) => {
     setEditingGenre(genre)
     setIsModalOpen(true)
-  }
-
-  const handleDeleteClick = async (genre: Genre) => {
-    const idDisplay = genre.externalId ? `ID: ${genre.externalId}` : 'Custom'
-    if (
-      !confirm(
-        `Видалити жанр "${genre.name}" (${idDisplay})? Це може вплинути на існуючі фільми.`,
-      )
-    )
-      return
-
-    await deleteGenre(genre.id)
   }
 
   const handleSave = async (externalId: number | null, name: string) => {
@@ -58,21 +60,14 @@ const GenresPage = () => {
 
   return (
     <div className='space-y-6'>
-      <div className='flex items-center justify-between'>
-        <div>
-          <h1 className='text-3xl font-bold text-white'>Жанри</h1>
-          <p className='text-[var(--text-muted)] mt-1'>
-            Категорії фільмів (Action, Drama тощо)
-          </p>
-        </div>
-        <button
-          type='button'
-          onClick={handleCreateClick}
-          className='flex items-center gap-2 bg-[var(--color-primary)] text-white px-5 py-2.5 rounded-xl font-bold hover:bg-[var(--color-primary-hover)] transition-all shadow-lg shadow-[var(--color-primary)]/20'
-        >
+      <AdminPageHeader
+        title='Жанри'
+        description='Категорії фільмів (Action, Drama тощо)'
+      >
+        <Button onClick={handleCreateClick}>
           <Plus size={18} /> Додати жанр
-        </button>
-      </div>
+        </Button>
+      </AdminPageHeader>
 
       <div className='relative max-w-md'>
         <Search
@@ -80,11 +75,12 @@ const GenresPage = () => {
           size={20}
         />
         <input
-          type='text'
+          type='search'
+          aria-label='Пошук жанру за назвою або TMDB ID'
           placeholder='Пошук жанру...'
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
-          className='w-full rounded-xl bg-[var(--bg-card)] border border-white/5 py-3 pl-10 pr-4 text-white placeholder-[var(--text-muted)] focus:border-[var(--color-primary)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]/50'
+          className='field pl-10'
         />
       </div>
 
@@ -95,8 +91,8 @@ const GenresPage = () => {
       ) : isError && genres.length === 0 ? (
         <UnavailableState onRetry={() => void refetch()} />
       ) : (
-        <div className='rounded-xl border border-white/5 bg-[var(--bg-card)] overflow-hidden backdrop-blur-sm shadow-xl'>
-          <table className='w-full text-left text-sm'>
+        <AdminTable label='Жанри'>
+          <table className='min-w-[560px]'>
             <thead className='bg-white/5 text-[var(--text-muted)] font-medium uppercase text-xs tracking-wider'>
               <tr>
                 <th className='px-6 py-4'>ID (TMDB)</th>
@@ -140,7 +136,7 @@ const GenresPage = () => {
                       {genre.externalId !== null ? (
                         genre.externalId
                       ) : (
-                        <span className='inline-flex items-center px-2 py-1 rounded bg-white/5 text-xs text-zinc-500'>
+                        <span className='inline-flex items-center px-2 py-1 rounded bg-white/5 text-xs text-[var(--text-faint)]'>
                           Custom
                         </span>
                       )}
@@ -167,7 +163,7 @@ const GenresPage = () => {
                         </button>
                         <button
                           type='button'
-                          onClick={() => handleDeleteClick(genre)}
+                          onClick={() => setDeleteTarget(genre)}
                           className='p-2 rounded-lg text-[var(--text-muted)] hover:text-red-500 hover:bg-red-500/10 transition-colors'
                           title='Видалити'
                         >
@@ -180,9 +176,25 @@ const GenresPage = () => {
               )}
             </tbody>
           </table>
-        </div>
+        </AdminTable>
       )}
 
+      <ConfirmModal
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        title='Видалити жанр?'
+        message={`Жанр «${deleteTarget?.name ?? ''}» буде видалено. Це може вплинути на існуючі фільми.`}
+        confirmText='Видалити'
+        isDestructive
+        onConfirm={async () => {
+          if (!deleteTarget) return
+          const result = await deleteGenre(deleteTarget.id)
+          if (!result.success)
+            throw new Error(result.error || 'Не вдалося видалити жанр')
+          toast.success('Жанр видалено')
+          setDeleteTarget(null)
+        }}
+      />
       <GenreModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

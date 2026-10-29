@@ -1,0 +1,45 @@
+.cinema-hero { min-height: 46rem; min-height: 90svh; }
+.cinema-hero-content {
+  min-height: 46rem;
+  min-height: 90svh;
+  padding-top: 12rem;
+  padding-bottom: 6rem;
+}
+.cinema-hero-title {
+  font-family: var(--font-public-display);
+  font-size: clamp(3.25rem, 6.6vw, 6.5rem);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+.cinema-hero-image { position: absolute; inset: 0; }
+.cinema-hero-copy { animation: cinema-copy-in 360ms ease-out; }
+@keyframes cinema-copy-in {
+  from { opacity: 0.65; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes hero-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-progress { animation: hero-progress linear forwards; }
+}
+@media (max-width: 63.999rem) {
+  .cinema-hero { min-height: auto; }
+  .cinema-hero-loading { min-height: 42rem; }
+  .cinema-hero-content { min-height: 42rem; padding-top: 13rem; }
+  .cinema-hero-title { font-size: clamp(2.5rem, 7.8vw, 4.5rem); }
+  .cinema-hero-depth { transform: none !important; }
+}
+@media (max-width: 39.999rem) {
+  .cinema-hero-loading { min-height: 38rem; }
+  .cinema-hero-content { min-height: 38rem; padding-top: 12rem; padding-bottom: 5.5rem; }
+  .cinema-hero-title { font-size: clamp(2.5rem, 10vw, 3.25rem); line-height: 1.06; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cinema-hero-copy { animation: none; }
+  .cinema-hero-depth, .home-programme-heading { transform: none !important; }
+}

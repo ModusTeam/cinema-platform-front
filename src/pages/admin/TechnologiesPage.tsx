@@ -1,47 +1,26 @@
+import { Cpu, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useTechnologies } from '@/features/admin/model/useTechnologies'
-import { Plus, Cpu, Trash2 } from 'lucide-react'
-import EmptyState from '@/shared/ui/EmptyState'
-import UnavailableState from '@/shared/ui/UnavailableState'
-import { GridLoader } from '@/shared/ui/GridLoader'
+import { AdminPageHeader } from '@/features/admin/ui/AdminPageHeader'
+import { AdminTable } from '@/features/admin/ui/AdminTable'
 import CreateTechnologyModal from '@/features/admin/ui/CreateTechnologyModal'
+import Button from '@/shared/ui/Button'
+import EmptyState from '@/shared/ui/EmptyState'
+import { GridLoader } from '@/shared/ui/GridLoader'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 const TechnologiesPage = () => {
-  const { technologies, isLoading, isError, refetch, createTechnology } = useTechnologies()
+  const { technologies, isLoading, isError, refetch, createTechnology } =
+    useTechnologies()
   const [isModalOpen, setIsModalOpen] = useState(false)
-
-  const getTypeColor = (type: string) => {
-    switch (type.toLowerCase()) {
-      case 'visual':
-        return 'text-blue-400 bg-blue-400/10 border-blue-400/20'
-      case 'audio':
-        return 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20'
-      case 'seating':
-        return 'text-green-400 bg-green-400/10 border-green-400/20'
-      case 'experience':
-        return 'text-purple-400 bg-purple-400/10 border-purple-400/20'
-      default:
-        return 'text-gray-400 bg-gray-400/10 border-gray-400/20'
-    }
-  }
 
   return (
     <div className='space-y-6'>
-      <div className='flex items-center justify-between'>
-        <div>
-          <h1 className='text-3xl font-bold text-white'>Технології</h1>
-          <p className='text-[var(--text-muted)] mt-1'>
-            Типи проекції та звуку
-          </p>
-        </div>
-        <button
-          type='button'
-          onClick={() => setIsModalOpen(true)}
-          className='flex items-center gap-2 bg-[var(--color-primary)] text-white px-5 py-2.5 rounded-xl font-bold hover:bg-[var(--color-primary-hover)] transition-all shadow-lg shadow-[var(--color-primary)]/20'
-        >
+      <AdminPageHeader title='Технології' description='Типи проекції та звуку'>
+        <Button onClick={() => setIsModalOpen(true)}>
           <Plus size={18} /> Додати технологію
-        </button>
-      </div>
+        </Button>
+      </AdminPageHeader>
 
       {isLoading ? (
         <div className='flex justify-center py-20'>
@@ -50,8 +29,8 @@ const TechnologiesPage = () => {
       ) : isError && technologies.length === 0 ? (
         <UnavailableState onRetry={() => void refetch()} />
       ) : (
-        <div className='rounded-xl border border-white/5 bg-[var(--bg-card)] overflow-hidden backdrop-blur-sm shadow-xl'>
-          <table className='w-full text-left text-sm'>
+        <AdminTable label='Технології'>
+          <table className='min-w-[560px]'>
             <thead className='bg-white/5 text-[var(--text-muted)] font-medium uppercase text-xs tracking-wider'>
               <tr>
                 <th className='px-6 py-4'>Назва</th>
@@ -90,14 +69,12 @@ const TechnologiesPage = () => {
                       </div>
                     </td>
                     <td className='px-6 py-4'>
-                      <span
-                        className={`px-2 py-1 rounded-md text-xs font-bold border ${getTypeColor(tech.type)}`}
-                      >
+                      <span className='text-sm text-[var(--text-muted)]'>
                         {tech.type}
                       </span>
                     </td>
                     <td className='px-6 py-4 text-right'>
-                      <div className='flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity'>
+                      <div className='flex items-center justify-end gap-2'>
                         <button
                           type='button'
                           disabled // Поки що API не має методу Delete
@@ -113,7 +90,7 @@ const TechnologiesPage = () => {
               )}
             </tbody>
           </table>
-        </div>
+        </AdminTable>
       )}
 
       <CreateTechnologyModal

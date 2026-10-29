@@ -1,24 +1,26 @@
 import { clsx } from 'clsx'
 import { Edit, Plus, Search, Trash2, Trophy } from 'lucide-react'
 import { useMemo, useState } from 'react'
-
-import EmptyState from '@/shared/ui/EmptyState'
-import UnavailableState from '@/shared/ui/UnavailableState'
-import { GridLoader } from '@/shared/ui/GridLoader'
-import ConfirmModal from '@/shared/ui/modals/ConfirmModal'
-import { useToast } from '@/shared/ui/toast/ToastContext'
-import AchievementFormModal from '@/features/admin/ui/AchievementFormModal'
+import type {
+  AdminAchievementDto,
+  AdminAchievementPayload,
+} from '@/features/admin/api/admin-achievements.service'
 import { useAdminAchievements } from '@/features/admin/model/useAdminAchievements'
+import AchievementFormModal from '@/features/admin/ui/AchievementFormModal'
+import { AdminPageHeader } from '@/features/admin/ui/AdminPageHeader'
+import { AdminTable } from '@/features/admin/ui/AdminTable'
 import {
   getAchievementCategoryLabel,
   getAchievementRarityLabel,
   getAchievementStrategyLabel,
   resolveAchievementIcon,
 } from '@/features/loyalty/achievements/achievementContract'
-import type {
-  AdminAchievementDto,
-  AdminAchievementPayload,
-} from '@/features/admin/api/admin-achievements.service'
+import Button from '@/shared/ui/Button'
+import EmptyState from '@/shared/ui/EmptyState'
+import { GridLoader } from '@/shared/ui/GridLoader'
+import ConfirmModal from '@/shared/ui/modals/ConfirmModal'
+import { useToast } from '@/shared/ui/toast/ToastContext'
+import UnavailableState from '@/shared/ui/UnavailableState'
 
 type SecretFilter = 'all' | 'secret' | 'regular'
 
@@ -27,8 +29,8 @@ const SECRET_FILTER_OPTIONS: Array<{
   label: string
 }> = [
   { value: 'all', label: 'Усі' },
-  { value: 'secret', label: 'Тільки Secret' },
-  { value: 'regular', label: 'Без Secret' },
+  { value: 'secret', label: 'Секретні' },
+  { value: 'regular', label: 'Несекретні' },
 ]
 
 const AdminAchievementsPage = () => {
@@ -87,62 +89,47 @@ const AdminAchievementsPage = () => {
   }
 
   const handleSave = async (payload: AdminAchievementPayload) => {
-    try {
-      if (editingAchievement) {
-        await updateAchievement({ id: editingAchievement.id, payload })
-        toast.success('Досягнення оновлено')
-      } else {
-        await createAchievement(payload)
-        toast.success('Досягнення створено')
-      }
-
-      setIsFormOpen(false)
-      setEditingAchievement(null)
-    } catch (saveError) {
-      toast.error((saveError as Error).message)
+    if (editingAchievement) {
+      await updateAchievement({ id: editingAchievement.id, payload })
+      toast.success('Досягнення оновлено')
+    } else {
+      await createAchievement(payload)
+      toast.success('Досягнення створено')
     }
+    setIsFormOpen(false)
+    setEditingAchievement(null)
   }
 
   const handleDelete = async () => {
     if (!deleteTarget) return
 
-    try {
-      await deleteAchievement(deleteTarget.id)
-      toast.success('Досягнення видалено')
-      setDeleteTarget(null)
-    } catch (deleteError) {
-      toast.error((deleteError as Error).message)
-    }
+    await deleteAchievement(deleteTarget.id)
+    toast.success('Досягнення видалено')
+    setDeleteTarget(null)
   }
 
   return (
     <div className='space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500'>
-      <div className='flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between'>
-        <div>
-          <h1 className='text-3xl font-bold text-white'>Досягнення</h1>
-          <p className='mt-1 text-sm text-[var(--text-muted)]'>
-            Керуйте правилами досягнень, нагородами та активністю.
-          </p>
-        </div>
-
-        <button
-          type='button'
-          onClick={handleCreate}
-          className='flex w-fit items-center gap-2 rounded-xl bg-[var(--color-primary)] px-5 py-3 text-sm font-bold text-white shadow-lg shadow-[var(--color-primary)]/20 transition-colors hover:bg-[var(--color-primary-hover)]'
-        >
-          <Plus size={18} />
+      <AdminPageHeader
+        title='Досягнення'
+        description='Керуйте правилами досягнень, нагородами та активністю.'
+      >
+        <Button onClick={handleCreate}>
+          <Plus size={18} aria-hidden='true' />
           Нове досягнення
-        </button>
-      </div>
+        </Button>
+      </AdminPageHeader>
 
-      <div className='flex flex-col gap-3 rounded-2xl border border-white/5 bg-[var(--bg-card)] p-4 xl:flex-row xl:items-center xl:justify-between'>
+      <div className='flex flex-col gap-3 rounded-lg border border-white/5 bg-[var(--bg-card)] p-4 xl:flex-row xl:items-center xl:justify-between'>
         <label className='relative block w-full md:max-w-sm'>
-          <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500' />
+          <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-faint)]' />
           <input
+            type='search'
+            aria-label='Пошук досягнення за кодом або назвою'
             value={search}
             onChange={event => setSearch(event.target.value)}
             placeholder='Пошук за кодом або назвою'
-            className='w-full rounded-xl border border-white/10 bg-black/20 py-3 pl-10 pr-4 text-sm text-white outline-none placeholder:text-neutral-600 focus:border-[var(--color-primary)]'
+            className='field pl-10'
           />
         </label>
 
@@ -153,10 +140,11 @@ const AdminAchievementsPage = () => {
                 key={option.value}
                 type='button'
                 onClick={() => setSecretFilter(option.value)}
+                aria-pressed={secretFilter === option.value}
                 className={clsx(
-                  'rounded-lg px-3 py-2 text-xs font-semibold transition-colors',
+                  'selection-control px-3 text-sm',
                   secretFilter === option.value
-                    ? 'bg-[var(--color-primary)] text-white'
+                    ? 'text-[var(--text-main)]'
                     : 'text-neutral-400 hover:bg-white/5 hover:text-white',
                 )}
               >
@@ -177,7 +165,7 @@ const AdminAchievementsPage = () => {
         </div>
       </div>
 
-      <div className='overflow-hidden rounded-2xl border border-white/5 bg-[var(--bg-card)]'>
+      <div className='overflow-hidden rounded-lg border border-white/5 bg-[var(--bg-card)]'>
         <div className='flex items-center justify-between border-b border-white/5 p-5'>
           <div className='text-sm text-neutral-400'>
             Знайдено{' '}
@@ -193,7 +181,10 @@ const AdminAchievementsPage = () => {
             <GridLoader className='h-8 w-8 animate-spin text-[var(--color-primary)]' />
           </div>
         ) : error ? (
-          <UnavailableState title='Досягнення тимчасово недоступні' onRetry={() => void refetch()} />
+          <UnavailableState
+            title='Досягнення тимчасово недоступні'
+            onRetry={() => void refetch()}
+          />
         ) : filteredAchievements.length === 0 ? (
           <EmptyState
             icon={<Trophy className='h-12 w-12' />}
@@ -222,9 +213,9 @@ const AdminAchievementsPage = () => {
             className='border-0 bg-transparent py-16'
           />
         ) : (
-          <div className='overflow-x-auto'>
+          <AdminTable label='Досягнення'>
             <table className='w-full min-w-[980px] text-left text-sm'>
-              <thead className='border-b border-white/5 text-xs uppercase tracking-wider text-neutral-500'>
+              <thead className='border-b border-white/5 text-xs uppercase tracking-wider text-[var(--text-faint)]'>
                 <tr>
                   <th className='px-5 py-4'>Досягнення</th>
                   <th className='px-5 py-4'>Категорія</th>
@@ -258,11 +249,11 @@ const AdminAchievementsPage = () => {
                               {achievement.name}
                               {achievement.isSecret && (
                                 <span className='rounded-full bg-violet-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-violet-200'>
-                                  Secret
+                                  Секретне
                                 </span>
                               )}
                             </div>
-                            <div className='mt-1 font-mono text-xs text-neutral-500'>
+                            <div className='mt-1 font-mono text-xs text-[var(--text-faint)]'>
                               {achievement.code}
                             </div>
                             {achievement.isSecret && achievement.secretHint && (
@@ -302,7 +293,7 @@ const AdminAchievementsPage = () => {
                           <button
                             type='button'
                             onClick={() => handleEdit(achievement)}
-                            className='rounded-lg p-2 text-neutral-400 transition-colors hover:bg-white/5 hover:text-white'
+                            className='action action-ghost w-11 px-0 text-neutral-400 transition-colors hover:bg-white/5 hover:text-white'
                             aria-label='Редагувати досягнення'
                           >
                             <Edit size={16} />
@@ -310,7 +301,7 @@ const AdminAchievementsPage = () => {
                           <button
                             type='button'
                             onClick={() => setDeleteTarget(achievement)}
-                            className='rounded-lg p-2 text-neutral-400 transition-colors hover:bg-red-500/10 hover:text-red-400'
+                            className='action action-ghost w-11 px-0 text-neutral-400 transition-colors hover:bg-red-500/10 hover:text-red-400'
                             aria-label='Видалити досягнення'
                           >
                             <Trash2 size={16} />
@@ -322,7 +313,7 @@ const AdminAchievementsPage = () => {
                 })}
               </tbody>
             </table>
-          </div>
+          </AdminTable>
         )}
       </div>
 

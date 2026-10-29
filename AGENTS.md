@@ -242,6 +242,11 @@ relative imports within the same slice or local module.
 
 Use `import type` for type-only imports.
 
+Prefer self-documenting code. Avoid comments that merely restate what the code
+does. Add comments only when they clarify non-obvious intent, architectural
+decisions, constraints, workarounds or important invariants. Preserve required
+tooling, legal and API documentation annotations.
+
 ## Existing Patterns
 
 ### API Calls
@@ -376,6 +381,12 @@ navigation or footer components in `src/app/layouts/components`.
 test dependency is required, so the dependency lockfile is unchanged.
 There is no configured component or browser test runner.
 
+`tests/accountPresentation.test.ts` covers admission QR eligibility, seat-to-ticket
+associations, unchanged order grouping, account navigation markup and extracted
+profile validation. The durable design reference is
+[`docs/design/ui-guidelines.md`](docs/design/ui-guidelines.md). The temporary
+Design Lab, phase reports, fixtures and visual captures have been removed.
+
 `tests/inputAccessibility.test.ts` checks shared input markup with React's
 server renderer; it does not verify DOM focus. The optional
 `tests/accessibility.browser.mjs` function runs real Chromium keyboard and
@@ -384,6 +395,41 @@ viewport checks through Playwright's `browser_run_code` tool. Start
 argument (or use `filename` if the tool can access the repository). It uses
 disposable browser contexts and mocked API responses, including mutations.
 No additional dependency or browser runner is installed.
+
+`tests/interactionPolish.browser.mjs` is a retained optional regression helper for
+shared interactions, navigation, forms and scroll behavior. It is not part of
+`bun run test` and is not a default visual-development check. Leave its optional
+screenshot directory unset unless a capture is needed; when set, use an isolated
+directory under `%TEMP%` and delete the captures after inspection.
+
+### Temporary artifacts and focused browser verification
+
+- Store disposable screenshots, reference captures, recordings, extracted frames,
+  fixture artwork, scripts and generated results outside the repository, in an
+  isolated OS temporary directory (`%TEMP%` on Windows). Inspect them, then delete
+  them immediately when no longer needed. Never stage them or copy them into
+  `docs`, `src`, `public`, `tests` or another source directory.
+- A persistent visual fixture or regression helper needs a stated long-term
+  purpose and the smallest maintainable representation. Preserve legitimate
+  production assets and automated tests regardless of file extension.
+- For small visual changes, inspect the affected component/route, run focused
+  tests and check one desktop (usually 1440px) and one mobile (usually 390px)
+  viewport. Capture only when it adds evidence; do not capture each CSS edit.
+- For layout changes, add 320px checks where relevant; add tablet only for an
+  affected breakpoint and long-text/200% enlargement checks when justified.
+- For interactions, check affected paths and relevant keyboard, focus and
+  reduced-motion behavior. Reuse browser context when safe. Repeat a successful
+  scenario only after a relevant change or a concrete new concern.
+- Broad browser regression is for shared infrastructure, navigation/auth,
+  critical booking/payment, release/merge preparation or evidence of a wider
+  regression. Preserve thorough checks for seat ownership, checkout and ticket
+  eligibility. Report behavior covered, not assertion counts.
+- Work in one cycle: inspect, implement, focused checks, one targeted visual
+  inspection, fix actual issues and recheck affected behavior. Run final required
+  build/full unit verification once near completion; after failure, start with
+  the relevant subset. Avoid routine phase reports and screenshot matrices.
+- Artifact/documentation-only cleanup needs no browser run when the application
+  build succeeds and no application integration code changes.
 
 Do not claim tests were run unless you add or run an actual configured command.
 If test tooling is intentionally introduced, use Bun commands and update
@@ -432,15 +478,19 @@ that should be verified.
   labels, numbers, and persistent statuses come from the backend; only `Active`
   seats absent from session occupancy may be selected.
 - Legacy `POST /orders` returns a GUID string and currently receives a mock
-  payment token. The frontend has not adopted the backend's reservation,
-  checkout, and status endpoints. Do not change the payment flow in a refactor.
-- The backend has `PaymentProcessing`, `PaymentOutcomeUnknown`, and `Expired`
-  order states and `Reserved` and `Released` ticket states. The current order
-  list UI still maps only older order states and needs payment-aware treatment.
+  payment token. The frontend has not adopted the backend's reservation or
+  checkout endpoints. Booking results read `GET /orders/{id}/status`; successful
+  creation alone does not confirm payment. Do not change the payment flow in a refactor.
+- Account tickets display `PaymentProcessing`, `PaymentOutcomeUnknown`, and
+  `Expired` order states and `Reserved` and `Released` ticket states. QR disclosure
+  retains the existing paid-order/valid-ticket rule and ticket-ID payload. History
+  grouping does not introduce another admission rule; backend validation remains
+  authoritative. Profile composition lives in `features/profile/ui`, and forms
+  retain their React Hook Form/Zod schemas and existing mutation hooks.
 - Loyalty profile and transaction DTOs match the .NET account endpoints.
   Benefits and the older loyalty checkout preview adapter remain placeholders;
   booking amounts come from `/orders/checkout-preview`.
 
 ---
 
-Last updated: 2026-10-23
+Last updated: 2026-10-28

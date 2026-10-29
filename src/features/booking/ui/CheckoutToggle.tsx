@@ -19,22 +19,27 @@ const CheckoutToggle = ({
     aria-checked={checked}
     disabled={disabled}
     onClick={() => onToggle(!checked)}
-    className={`flex w-full items-center justify-between gap-4 rounded-2xl bg-white/5 px-4 py-3 text-left transition-colors ${
-      disabled ? 'cursor-not-allowed opacity-50' : 'hover:bg-white/10'
+    aria-label={label}
+    className={`flex min-h-24 w-full items-center justify-between gap-5 border-b border-[var(--border-default)] py-5 text-left transition-colors ${
+      disabled ? 'cursor-not-allowed' : 'hover:bg-[var(--surface-muted)]'
     }`}
   >
     <span>
-      <span className='block text-sm font-bold text-white'>{label}</span>
-      <span className='mt-1 block text-xs text-zinc-400'>{description}</span>
+      <span className='block text-base font-medium text-[var(--text-main)]'>
+        {label}
+      </span>
+      <span className='mt-2 block text-sm leading-relaxed text-[var(--text-muted)]'>
+        {description}
+      </span>
     </span>
     <span
       className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${
-        checked ? 'bg-red-600' : 'bg-zinc-700'
+        checked ? 'bg-[var(--action-primary)]' : 'bg-[var(--border-field)]'
       }`}
       aria-hidden='true'
     >
       <span
-        className={`absolute top-1 h-5 w-5 rounded-full bg-white transition-transform ${
+        className={`absolute top-1 h-5 w-5 rounded-full bg-white transition-transform motion-reduce:transition-none ${
           checked ? 'translate-x-6' : 'translate-x-1'
         }`}
       />

@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { adminSessionsService } from '@/features/admin/api/admin-sessions.service'
-import { moviesService } from '@/entities/movie/api/movies.service'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
 import { hallsService } from '@/entities/hall/api/halls.service'
+import { moviesService } from '@/entities/movie/api/movies.service'
+import { adminSessionsService } from '@/features/admin/api/admin-sessions.service'
 import { useToast } from '@/shared/ui/toast/ToastContext'
-import { isAxiosError } from 'axios'
 
 export const useCreateSession = (
   isOpen: boolean,
@@ -14,6 +13,7 @@ export const useCreateSession = (
   const queryClient = useQueryClient()
   const toast = useToast()
 
+  const [submitError, setSubmitError] = useState('')
   const [movieId, setMovieId] = useState('')
   const [hallId, setHallId] = useState('')
   const [pricingId, setPricingId] = useState('')
@@ -85,8 +85,10 @@ export const useCreateSession = (
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (createMutation.isPending) return
+    setSubmitError('')
     if (!movieId || !hallId || !pricingId || !date || !time) {
-      toast.warning('Будь ласка, заповніть всі поля')
+      setSubmitError('Будь ласка, заповніть всі поля')
       return
     }
 
@@ -100,10 +102,9 @@ export const useCreateSession = (
         pricingId,
       })
     } catch (error: unknown) {
-      const message = isAxiosError<{ error?: string }>(error)
-        ? error.response?.data?.error
-        : undefined
-      toast.error(message || 'Помилка створення сеансу')
+      setSubmitError(
+        error instanceof Error ? error.message : 'Помилка створення сеансу',
+      )
     }
   }
 
@@ -126,6 +127,7 @@ export const useCreateSession = (
     isLoadingData,
     isDataError,
     retryData,
+    submitError,
     isSubmitting: createMutation.isPending,
     submit,
   }

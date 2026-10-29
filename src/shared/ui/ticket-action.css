@@ -1,0 +1,26 @@
+.ticket-action {
+  min-height: 3.5rem;
+  padding: 0;
+  gap: 0;
+  border-radius: var(--radius-control);
+  font-size: 1rem;
+  /* Small bites meet the perforation without clipping the control's hit area. */
+  mask: radial-gradient(circle 4px at calc(100% - 3.5rem) 0, transparent 98%, black) top / 100% 51% no-repeat,
+    radial-gradient(circle 4px at calc(100% - 3.5rem) 100%, transparent 98%, black) bottom / 100% 51% no-repeat;
+}
+.ticket-action-label { padding: 0.875rem 1.5rem; }
+.ticket-action-stub {
+  display: grid;
+  place-items: center;
+  align-self: stretch;
+  width: 3.5rem;
+  border-left: 1px dashed rgb(255 255 255 / 55%);
+}
+.ticket-action:focus-visible { mask: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .ticket-action { transition: background-color 150ms, transform 180ms ease-out; }
+  @media (hover: hover) {
+    .ticket-action:not(:disabled):hover { transform: translateY(-2px); }
+  }
+  .ticket-action:not(:disabled):active { transform: scale(0.98); }
+}

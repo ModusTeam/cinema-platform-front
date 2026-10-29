@@ -10,6 +10,11 @@ export const OrderStatus = {
 
 export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
 
+export interface OrderStatusDto {
+  id: string
+  status: OrderStatus | string
+}
+
 export const TicketStatus = {
   Valid: 'Valid',
   Used: 'Used',

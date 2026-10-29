@@ -192,8 +192,10 @@ async function checkAccessibility(page) {
         name: `Редагувати фільм «${movie.title}»`,
       })
       await edit.waitFor()
+      if (width < 1024)
+        await p.getByRole('button', { name: 'Меню', exact: true }).click()
       const layout = await p.evaluate(() => {
-        const sidebar = document.querySelector('aside')
+        const sidebar = document.querySelector('#admin-navigation')
         const nav = sidebar.querySelector('nav')
         const tableRegion = document.querySelector('section')
         const back = sidebar.querySelector('div:last-child')
@@ -210,8 +212,8 @@ async function checkAccessibility(page) {
         `No page overflow at admin ${width}px (${layout.pageWidth}px)`,
       )
       check(
-        layout.sidebarWidth === (width < 1024 ? 176 : 256),
-        `Persistent sidebar width at ${width}px`,
+        layout.sidebarWidth === 224,
+        `Sidebar or tablet drawer width at ${width}px`,
       )
       check(
         layout.navScrolls && layout.backVisible,
@@ -224,6 +226,7 @@ async function checkAccessibility(page) {
           .getAttribute('aria-current')) === 'page',
         'Admin active link has aria-current',
       )
+      if (width < 1024) await p.keyboard.press('Escape')
       await edit.focus()
       await p.waitForFunction(
         () =>

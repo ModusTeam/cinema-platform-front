@@ -1,10 +1,15 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { technologiesService } from '@/entities/hall/api/technologies.service'
 
 export const useTechnologies = () => {
   const queryClient = useQueryClient()
 
-  const { data: technologies = [], isLoading, isError, refetch } = useQuery({
+  const {
+    data: technologies = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ['technologies'],
     queryFn: technologiesService.getAll,
     staleTime: Infinity,
@@ -22,8 +27,8 @@ export const useTechnologies = () => {
     try {
       await createMutation.mutateAsync({ name, type })
       return { success: true }
-    } catch (error: any) {
-      const msg = error.response?.data?.title || 'Помилка створення'
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : 'Помилка створення'
       return { success: false, error: msg }
     }
   }

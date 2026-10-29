@@ -1,12 +1,14 @@
-import { useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Sparkles, Ticket, Play, Circle } from 'lucide-react'
-import EmptyState from '@/shared/ui/EmptyState'
-import { useAuth } from '@/features/auth/model/AuthContext'
+import { ArrowUpRight, Ticket } from 'lucide-react'
+import { useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { moviesService } from '@/entities/movie/api/movies.service'
+import { useAuth } from '@/features/auth/model/AuthContext'
+import CataloguePoster from '@/features/movies/ui/CataloguePoster'
+import EmptyState from '@/shared/ui/EmptyState'
 import { GridLoader } from '@/shared/ui/GridLoader'
 import UnavailableState from '@/shared/ui/UnavailableState'
+import EditorialPageLayout from '@/widgets/static-page/ui/EditorialPageLayout'
 
 const OffersPage = () => {
   const { user, isLoading: isAuthLoading } = useAuth()
@@ -31,122 +33,68 @@ const OffersPage = () => {
     retry: false,
   })
 
-  if (isAuthLoading || (isLoading && user)) {
-    return (
-      <div className='flex min-h-[calc(100vh-4rem)] items-center justify-center bg-[var(--bg-main)]'>
-        <GridLoader className='h-8 w-8 animate-spin text-[var(--color-primary)]' />
-      </div>
-    )
-  }
-
-  if (!user) return null
+  if (!isAuthLoading && !user) return null
 
   return (
-    <div className='min-h-[calc(100vh-4rem)] px-4 py-12 bg-[var(--bg-main)] overflow-hidden relative'>
-      <div className='absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl opacity-20 pointer-events-none'>
-        <div className='absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-primary)]/30 rounded-full blur-[120px]' />
-        <div className='absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[150px]' />
-      </div>
-
-      <div className='relative z-10 container mx-auto max-w-6xl'>
-        <div className='text-center mb-16 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700'>
-          <div className='inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-[var(--color-primary)] uppercase tracking-widest mb-2'>
-            <Sparkles size={14} /> AI Powered
-          </div>
-          <h1 className='text-4xl sm:text-5xl font-black text-white tracking-tight uppercase'>
-            Персонально для{' '}
-            <span className='text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-purple-500'>
-              Вас
-            </span>
-          </h1>
-          <p className='text-lg text-[var(--text-muted)] max-w-2xl mx-auto'>
-            Ми проаналізували вашу історію переглядів за допомогою штучного
-            інтелекту та підібрали фільми, які вам точно сподобаються.
-          </p>
+    <EditorialPageLayout
+      title='Персонально для вас'
+      subtitle='Ваша добірка фільмів. Знайдіть історію для наступного перегляду.'
+      surface='paper'
+    >
+      {isAuthLoading || isLoading ? (
+        <output className='flex min-h-64 items-center justify-center'>
+          <GridLoader className='h-8 w-8 animate-spin motion-reduce:animate-none text-[var(--text-muted)]' />
+          <span className='sr-only'>Завантаження рекомендацій</span>
+        </output>
+      ) : isError ? (
+        <UnavailableState
+          title='Не вдалося завантажити рекомендації'
+          onRetry={() => void refetch()}
+          className='editorial-state py-20'
+        />
+      ) : recommendations.length > 0 ? (
+        <div className='grid grid-cols-1 gap-x-8 gap-y-12 pt-10 sm:grid-cols-2 lg:grid-cols-3'>
+          {recommendations.map(movie => (
+            <Link
+              key={movie.id}
+              to={`/movies/${movie.id}`}
+              className='group min-w-0'
+            >
+              <CataloguePoster
+                key={movie.posterUrl}
+                src={movie.posterUrl ?? undefined}
+                title={movie.title}
+              />
+              <div className='mt-5 flex items-start justify-between gap-4'>
+                <h2 className='type-public-section group-hover:underline underline-offset-4'>
+                  {movie.title}
+                </h2>
+                <ArrowUpRight
+                  size={20}
+                  aria-hidden='true'
+                  className='mt-1 shrink-0'
+                />
+              </div>
+              <p className='mt-2 text-sm tabular-nums text-[var(--text-muted)]'>
+                Відповідність: {Math.round(movie.similarityScore * 100)}%
+              </p>
+              <span className='editorial-link mt-2 text-sm'>
+                Дивитись деталі
+              </span>
+            </Link>
+          ))}
         </div>
-
-        {isError ? (
-          <UnavailableState
-            title='Не вдалося завантажити рекомендації'
-            onRetry={() => void refetch()}
-            className='py-20'
-          />
-        ) : recommendations.length > 0 ? (
-          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
-            {recommendations.map((movie, index) => {
-              const matchPercentage = Math.round(movie.similarityScore * 100)
-
-              const radius = 10
-              const circumference = 2 * Math.PI * radius
-              const strokeDashoffset =
-                circumference - (matchPercentage / 100) * circumference
-
-              return (
-                <Link
-                  key={movie.id}
-                  to={`/movies/${movie.id}`}
-                  className='group relative aspect-[2/3] overflow-hidden rounded-2xl bg-[#1a1a1a] border border-white/5 shadow-2xl transition-all hover:-translate-y-2 hover:shadow-[0_0_30px_-5px_var(--color-primary)]/30 animate-in fade-in zoom-in duration-500'
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <img
-                    src={movie.posterUrl ?? undefined}
-                    alt={movie.title}
-                    className='h-full w-full object-cover transition-transform duration-700 group-hover:scale-110'
-                  />
-
-                  <div className='absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity' />
-
-                  <div className='absolute top-4 right-4'>
-                    <div className='relative flex items-center justify-center w-12 h-12 rounded-full bg-black/60 backdrop-blur-md border border-white/10 shadow-lg group-hover:scale-110 transition-transform'>
-                      <Circle
-                        size={48}
-                        strokeWidth={2}
-                        className='absolute text-white/10'
-                      />
-                      <Circle
-                        size={48}
-                        strokeWidth={2}
-                        className={`absolute -rotate-90 transition-all duration-1000 ${
-                          matchPercentage > 80
-                            ? 'text-green-500'
-                            : matchPercentage > 60
-                              ? 'text-yellow-500'
-                              : 'text-[var(--color-primary)]'
-                        }`}
-                        strokeDasharray={circumference}
-                        strokeDashoffset={strokeDashoffset}
-                        strokeLinecap='round'
-                      />
-                      <span className='text-[10px] font-bold text-white absolute'>
-                        {matchPercentage}%
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className='absolute bottom-0 left-0 w-full p-6 translate-y-2 group-hover:translate-y-0 transition-transform'>
-                    <h3 className='text-xl font-bold text-white leading-tight mb-2 line-clamp-2 drop-shadow-md'>
-                      {movie.title}
-                    </h3>
-                    <div className='flex items-center gap-2 text-xs font-bold text-[var(--color-primary)] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity delay-100'>
-                      <Play size={12} fill='currentColor' /> Дивитись деталі
-                    </div>
-                  </div>
-                </Link>
-              )
-            })}
-          </div>
-        ) : (
-          <EmptyState
-            icon={<Ticket className='h-12 w-12' />}
-            title='Персональні поради ще готуються'
-            description='Відвідайте кілька сеансів, і ми зможемо скласти добірку фільмів саме під ваші вподобання.'
-            actionLabel='Обрати перший фільм'
-            onAction={() => navigate('/sessions')}
-            className='py-20 animate-in fade-in zoom-in duration-500'
-          />
-        )}
-      </div>
-    </div>
+      ) : (
+        <EmptyState
+          icon={<Ticket className='h-12 w-12' />}
+          title='Персональні поради ще готуються'
+          description='Відвідайте кілька сеансів, і ми зможемо скласти добірку фільмів саме під ваші вподобання.'
+          actionLabel='Обрати перший фільм'
+          onAction={() => navigate('/sessions')}
+          className='editorial-state py-20'
+        />
+      )}
+    </EditorialPageLayout>
   )
 }
 
