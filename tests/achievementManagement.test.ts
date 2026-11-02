@@ -265,6 +265,40 @@ describe('safe full-replacement activation', () => {
       )
     }
   })
+  it('normalizes numeric, named and mixed enums without changing stored settings', () => {
+    for (const enums of [
+      { category: 2, rarity: 3, strategy: 2 },
+      { category: 'spending', rarity: 'rare', strategy: 'threshold' },
+      { category: '2', rarity: 'Rare', strategy: 2 },
+      {
+        category: ' ACHIEVEMENT_CATEGORY_SPENDING ',
+        rarity: 3,
+        strategy: 'achievement_strategy_threshold',
+      },
+    ]) {
+      const initial = dto({
+        ...enums,
+        icon: 'withicons-retro:coffee',
+        criteriaJson: rule({ operator: 'sum', valueField: 'paidAmount' }),
+      })
+      const before = { ...initial }
+      const defaults = getAchievementFormDefaults(initial)
+      assert.equal(defaults.category, 2)
+      assert.equal(defaults.rarity, 3)
+      assert.equal(defaults.strategy, 2)
+      assert.deepEqual(getMeaningfulAchievementChanges(initial, defaults), [])
+      const { id, createdAt, updatedAt, ...stored } = initial
+      assert.deepEqual(buildAchievementReactivationPayload(initial), {
+        ...stored,
+        category: 2,
+        rarity: 3,
+        strategy: 2,
+        isActive: true,
+      })
+      assert.equal(getReactivationRestriction(initial), null)
+      assert.deepEqual(initial, before)
+    }
+  })
   it('blocks normalization/data loss instead of forcing a legacy record through PUT', () => {
     for (const change of [
       { criteriaJson: rule({ extra: 1 }) },
@@ -273,6 +307,13 @@ describe('safe full-replacement activation', () => {
       { name: ' Name ' },
       { icon: ' trophy ' },
       { strategy: 99 },
+      { category: 'future-category' },
+      { rarity: 'future-rarity' },
+      { strategy: 'future-strategy' },
+      { category: '' },
+      { rarity: '99' },
+      { secretHint: ' Hint ' },
+      { rewardPoints: -1 },
     ]) {
       assert.throws(() => buildAchievementReactivationPayload(dto(change)))
       assert.ok(getReactivationRestriction(dto(change)))

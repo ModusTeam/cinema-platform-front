@@ -21,12 +21,12 @@ export default function AchievementDetailsPage() {
         <ArrowLeft size={16} aria-hidden='true' />
         До колекції
       </Link>
-      {isPending && fetchStatus !== 'paused' ? (
+      {!data && isPending && fetchStatus !== 'paused' ? (
         <div className='py-16'>
           <h1 className='account-subheading'>Досягнення</h1>
           <output className='mt-4 block'>Завантажуємо досягнення…</output>
         </div>
-      ) : error || fetchStatus === 'paused' ? (
+      ) : !data && (error || fetchStatus === 'paused') ? (
         <>
           <h1 className='account-subheading mt-8'>Досягнення</h1>
           <UnavailableState

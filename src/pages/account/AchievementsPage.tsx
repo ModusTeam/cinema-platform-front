@@ -46,11 +46,11 @@ export default function AchievementsPage() {
       title='Ваші досягнення'
       description='Колекція ваших кіновражень. Відкриті досягнення та наступні цілі — кожне зі своєю історією.'
     >
-      {isPending && fetchStatus !== 'paused' ? (
+      {!data && isPending && fetchStatus !== 'paused' ? (
         <output className='block border-y border-[var(--account-rule)] py-16 text-[var(--account-muted)]'>
           Завантажуємо вашу колекцію…
         </output>
-      ) : error || fetchStatus === 'paused' ? (
+      ) : !data && (error || fetchStatus === 'paused') ? (
         <UnavailableState
           className='account-state'
           title='Досягнення тимчасово недоступні'

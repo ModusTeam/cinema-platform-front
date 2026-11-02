@@ -130,6 +130,21 @@ describe('achievement artwork registry', () => {
     }
   })
 
+  it('trims normalized boundary separators and preserves internal ones', () => {
+    for (const identifier of [
+      '___BADGE_CHECK',
+      'BADGE_CHECK___',
+      '___Badge---Check___',
+      `${'_'.repeat(100_000)}BADGE_CHECK${'_'.repeat(100_000)}`,
+    ])
+      assert.deepEqual(resolveAchievementIcon(identifier), {
+        kind: 'legacy',
+        component: BadgeCheck,
+      })
+    assert.equal(resolveAchievementIcon('a_'.repeat(100_000)).kind, 'unknown')
+    assert.equal(resolveAchievementIcon('_'.repeat(100_000)).kind, 'unknown')
+  })
+
   it('masks every secret before resolving or requesting its real artwork', () => {
     for (const identifier of [
       'withicons-retro:coffee',
@@ -220,14 +235,14 @@ describe('approved collection API', () => {
           }),
         ),
       )
-      assert.equal(
-        (
-          await loadAchievementIcon(
-            'withicons-retro:coffee',
-            new AbortController().signal,
-          )
-        ).width,
-        24,
+      // Native XML parsing and successful rendering are checked in
+      // achievementReview.browser.mjs. Bun has no DOMParser: fail closed.
+      await assert.rejects(
+        loadAchievementIcon(
+          'withicons-retro:coffee',
+          new AbortController().signal,
+        ),
+        /cannot be validated/,
       )
       const controller = new AbortController()
       controller.abort()

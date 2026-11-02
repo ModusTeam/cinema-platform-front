@@ -1,4 +1,12 @@
 import { z } from 'zod'
+import {
+  ACHIEVEMENT_CATEGORY_OPTIONS,
+  ACHIEVEMENT_RARITY_OPTIONS,
+  ACHIEVEMENT_STRATEGY_OPTIONS,
+  resolveAchievementCategory,
+  resolveAchievementRarity,
+  resolveAchievementStrategy,
+} from '@/features/loyalty/achievements/achievementContract'
 import type {
   AdminAchievementDto,
   AdminAchievementPayload,
@@ -95,6 +103,24 @@ export const DEFAULT_ACHIEVEMENT_VALUES: AchievementFormData = {
   isActive: true,
 }
 
+function normalizeStoredEnums(initial: AdminAchievementDto) {
+  // Unsupported values stay invalid rather than silently becoming defaults.
+  return {
+    category:
+      ACHIEVEMENT_CATEGORY_OPTIONS.find(
+        option => option.key === resolveAchievementCategory(initial.category),
+      )?.value ?? Number.NaN,
+    rarity:
+      ACHIEVEMENT_RARITY_OPTIONS.find(
+        option => option.key === resolveAchievementRarity(initial.rarity),
+      )?.value ?? Number.NaN,
+    strategy:
+      ACHIEVEMENT_STRATEGY_OPTIONS.find(
+        option => option.key === resolveAchievementStrategy(initial.strategy),
+      )?.value ?? Number.NaN,
+  }
+}
+
 export function getAchievementFormDefaults(
   initial?: AdminAchievementDto | null,
 ): AchievementFormData {
@@ -106,9 +132,7 @@ export function getAchievementFormDefaults(
     secretHint: initial.secretHint ?? '',
     isSecret: initial.isSecret,
     icon: initial.icon,
-    category: Number(initial.category),
-    rarity: Number(initial.rarity),
-    strategy: Number(initial.strategy),
+    ...normalizeStoredEnums(initial),
     ...parseCriteriaDefaults(initial.criteriaJson),
     rewardPoints: initial.rewardPoints,
     sortOrder: initial.sortOrder,
@@ -154,7 +178,8 @@ export function getMeaningfulAchievementChanges(
     changes.push('Умова отримання')
   if (initial.rewardPoints !== next.rewardPoints)
     changes.push('Нагорода балами')
-  if (Number(initial.strategy) !== next.strategy) changes.push('Стратегія')
+  if (normalizeStoredEnums(initial).strategy !== next.strategy)
+    changes.push('Стратегія')
   return changes
 }
 
@@ -169,6 +194,7 @@ export function buildAchievementReactivationPayload(
     ...getAchievementFormDefaults(initial),
     isActive: true,
   })
+  const storedEnums = normalizeStoredEnums(initial)
   // Reactivation uses full PUT; normalization must not overwrite stored data.
   for (const key of Object.keys(payload) as Array<
     keyof AdminAchievementPayload
@@ -177,7 +203,7 @@ export function buildAchievementReactivationPayload(
     const stored = initial[key]
     const expected =
       key === 'category' || key === 'rarity' || key === 'strategy'
-        ? Number(stored)
+        ? storedEnums[key]
         : key === 'secretHint'
           ? (stored ?? '')
           : stored

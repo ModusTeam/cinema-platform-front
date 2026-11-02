@@ -308,7 +308,8 @@ export function resolveAchievementIcon(
   const normalized = id
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, '')
+    .replace(/^_/, '')
+    .replace(/_$/, '')
   const component = Object.hasOwn(legacyIcons, normalized)
     ? legacyIcons[normalized]
     : undefined

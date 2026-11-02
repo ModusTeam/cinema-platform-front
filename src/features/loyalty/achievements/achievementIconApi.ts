@@ -1,5 +1,6 @@
 import type { IconifyIcon } from '@iconify/react/offline'
 import { RETRO_ICON_PATTERN, RETRO_PREFIX } from './achievementIcons'
+import { validateAchievementIconBody } from './achievementIconValidation'
 
 const ICONIFY_API = 'https://api.iconify.design'
 export const ICON_SEARCH_LIMIT = 32
@@ -77,7 +78,7 @@ export async function loadAchievementIcon(
   const height =
     'height' in result && typeof result.height === 'number' ? result.height : 24
   return {
-    body: icon.body,
+    body: validateAchievementIconBody(icon.body),
     width:
       'width' in icon && typeof icon.width === 'number' ? icon.width : width,
     height:
