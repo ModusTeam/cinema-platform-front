@@ -4,21 +4,37 @@ import {
   type AdminAchievementPayload,
   adminAchievementsService,
 } from '@/features/admin/api/admin-achievements.service'
+import {
+  ACHIEVEMENTS_PAGE_SIZE,
+  achievementListKey,
+  achievementPageOffset,
+  invalidateAchievementQueries,
+} from './achievementManagement'
 
-export const useAdminAchievements = (includeInactive: boolean) => {
+export const useAdminAchievements = (
+  includeInactive: boolean,
+  page = 1,
+  pageSize = ACHIEVEMENTS_PAGE_SIZE,
+) => {
   const queryClient = useQueryClient()
-  const queryKey = ['admin-achievements', includeInactive]
+  const queryKey = achievementListKey(page, pageSize, includeInactive)
 
   const achievementsQuery = useQuery({
     queryKey,
-    queryFn: () => adminAchievementsService.getAll(includeInactive),
+    queryFn: ({ signal }) =>
+      adminAchievementsService.getAll(
+        includeInactive,
+        pageSize,
+        achievementPageOffset(page, pageSize),
+        signal,
+      ),
     staleTime: 60 * 1000,
   })
 
   const createMutation = useMutation({
     mutationFn: (payload: AdminAchievementPayload) =>
       adminAchievementsService.create(payload),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey }),
+    onSuccess: () => invalidateAchievementQueries(queryClient),
   })
 
   const updateMutation = useMutation({
@@ -29,24 +45,25 @@ export const useAdminAchievements = (includeInactive: boolean) => {
       id: string
       payload: AdminAchievementPayload
     }) => adminAchievementsService.update(id, payload),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey }),
+    onSuccess: () => invalidateAchievementQueries(queryClient),
   })
 
-  const deleteMutation = useMutation({
-    mutationFn: adminAchievementsService.delete,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey }),
+  const deactivateMutation = useMutation({
+    mutationFn: adminAchievementsService.deactivate,
+    onSuccess: () => invalidateAchievementQueries(queryClient),
   })
 
   return {
     achievements: achievementsQuery.data?.achievements || [],
     total: achievementsQuery.data?.total || 0,
     isLoading: achievementsQuery.isLoading,
+    isFetching: achievementsQuery.isFetching,
     error: achievementsQuery.error,
     refetch: achievementsQuery.refetch,
     createAchievement: createMutation.mutateAsync,
     updateAchievement: updateMutation.mutateAsync,
-    deleteAchievement: deleteMutation.mutateAsync,
+    deactivateAchievement: deactivateMutation.mutateAsync,
     isSaving: createMutation.isPending || updateMutation.isPending,
-    isDeleting: deleteMutation.isPending,
+    isDeactivating: deactivateMutation.isPending,
   }
 }

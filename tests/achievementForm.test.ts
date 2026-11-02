@@ -43,10 +43,9 @@ describe('criteria preservation', () => {
     }
   })
 
-  it('keeps sum and valueField in JSON mode, including an omitted server-default valueField', () => {
+  it('keeps unverified sum fields in JSON mode', () => {
     for (const criteriaJson of [
       rule({ operator: 'sum', valueField: 'ticketCount' }),
-      rule({ operator: 'sum' }),
     ]) {
       const state = parseCriteriaDefaults(criteriaJson)
       assert.equal(state.criteriaMode, 'json')
@@ -208,7 +207,7 @@ describe('achievement validation and submission', () => {
       icon: 'unknown:original',
       category: 1,
       rarity: 1,
-      strategy: 1,
+      strategy: 2,
       rewardPoints: 0,
       sortOrder: 0,
       isActive: true,
@@ -230,7 +229,8 @@ describe('achievement validation and submission', () => {
       updatedAt: '',
     }
     const state = getAchievementFormDefaults(dto)
-    assert.equal(state.criteriaMode, 'json')
+    assert.equal(state.criteriaMode, 'builder')
+    assert.equal(state.criteriaPreset, 'purchase-amount')
     assert.equal(buildAchievementPayload(state).criteriaJson, dto.criteriaJson)
     assert.equal(buildAchievementPayload(state).icon, dto.icon)
   })

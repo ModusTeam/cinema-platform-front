@@ -4,34 +4,19 @@ import type {
   AdminAchievementPayload,
 } from '../api/admin-achievements.service'
 
-export const ACHIEVEMENT_ACTIONS = [
-  'TICKET_PURCHASED',
-  'BULK_TICKET_PURCHASED',
-  'REVIEW_LEFT',
-  'VIP_SEAT_BOUGHT',
-] as const
+import {
+  criteriaMeaning,
+  getCriteriaSafetyError,
+  parseCriteriaDefaults,
+  serializeCriteria,
+} from './achievementCriteria'
 
-const criteriaSchema = z
-  .object({
-    field: z.enum(ACHIEVEMENT_ACTIONS, {
-      error: 'Вкажіть підтримувану подію.',
-    }),
-    operator: z.enum(['gte', 'sum'], {
-      error: 'Підтримуються лише gte та sum.',
-    }),
-    target: z
-      .number({ error: 'Ціль має бути числом.' })
-      .int('Ціль має бути цілим числом.')
-      .positive('Ціль має бути більшою за 0.')
-      .max(1_000_000_000, 'Максимальна ціль — 1 000 000 000.'),
-    valueField: z
-      .string()
-      .trim()
-      .min(1, 'valueField не може бути порожнім.')
-      .max(64, 'valueField: максимум 64 символи.')
-      .optional(),
-  })
-  .catchall(z.unknown())
+export {
+  ACHIEVEMENT_ACTIONS,
+  parseCriteriaDefaults,
+  serializeCriteria,
+  switchCriteriaMode,
+} from './achievementCriteria'
 
 const requiredText = (label: string, max: number) =>
   z
@@ -59,6 +44,7 @@ export const achievementSchema = z
     rarity: z.number().int().min(1).max(5),
     strategy: z.number().int().min(1).max(3),
     criteriaMode: z.enum(['builder', 'json']),
+    criteriaPreset: z.enum(['purchase-count', 'purchase-amount']),
     criteriaTarget: z.number().or(z.nan()),
     criteriaJson: z.string(),
     rewardPoints: z
@@ -74,64 +60,18 @@ export const achievementSchema = z
     isActive: z.boolean(),
   })
   .superRefine((data, context) => {
-    let criteria: unknown
-    try {
-      criteria = JSON.parse(serializeCriteria(data))
-    } catch {
+    const error = getCriteriaSafetyError(serializeCriteria(data))
+    if (error)
       context.addIssue({
         code: 'custom',
-        path: ['criteriaJson'],
-        message: 'Введіть коректний JSON. Початковий текст збережено.',
+        path: [
+          data.criteriaMode === 'builder' ? 'criteriaTarget' : 'criteriaJson',
+        ],
+        message: error,
       })
-      return
-    }
-    const validation = criteriaSchema.safeParse(criteria)
-    const errorPath =
-      data.criteriaMode === 'builder' ? 'criteriaTarget' : 'criteriaJson'
-    if (!validation.success) {
-      for (const issue of validation.error.issues) {
-        context.addIssue({
-          code: 'custom',
-          path: [errorPath],
-          message: issue.message,
-        })
-      }
-      return
-    }
-    const extraKeys = Object.keys(validation.data).filter(
-      key => !['field', 'operator', 'target', 'valueField'].includes(key),
-    )
-    if (extraKeys.length > 0) {
-      context.addIssue({
-        code: 'custom',
-        path: ['criteriaJson'],
-        message: `Сервер не зберігає додаткові поля: ${extraKeys.join(', ')}. Перевірте правило вручну; ми не видалятимемо їх автоматично.`,
-      })
-    }
-    if (
-      validation.data.operator !== 'sum' &&
-      validation.data.valueField !== undefined
-    ) {
-      context.addIssue({
-        code: 'custom',
-        path: ['criteriaJson'],
-        message:
-          'Сервер зберігає valueField лише для sum. Перевірте правило вручну, щоб не втратити це поле.',
-      })
-    }
   })
 
 export type AchievementFormData = z.infer<typeof achievementSchema>
-type CriteriaFormState = Pick<
-  AchievementFormData,
-  'criteriaMode' | 'criteriaJson' | 'criteriaTarget'
->
-const defaultCriteria = {
-  field: 'TICKET_PURCHASED',
-  operator: 'gte',
-  target: 1,
-}
-
 export const DEFAULT_ACHIEVEMENT_VALUES: AchievementFormData = {
   code: '',
   name: '',
@@ -141,62 +81,18 @@ export const DEFAULT_ACHIEVEMENT_VALUES: AchievementFormData = {
   icon: 'withicons-retro:trophy',
   category: 1,
   rarity: 1,
-  strategy: 1,
+  strategy: 2,
   criteriaMode: 'builder',
+  criteriaPreset: 'purchase-count',
   criteriaTarget: 1,
-  criteriaJson: JSON.stringify(defaultCriteria, null, 2),
+  criteriaJson: JSON.stringify(
+    { field: 'TICKET_PURCHASED', operator: 'gte', target: 1 },
+    null,
+    2,
+  ),
   rewardPoints: 0,
   sortOrder: 0,
   isActive: true,
-}
-
-export function parseCriteriaDefaults(criteriaJson: string): CriteriaFormState {
-  try {
-    const parsed: unknown = JSON.parse(criteriaJson)
-    const result = criteriaSchema.safeParse(parsed)
-    if (
-      result.success &&
-      result.data.field === 'TICKET_PURCHASED' &&
-      result.data.operator === 'gte' &&
-      Object.keys(result.data).every(key =>
-        ['field', 'operator', 'target'].includes(key),
-      )
-    ) {
-      return {
-        criteriaMode: 'builder',
-        criteriaJson,
-        criteriaTarget: result.data.target,
-      }
-    }
-  } catch {
-    // Invalid historical JSON remains editable without replacing the original text.
-  }
-  return { criteriaMode: 'json', criteriaJson, criteriaTarget: 1 }
-}
-
-export function serializeCriteria(data: CriteriaFormState): string {
-  return data.criteriaMode === 'builder'
-    ? JSON.stringify(
-        { ...defaultCriteria, target: data.criteriaTarget },
-        null,
-        2,
-      )
-    : data.criteriaJson
-}
-
-export function switchCriteriaMode(
-  data: CriteriaFormState,
-  mode: CriteriaFormState['criteriaMode'],
-): CriteriaFormState | null {
-  if (mode === data.criteriaMode) return data
-  if (mode === 'json')
-    return {
-      ...data,
-      criteriaMode: 'json',
-      criteriaJson: serializeCriteria(data),
-    }
-  const parsed = parseCriteriaDefaults(data.criteriaJson)
-  return parsed.criteriaMode === 'builder' ? parsed : null
 }
 
 export function getAchievementFormDefaults(
@@ -223,15 +119,83 @@ export function getAchievementFormDefaults(
 export function buildAchievementPayload(
   data: AchievementFormData,
 ): AdminAchievementPayload {
-  const { criteriaMode, criteriaTarget, criteriaJson, ...payload } =
-    achievementSchema.parse(data)
+  const {
+    criteriaMode,
+    criteriaPreset,
+    criteriaTarget,
+    criteriaJson,
+    ...payload
+  } = achievementSchema.parse(data)
   return {
     ...payload,
     secretHint: payload.secretHint.trim(),
     criteriaJson: serializeCriteria({
       criteriaMode,
+      criteriaPreset,
       criteriaTarget,
       criteriaJson,
     }),
+  }
+}
+
+export const ACHIEVEMENT_EDIT_WARNING =
+  'Історичний прогрес може не перерахуватися одразу. Уже відкриті досягнення можуть зберегти попередній прогрес і стан нагороди; зміна не нараховує нагороду повторно.'
+
+export function getMeaningfulAchievementChanges(
+  initial: AdminAchievementDto | null | undefined,
+  next: AchievementFormData,
+): string[] {
+  if (!initial) return []
+  const changes: string[] = []
+  if (
+    criteriaMeaning(initial.criteriaJson) !==
+    criteriaMeaning(serializeCriteria(next))
+  )
+    changes.push('Умова отримання')
+  if (initial.rewardPoints !== next.rewardPoints)
+    changes.push('Нагорода балами')
+  if (Number(initial.strategy) !== next.strategy) changes.push('Стратегія')
+  return changes
+}
+
+export function buildAchievementReactivationPayload(
+  initial: AdminAchievementDto,
+): AdminAchievementPayload {
+  if (initial.icon !== initial.icon.trim())
+    throw new Error(
+      'Сервер змінить збережений ідентифікатор іконки. Перевірте його в редакторі.',
+    )
+  const payload = buildAchievementPayload({
+    ...getAchievementFormDefaults(initial),
+    isActive: true,
+  })
+  // A full replacement must preserve every stored property, including raw artwork and criteria.
+  for (const key of Object.keys(payload) as Array<
+    keyof AdminAchievementPayload
+  >) {
+    if (key === 'isActive') continue
+    const stored = initial[key]
+    const expected =
+      key === 'category' || key === 'rarity' || key === 'strategy'
+        ? Number(stored)
+        : key === 'secretHint'
+          ? (stored ?? '')
+          : stored
+    if (payload[key] !== expected)
+      throw new Error(
+        'Активацію заблоковано: повне оновлення змінить збережені дані. Перевірте досягнення в редакторі.',
+      )
+  }
+  return payload
+}
+
+export function getReactivationRestriction(
+  initial: AdminAchievementDto,
+): string | null {
+  try {
+    buildAchievementReactivationPayload(initial)
+    return null
+  } catch {
+    return 'Активація недоступна без зміни збережених даних. Перевірте правило й налаштування в редакторі.'
   }
 }

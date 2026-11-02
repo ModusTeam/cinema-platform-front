@@ -47,11 +47,13 @@ export interface AdminAchievementUpdatePayload extends AdminAchievementPayload {
 export const adminAchievementsService = {
   getAll: async (
     includeInactive: boolean,
-    limit = 50,
+    limit = 20,
     offset = 0,
+    signal?: AbortSignal,
   ): Promise<AdminAchievementsResponse> => {
     const { data } = await api.get<AdminAchievementsResponse>('/achievements', {
       params: { includeInactive, limit, offset },
+      signal,
     })
 
     return data
@@ -83,7 +85,7 @@ export const adminAchievementsService = {
     return data
   },
 
-  delete: async (id: string): Promise<AdminAchievementDto> => {
+  deactivate: async (id: string): Promise<AdminAchievementDto> => {
     const { data } = await api.delete<AdminAchievementDto>(
       `/achievements/${id}`,
     )

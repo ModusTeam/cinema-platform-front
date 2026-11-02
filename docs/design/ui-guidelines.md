@@ -99,9 +99,23 @@ Retain the redistributed MIT notice under `public/licenses`.
 
 The achievement editor keeps a scoped paper preview beside the dark form from
 768px, reusing `AchievementCard` without user progress. Its basic criteria builder
-counts purchase events with `TICKET_PURCHASED / gte`; other criteria stay in JSON.
-Preserve `sum/valueField` and synchronize modes explicitly. Block saving fields
-the server would discard, with an explanation, instead of simplifying the rule.
+counts processed orders with `TICKET_PURCHASED / gte` or accumulates their
+pre-redemption UAH value with `sum / amount` (each positive order amount is
+rounded before incrementing). Other fields remain in JSON with review guidance.
+Preserve raw unchanged JSON, `sum/valueField` and synchronize modes explicitly.
+Block saving fields the server would discard, with an explanation, instead of
+simplifying the rule. Confirm meaningful edits to existing criteria, rewards or
+strategy; spelling and presentation edits need no extra confirmation. New
+achievements use threshold progress; retain legacy strategies without implying
+a working streak algorithm. Categories and rarities remain descriptive.
+
+The Admin achievements ledger uses server pages of 20 and the shared pagination.
+Active/all selection applies to the catalogue; name/code, secret, category,
+rarity and inactive-only filters explicitly apply to the loaded page. Keep page
+counts separate from the server total and retain navigation on locally empty
+pages. DELETE deactivates; reactivation uses a validated full PUT preserving
+stored properties and is blocked when normalization would lose data. Mutations
+invalidate all Admin achievement pages and the three user achievement views.
 
 Form dialogs compose `FormDialog` over `Dialog` and the existing modal focus
 infrastructure. Keep headers and actions outside the scrolling form body, protect
