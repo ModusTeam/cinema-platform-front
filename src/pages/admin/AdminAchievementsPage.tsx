@@ -9,11 +9,11 @@ import { useAdminAchievements } from '@/features/admin/model/useAdminAchievement
 import AchievementFormModal from '@/features/admin/ui/AchievementFormModal'
 import { AdminPageHeader } from '@/features/admin/ui/AdminPageHeader'
 import { AdminTable } from '@/features/admin/ui/AdminTable'
+import { AchievementIcon } from '@/features/loyalty/achievements/AchievementIcon'
 import {
   getAchievementCategoryLabel,
   getAchievementRarityLabel,
   getAchievementStrategyLabel,
-  resolveAchievementIcon,
 } from '@/features/loyalty/achievements/achievementContract'
 import Button from '@/shared/ui/Button'
 import EmptyState from '@/shared/ui/EmptyState'
@@ -228,12 +228,6 @@ const AdminAchievementsPage = () => {
               </thead>
               <tbody>
                 {filteredAchievements.map(achievement => {
-                  const Icon = resolveAchievementIcon(
-                    achievement.icon,
-                    achievement.category,
-                    achievement.rarity,
-                  )
-
                   return (
                     <tr
                       key={achievement.id}
@@ -242,7 +236,10 @@ const AdminAchievementsPage = () => {
                       <td className='px-5 py-4'>
                         <div className='flex items-center gap-3'>
                           <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 text-[var(--color-primary)]'>
-                            <Icon size={20} />
+                            <AchievementIcon
+                              identifier={achievement.icon}
+                              size={20}
+                            />
                           </div>
                           <div className='min-w-0'>
                             <div className='flex flex-wrap items-center gap-2 font-semibold text-white'>

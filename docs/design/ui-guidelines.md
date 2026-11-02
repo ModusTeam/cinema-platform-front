@@ -88,6 +88,21 @@ Account previews; identify locked secrets only through public hints, and reserve
 awarded-reward wording for unlocked achievements. Category and rarity labels are
 Ukrainian; their API values remain unchanged.
 
+Achievement artwork uses the centralized loyalty icon registry and renderer:
+30 individually imported with icons Retro icons render locally; persisted Lucide
+identifiers retain their local artwork. Unknown identifiers show a fallback and
+remain unchanged until an administrator selects a replacement. Mask locked
+secrets before resolving artwork, including remote icons. The editor offers a
+searchable recommended radio grid and optional English search restricted to Retro.
+Additional artwork depends on Iconify at runtime; bundled artwork does not.
+Retain the redistributed MIT notice under `public/licenses`.
+
+The achievement editor keeps a scoped paper preview beside the dark form from
+768px, reusing `AchievementCard` without user progress. Its basic criteria builder
+counts purchase events with `TICKET_PURCHASED / gte`; other criteria stay in JSON.
+Preserve `sum/valueField` and synchronize modes explicitly. Block saving fields
+the server would discard, with an explanation, instead of simplifying the rule.
+
 Form dialogs compose `FormDialog` over `Dialog` and the existing modal focus
 infrastructure. Keep headers and actions outside the scrolling form body, protect
 dirty work on dismissal, disable submissions while pending, and retain input with

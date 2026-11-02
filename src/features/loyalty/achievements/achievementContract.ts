@@ -1,17 +1,3 @@
-import {
-  Award,
-  BadgeCheck,
-  CalendarClock,
-  Clock,
-  Coins,
-  Flame,
-  type LucideIcon,
-  Medal,
-  Star,
-  Ticket,
-  Trophy,
-} from 'lucide-react'
-
 import type {
   AchievementCategoryKey,
   AchievementRarityKey,
@@ -100,61 +86,5 @@ export const getAchievementStrategyLabel = (value: number | string) => {
   const key = resolveAchievementStrategy(value)
   return (
     ACHIEVEMENT_STRATEGY_OPTIONS.find(item => item.key === key)?.label || 'Інше'
-  )
-}
-
-const ICONS_BY_NAME: Record<string, LucideIcon> = {
-  award: Award,
-  badge: BadgeCheck,
-  badge_check: BadgeCheck,
-  calendar: CalendarClock,
-  clock: Clock,
-  coins: Coins,
-  flame: Flame,
-  medal: Medal,
-  star: Star,
-  ticket: Ticket,
-  trophy: Trophy,
-}
-
-const ICONS_BY_CATEGORY: Partial<Record<AchievementCategoryKey, LucideIcon>> = {
-  visits: Ticket,
-  spending: Coins,
-  tier: BadgeCheck,
-  time: Clock,
-  special: Star,
-  streak: Flame,
-  secret: Trophy,
-}
-
-const ICONS_BY_RARITY: Partial<Record<AchievementRarityKey, LucideIcon>> = {
-  epic: Medal,
-  legendary: Trophy,
-}
-
-export const resolveAchievementIcon = (
-  iconName?: string,
-  category?: AchievementCategoryKey | number | string,
-  rarity?: AchievementRarityKey | number | string,
-): LucideIcon => {
-  const normalizedIcon = iconName
-    ?.trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, '')
-
-  if (normalizedIcon && ICONS_BY_NAME[normalizedIcon]) {
-    return ICONS_BY_NAME[normalizedIcon]
-  }
-
-  const resolvedRarity =
-    rarity === undefined ? undefined : resolveAchievementRarity(rarity)
-  const resolvedCategory =
-    category === undefined ? undefined : resolveAchievementCategory(category)
-
-  return (
-    (resolvedRarity && ICONS_BY_RARITY[resolvedRarity]) ||
-    (resolvedCategory && ICONS_BY_CATEGORY[resolvedCategory]) ||
-    Trophy
   )
 }

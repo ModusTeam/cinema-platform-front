@@ -9,6 +9,8 @@
         "@fontsource-variable/montserrat": "^5.3.0",
         "@fontsource-variable/roboto-condensed": "^5.3.0",
         "@hookform/resolvers": "^5.2.2",
+        "@iconify-icons/withicons-retro": "^2.0.0",
+        "@iconify/react": "^6.0.4",
         "@microsoft/signalr": "^10.0.0",
         "@tailwindcss/vite": "^4.1.18",
         "@tanstack/react-query": "^5.90.20",
@@ -156,6 +158,12 @@
     "@fontsource-variable/roboto-condensed": ["@fontsource-variable/roboto-condensed@5.3.0", "", {}, "sha512-RpYyF6G0h0nsVcCDLRIbZbK+l8cVDoe1PVbzvzVhtLzCiPqIEEGDs9xB9ZWPJawKS4bJzpKn42KgZFISF/AOuQ=="],
 
     "@hookform/resolvers": ["@hookform/resolvers@5.2.2", "", { "dependencies": { "@standard-schema/utils": "^0.3.0" }, "peerDependencies": { "react-hook-form": "^7.55.0" } }, "sha512-A/IxlMLShx3KjV/HeTcTfaMxdwy690+L/ZADoeaTltLx+CVuzkeVIPuybK3jrRfw7YZnmdKsVVHAlEPIAEUNlA=="],
+
+    "@iconify-icons/withicons-retro": ["@iconify-icons/withicons-retro@2.0.0", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-1aqfjs8RcfA2y+Pi56EwJ1F6mvvsy+g1QzWgbdobCso6MmPzR/lWT8u2SLB8tQSx7BRF5WAgdn9de/g6TpBuvA=="],
+
+    "@iconify/react": ["@iconify/react@6.0.4", "", { "dependencies": { "@iconify/types": "^2.0.0" }, "peerDependencies": { "react": ">=18.0.0" } }, "sha512-7nKd1eF52E1QGIl46eDWfMNPuTQHUxsXoK2Evgtu5jr386jCWTuWFLHM9vfsTNbUcKp+uq6ao+3skNUalDhH/w=="],
+
+    "@iconify/types": ["@iconify/types@2.0.0", "", {}, "sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg=="],
 
     "@jridgewell/gen-mapping": ["@jridgewell/gen-mapping@0.3.13", "", { "dependencies": { "@jridgewell/sourcemap-codec": "^1.5.0", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA=="],
 

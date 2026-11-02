@@ -16,6 +16,8 @@
     "@fontsource-variable/montserrat": "^5.3.0",
     "@fontsource-variable/roboto-condensed": "^5.3.0",
     "@hookform/resolvers": "^5.2.2",
+    "@iconify-icons/withicons-retro": "^2.0.0",
+    "@iconify/react": "^6.0.4",
     "@microsoft/signalr": "^10.0.0",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-query": "^5.90.20",
