@@ -13,6 +13,12 @@
 .achievement-badge[data-size='small'] { --badge-size: 4rem; }
 .achievement-badge[data-size='medium'] { --badge-size: 5.5rem; }
 .achievement-badge[data-size='large'] { --badge-size: 8rem; }
+.achievement-badge[data-size='display'] {
+  --badge-size: clamp(10rem, 24vw, 15rem);
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
 
 /* Rim colors work on the Account paper and the dark loyalty shell. */
 .achievement-badge[data-tone='green'] { --badge-rim: #62816c; }

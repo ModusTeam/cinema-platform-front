@@ -1,6 +1,7 @@
 import { lazy } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 import AdminRoute from '@/features/auth/ui/AdminRoute'
+import AuthenticatedRoute from '@/features/auth/ui/AuthenticatedRoute'
 import AdminLayout from '@/app/layouts/AdminLayout'
 import MainLayout from '@/app/layouts/MainLayout'
 import NotFoundPage from '@/pages/public/NotFoundPage'
@@ -21,6 +22,7 @@ const CareersPage = lazy(() => import('@/pages/public/CareersPage'))
 const LoyaltyPage = lazy(() => import('@/pages/account/LoyaltyPage'))
 const LoyaltyHistoryPage = lazy(() => import('@/pages/account/LoyaltyHistoryPage'))
 const AchievementsPage = lazy(() => import('@/pages/account/AchievementsPage'))
+const AchievementDetailsPage = lazy(() => import('@/pages/account/AchievementDetailsPage'))
 const PublicTechnologiesPage = lazy(() => import('@/pages/public/TechnologiesPage'))
 const PublicHallsPage = lazy(() => import('@/pages/public/HallsPage'))
 const RulesPage = lazy(() => import('@/pages/public/RulesPage'))
@@ -137,7 +139,13 @@ export const router = createBrowserRouter([
         path: 'account/loyalty/history',
         element: <LoyaltyHistoryPage />,
       },
-      { path: 'profile/achievements', element: <AchievementsPage /> },
+      {
+        element: <AuthenticatedRoute />,
+        children: [
+          { path: 'profile/achievements', element: <AchievementsPage /> },
+          { path: 'profile/achievements/:id', element: <AchievementDetailsPage /> },
+        ],
+      },
     ],
   },
   {

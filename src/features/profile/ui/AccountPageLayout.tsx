@@ -7,12 +7,14 @@ interface AccountPageLayoutProps {
   title: string
   description: string
   children: ReactNode
+  header?: ReactNode
 }
 
 export function AccountPageLayout({
   title,
   description,
   children,
+  header,
 }: AccountPageLayoutProps) {
   return (
     <div className='account font-public'>
@@ -46,12 +48,16 @@ export function AccountPageLayout({
             </NavLink>
           </nav>
         </div>
-        <header className='mb-9 max-w-3xl lg:mb-12'>
-          <h1 className='account-heading'>{title}</h1>
-          <p className='mt-5 max-w-2xl text-base leading-relaxed text-[var(--account-muted)]'>
-            {description}
-          </p>
-        </header>
+        {header === undefined ? (
+          <header className='mb-9 max-w-3xl lg:mb-12'>
+            <h1 className='account-heading'>{title}</h1>
+            <p className='mt-5 max-w-2xl text-base leading-relaxed text-[var(--account-muted)]'>
+              {description}
+            </p>
+          </header>
+        ) : (
+          header
+        )}
         {children}
       </div>
     </div>

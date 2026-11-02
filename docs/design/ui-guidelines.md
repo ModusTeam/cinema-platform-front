@@ -110,6 +110,19 @@ Cards wrap text below the medallion when space or text enlargement requires it.
 Badge hover is a small lift for unlocked awards, disabled with reduced motion;
 mounting never triggers a completion animation.
 
+The achievement collection uses an open responsive medallion grid, with a
+single linked nearest target chosen by highest valid in-progress percentage
+(catalogue order, then ID break ties). It appears once within the active filters.
+Category and status filters use URL search parameters and category-scoped counts.
+Undiscovered secrets belong to the public secret category and retain only the
+permitted hint, generic title and neutral artwork. Detail pages center the same
+badge at a responsive display size, with one heading and native progress semantics;
+badge sizing must also fit narrow layouts with enlarged text. Account previews
+retain small badges and link to the same authenticated, ID-only detail route.
+Both routes read the user-scoped collection cache; private achievement queries
+must never reuse another user's data. Frontend masking is a presentation safeguard,
+not a substitute for backend authorization.
+
 The achievement editor keeps a scoped paper preview beside the dark form from
 768px, reusing `AchievementCard`. Locked, in-progress and unlocked preview states
 are local simulations; the clearly labelled 35/100 example never changes form

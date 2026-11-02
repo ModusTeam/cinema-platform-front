@@ -202,6 +202,13 @@ Public routes are children of `MainLayout`, including:
 - `/account/loyalty`
 - `/account/loyalty/history`
 - `/profile/achievements`
+- `/profile/achievements/:id`
+
+The achievement collection and detail routes use `AuthenticatedRoute`. They
+share `useAchievementsTabData` and find details only in the current user's
+authorized collection. All three user achievement query prefixes include the
+user ID and are disabled without one; credential clearing retains the existing
+query-cache cleanup. Collection category/status filters use search parameters.
 
 Admin routes are children of `AdminRoute` and `AdminLayout`, including:
 
@@ -386,6 +393,10 @@ associations, unchanged order grouping, account navigation markup and extracted
 profile validation. The durable design reference is
 [`docs/design/ui-guidelines.md`](docs/design/ui-guidelines.md). The temporary
 Design Lab, phase reports, fixtures and visual captures have been removed.
+
+`tests/achievementCollection.test.ts` covers collectible gallery/detail markup,
+category/status filtering, deterministic featured selection, secret masking,
+progress semantics, preview links and user-scoped achievement cache isolation.
 
 `tests/inputAccessibility.test.ts` checks shared input markup with React's
 server renderer; it does not verify DOM focus. The optional

@@ -1,8 +1,12 @@
 import { Check } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { cn } from '@/shared/lib/utils'
 import { AchievementBadge, type AchievementBadgeSize } from './AchievementBadge'
-import { getBadgeProgressPercent } from './achievementBadgePresentation'
-import { getAchievementPresentation } from './achievementPresentation'
+import AchievementProgress from './AchievementProgress'
+import {
+  getAchievementPresentation,
+  getAchievementProgress,
+} from './achievementPresentation'
 import type { Achievement } from './achievements.types'
 
 interface AchievementCardProps {
@@ -12,6 +16,7 @@ interface AchievementCardProps {
   featuredLabel?: string
   preview?: boolean
   badgeSize?: AchievementBadgeSize
+  to?: string
 }
 
 const AchievementCard = ({
@@ -21,14 +26,12 @@ const AchievementCard = ({
   featuredLabel = 'Найближча ціль',
   preview = false,
   badgeSize = preview || featured ? 'large' : compact ? 'small' : 'medium',
+  to,
 }: AchievementCardProps) => {
   const presentation = getAchievementPresentation(achievement)
   const unlocked = achievement.status === 'unlocked'
-  const progress =
-    !presentation.hidden && !unlocked && Number.isFinite(achievement.current)
-      ? getBadgeProgressPercent(achievement.progressPercent, achievement.target)
-      : null
-  return (
+  const progress = getAchievementProgress(achievement)
+  const content = (
     <article
       className={cn(
         'min-w-0 border-t border-[var(--border-default)] py-6',
@@ -85,20 +88,7 @@ const AchievementCard = ({
       <div
         className={cn('mt-5 space-y-4', featured && 'lg:mt-0 lg:self-center')}
       >
-        {progress !== null && (
-          <div>
-            <p className='mb-3 text-sm tabular-nums text-[var(--text-muted)]'>
-              Прогрес: {achievement.current} / {achievement.target}
-            </p>
-            <progress
-              className='sr-only'
-              aria-label={`Прогрес: ${presentation.title}`}
-              aria-valuetext={`${achievement.current} з ${achievement.target}`}
-              value={progress}
-              max={100}
-            />
-          </div>
-        )}
+        <AchievementProgress achievement={achievement} />
         {!presentation.hidden && achievement.pointsReward > 0 && (
           <p className='text-sm tabular-nums'>
             {unlocked ? 'Нагорода' : 'За відкриття'}: +
@@ -107,6 +97,17 @@ const AchievementCard = ({
         )}
       </div>
     </article>
+  )
+  return to ? (
+    <Link
+      to={to}
+      className='block min-w-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--focus-ring)]'
+      aria-label={`${presentation.title} — ${presentation.statusLabel}`}
+    >
+      {content}
+    </Link>
+  ) : (
+    content
   )
 }
 export default AchievementCard

@@ -10,7 +10,7 @@ import type {
 } from './achievements.types'
 import './achievementBadge.css'
 
-export type AchievementBadgeSize = 'small' | 'medium' | 'large'
+export type AchievementBadgeSize = 'small' | 'medium' | 'large' | 'display'
 
 interface AchievementBadgeProps {
   icon?: string
