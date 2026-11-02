@@ -169,7 +169,7 @@ export function buildAchievementReactivationPayload(
     ...getAchievementFormDefaults(initial),
     isActive: true,
   })
-  // A full replacement must preserve every stored property, including raw artwork and criteria.
+  // Reactivation uses full PUT; normalization must not overwrite stored data.
   for (const key of Object.keys(payload) as Array<
     keyof AdminAchievementPayload
   >) {

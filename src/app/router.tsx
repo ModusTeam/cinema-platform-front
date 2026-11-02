@@ -6,7 +6,6 @@ import AdminLayout from '@/app/layouts/AdminLayout'
 import MainLayout from '@/app/layouts/MainLayout'
 import NotFoundPage from '@/pages/public/NotFoundPage'
 
-// client
 const HomePage = lazy(() => import('@/pages/public/HomePage'))
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage'))
 const AboutPage = lazy(() => import('@/pages/public/AboutPage'))
@@ -30,7 +29,6 @@ const PrivacyPage = lazy(() => import('@/pages/public/PrivacyPage'))
 const OfferPage = lazy(() => import('@/pages/public/OfferPage'))
 const AgeLimitsPage = lazy(() => import('@/pages/public/AgeLimitsPage'))
 
-// admin
 const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'))
 const HallsPage = lazy(() => import('@/pages/admin/HallsPage'))
 const AdminSessionsPage = lazy(

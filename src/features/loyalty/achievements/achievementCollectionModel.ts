@@ -14,8 +14,7 @@ export const ACHIEVEMENT_FILTERS: {
   { value: 'locked', label: 'Ще не відкрито' },
 ]
 
-// Hidden achievements belong only to the public secret category, regardless of
-// any concealed category the server may have returned.
+// Filtering must not disclose a hidden achievement's actual category.
 export function getCollectionCategory(item: Achievement) {
   return getAchievementPresentation(item).hidden
     ? { key: 'secret', label: 'Секретні' }
@@ -35,7 +34,7 @@ export function filterAchievements(
 }
 
 export function selectFeaturedAchievement(items: Achievement[]) {
-  // Highest valid completion percentage; ties use catalogue order, then ID.
+  // Tie-breaks keep the featured target stable across refetches.
   return items.reduce<Achievement | undefined>((nearest, item) => {
     const progress = getAchievementProgress(item)
     if (progress === null || progress <= 0) return nearest

@@ -297,7 +297,7 @@ export function resolveAchievementIcon(
 ): AchievementIconResolution {
   if (hidden) return { kind: 'secret', component: Lock }
   const id = identifier?.trim() ?? ''
-  // Namespaces must be resolved before the legacy punctuation normalization.
+  // Legacy punctuation normalization would corrupt Iconify namespaces.
   if (id.includes(':')) {
     const curated = curatedById.get(id)
     if (curated) return { kind: 'curated', icon: curated }

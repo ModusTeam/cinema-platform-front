@@ -20,7 +20,7 @@
   aspect-ratio: 1;
 }
 
-/* Rim colors work on the Account paper and the dark loyalty shell. */
+/* Keep rims legible on both paper and dark surfaces. */
 .achievement-badge[data-tone='green'] { --badge-rim: #62816c; }
 .achievement-badge[data-tone='blue'] { --badge-rim: #6485a6; }
 .achievement-badge[data-tone='violet'] { --badge-rim: #9676a5; }

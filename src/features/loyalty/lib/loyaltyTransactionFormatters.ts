@@ -1,6 +1,5 @@
 import type { LoyaltyTransaction } from '../model/loyalty.types'
 
-// Names come from the loyalty service transaction enum and admin constants.
 const TRANSACTION_TITLES: Record<string, string> = {
   EARN_TICKET: 'Купівля квитків',
   EARN_FOOD: 'Покупки в кінобарі',
@@ -48,7 +47,6 @@ const getCleanReason = (transaction: LoyaltyTransaction) => {
     transaction.type === 'ADMIN_ADDITION' ||
     transaction.type === 'ADMIN_DEDUCTION'
   ) {
-    // Remove only the service's known administrative prefix; retain the reason.
     return (
       description
         .replace(/^\[Admin:[^\]]*\]\s*Reason:\s*/i, '')
@@ -56,7 +54,6 @@ const getCleanReason = (transaction: LoyaltyTransaction) => {
         .trim() || null
     )
   }
-  // Hide redundant generated accounting text, never arbitrary user descriptions.
   if (
     (transaction.type === 'EARN_TICKET' ||
       transaction.type === 'EARN_SPECIAL') &&
