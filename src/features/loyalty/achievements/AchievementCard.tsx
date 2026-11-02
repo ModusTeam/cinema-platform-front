@@ -1,6 +1,7 @@
 import { Check } from 'lucide-react'
 import { cn } from '@/shared/lib/utils'
-import { AchievementIcon } from './AchievementIcon'
+import { AchievementBadge, type AchievementBadgeSize } from './AchievementBadge'
+import { getBadgeProgressPercent } from './achievementBadgePresentation'
 import { getAchievementPresentation } from './achievementPresentation'
 import type { Achievement } from './achievements.types'
 
@@ -10,6 +11,7 @@ interface AchievementCardProps {
   featured?: boolean
   featuredLabel?: string
   preview?: boolean
+  badgeSize?: AchievementBadgeSize
 }
 
 const AchievementCard = ({
@@ -18,9 +20,14 @@ const AchievementCard = ({
   featured,
   featuredLabel = 'Найближча ціль',
   preview = false,
+  badgeSize = preview || featured ? 'large' : compact ? 'small' : 'medium',
 }: AchievementCardProps) => {
   const presentation = getAchievementPresentation(achievement)
   const unlocked = achievement.status === 'unlocked'
+  const progress =
+    !presentation.hidden && !unlocked && Number.isFinite(achievement.current)
+      ? getBadgeProgressPercent(achievement.progressPercent, achievement.target)
+      : null
   return (
     <article
       className={cn(
@@ -30,21 +37,27 @@ const AchievementCard = ({
       )}
     >
       <div
-        className={cn('flex min-w-0 items-start gap-4', preview && 'flex-col')}
+        className={cn(
+          'flex min-w-0 flex-wrap items-start gap-4',
+          preview && 'flex-col',
+        )}
       >
-        <div className='mt-1 shrink-0 text-[var(--text-muted)]'>
-          <AchievementIcon
-            identifier={achievement.icon}
+        <div className='shrink-0'>
+          <AchievementBadge
+            icon={achievement.icon}
+            rarity={achievement.rarity}
+            status={achievement.status}
+            progress={progress ?? undefined}
+            target={achievement.target}
             hidden={presentation.hidden}
-            size={preview ? 64 : 24}
-            strokeWidth={1.4}
+            size={badgeSize}
           />
         </div>
-        <div className='min-w-0'>
+        <div className={cn('min-w-0', !preview && 'flex-1 basis-40')}>
           <p className='mb-2 flex flex-wrap items-center gap-2 text-xs text-[var(--text-muted)]'>
             {unlocked && <Check size={14} aria-hidden='true' />}
             {featured ? `${featuredLabel} · ` : ''}
-            {preview ? 'Попередній вигляд' : presentation.statusLabel}
+            {presentation.statusLabel}
           </p>
           <h3 className='type-public-section break-words'>
             {presentation.title}
@@ -72,23 +85,20 @@ const AchievementCard = ({
       <div
         className={cn('mt-5 space-y-4', featured && 'lg:mt-0 lg:self-center')}
       >
-        {!preview &&
-          !presentation.hidden &&
-          !unlocked &&
-          achievement.target > 0 && (
-            <div>
-              <p className='mb-3 text-sm tabular-nums text-[var(--text-muted)]'>
-                Прогрес: {achievement.current} / {achievement.target}
-              </p>
-              <progress
-                className='achievement-progress w-full'
-                aria-label={`Прогрес: ${presentation.title}`}
-                aria-valuetext={`${achievement.current} з ${achievement.target}`}
-                value={achievement.progressPercent}
-                max={100}
-              />
-            </div>
-          )}
+        {progress !== null && (
+          <div>
+            <p className='mb-3 text-sm tabular-nums text-[var(--text-muted)]'>
+              Прогрес: {achievement.current} / {achievement.target}
+            </p>
+            <progress
+              className='sr-only'
+              aria-label={`Прогрес: ${presentation.title}`}
+              aria-valuetext={`${achievement.current} з ${achievement.target}`}
+              value={progress}
+              max={100}
+            />
+          </div>
+        )}
         {!presentation.hidden && achievement.pointsReward > 0 && (
           <p className='text-sm tabular-nums'>
             {unlocked ? 'Нагорода' : 'За відкриття'}: +

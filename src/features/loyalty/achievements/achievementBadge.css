@@ -1,0 +1,69 @@
+.achievement-badge {
+  --badge-rim: var(--text-muted);
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: var(--badge-size);
+  height: var(--badge-size);
+  flex: none;
+  color: var(--badge-rim);
+  vertical-align: middle;
+}
+
+.achievement-badge[data-size='small'] { --badge-size: 4rem; }
+.achievement-badge[data-size='medium'] { --badge-size: 5.5rem; }
+.achievement-badge[data-size='large'] { --badge-size: 8rem; }
+
+/* Rim colors work on the Account paper and the dark loyalty shell. */
+.achievement-badge[data-tone='green'] { --badge-rim: #62816c; }
+.achievement-badge[data-tone='blue'] { --badge-rim: #6485a6; }
+.achievement-badge[data-tone='violet'] { --badge-rim: #9676a5; }
+.achievement-badge[data-tone='gold'] { --badge-rim: #a88945; }
+
+.achievement-badge__rim {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  stroke-width: 1;
+}
+
+.achievement-badge__inner { opacity: 0.55; }
+.achievement-badge[data-rim='strong'] .achievement-badge__outline,
+.achievement-badge[data-rim='etched'] .achievement-badge__outline { stroke-width: 2; }
+.achievement-badge__marks { fill: currentColor; stroke: none; }
+.achievement-badge__engraving { stroke-width: 1.5; }
+.achievement-badge__track { stroke: var(--border-default); stroke-width: 2; }
+.achievement-badge__progress { stroke: var(--text-main); stroke-width: 2; }
+.achievement-badge[data-state='unlocked'] .achievement-badge__progress { stroke: currentColor; }
+
+.achievement-badge__artwork {
+  width: 46%;
+  height: 46%;
+  color: var(--text-main);
+}
+
+.achievement-badge[data-state='locked'] .achievement-badge__artwork {
+  filter: grayscale(0.7);
+  opacity: 0.6;
+}
+
+.achievement-badge__complete {
+  position: absolute;
+  bottom: 17%;
+  left: 44%;
+  width: 12%;
+  height: 12%;
+  color: var(--text-main);
+}
+
+@media (prefers-reduced-motion: no-preference) and (hover: hover) {
+  .achievement-badge[data-state='unlocked'] {
+    transition: transform 160ms ease-out;
+  }
+
+  .achievement-badge[data-state='unlocked']:hover {
+    transform: translateY(-2px);
+  }
+}

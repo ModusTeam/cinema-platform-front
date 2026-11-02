@@ -1,15 +1,9 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import AchievementCard from '@/features/loyalty/achievements/AchievementCard'
-import {
-  getAchievementCategoryLabel,
-  getAchievementRarityLabel,
-  getAchievementStrategyLabel,
-  resolveAchievementCategory,
-  resolveAchievementRarity,
-  resolveAchievementStrategy,
-} from '@/features/loyalty/achievements/achievementContract'
-import type { Achievement } from '@/features/loyalty/achievements/achievements.types'
+import { ACHIEVEMENT_STATUS_LABELS } from '@/features/loyalty/achievements/achievementPresentation'
+import type { AchievementStatus } from '@/features/loyalty/achievements/achievements.types'
 import type { AchievementFormData } from '../model/achievementForm'
+import { buildAchievementPreview } from '../model/achievementPreview'
 import './achievementEditorPreview.css'
 
 export function AchievementEditorPreview({
@@ -18,29 +12,10 @@ export function AchievementEditorPreview({
   values: AchievementFormData
 }) {
   const [guestView, setGuestView] = useState(false)
-  const achievement: Achievement = {
-    id: 'editor-preview',
-    code: values.code,
-    title: values.name || 'Назва досягнення',
-    description: values.description || 'Тут з’явиться опис вашого досягнення.',
-    icon: values.icon,
-    category: resolveAchievementCategory(values.category),
-    categoryLabel: getAchievementCategoryLabel(values.category),
-    rarity: resolveAchievementRarity(values.rarity),
-    rarityLabel: getAchievementRarityLabel(values.rarity),
-    strategy: resolveAchievementStrategy(values.strategy),
-    strategyLabel: getAchievementStrategyLabel(values.strategy),
-    pointsReward: Number.isFinite(values.rewardPoints)
-      ? values.rewardPoints
-      : 0,
-    isSecret: guestView && values.isSecret,
-    secretHint: values.secretHint,
-    sortOrder: values.sortOrder,
-    status: 'locked',
-    current: 0,
-    target: 0,
-    progressPercent: 0,
-  }
+  const [status, setStatus] = useState<AchievementStatus>('locked')
+  const stateId = useId()
+  const helpId = useId()
+  const achievement = buildAchievementPreview(values, status, guestView)
 
   return (
     <aside
@@ -49,8 +24,26 @@ export function AchievementEditorPreview({
     >
       <h3 className='text-lg font-semibold'>Попередній вигляд</h3>
       <p className='mt-2 text-xs leading-relaxed text-[var(--text-muted)]'>
-        Зміни з’являються одразу. Прогрес гостя тут не відображається.
+        Зміни з’являються одразу. Стани нижче — лише симуляція вигляду.
       </p>
+      <div className='mt-4 space-y-2'>
+        <label htmlFor={stateId} className='block text-sm'>
+          Стан для перегляду
+        </label>
+        <select
+          id={stateId}
+          value={status}
+          aria-describedby={helpId}
+          onChange={event => setStatus(event.target.value as AchievementStatus)}
+          className='w-full min-w-0 border border-[var(--text-muted)] bg-transparent px-2 py-3 text-sm'
+        >
+          <option value='locked'>{ACHIEVEMENT_STATUS_LABELS.locked}</option>
+          <option value='in-progress'>
+            {ACHIEVEMENT_STATUS_LABELS['in-progress']}
+          </option>
+          <option value='unlocked'>{ACHIEVEMENT_STATUS_LABELS.unlocked}</option>
+        </select>
+      </div>
       <label className='my-4 flex min-h-11 items-center gap-3 text-sm'>
         <input
           type='checkbox'
@@ -60,6 +53,18 @@ export function AchievementEditorPreview({
         />
         Як бачить гість
       </label>
+      <p
+        id={helpId}
+        className='mb-4 text-xs leading-relaxed text-[var(--text-muted)]'
+      >
+        {guestView && values.isSecret
+          ? 'Гість без відкритого секрету: іконку, рідкість і нагороду приховано в усіх станах перегляду.'
+          : status === 'in-progress'
+            ? 'Симуляція: 35 зі 100 (35%). Це приклад, а не прогрес гостя.'
+            : status === 'unlocked'
+              ? 'Симуляція користувача, який відкрив досягнення. Секретна іконка та рідкість видимі.'
+              : 'Симуляція невідкритого досягнення. Це перегляд адміністратора; секрет можна перевірити в режимі гостя.'}
+      </p>
       <AchievementCard achievement={achievement} preview />
       <p className='border-t border-[var(--border-default)] pt-4 text-xs leading-relaxed text-[var(--text-muted)]'>
         {values.isSecret

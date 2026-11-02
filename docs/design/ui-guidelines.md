@@ -97,8 +97,26 @@ searchable recommended radio grid and optional English search restricted to Retr
 Additional artwork depends on Iconify at runtime; bundled artwork does not.
 Retain the redistributed MIT notice under `public/licenses`.
 
+`AchievementBadge` wraps that artwork in a circular medallion, with shared small,
+medium and large sizes. Rarity derives only from the existing field: neutral
+single rim, green double rim, blue stronger rim, violet geometric marks and gold
+engraving. Keep original multicolor artwork, transparent centers and visible
+rarity labels. Locked artwork is partially desaturated; unlocked badges have a
+completed rim and check. Only finite percentages with a positive finite target
+can draw an in-progress arc; the card retains numeric progress and one native
+accessible progress element. The SVG is decorative. Hidden secrets always use
+the same neutral single-rim lock, without progress or concealed metadata.
+Cards wrap text below the medallion when space or text enlargement requires it.
+Badge hover is a small lift for unlocked awards, disabled with reduced motion;
+mounting never triggers a completion animation.
+
 The achievement editor keeps a scoped paper preview beside the dark form from
-768px, reusing `AchievementCard` without user progress. Its basic criteria builder
+768px, reusing `AchievementCard`. Locked, in-progress and unlocked preview states
+are local simulations; the clearly labelled 35/100 example never changes form
+values or submission payloads. Secret guest view always represents an
+undiscovered secret, even with an unlocked simulation selected. Turning guest
+view off restores the labelled administrator/unlocked-user simulation.
+Its basic criteria builder
 counts processed orders with `TICKET_PURCHASED / gte` or accumulates their
 pre-redemption UAH value with `sum / amount` (each positive order amount is
 rounded before incrementing). Other fields remain in JSON with review guidance.

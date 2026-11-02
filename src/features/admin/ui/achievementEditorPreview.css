@@ -15,7 +15,7 @@
   background: #201f1d;
 }
 
-.achievement-editor-preview input:focus-visible {
+.achievement-editor-preview :is(input, select):focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 3px;
 }

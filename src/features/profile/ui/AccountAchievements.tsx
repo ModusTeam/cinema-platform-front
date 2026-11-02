@@ -43,7 +43,7 @@ export default function AccountAchievements() {
         <ul className='mt-6'>
           {preview.map(item => (
             <li key={item.id}>
-              <AchievementCard achievement={item} />
+              <AchievementCard achievement={item} badgeSize='small' />
             </li>
           ))}
         </ul>
