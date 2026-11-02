@@ -9,11 +9,13 @@ export const loyaltyCopy = {
     currentStatus: 'Поточний статус',
     highestTier: 'У вас найвищий рівень програми.',
     nextTier: (label: string) => `Наступний рівень: ${label}.`,
-    goldUpgradeAvailable: 'Доступне підвищення до Gold',
+    goldUpgradeAvailable:
+      'Доступне підвищення квитка до VIP за статусом Gold. Умови перевіряються під час оформлення.',
     maximumTier: 'Максимальний рівень програми лояльності',
-    pointsRemaining: (points: number, label: string | undefined) =>
-      `Залишилось ${points} балів до ${label}`,
-    pointsThisYear: 'Балів цього року',
+    qualificationNotice:
+      'Доступні бали можна витрачати. Їхній залишок не показує прогрес до наступного рівня.',
+    progressionUnavailable: 'Прогрес до наступного рівня наразі недоступний.',
+    pointsThisYear: 'Нараховано балів цього року',
     visitsThisYear: 'Візитів цього року',
     activeUntil: (date: string) => `Статус активний до ${date}.`,
     maximumReached: 'Максимальний рівень досягнуто',

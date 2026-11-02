@@ -13,6 +13,7 @@ interface PointsHistoryTableProps {
   transactions: LoyaltyTransaction[]
   isLoading: boolean
   isLoadingMore: boolean
+  isRetrying?: boolean
   hasMore: boolean
   error?: Error | null
   onLoadMore: () => void
@@ -23,6 +24,7 @@ const PointsHistoryTable = ({
   transactions,
   isLoading,
   isLoadingMore,
+  isRetrying = false,
   hasMore,
   error,
   onLoadMore,
@@ -53,7 +55,10 @@ const PointsHistoryTable = ({
     )
   return (
     <div>
-      <div className='mb-1 flex justify-between border-b border-[var(--border-default)] pb-4 text-xs text-[var(--text-muted)]'>
+      <div
+        aria-hidden='true'
+        className='mb-1 hidden justify-between border-b border-[var(--border-default)] pb-4 text-xs text-[var(--text-muted)] sm:flex'
+      >
         <span>Операція / дата</span>
         <span>Зміна / баланс</span>
       </div>
@@ -64,26 +69,44 @@ const PointsHistoryTable = ({
           return (
             <li
               key={transaction.id}
-              className='grid grid-cols-[minmax(0,1fr)_auto] gap-5 border-b border-[var(--border-default)] py-6 sm:gap-10'
+              className='points-ledger-entry border-b border-[var(--border-default)] py-6'
             >
               <div className='min-w-0'>
                 <h2 className='type-public-title'>{info.title}</h2>
-                <p className='mt-2 text-sm leading-relaxed text-[var(--text-muted)]'>
-                  {info.subtitle}
+                <p className='mt-2 text-xs leading-relaxed text-[var(--text-muted)]'>
+                  <time
+                    dateTime={
+                      Number.isNaN(new Date(transaction.createdAt).getTime())
+                        ? undefined
+                        : transaction.createdAt
+                    }
+                  >
+                    {info.date}
+                  </time>
                 </p>
+                {info.description && (
+                  <p className='mt-3 whitespace-pre-line text-sm leading-relaxed text-[var(--text-muted)]'>
+                    {info.description}
+                  </p>
+                )}
               </div>
-              <div className='text-right tabular-nums'>
-                <p className='text-xl font-medium'>
-                  {formatSignedPoints(transaction)}
-                  <span className='sr-only'> балів</span>
-                </p>
-                <p className='mt-1 text-xs text-[var(--text-muted)]'>
-                  {tone === 'positive'
-                    ? 'Нарахування'
-                    : tone === 'negative'
-                      ? 'Списання'
-                      : 'Без змін'}
-                </p>
+              <div className='points-ledger-amount tabular-nums'>
+                <div>
+                  <p
+                    data-tone={tone}
+                    className='points-ledger-change text-2xl font-medium'
+                  >
+                    {formatSignedPoints(transaction)}
+                    <span className='sr-only'> балів</span>
+                  </p>
+                  <p className='mt-1 text-xs text-[var(--text-muted)]'>
+                    {tone === 'positive'
+                      ? 'Нарахування'
+                      : tone === 'negative'
+                        ? 'Списання'
+                        : 'Без змін'}
+                  </p>
+                </div>
                 <p className='mt-3 text-xs text-[var(--text-muted)]'>
                   Баланс: {transaction.balanceAfter.toLocaleString('uk-UA')}
                 </p>
@@ -93,12 +116,22 @@ const PointsHistoryTable = ({
         })}
       </ol>
       {error && (
-        <UnavailableState
-          className='account-state'
-          title='Не вдалося оновити історію'
-          description='Завантажені операції залишилися на сторінці. Спробуйте ще раз.'
-          onRetry={onRetry}
-        />
+        <div className='mt-6 border-b border-[var(--account-rule)] pb-6'>
+          <output className='block text-sm leading-relaxed'>
+            Не вдалося оновити історію. Завантажені операції залишилися на
+            сторінці.
+          </output>
+          {onRetry && (
+            <Button
+              className='mt-4'
+              variant='secondary'
+              onClick={onRetry}
+              isLoading={isRetrying}
+            >
+              {isRetrying ? 'Завантажуємо…' : 'Спробувати ще раз'}
+            </Button>
+          )}
+        </div>
       )}
       {hasMore && !error && (
         <div className='mt-8 flex justify-center'>

@@ -81,9 +81,22 @@ sets the content offset on non-Home routes. Ticket Menu keeps its paper geometry
 with wrapping labels and a scrollable body at narrow widths.
 
 Account, Loyalty, point history and Achievements share the scoped Account
-paper/ink roles and editorial headings. Keep the membership card dark, tier
-progress native and labelled, and transactions in a ledger with signed amounts,
-operation labels, dates and server balances. Reuse achievement presentation in
+paper/ink roles and editorial headings. Keep the membership card dark, with the
+same Cinema wordmark as the Header/Footer, restrained tier-colored type and a
+perforated history link. Available balance is spendable; never derive tier or
+qualification progress from it. The profile supplies no qualification percentage:
+show its current tier, factual annual metrics and separate status/points expiry
+dates, without a tier progress bar. Missing annual metrics remain unknown.
+Tier thresholds are informational annual earned-point/visit alternatives, not a
+frontend qualification calculation. Only explicit Gold is the maximum tier;
+`goldUpgradeAvailable` describes a Gold member's ticket upgrade, not promotion
+to Gold. Omit unverified benefit claims. Keep transactions in a ledger with signed amounts,
+operation labels, dates and server balances. Numeric signs determine increases,
+decreases and zero changes, with text labels alongside color. Unknown operation
+types stay neutral in category; preserve meaningful descriptions. Stack amount
+and balance below the description on narrow screens. Retain paginated rows on
+failure, retry the failed offset and deduplicate overlapping entries by ID.
+Reuse achievement presentation in
 Account previews; identify locked secrets only through public hints, and reserve
 awarded-reward wording for unlocked achievements. Category and rarity labels are
 Ukrainian; their API values remain unchanged.

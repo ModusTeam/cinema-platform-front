@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useLoyaltyProfile } from '@/features/loyalty/model/useLoyaltyProfile'
+import TierProgress from '@/features/loyalty/ui/TierProgress'
 
 export default function AccountLoyaltySummary() {
   const { data, isLoading, error, refetch } = useLoyaltyProfile()
@@ -10,7 +11,10 @@ export default function AccountLoyaltySummary() {
     >
       <div className='mb-3 flex flex-wrap justify-between gap-2'>
         <h2 className='text-sm'>Лояльність</h2>
-        <Link to='/account/loyalty' className='account-link text-sm'>
+        <Link
+          to='/account/loyalty'
+          className='account-link inline-flex min-h-11 items-center text-sm'
+        >
           Докладніше ↗
         </Link>
       </div>
@@ -34,24 +38,12 @@ export default function AccountLoyaltySummary() {
           <div className='flex flex-wrap items-baseline justify-between gap-2'>
             <p className='account-subheading'>{data.tier.label}</p>
             <p className='text-sm tabular-nums'>
-              {data.pointsBalance.toLocaleString('uk-UA')} балів
+              Доступні бали: {data.pointsBalance.toLocaleString('uk-UA')}
             </p>
           </div>
-          <progress
-            aria-label={
-              data.nextTier
-                ? `Прогрес до ${data.nextTier.label}`
-                : 'Максимальний рівень'
-            }
-            max={100}
-            value={data.progressPercent}
-            className='account-progress mt-4 w-full'
-          />
-          <p className='mt-2 text-xs leading-relaxed text-[var(--account-muted)]'>
-            {data.nextTier
-              ? `${data.nextTier.minPoints.toLocaleString('uk-UA')} балів — поріг ${data.nextTier.label}`
-              : 'Максимальний рівень досягнуто'}
-          </p>
+          <div className='mt-4'>
+            <TierProgress tier={data.tier} nextTier={data.nextTier} />
+          </div>
         </>
       ) : (
         <p className='text-sm'>Баланс поки недоступний.</p>
