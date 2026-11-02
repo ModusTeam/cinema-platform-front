@@ -1,42 +1,24 @@
-interface TierProgressProps {
-  progressPercent: number
-  currentPoints: number
-  nextTierPoints?: number
-  nextTierLabel?: string
-}
+import { loyaltyCopy } from '../config/loyalty.copy'
+import type { LoyaltyProfile } from '../model/loyalty.types'
 
 const TierProgress = ({
-  progressPercent,
-  currentPoints,
-  nextTierPoints,
-  nextTierLabel,
-}: TierProgressProps) => {
-  if (!nextTierLabel || nextTierPoints === undefined)
-    return (
-      <p className='text-sm text-[var(--text-muted)]'>
-        Максимальний рівень досягнуто
-      </p>
-    )
-  const remaining = Math.max(0, nextTierPoints - currentPoints)
-  return (
-    <div className='space-y-3'>
-      <div className='flex flex-wrap justify-between gap-2 text-sm'>
-        <span>До {nextTierLabel}</span>
-        <span className='tabular-nums text-[var(--text-muted)]'>
-          Ще {remaining.toLocaleString('uk-UA')} балів
-        </span>
-      </div>
-      <progress
-        className='account-progress w-full'
-        aria-label={`Прогрес до ${nextTierLabel}`}
-        aria-valuetext={`${currentPoints} з ${nextTierPoints} балів`}
-        max={100}
-        value={Math.min(100, Math.max(0, progressPercent))}
-      />
-      <p className='text-xs text-[var(--text-muted)]'>
-        Поріг рівня — {nextTierPoints.toLocaleString('uk-UA')} балів
-      </p>
-    </div>
-  )
-}
+  tier,
+  nextTier,
+}: Pick<LoyaltyProfile, 'tier' | 'nextTier'>) => (
+  <div className='space-y-3 text-sm leading-relaxed'>
+    {tier.id === 'gold' ? (
+      <p>{loyaltyCopy.tier.maximumReached}</p>
+    ) : (
+      <>
+        {nextTier && <p>{loyaltyCopy.tier.nextTier(nextTier.label)}</p>}
+        <p className='text-[var(--account-muted)]'>
+          {loyaltyCopy.tier.progressionUnavailable}
+        </p>
+      </>
+    )}
+    <p className='text-[var(--account-muted)]'>
+      {loyaltyCopy.tier.qualificationNotice}
+    </p>
+  </div>
+)
 export default TierProgress

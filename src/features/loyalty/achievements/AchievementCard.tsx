@@ -1,7 +1,12 @@
-import { Check, Lock } from 'lucide-react'
+import { Check } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { cn } from '@/shared/lib/utils'
-import { resolveAchievementIcon } from './achievementContract'
-import { getAchievementPresentation } from './achievementPresentation'
+import { AchievementBadge, type AchievementBadgeSize } from './AchievementBadge'
+import AchievementProgress from './AchievementProgress'
+import {
+  getAchievementPresentation,
+  getAchievementProgress,
+} from './achievementPresentation'
 import type { Achievement } from './achievements.types'
 
 interface AchievementCardProps {
@@ -9,6 +14,9 @@ interface AchievementCardProps {
   compact?: boolean
   featured?: boolean
   featuredLabel?: string
+  preview?: boolean
+  badgeSize?: AchievementBadgeSize
+  to?: string
 }
 
 const AchievementCard = ({
@@ -16,17 +24,14 @@ const AchievementCard = ({
   compact,
   featured,
   featuredLabel = 'Найближча ціль',
+  preview = false,
+  badgeSize = preview || featured ? 'large' : compact ? 'small' : 'medium',
+  to,
 }: AchievementCardProps) => {
   const presentation = getAchievementPresentation(achievement)
-  const Icon = presentation.hidden
-    ? Lock
-    : resolveAchievementIcon(
-        achievement.icon,
-        achievement.category,
-        achievement.rarity,
-      )
   const unlocked = achievement.status === 'unlocked'
-  return (
+  const progress = getAchievementProgress(achievement)
+  const content = (
     <article
       className={cn(
         'min-w-0 border-t border-[var(--border-default)] py-6',
@@ -34,11 +39,24 @@ const AchievementCard = ({
           'lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(12rem,0.5fr)] lg:gap-10',
       )}
     >
-      <div className='flex min-w-0 items-start gap-4'>
-        <div className='mt-1 shrink-0 text-[var(--text-muted)]'>
-          <Icon size={24} strokeWidth={1.4} aria-hidden='true' />
+      <div
+        className={cn(
+          'flex min-w-0 flex-wrap items-start gap-4',
+          preview && 'flex-col',
+        )}
+      >
+        <div className='shrink-0'>
+          <AchievementBadge
+            icon={achievement.icon}
+            rarity={achievement.rarity}
+            status={achievement.status}
+            progress={progress ?? undefined}
+            target={achievement.target}
+            hidden={presentation.hidden}
+            size={badgeSize}
+          />
         </div>
-        <div className='min-w-0'>
+        <div className={cn('min-w-0', !preview && 'flex-1 basis-40')}>
           <p className='mb-2 flex flex-wrap items-center gap-2 text-xs text-[var(--text-muted)]'>
             {unlocked && <Check size={14} aria-hidden='true' />}
             {featured ? `${featuredLabel} · ` : ''}
@@ -70,20 +88,7 @@ const AchievementCard = ({
       <div
         className={cn('mt-5 space-y-4', featured && 'lg:mt-0 lg:self-center')}
       >
-        {!presentation.hidden && !unlocked && achievement.target > 0 && (
-          <div>
-            <p className='mb-3 text-sm tabular-nums text-[var(--text-muted)]'>
-              Прогрес: {achievement.current} / {achievement.target}
-            </p>
-            <progress
-              className='achievement-progress w-full'
-              aria-label={`Прогрес: ${presentation.title}`}
-              aria-valuetext={`${achievement.current} з ${achievement.target}`}
-              value={achievement.progressPercent}
-              max={100}
-            />
-          </div>
-        )}
+        <AchievementProgress achievement={achievement} />
         {!presentation.hidden && achievement.pointsReward > 0 && (
           <p className='text-sm tabular-nums'>
             {unlocked ? 'Нагорода' : 'За відкриття'}: +
@@ -92,6 +97,17 @@ const AchievementCard = ({
         )}
       </div>
     </article>
+  )
+  return to ? (
+    <Link
+      to={to}
+      className='block min-w-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--focus-ring)]'
+      aria-label={`${presentation.title} — ${presentation.statusLabel}`}
+    >
+      {content}
+    </Link>
+  ) : (
+    content
   )
 }
 export default AchievementCard

@@ -81,12 +81,85 @@ sets the content offset on non-Home routes. Ticket Menu keeps its paper geometry
 with wrapping labels and a scrollable body at narrow widths.
 
 Account, Loyalty, point history and Achievements share the scoped Account
-paper/ink roles and editorial headings. Keep the membership card dark, tier
-progress native and labelled, and transactions in a ledger with signed amounts,
-operation labels, dates and server balances. Reuse achievement presentation in
+paper/ink roles and editorial headings. Keep the membership card dark, with the
+same Cinema wordmark as the Header/Footer, restrained tier-colored type and a
+perforated history link. Available balance is spendable; never derive tier or
+qualification progress from it. The profile supplies no qualification percentage:
+show its current tier, factual annual metrics and separate status/points expiry
+dates, without a tier progress bar. Missing annual metrics remain unknown.
+Tier thresholds are informational annual earned-point/visit alternatives, not a
+frontend qualification calculation. Only explicit Gold is the maximum tier;
+`goldUpgradeAvailable` describes a Gold member's ticket upgrade, not promotion
+to Gold. Omit unverified benefit claims. Keep transactions in a ledger with signed amounts,
+operation labels, dates and server balances. Numeric signs determine increases,
+decreases and zero changes, with text labels alongside color. Unknown operation
+types stay neutral in category; preserve meaningful descriptions. Stack amount
+and balance below the description on narrow screens. Retain paginated rows on
+failure, retry the failed offset and deduplicate overlapping entries by ID.
+Reuse achievement presentation in
 Account previews; identify locked secrets only through public hints, and reserve
 awarded-reward wording for unlocked achievements. Category and rarity labels are
 Ukrainian; their API values remain unchanged.
+
+Achievement artwork uses the centralized loyalty icon registry and renderer:
+30 individually imported with icons Retro icons render locally; persisted Lucide
+identifiers retain their local artwork. Unknown identifiers show a fallback and
+remain unchanged until an administrator selects a replacement. Mask locked
+secrets before resolving artwork, including remote icons. The editor offers a
+searchable recommended radio grid and optional English search restricted to Retro.
+Additional artwork depends on Iconify at runtime; bundled artwork does not.
+Retain the redistributed MIT notice under `public/licenses`.
+
+`AchievementBadge` wraps that artwork in a circular medallion, with shared small,
+medium and large sizes. Rarity derives only from the existing field: neutral
+single rim, green double rim, blue stronger rim, violet geometric marks and gold
+engraving. Keep original multicolor artwork, transparent centers and visible
+rarity labels. Locked artwork is partially desaturated; unlocked badges have a
+completed rim and check. Only finite percentages with a positive finite target
+can draw an in-progress arc; the card retains numeric progress and one native
+accessible progress element. The SVG is decorative. Hidden secrets always use
+the same neutral single-rim lock, without progress or concealed metadata.
+Cards wrap text below the medallion when space or text enlargement requires it.
+Badge hover is a small lift for unlocked awards, disabled with reduced motion;
+mounting never triggers a completion animation.
+
+The achievement collection uses an open responsive medallion grid, with a
+single linked nearest target chosen by highest valid in-progress percentage
+(catalogue order, then ID break ties). It appears once within the active filters.
+Category and status filters use URL search parameters and category-scoped counts.
+Undiscovered secrets belong to the public secret category and retain only the
+permitted hint, generic title and neutral artwork. Detail pages center the same
+badge at a responsive display size, with one heading and native progress semantics;
+badge sizing must also fit narrow layouts with enlarged text. Account previews
+retain small badges and link to the same authenticated, ID-only detail route.
+Both routes read the user-scoped collection cache; private achievement queries
+must never reuse another user's data. Frontend masking is a presentation safeguard,
+not a substitute for backend authorization.
+
+The achievement editor keeps a scoped paper preview beside the dark form from
+768px, reusing `AchievementCard`. Locked, in-progress and unlocked preview states
+are local simulations; the clearly labelled 35/100 example never changes form
+values or submission payloads. Secret guest view always represents an
+undiscovered secret, even with an unlocked simulation selected. Turning guest
+view off restores the labelled administrator/unlocked-user simulation.
+Its basic criteria builder
+counts processed orders with `TICKET_PURCHASED / gte` or accumulates their
+pre-redemption UAH value with `sum / amount` (each positive order amount is
+rounded before incrementing). Other fields remain in JSON with review guidance.
+Preserve raw unchanged JSON, `sum/valueField` and synchronize modes explicitly.
+Block saving fields the server would discard, with an explanation, instead of
+simplifying the rule. Confirm meaningful edits to existing criteria, rewards or
+strategy; spelling and presentation edits need no extra confirmation. New
+achievements use threshold progress; retain legacy strategies without implying
+a working streak algorithm. Categories and rarities remain descriptive.
+
+The Admin achievements ledger uses server pages of 20 and the shared pagination.
+Active/all selection applies to the catalogue; name/code, secret, category,
+rarity and inactive-only filters explicitly apply to the loaded page. Keep page
+counts separate from the server total and retain navigation on locally empty
+pages. DELETE deactivates; reactivation uses a validated full PUT preserving
+stored properties and is blocked when normalization would lose data. Mutations
+invalidate all Admin achievement pages and the three user achievement views.
 
 Form dialogs compose `FormDialog` over `Dialog` and the existing modal focus
 infrastructure. Keep headers and actions outside the scrolling form body, protect

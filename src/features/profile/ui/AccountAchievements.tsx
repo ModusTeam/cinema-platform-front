@@ -1,6 +1,7 @@
 import { Trophy } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import AchievementCard from '@/features/loyalty/achievements/AchievementCard'
+import { achievementDetailsPath } from '@/features/loyalty/achievements/achievementCollectionModel'
 import { useAchievementsTabData } from '@/features/loyalty/achievements/model/useAchievementsTabData'
 import EmptyState from '@/shared/ui/EmptyState'
 import UnavailableState from '@/shared/ui/UnavailableState'
@@ -43,7 +44,11 @@ export default function AccountAchievements() {
         <ul className='mt-6'>
           {preview.map(item => (
             <li key={item.id}>
-              <AchievementCard achievement={item} />
+              <AchievementCard
+                achievement={item}
+                badgeSize='small'
+                to={achievementDetailsPath(item.id)}
+              />
             </li>
           ))}
         </ul>

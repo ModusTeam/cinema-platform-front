@@ -4,7 +4,7 @@ import { AccountPageLayout } from '@/features/profile/ui/AccountPageLayout'
 const LoyaltyPage = () => (
   <AccountPageLayout
     title='Ваша лояльність'
-    description='Поточний статус, баланс балів та шлях до наступного рівня. Усе про вашу участь у програмі — в одному місці.'
+    description='Ваша картка учасника, доступні бали та рік у кіно. Статус програми й колекція досягнень — поруч.'
   >
     <LoyaltyDashboard />
   </AccountPageLayout>

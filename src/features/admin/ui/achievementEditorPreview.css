@@ -1,0 +1,21 @@
+.achievement-editor-preview {
+  --text-main: #201f1d;
+  --text-muted: #686259;
+  --text-faint: #686259;
+  --border-default: #c4bdb2;
+  --focus-ring: #201f1d;
+  background: #f5f1e8;
+  color: var(--text-main);
+  color-scheme: light;
+  overflow-wrap: anywhere;
+}
+
+.achievement-editor-preview ::selection {
+  color: #f5f1e8;
+  background: #201f1d;
+}
+
+.achievement-editor-preview :is(input, select):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}

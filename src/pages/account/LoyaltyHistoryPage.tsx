@@ -13,13 +13,14 @@ const LoyaltyHistoryPage = () => {
         transactions={history.transactions}
         isLoading={history.isLoading}
         isLoadingMore={history.isLoadingMore}
+        isRetrying={history.isFetching}
         hasMore={history.hasMore}
         error={history.error}
         onLoadMore={() => {
           void history.loadMore()
         }}
         onRetry={() => {
-          void history.refetch()
+          void history.retry()
         }}
       />
     </AccountPageLayout>

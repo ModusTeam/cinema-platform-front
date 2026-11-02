@@ -1,23 +1,24 @@
-import type { LoyaltyTransaction } from '@/features/loyalty/model/loyalty.types'
-
-const EARNING_KEYWORDS = ['earn', 'bonus', 'refund', 'grant', 'credit']
-const SPENDING_KEYWORDS = ['redeem', 'spend', 'expire', 'debit', 'charge']
-const UUID_PATTERN = /\b[a-f0-9-]{36}\b/gi
+import type { LoyaltyTransaction } from '../model/loyalty.types'
 
 const TRANSACTION_TITLES: Record<string, string> = {
   EARN_TICKET: 'Купівля квитків',
+  EARN_FOOD: 'Покупки в кінобарі',
+  EARN_BIRTHDAY: 'Бонус до дня народження',
+  EARN_SPECIAL: 'Спеціальна подія',
+  EARN_PROMO: 'Промоційне нарахування',
+  EARN_ACHIEVEMENT: 'Нагорода за досягнення',
   BURN_DISCOUNT: 'Використання знижки',
+  BURN_REWARD: 'Використання нагороди',
+  EXPIRE: 'Завершення терміну дії балів',
+  ADJUST: 'Коригування балів',
+  REFUND: 'Повернення балів',
   ADMIN_ADDITION: 'Бонусне нарахування',
   ADMIN_DEDUCTION: 'Списання балів',
 }
 
 export const formatTransactionDate = (value: string) => {
   const date = new Date(value)
-
-  if (Number.isNaN(date.getTime())) {
-    return 'Дата невідома'
-  }
-
+  if (Number.isNaN(date.getTime())) return 'Дата невідома'
   return new Intl.DateTimeFormat('uk-UA', {
     day: 'numeric',
     month: 'long',
@@ -32,72 +33,49 @@ export const getTransactionPointsTone = (
 ): 'positive' | 'negative' | 'neutral' => {
   if (transaction.points > 0) return 'positive'
   if (transaction.points < 0) return 'negative'
-
-  const normalizedType = transaction.type.trim().toLowerCase()
-
-  if (EARNING_KEYWORDS.some(keyword => normalizedType.includes(keyword))) {
-    return 'positive'
-  }
-
-  if (SPENDING_KEYWORDS.some(keyword => normalizedType.includes(keyword))) {
-    return 'negative'
-  }
-
   return 'neutral'
 }
 
-export const formatSignedPoints = (transaction: LoyaltyTransaction) => {
-  const tone = getTransactionPointsTone(transaction)
-  const absolutePoints = Math.abs(transaction.points)
-
-  if (tone === 'positive') return `+${absolutePoints}`
-  if (tone === 'negative') return `-${absolutePoints}`
-
-  return `${absolutePoints}`
-}
-
-const sanitizeDescription = (description: string) =>
-  description
-    .replace(UUID_PATTERN, '')
-    .replace(/\[Admin:\s*\]/gi, '')
-    .replace(/\bfor\s+order\b.*$/i, '')
-    .replace(/\(\s*STANDARD\s*\)/gi, '')
-    .replace(/\s{2,}/g, ' ')
-    .replace(/\s+([.,:;])/g, '$1')
-    .trim()
-
-const getAdminReason = (description: string) => {
-  const reasonMatch = description.match(/\bReason:\s*(.+)$/i)
-
-  if (!reasonMatch?.[1]) return null
-
-  const reason = sanitizeDescription(reasonMatch[1])
-
-  return reason || null
-}
+export const formatSignedPoints = ({ points }: LoyaltyTransaction) =>
+  `${points > 0 ? '+' : points < 0 ? '-' : ''}${Math.abs(points).toLocaleString('uk-UA')}`
 
 const getCleanReason = (transaction: LoyaltyTransaction) => {
-  if (transaction.type.startsWith('ADMIN_')) {
-    return getAdminReason(transaction.description)
+  const description = transaction.description.trim()
+  if (!description) return null
+
+  if (
+    transaction.type === 'ADMIN_ADDITION' ||
+    transaction.type === 'ADMIN_DEDUCTION'
+  ) {
+    return (
+      description
+        .replace(/^\[Admin:[^\]]*\]\s*Reason:\s*/i, '')
+        .replace(/^Reason:\s*/i, '')
+        .trim() || null
+    )
   }
-
-  const cleanDescription = sanitizeDescription(transaction.description)
-
-  if (!cleanDescription) return null
-  if (/^earned\s+\d+\s+pts$/i.test(cleanDescription)) return null
-  if (/^burned\s+\d+\s+pts$/i.test(cleanDescription)) return null
-  if (/^used\s+\d+\s+pts$/i.test(cleanDescription)) return null
-
-  return cleanDescription
+  if (
+    (transaction.type === 'EARN_TICKET' ||
+      transaction.type === 'EARN_SPECIAL') &&
+    /^Earned \d+ pts for order [a-f0-9-]{36}(?: \([A-Z_]+\))?$/i.test(
+      description,
+    )
+  )
+    return null
+  if (
+    transaction.type === 'BURN_DISCOUNT' &&
+    /^Redeemed \d+ pts for order [a-f0-9-]{36}$/i.test(description)
+  )
+    return null
+  if (transaction.type === 'EXPIRE' && description === 'Points expired')
+    return null
+  return description
 }
 
-export const formatTransactionInfo = (transaction: LoyaltyTransaction) => {
-  const title = TRANSACTION_TITLES[transaction.type] ?? 'Операція з балами'
-  const date = formatTransactionDate(transaction.createdAt)
-  const reason = getCleanReason(transaction)
-
-  return {
-    title,
-    subtitle: reason ? `${date} · ${reason}` : date,
-  }
-}
+export const formatTransactionInfo = (transaction: LoyaltyTransaction) => ({
+  title: Object.hasOwn(TRANSACTION_TITLES, transaction.type)
+    ? TRANSACTION_TITLES[transaction.type]
+    : 'Операція з балами',
+  date: formatTransactionDate(transaction.createdAt),
+  description: getCleanReason(transaction),
+})

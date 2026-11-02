@@ -1,19 +1,32 @@
-import { clsx } from 'clsx'
-import { Edit, Plus, Search, Trash2, Trophy } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { Edit, Plus, Power, Search, Trophy } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import type {
   AdminAchievementDto,
   AdminAchievementPayload,
 } from '@/features/admin/api/admin-achievements.service'
+import { getCriteriaSummary } from '@/features/admin/model/achievementCriteria'
+import {
+  buildAchievementReactivationPayload,
+  getReactivationRestriction,
+} from '@/features/admin/model/achievementForm'
+import {
+  ACHIEVEMENTS_PAGE_SIZE,
+  type AchievementPageFilters,
+  DEFAULT_ACHIEVEMENT_FILTERS,
+  filterAchievementPage,
+  lastAchievementPage,
+} from '@/features/admin/model/achievementManagement'
 import { useAdminAchievements } from '@/features/admin/model/useAdminAchievements'
 import AchievementFormModal from '@/features/admin/ui/AchievementFormModal'
 import { AdminPageHeader } from '@/features/admin/ui/AdminPageHeader'
+import { AdminPagination } from '@/features/admin/ui/AdminPagination'
 import { AdminTable } from '@/features/admin/ui/AdminTable'
+import { AchievementIcon } from '@/features/loyalty/achievements/AchievementIcon'
 import {
+  ACHIEVEMENT_CATEGORY_OPTIONS,
+  ACHIEVEMENT_RARITY_OPTIONS,
   getAchievementCategoryLabel,
   getAchievementRarityLabel,
-  getAchievementStrategyLabel,
-  resolveAchievementIcon,
 } from '@/features/loyalty/achievements/achievementContract'
 import Button from '@/shared/ui/Button'
 import EmptyState from '@/shared/ui/EmptyState'
@@ -22,72 +35,70 @@ import ConfirmModal from '@/shared/ui/modals/ConfirmModal'
 import { useToast } from '@/shared/ui/toast/ToastContext'
 import UnavailableState from '@/shared/ui/UnavailableState'
 
-type SecretFilter = 'all' | 'secret' | 'regular'
-
-const SECRET_FILTER_OPTIONS: Array<{
-  value: SecretFilter
-  label: string
-}> = [
-  { value: 'all', label: 'Усі' },
-  { value: 'secret', label: 'Секретні' },
-  { value: 'regular', label: 'Несекретні' },
-]
-
 const AdminAchievementsPage = () => {
   const toast = useToast()
-  const [includeInactive, setIncludeInactive] = useState(false)
-  const [search, setSearch] = useState('')
-  const [secretFilter, setSecretFilter] = useState<SecretFilter>('all')
+  const [filters, setFilters] = useState(DEFAULT_ACHIEVEMENT_FILTERS)
+  const [page, setPage] = useState(1)
   const [editingAchievement, setEditingAchievement] =
     useState<AdminAchievementDto | null>(null)
   const [isFormOpen, setIsFormOpen] = useState(false)
-  const [deleteTarget, setDeleteTarget] = useState<AdminAchievementDto | null>(
+  const [statusTarget, setStatusTarget] = useState<AdminAchievementDto | null>(
     null,
   )
-
+  const resultsRef = useRef<HTMLHeadingElement>(null)
+  const focusAfterLoad = useRef(false)
   const {
     achievements,
     total,
-    isLoading,
+    isFetching,
     error,
     refetch,
     createAchievement,
     updateAchievement,
-    deleteAchievement,
+    deactivateAchievement,
     isSaving,
-    isDeleting,
-  } = useAdminAchievements(includeInactive)
+    isDeactivating,
+  } = useAdminAchievements(filters.status !== 'active', page)
+  const lastPage = lastAchievementPage(total, ACHIEVEMENTS_PAGE_SIZE)
+  const correctingPage = !isFetching && !error && page > lastPage
+  const loading = isFetching || correctingPage
 
-  const filteredAchievements = useMemo(() => {
-    const query = search.trim().toLowerCase()
+  useEffect(() => {
+    if (correctingPage) setPage(lastPage)
+  }, [correctingPage, lastPage])
+  useEffect(() => {
+    if (!loading && !isFormOpen && !statusTarget && focusAfterLoad.current) {
+      focusAfterLoad.current = false
+      resultsRef.current?.focus({ preventScroll: true })
+    }
+  }, [loading, isFormOpen, statusTarget])
 
-    return achievements.filter(item => {
-      const matchesSecretFilter =
-        secretFilter === 'all' ||
-        (secretFilter === 'secret' && item.isSecret) ||
-        (secretFilter === 'regular' && !item.isSecret)
-      const matchesSearch =
-        !query ||
-        item.code.toLowerCase().includes(query) ||
-        item.name.toLowerCase().includes(query)
-
-      return matchesSecretFilter && matchesSearch
-    })
-  }, [achievements, search, secretFilter])
-
-  const hasActiveFilters =
-    Boolean(search.trim()) || includeInactive || secretFilter !== 'all'
-
+  const changeFilter = <K extends keyof AchievementPageFilters>(
+    key: K,
+    value: AchievementPageFilters[K],
+  ) => {
+    setFilters(current => ({ ...current, [key]: value }))
+    if (key === 'status') setPage(1)
+  }
+  const resetFilters = () => {
+    setFilters(DEFAULT_ACHIEVEMENT_FILTERS)
+    setPage(1)
+  }
+  const filteredAchievements = filterAchievementPage(achievements, filters)
+  const hasActiveFilters = Object.keys(DEFAULT_ACHIEVEMENT_FILTERS).some(
+    key => {
+      const filter = key as keyof AchievementPageFilters
+      return filters[filter] !== DEFAULT_ACHIEVEMENT_FILTERS[filter]
+    },
+  )
   const handleCreate = () => {
     setEditingAchievement(null)
     setIsFormOpen(true)
   }
-
   const handleEdit = (achievement: AdminAchievementDto) => {
     setEditingAchievement(achievement)
     setIsFormOpen(true)
   }
-
   const handleSave = async (payload: AdminAchievementPayload) => {
     if (editingAchievement) {
       await updateAchievement({ id: editingAchievement.id, payload })
@@ -96,89 +107,183 @@ const AdminAchievementsPage = () => {
       await createAchievement(payload)
       toast.success('Досягнення створено')
     }
+    focusAfterLoad.current = true
     setIsFormOpen(false)
     setEditingAchievement(null)
   }
-
-  const handleDelete = async () => {
-    if (!deleteTarget) return
-
-    await deleteAchievement(deleteTarget.id)
-    toast.success('Досягнення видалено')
-    setDeleteTarget(null)
+  const handleStatusChange = async () => {
+    if (!statusTarget) return
+    if (statusTarget.isActive) {
+      await deactivateAchievement(statusTarget.id)
+      toast.success('Досягнення деактивовано')
+    } else {
+      await updateAchievement({
+        id: statusTarget.id,
+        payload: buildAchievementReactivationPayload(statusTarget),
+      })
+      toast.success('Досягнення активовано')
+    }
+    focusAfterLoad.current = true
+    setStatusTarget(null)
   }
 
   return (
-    <div className='space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500'>
+    <div className='space-y-6'>
       <AdminPageHeader
         title='Досягнення'
-        description='Керуйте правилами досягнень, нагородами та активністю.'
+        description='Умови отримання, нагороди та доступність для гостей.'
       >
         <Button onClick={handleCreate}>
           <Plus size={18} aria-hidden='true' />
           Нове досягнення
         </Button>
       </AdminPageHeader>
-
-      <div className='flex flex-col gap-3 rounded-lg border border-white/5 bg-[var(--bg-card)] p-4 xl:flex-row xl:items-center xl:justify-between'>
-        <label className='relative block w-full md:max-w-sm'>
-          <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-faint)]' />
-          <input
-            type='search'
-            aria-label='Пошук досягнення за кодом або назвою'
-            value={search}
-            onChange={event => setSearch(event.target.value)}
-            placeholder='Пошук за кодом або назвою'
-            className='field pl-10'
-          />
-        </label>
-
-        <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
-          <div className='flex rounded-xl border border-white/10 bg-black/20 p-1'>
-            {SECRET_FILTER_OPTIONS.map(option => (
-              <button
-                key={option.value}
-                type='button'
-                onClick={() => setSecretFilter(option.value)}
-                aria-pressed={secretFilter === option.value}
-                className={clsx(
-                  'selection-control px-3 text-sm',
-                  secretFilter === option.value
-                    ? 'text-[var(--text-main)]'
-                    : 'text-neutral-400 hover:bg-white/5 hover:text-white',
-                )}
-              >
-                {option.label}
-              </button>
-            ))}
+      <section aria-label='Фільтри досягнень' className='space-y-4'>
+        <div className='grid grid-cols-2 gap-4 xl:grid-cols-[minmax(15rem,2fr)_repeat(4,minmax(0,1fr))]'>
+          <div className='space-y-2'>
+            <label htmlFor='achievement-search' className='field-label'>
+              Назва або код на сторінці
+            </label>
+            <div className='relative'>
+              <Search
+                aria-hidden='true'
+                size={16}
+                className='pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-faint)]'
+              />
+              <input
+                id='achievement-search'
+                type='search'
+                value={filters.search}
+                onChange={event => changeFilter('search', event.target.value)}
+                placeholder='Пошук на цій сторінці'
+                className='field pl-10'
+                aria-describedby='achievement-filter-scope'
+              />
+            </div>
           </div>
-
-          <label className='flex items-center gap-3 text-sm text-neutral-300'>
-            <input
-              type='checkbox'
-              checked={includeInactive}
-              onChange={event => setIncludeInactive(event.target.checked)}
-              className='h-4 w-4 accent-[var(--color-primary)]'
-            />
-            Показувати неактивні
-          </label>
-        </div>
-      </div>
-
-      <div className='overflow-hidden rounded-lg border border-white/5 bg-[var(--bg-card)]'>
-        <div className='flex items-center justify-between border-b border-white/5 p-5'>
-          <div className='text-sm text-neutral-400'>
-            Знайдено{' '}
-            <span className='font-bold text-white'>
-              {filteredAchievements.length}
-            </span>{' '}
-            з {total}
+          <div className='space-y-2'>
+            <label htmlFor='achievement-status-filter' className='field-label'>
+              Активність
+            </label>
+            <select
+              id='achievement-status-filter'
+              className='field'
+              value={filters.status}
+              onChange={event =>
+                changeFilter(
+                  'status',
+                  event.target.value as AchievementPageFilters['status'],
+                )
+              }
+            >
+              <option value='active'>Активні</option>
+              <option value='all'>Усі</option>
+              <option value='inactive'>Неактивні на сторінці</option>
+            </select>
+          </div>
+          <div className='space-y-2'>
+            <label htmlFor='achievement-secret-filter' className='field-label'>
+              Секретність
+            </label>
+            <select
+              id='achievement-secret-filter'
+              className='field'
+              value={filters.secret}
+              onChange={event =>
+                changeFilter(
+                  'secret',
+                  event.target.value as AchievementPageFilters['secret'],
+                )
+              }
+            >
+              <option value='all'>Усі</option>
+              <option value='secret'>Секретні</option>
+              <option value='regular'>Несекретні</option>
+            </select>
+          </div>
+          <div className='space-y-2'>
+            <label
+              htmlFor='achievement-category-filter'
+              className='field-label'
+            >
+              Категорія
+            </label>
+            <select
+              id='achievement-category-filter'
+              className='field'
+              value={filters.category}
+              onChange={event => changeFilter('category', event.target.value)}
+            >
+              <option value='all'>Усі категорії</option>
+              {ACHIEVEMENT_CATEGORY_OPTIONS.map(option => (
+                <option key={option.key} value={option.key}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className='space-y-2'>
+            <label htmlFor='achievement-rarity-filter' className='field-label'>
+              Рідкість
+            </label>
+            <select
+              id='achievement-rarity-filter'
+              className='field'
+              value={filters.rarity}
+              onChange={event => changeFilter('rarity', event.target.value)}
+            >
+              <option value='all'>Усі рівні рідкості</option>
+              {ACHIEVEMENT_RARITY_OPTIONS.map(option => (
+                <option key={option.key} value={option.key}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
-
-        {isLoading ? (
-          <div className='flex justify-center py-16'>
-            <GridLoader className='h-8 w-8 animate-spin text-[var(--color-primary)]' />
+        <div className='flex flex-wrap items-start justify-between gap-3'>
+          <p
+            id='achievement-filter-scope'
+            className='max-w-3xl text-sm leading-relaxed text-[var(--text-muted)]'
+          >
+            Пошук, секретність, категорія, рідкість і вибір неактивних
+            фільтрують лише завантажену сторінку з {ACHIEVEMENTS_PAGE_SIZE}{' '}
+            записів. Для решти каталогу перейдіть на іншу сторінку. Вибір
+            «Активні» або «Усі» застосовується до каталогу на сервері.
+          </p>
+          {hasActiveFilters && (
+            <Button variant='ghost' onClick={resetFilters}>
+              Скинути фільтри
+            </Button>
+          )}
+        </div>
+      </section>
+      <section
+        aria-labelledby='achievement-results'
+        aria-busy={loading}
+        className='space-y-4'
+      >
+        <div className='flex flex-wrap items-baseline justify-between gap-2'>
+          <h2
+            id='achievement-results'
+            ref={resultsRef}
+            tabIndex={-1}
+            className='text-lg font-medium'
+          >
+            Перелік досягнень
+          </h2>
+          <output className='text-sm tabular-nums text-[var(--text-muted)]'>
+            {loading
+              ? 'Завантажуємо сторінку…'
+              : error
+                ? 'Не вдалося завантажити сторінку'
+                : `На цій сторінці: ${filteredAchievements.length} із ${achievements.length}. У каталозі ${filters.status === 'active' ? 'активних' : 'всього'}: ${total}.`}
+            {hasActiveFilters && ' Фільтри застосовано.'}
+          </output>
+        </div>
+        {loading ? (
+          <div className='flex justify-center border-y border-[var(--border-default)] py-16'>
+            <GridLoader className='h-8 w-8 animate-spin text-[var(--text-muted)] motion-reduce:animate-none' />
           </div>
         ) : error ? (
           <UnavailableState
@@ -189,124 +294,156 @@ const AdminAchievementsPage = () => {
           <EmptyState
             icon={<Trophy className='h-12 w-12' />}
             title={
-              hasActiveFilters
-                ? 'Досягнень за фільтрами немає'
-                : 'Досягнень ще немає'
+              total === 0 && !hasActiveFilters
+                ? 'Досягнень ще немає'
+                : 'На цій сторінці збігів немає'
             }
             description={
-              hasActiveFilters
-                ? 'Змініть пошук, секретність або фільтр активності, щоб знайти потрібне правило.'
-                : 'Створіть перше досягнення, щоб винагороджувати гостей за активність.'
+              total === 0 && !hasActiveFilters
+                ? 'Створіть перше досягнення, щоб винагороджувати гостей за покупки.'
+                : 'Змініть фільтри або перейдіть на іншу сторінку. Пошук не охоплює решту каталогу.'
             }
             actionLabel={
               hasActiveFilters ? 'Скинути фільтри' : 'Нове досягнення'
             }
-            onAction={
-              hasActiveFilters
-                ? () => {
-                    setSearch('')
-                    setIncludeInactive(false)
-                    setSecretFilter('all')
-                  }
-                : handleCreate
-            }
-            className='border-0 bg-transparent py-16'
+            onAction={hasActiveFilters ? resetFilters : handleCreate}
+            className='border-x-0 bg-transparent py-16'
           />
         ) : (
-          <AdminTable label='Досягнення'>
-            <table className='w-full min-w-[980px] text-left text-sm'>
-              <thead className='border-b border-white/5 text-xs uppercase tracking-wider text-[var(--text-faint)]'>
+          <AdminTable label='Таблиця досягнень'>
+            <table className='w-full min-w-[1120px] table-fixed text-left text-sm'>
+              <thead className='border-b border-[var(--border-default)] text-xs text-[var(--text-faint)]'>
                 <tr>
-                  <th className='px-5 py-4'>Досягнення</th>
-                  <th className='px-5 py-4'>Категорія</th>
-                  <th className='px-5 py-4'>Рідкість</th>
-                  <th className='px-5 py-4'>Стратегія</th>
-                  <th className='px-5 py-4'>Нагорода</th>
-                  <th className='px-5 py-4'>Статус</th>
-                  <th className='px-5 py-4 text-right'>Дії</th>
+                  <th scope='col' className='w-[28%] px-4 py-4 font-medium'>
+                    Досягнення / код
+                  </th>
+                  <th scope='col' className='w-[15%] px-4 py-4 font-medium'>
+                    Категорія / рідкість
+                  </th>
+                  <th scope='col' className='w-[25%] px-4 py-4 font-medium'>
+                    Умова отримання
+                  </th>
+                  <th scope='col' className='w-[10%] px-4 py-4 font-medium'>
+                    Нагорода
+                  </th>
+                  <th scope='col' className='w-[10%] px-4 py-4 font-medium'>
+                    Статус
+                  </th>
+                  <th
+                    scope='col'
+                    className='w-[12%] px-4 py-4 text-right font-medium'
+                  >
+                    Дії
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {filteredAchievements.map(achievement => {
-                  const Icon = resolveAchievementIcon(
-                    achievement.icon,
-                    achievement.category,
-                    achievement.rarity,
-                  )
-
+                  const summary = getCriteriaSummary(achievement.criteriaJson)
+                  const restriction = achievement.isActive
+                    ? null
+                    : getReactivationRestriction(achievement)
                   return (
                     <tr
                       key={achievement.id}
-                      className='border-b border-white/5 last:border-0'
+                      className='border-b border-[var(--border-default)] align-top last:border-0 hover:bg-[var(--surface-muted)]'
                     >
-                      <td className='px-5 py-4'>
-                        <div className='flex items-center gap-3'>
-                          <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 text-[var(--color-primary)]'>
-                            <Icon size={20} />
-                          </div>
-                          <div className='min-w-0'>
-                            <div className='flex flex-wrap items-center gap-2 font-semibold text-white'>
+                      <td className='px-4 py-5 text-left font-normal'>
+                        <div className='flex items-start gap-4'>
+                          <AchievementIcon
+                            identifier={achievement.icon}
+                            size={32}
+                            className='mt-1 shrink-0'
+                          />
+                          <div className='min-w-0 space-y-2'>
+                            <p className='break-words font-medium text-[var(--text-main)]'>
                               {achievement.name}
-                              {achievement.isSecret && (
-                                <span className='rounded-full bg-violet-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-violet-200'>
-                                  Секретне
-                                </span>
-                              )}
-                            </div>
-                            <div className='mt-1 font-mono text-xs text-[var(--text-faint)]'>
+                            </p>
+                            <p className='break-all font-mono text-xs text-[var(--text-faint)]'>
                               {achievement.code}
-                            </div>
-                            {achievement.isSecret && achievement.secretHint && (
-                              <div className='mt-2 max-w-md text-xs leading-5 text-neutral-400'>
-                                Підказка: {achievement.secretHint}
-                              </div>
+                            </p>
+                            {achievement.isSecret && (
+                              <p className='text-xs text-[var(--text-muted)]'>
+                                Секретне
+                              </p>
                             )}
                           </div>
                         </div>
                       </td>
-                      <td className='px-5 py-4 text-neutral-300'>
-                        {getAchievementCategoryLabel(achievement.category)}
+                      <td className='space-y-2 px-4 py-5 text-[var(--text-muted)]'>
+                        <p>
+                          {getAchievementCategoryLabel(achievement.category)}
+                        </p>
+                        <p className='text-xs'>
+                          {getAchievementRarityLabel(achievement.rarity)}
+                        </p>
                       </td>
-                      <td className='px-5 py-4 text-neutral-300'>
-                        {getAchievementRarityLabel(achievement.rarity)}
+                      <td className='px-4 py-5'>
+                        <p className='break-words'>{summary.text}</p>
+                        {summary.needsReview && (
+                          <p className='mt-2 text-xs text-[var(--color-warning)]'>
+                            Потребує перевірки
+                          </p>
+                        )}
+                        <details className='mt-2 text-xs text-[var(--text-muted)]'>
+                          <summary className='min-h-11 cursor-pointer py-3'>
+                            Переглянути правило
+                            <span className='sr-only'>
+                              : {achievement.name}
+                            </span>
+                          </summary>
+                          <p className='mb-3 leading-relaxed'>
+                            {summary.explanation}
+                          </p>
+                          <pre className='max-h-48 overflow-auto whitespace-pre-wrap break-all border-t border-[var(--border-default)] pt-3'>
+                            {achievement.criteriaJson}
+                          </pre>
+                        </details>
                       </td>
-                      <td className='px-5 py-4 text-neutral-300'>
-                        {getAchievementStrategyLabel(achievement.strategy)}
-                      </td>
-                      <td className='px-5 py-4 text-amber-300'>
-                        +{achievement.rewardPoints}
-                      </td>
-                      <td className='px-5 py-4'>
-                        <span
-                          className={clsx(
-                            'rounded-full px-2.5 py-1 text-xs font-semibold',
-                            achievement.isActive
-                              ? 'bg-emerald-500/10 text-emerald-300'
-                              : 'bg-neutral-500/10 text-neutral-400',
-                          )}
-                        >
-                          {achievement.isActive ? 'Активне' : 'Неактивне'}
+                      <td className='px-4 py-5 tabular-nums'>
+                        +{achievement.rewardPoints.toLocaleString('uk-UA')}
+                        <span className='mt-2 block text-xs text-[var(--text-muted)]'>
+                          балів
                         </span>
                       </td>
-                      <td className='px-5 py-4'>
-                        <div className='flex justify-end gap-2'>
+                      <td className='px-4 py-5 text-[var(--text-muted)]'>
+                        {achievement.isActive ? 'Активне' : 'Неактивне'}
+                      </td>
+                      <td className='px-4 py-3'>
+                        <div className='flex justify-end gap-1'>
                           <button
                             type='button'
                             onClick={() => handleEdit(achievement)}
-                            className='action action-ghost w-11 px-0 text-neutral-400 transition-colors hover:bg-white/5 hover:text-white'
-                            aria-label='Редагувати досягнення'
+                            className='action action-ghost w-11 shrink-0 px-0'
+                            aria-label={`Редагувати досягнення «${achievement.name}»`}
                           >
-                            <Edit size={16} />
+                            <Edit size={17} aria-hidden='true' />
                           </button>
                           <button
                             type='button'
-                            onClick={() => setDeleteTarget(achievement)}
-                            className='action action-ghost w-11 px-0 text-neutral-400 transition-colors hover:bg-red-500/10 hover:text-red-400'
-                            aria-label='Видалити досягнення'
+                            onClick={() => setStatusTarget(achievement)}
+                            disabled={
+                              !!restriction || isDeactivating || isSaving
+                            }
+                            className='action action-ghost w-11 shrink-0 px-0'
+                            aria-describedby={
+                              restriction
+                                ? `activation-restriction-${achievement.id}`
+                                : undefined
+                            }
+                            aria-label={`${achievement.isActive ? 'Деактивувати' : 'Активувати'} досягнення «${achievement.name}»`}
                           >
-                            <Trash2 size={16} />
+                            <Power size={17} aria-hidden='true' />
                           </button>
                         </div>
+                        {restriction && (
+                          <p
+                            id={`activation-restriction-${achievement.id}`}
+                            className='mt-2 text-xs leading-relaxed text-[var(--color-warning)]'
+                          >
+                            {restriction}
+                          </p>
+                        )}
                       </td>
                     </tr>
                   )
@@ -315,8 +452,20 @@ const AdminAchievementsPage = () => {
             </table>
           </AdminTable>
         )}
-      </div>
-
+        {!loading && !error && (
+          <AdminPagination
+            pageNumber={page}
+            pageSize={ACHIEVEMENTS_PAGE_SIZE}
+            totalCount={total}
+            hasPreviousPage={page > 1}
+            hasNextPage={page < lastPage}
+            onPageChange={next => {
+              focusAfterLoad.current = true
+              setPage(next)
+            }}
+          />
+        )}
+      </section>
       <AchievementFormModal
         isOpen={isFormOpen}
         onClose={() => {
@@ -327,16 +476,23 @@ const AdminAchievementsPage = () => {
         initialData={editingAchievement}
         isSaving={isSaving}
       />
-
       <ConfirmModal
-        isOpen={!!deleteTarget}
-        onClose={() => setDeleteTarget(null)}
-        onConfirm={handleDelete}
-        title='Видалити досягнення?'
-        message={`Досягнення "${deleteTarget?.name || ''}" буде видалено.`}
-        confirmText='Видалити'
-        isDestructive
-        isLoading={isDeleting}
+        isOpen={!!statusTarget}
+        onClose={() => setStatusTarget(null)}
+        onConfirm={handleStatusChange}
+        title={
+          statusTarget?.isActive
+            ? 'Деактивувати досягнення?'
+            : 'Активувати досягнення?'
+        }
+        message={
+          statusTarget?.isActive
+            ? `«${statusTarget.name}» стане неактивним і не отримуватиме новий прогрес. Запис не видаляється назавжди, проте досягнення може зникнути з колекцій гостей.`
+            : `«${statusTarget?.name ?? ''}» стане активним зі збереженою умовою. Історичний прогрес і нагороди не перераховуються автоматично.`
+        }
+        confirmText={statusTarget?.isActive ? 'Деактивувати' : 'Активувати'}
+        isDestructive={statusTarget?.isActive}
+        isLoading={isDeactivating || isSaving}
       />
     </div>
   )

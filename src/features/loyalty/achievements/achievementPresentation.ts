@@ -1,4 +1,5 @@
 import type { Achievement } from './achievements.types'
+import { getBadgeProgressPercent } from './achievementBadgePresentation'
 
 export const ACHIEVEMENT_STATUS_LABELS: Record<Achievement['status'], string> =
   {
@@ -18,4 +19,18 @@ export function getAchievementPresentation(achievement: Achievement) {
       : achievement.description,
     statusLabel: ACHIEVEMENT_STATUS_LABELS[achievement.status],
   }
+}
+
+export function getAchievementProgress(achievement: Achievement) {
+  if (
+    getAchievementPresentation(achievement).hidden ||
+    achievement.status !== 'in-progress' ||
+    !Number.isFinite(achievement.current) ||
+    achievement.current < 0
+  )
+    return null
+  return getBadgeProgressPercent(
+    achievement.progressPercent,
+    achievement.target,
+  )
 }

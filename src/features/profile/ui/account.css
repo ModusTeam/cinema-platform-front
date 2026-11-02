@@ -71,6 +71,22 @@
 .account-section-link:hover, .account-section-link[aria-current='page'] { color: var(--account-ink); text-decoration: underline; text-underline-offset: 6px; }
 .membership-card { --text-main: #f4f4f5; --text-muted: #b5b5be; --border-default: #3c3c44; --border-field: #777782; --focus-ring: #ffafb3; color: var(--text-main); border-bottom: 1px dashed var(--border-field); }
 .membership-card ::selection { color: #201f1d; background: #f5f1e8; }
+.membership-card { --membership-accent: #d8a77b; border-top: 1px solid var(--membership-accent); }
+.membership-card[data-tier='silver'] { --membership-accent: #c9ced3; }
+.membership-card[data-tier='gold'] { --membership-accent: #e1c681; }
+.membership-card[data-tier='unknown'] { --membership-accent: #b5b5be; }
+.membership-tier { color: var(--membership-accent); }
+.membership-history:hover { color: var(--membership-accent); }
+.membership-history:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
+.loyalty-level[data-current='true'] { background: var(--surface-muted); padding-inline: 1rem; }
+.points-ledger-entry { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+.points-ledger-amount { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.5rem 1.5rem; }
+.points-ledger-change[data-tone='positive'] { color: #27613e; }
+.points-ledger-change[data-tone='negative'] { color: #94343c; }
+@media (min-width: 640px) {
+  .points-ledger-entry { grid-template-columns: minmax(0, 1fr) minmax(0, 13rem); gap: 2.5rem; }
+  .points-ledger-amount { display: block; text-align: right; }
+}
 .achievement-progress { display: block; height: 3px; border: 0; border-radius: 0; background: var(--border-default); accent-color: var(--text-main); }
 .achievement-progress::-webkit-progress-bar { background: var(--border-default); }
 .achievement-progress::-webkit-progress-value { background: var(--text-main); }

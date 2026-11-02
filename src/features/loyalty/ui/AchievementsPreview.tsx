@@ -1,25 +1,30 @@
-import type { AchievementsPreviewData } from '@/features/loyalty/achievements/achievements.types'
-import { ArrowRight } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import AchievementCard from '../achievements/AchievementCard'
+import { achievementDetailsPath } from '../achievements/achievementCollectionModel'
+import type { AchievementsPreviewData } from '../achievements/achievements.types'
 
-interface AchievementsPreviewProps {
-  data: AchievementsPreviewData
-}
-
-const AchievementsPreview = ({ data }: AchievementsPreviewProps) => {
-  return (
-    <Link
-      to='/profile/achievements'
-      className='group flex w-fit items-center gap-3 rounded-full bg-white/5 px-4 py-2 transition-colors hover:bg-white/10'
-    >
-      <span className='text-sm text-neutral-300'>
-        Відкрито досягнень:{' '}
-        <strong className='text-white'>{data.totalUnlocked}</strong> /{' '}
-        {data.totalAvailable}
-      </span>
-      <ArrowRight className='h-4 w-4 text-neutral-500 transition-transform group-hover:translate-x-1 group-hover:text-white' />
-    </Link>
-  )
-}
-
+const AchievementsPreview = ({ data }: { data: AchievementsPreviewData }) => (
+  <>
+    <p className='mb-6 text-sm tabular-nums text-[var(--account-muted)]'>
+      Відкрито {data.totalUnlocked} з {data.totalAvailable}
+    </p>
+    {data.items.length > 0 ? (
+      <ul className='grid gap-x-8 md:grid-cols-3'>
+        {data.items.map(item => (
+          <li key={item.id} className='min-w-0'>
+            <AchievementCard
+              achievement={item}
+              badgeSize='small'
+              to={achievementDetailsPath(item.id)}
+            />
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p className='border-t border-[var(--account-rule)] py-6 text-sm text-[var(--account-muted)]'>
+        Досягнень поки немає. Ваша колекція з’явиться тут, коли вони стануть
+        доступними.
+      </p>
+    )}
+  </>
+)
 export default AchievementsPreview

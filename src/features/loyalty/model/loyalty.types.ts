@@ -3,12 +3,8 @@ export type LoyaltyTierKey = 'bronze' | 'silver' | 'gold'
 export type LoyaltyTierLabel = 'Bronze' | 'Silver' | 'Gold'
 
 export interface LoyaltyTier {
-  id: LoyaltyTierKey
-  label: LoyaltyTierLabel
-  minPoints: number
-  maxPoints?: number
-  badgeColor: string
-  benefits: string[]
+  id: LoyaltyTierKey | 'unknown'
+  label: LoyaltyTierLabel | 'Рівень невідомий'
 }
 
 export interface BackendLoyaltyProfileDto {
@@ -28,10 +24,9 @@ export interface LoyaltyProfile {
   pointsBalance: number
   tier: LoyaltyTier
   nextTier?: LoyaltyTier
-  progressPercent: number
-  lifetimePoints: number
-  yearPoints: number
-  yearVisits: number
+  lifetimePoints?: number
+  yearPoints?: number
+  yearVisits?: number
   tierExpiresAt?: string | null
   balanceExpiresAt?: string | null
   isBirthdayWeek: boolean
